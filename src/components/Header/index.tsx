@@ -28,13 +28,13 @@ export default function Header() {
       <div className={`flex`}>
         <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/home'}
+          href={'/'}
         >
           <p className={`text-inherit`}>Trang chủ</p>
         </Link>
         <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/'}
+          href={'/home'}
         >
           <p className={`text-inherit`}>Nhật kí</p>
         </Link>

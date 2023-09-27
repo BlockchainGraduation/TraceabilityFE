@@ -65,7 +65,7 @@ export default function Rules() {
           Tôi đã đọc nội quy và đồng ý với những nội dung trên
         </Checkbox>
       </div>
-      { checked && <Button className='block m-auto my-[50px]'>Done</Button>}
+       <Button disabled={!checked} className='block m-auto my-[50px]'>Done</Button>
     </div>
   );
 }

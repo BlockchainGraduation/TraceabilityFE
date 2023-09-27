@@ -50,7 +50,7 @@ export default function RegisterEnterprise() {
         }))}
         onChange={(value) => {setCurrent(value)}}
       />
-      {current===items.length-1 && <Button className='block m-auto my-[50px]'>Done</Button>}
+      <Button disabled={!(current===items.length-1)} className='block m-auto my-[50px]'>Done</Button>
     </div>
   );
 }
