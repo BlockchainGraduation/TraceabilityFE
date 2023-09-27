@@ -1,7 +1,7 @@
 import { Button, Form, Input } from 'antd';
 import React from 'react';
 
-export default function RegisterForm() {
+export default function RegisterForm({nextStep}:{nextStep:()=>void}) {
   type FieldType = {
     first_name?:string;
     last_name?:string;
@@ -71,11 +71,12 @@ export default function RegisterForm() {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
-          <Button className='mt-[30px] bg-[#1677ff]' type="primary" htmlType="submit">
+          <Button  className='mt-[30px] bg-[#1677ff]' type="primary" htmlType="submit">
             Submit
           </Button>
         </Form.Item>
       </Form>
+      <Button onClick={nextStep}>OK</Button>
     </div>
   );
 }

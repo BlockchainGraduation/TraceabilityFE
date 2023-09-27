@@ -13,10 +13,18 @@ import RegisterEnterprise from './RegisterEnterprise';
 export default function Register() {
   const [current, setCurrent] = useState(0);
 
+  const nextStep=()=>{
+    if(current===steps.length-1){
+      return
+    }else{
+      setCurrent(current+1)
+    }
+  }
+
   const steps = [
     {
       title: 'First',
-      content: <RegisterForm/>,
+      content: <RegisterForm nextStep={nextStep} />,
     },
     {
       title: 'Second',
@@ -66,7 +74,7 @@ export default function Register() {
         <div onClick={()=>setCurrent(current-1)}>
           previous
         </div>
-        <div onClick={()=>setCurrent(current+1)}>
+        <div onClick={nextStep}>
           next
         </div>
       </div>
