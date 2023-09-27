@@ -1,0 +1,12 @@
+{
+    "Index": {
+      "title": "Xin caho!"
+    },
+    "header":{
+      "tag":{
+        "home":"Trang chủ",
+        "diary":"Nhật ký",
+        "products":"Sản phẩm"
+      }
+    }
+  }
