@@ -1,7 +1,8 @@
-import { Checkbox, Collapse, Divider } from 'antd';
-import React from 'react';
+import { Button, Checkbox, Collapse, Divider } from 'antd';
+import React, { useState } from 'react';
 
 export default function Rules() {
+    const [checked, setChecked]=useState(false);
   const text = `
   A dog is a type of domesticated animal.
   Known for its loyalty and faithfulness,
@@ -60,10 +61,11 @@ export default function Rules() {
         ]}
       />
       <div className="flex justify-between my-[50px]">
-        <Checkbox className="m-auto">
+        <Checkbox onChange={e=>setChecked(e.target.checked)} checked={checked} className="m-auto">
           Tôi đã đọc nội quy và đồng ý với những nội dung trên
         </Checkbox>
       </div>
+      { checked && <Button className='block m-auto my-[50px]'>Done</Button>}
     </div>
   );
 }
