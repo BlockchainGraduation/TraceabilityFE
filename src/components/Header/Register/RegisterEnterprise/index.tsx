@@ -1,4 +1,4 @@
-import { Radio, Steps } from 'antd';
+import { Button, Radio, Steps } from 'antd';
 import React, { useState } from 'react';
 import RegisterForm from '../RegisterForm';
 import RoleSelect from '../RoleSelect';
@@ -50,6 +50,7 @@ export default function RegisterEnterprise() {
         }))}
         onChange={(value) => {setCurrent(value)}}
       />
+      {current===items.length-1 && <Button className='block m-auto my-[50px]'>Done</Button>}
     </div>
   );
 }
