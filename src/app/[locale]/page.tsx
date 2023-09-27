@@ -9,7 +9,7 @@ export default function Index() {
   const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
   return (
-    <div className={`h-[2000px] px-[20px] pt-[100px]`}>
+    <div className={`mainpage text-white h-[2000px] px-[20px] pt-[100px]`}>
       <h1>{t('title')}</h1>
       <div>{count}</div>
       <button onClick={() => dispatch(increment())}>Incre</button>

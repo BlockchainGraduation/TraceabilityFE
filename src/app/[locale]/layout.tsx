@@ -23,12 +23,12 @@ export default async function LocaleLayout({
     notFound();
   }
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <Header/>
-            <div>{children}</div>
+            <Header />
+              <div>{children}</div>
           </NextIntlClientProvider>
         </Providers>
       </body>

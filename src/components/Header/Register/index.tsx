@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import RegisterForm from './RegisterForm';
 import RegisterEnterprise from './RegisterEnterprise';
+import Rules from './Rules';
 
 export default function Register() {
   const [current, setCurrent] = useState(0);
@@ -32,7 +33,7 @@ export default function Register() {
     },
     {
       title: 'Last',
-      content: 'Last-content',
+      content: <Rules/>,
     },
     {
       title: 'Last',

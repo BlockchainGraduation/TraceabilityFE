@@ -5,16 +5,18 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import Login from './Login';
 import Register from './Register';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const path = usePathname()
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
   return (
     <div
-      className={`w-full fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent`}
+      className={`w-full ${path==='/' && 'text-white'} fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent`}
     >
       <Image
         width={50}
@@ -28,32 +30,32 @@ export default function Header() {
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
           href={'/home'}
         >
-          <p>Trang chủ</p>
+          <p className={`text-inherit`}>Trang chủ</p>
         </Link>
         <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
           href={'/'}
         >
-          <p>Nhật kí</p>
+          <p className={`text-inherit`}>Nhật kí</p>
         </Link>
         <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
           href={'/hitory'}
         >
-          <p>Sản phẩm</p>
+          <p className={`text-inherit`}>Sản phẩm</p>
         </Link>
         <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
           href={'/hitory'}
         >
-          <p>Hỗ trợ</p>
+          <p className={`text-inherit`}>Hỗ trợ</p>
         </Link>
       </div>
       <div>
         {user ? (
           <div>User</div>
         ) : (
-          <div className="cursor-pointer" onClick={() => setShowModal(true)}>
+          <div className={`text-inherit'} cursor-pointer`} onClick={() => setShowModal(true)}>
             Đăng nhập
           </div>
         )}
