@@ -9,12 +9,14 @@ import {
   Modal,
   Row,
   Table,
+  Timeline,
   Typography,
 } from 'antd';
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import DescriptionItem from './DescriptionItem';
+import GrowUpItem from './GrowUpItem';
 
 export default function ProductInfo() {
   const [openModal, setOpenModal] = useState(false);
@@ -106,7 +108,7 @@ export default function ProductInfo() {
             </Image.PreviewGroup>
           </Modal>
         </div>
-        <div className="w-3/5 p-[50px] flex flex-col gap-y-[30px] rounded border-[1px]">
+        <div className="w-3/5 p-[50px] flex flex-col gap-y-[30px] rounded border-[1px] bg-[#F8F8F8]">
           <Typography.Title className="text-center" level={1}>
             Chi tiet
           </Typography.Title>
@@ -114,6 +116,11 @@ export default function ProductInfo() {
           <DescriptionItem />
           <DescriptionItem />
         </div>
+      </div>
+      <div className=''>
+        <GrowUpItem/>
+        <GrowUpItem/>
+        <GrowUpItem/>
       </div>
     </div>
   );
