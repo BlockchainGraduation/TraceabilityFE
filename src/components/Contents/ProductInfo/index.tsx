@@ -83,14 +83,14 @@ export default function ProductInfo() {
           </div>
         </div>
       </div>
-      <div className='flex justify-around'>
+      <div className="flex justify-around">
         <div>
           <Image
             preview={false}
             onClick={() => setOpenModal(true)}
             alt=""
             width={200}
-            src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
           />
           <Modal
             open={openModal}
@@ -106,9 +106,13 @@ export default function ProductInfo() {
             </Image.PreviewGroup>
           </Modal>
         </div>
-        <div className='w-3/5'>
-          <p>Chi tiet</p>
-          <DescriptionItem/>
+        <div className="w-3/5 p-[50px] flex flex-col gap-y-[30px] rounded border-[1px]">
+          <Typography.Title className="text-center" level={1}>
+            Chi tiet
+          </Typography.Title>
+          <DescriptionItem />
+          <DescriptionItem />
+          <DescriptionItem />
         </div>
       </div>
     </div>
