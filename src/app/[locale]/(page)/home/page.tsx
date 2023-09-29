@@ -3,15 +3,16 @@ import { Input, Segmented, Select } from 'antd';
 import React from 'react';
 import { useTheme } from 'next-themes';
 import ProductItem from '@/components/Contents/Home/ProductItem';
+import staticVariables from '@/static';
 
 const { Search } = Input;
 export default function HomePage() {
   return (
-    <div className="w-full h-full pt-[100px]">
+    <div className="w-full">
       <div className="flex">
         <Search
           className="m-auto"
-          placeholder="input search text"
+          placeholder="Search product"
           onSearch={() => {}}
           style={{ width: 500 }}
         />
@@ -46,7 +47,7 @@ export default function HomePage() {
             productName="Sầu riêng DatBe"
             productImg="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
             ownerName="SimpRaidenEi"
-            ownerImg="https://xsgames.co/randomusers/avatar.php?g=pixel"
+            ownerImg={staticVariables.logoRaiden.src}
             role="Fammer"
             likeQuantity={12}
             messageQuantity={12}
