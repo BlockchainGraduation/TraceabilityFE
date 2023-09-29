@@ -117,10 +117,16 @@ export default function ProductInfo() {
           <DescriptionItem />
         </div>
       </div>
-      <div className=''>
-        <GrowUpItem/>
-        <GrowUpItem/>
-        <GrowUpItem/>
+      <div
+      //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
+        className={`border-l-2 block w-fit m-auto mt-[150px]`}
+      >
+        <div className="w-fit p-[20px] border-[1px] border-l-0">Qua trinh phat trien</div>
+        <div className='ml-[-16px]'>
+          <GrowUpItem />
+          <GrowUpItem />
+          <GrowUpItem />
+        </div>
       </div>
     </div>
   );
