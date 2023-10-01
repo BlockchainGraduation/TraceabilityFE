@@ -2,7 +2,7 @@
 import staticVariables from '@/static';
 import { ConfigProvider, Image, Modal, Select } from 'antd';
 import Link from 'next/link';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import Login from './Login';
 import Register from './Register';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
@@ -10,7 +10,7 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 
-export default function Header() {
+export default memo(function Header() {
   const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [currentForm, setCurrentForm] = useState<
@@ -18,7 +18,6 @@ export default function Header() {
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
   const [dataRoute, setDataRoute] = useState({});
-
 
   const router = useRouter();
   const t = useTranslations('header');
@@ -28,16 +27,15 @@ export default function Header() {
   function handleChangeLanguage() {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
   }
-  const isHomePage=path === '/' + (locale === 'vi' ? '' : locale);
+  const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
     // Sử dụng hàm async IIFE để lấy dữ liệu từ tệp dịch vụ (JSON)
     const fetchData = async () => {
       try {
-        const messages = (
-          await import(`../../../messages/${locale}.json`)
-        ).default;
+        const messages = (await import(`../../../messages/${locale}.json`))
+          .default;
         setDataHeader(messages.header);
-        setDataRoute(messages.header.route);// Lưu trữ dữ liệu vào state
+        setDataRoute(messages.header.route); // Lưu trữ dữ liệu vào state
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
         setDataHeader({}); // Xử lý lỗi nếu cần thiết
@@ -53,22 +51,25 @@ export default function Header() {
         isHomePage && 'text-white'
       } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent`}
     >
-      <Image
-        width={50}
-        height={50}
-        className={`object-cover`}
-        src={staticVariables.logoRaiden.src}
-        alt=""
-      />
+      <Link href={'/'}>
+        <Image
+          width={50}
+          height={50}
+          preview={false}
+          className={`object-cover`}
+          src={staticVariables.logoRaiden.src}
+          alt=""
+        />
+      </Link>
       <div className={`flex`}>
-        {Object.keys(dataRoute).map((key,index)=>(
+        {Object.keys(dataRoute).map((key, index) => (
           <Link
-          key={index}
-          className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={`/${key}`}
-        >
-          <p className={`text-inherit`}>{t(`route.${key}`)}</p>
-        </Link>
+            key={index}
+            className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
+            href={`/${key}`}
+          >
+            <p className={`text-inherit`}>{t(`route.${key}`)}</p>
+          </Link>
         ))}
         {/* <Link
           className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
@@ -95,15 +96,16 @@ export default function Header() {
           <p className={`text-inherit`}>Hỗ trợ</p>
         </Link> */}
       </div>
-      <div className="flex">
+      <div className="flex items-center">
         <ConfigProvider
           theme={{
             token: {
               colorText: `${isHomePage && 'white'}`,
-              colorBgElevated	:`${isHomePage && '#262626DB'}`,
-              
+              colorBgElevated: `${isHomePage && '#262626DB'}`,
             },
-            components: { Select: { controlItemBgActive: `${isHomePage && '#111126CE'}`} },
+            components: {
+              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
+            },
           }}
         >
           <Select
@@ -154,4 +156,4 @@ export default function Header() {
       </Modal>
     </div>
   );
-}
+});
