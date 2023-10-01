@@ -128,6 +128,9 @@ export default function ProductInfo() {
           <GrowUpItem />
         </div>
       </div>
+      <div>
+           
+      </div>
     </div>
   );
 }
