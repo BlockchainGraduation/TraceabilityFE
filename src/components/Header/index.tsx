@@ -17,8 +17,8 @@ export default memo(function Header() {
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
-  const [dataRoute, setDataRoute] = useState({});
 
+  
   const router = useRouter();
   const t = useTranslations('header');
   const pathname = pathLanguage();
@@ -35,11 +35,9 @@ export default memo(function Header() {
         const messages = (await import(`../../../messages/${locale}.json`))
           .default;
         setDataHeader(messages.header);
-        setDataRoute(messages.header.route); // Lưu trữ dữ liệu vào state
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
         setDataHeader({}); // Xử lý lỗi nếu cần thiết
-        setDataRoute({});
       }
     };
 
@@ -62,10 +60,10 @@ export default memo(function Header() {
         />
       </Link>
       <div className={`flex`}>
-        {Object.keys(dataRoute).map((key, index) => (
+        {Object.keys((dataHeader as any).route||{}).map((key, index) => (
           <Link
             key={index}
-            className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
+            className={`py-3 px-10 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
             href={`/${key}`}
           >
             <p className={`text-inherit`}>{t(`route.${key}`)}</p>
@@ -101,10 +99,10 @@ export default memo(function Header() {
           theme={{
             token: {
               colorText: `${isHomePage && 'white'}`,
-              colorBgElevated: `${isHomePage && '#262626DB'}`,
+              // colorBgElevated: `${isHomePage && '#363636FF'}`,
             },
             components: {
-              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
+              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}`},
             },
           }}
         >
@@ -113,9 +111,11 @@ export default memo(function Header() {
             style={{ width: 120 }}
             onChange={handleChangeLanguage}
             bordered={false}
-            className="select-language text-inherit"
+            dropdownStyle={isHomePage?{background:'#363636FF'}:{}}
+            className={`text-inherit mr-[20px]`}
+            size={'small'}
             options={[
-              { value: 'vi', label: 'Việt Nam' },
+              { value: 'vi', label: 'Tiếng Việt' },
               { value: 'en', label: 'English' },
             ]}
           />
