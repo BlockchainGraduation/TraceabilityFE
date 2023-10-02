@@ -1,6 +1,15 @@
 'use client';
 import staticVariables from '@/static';
-import { ConfigProvider, Image, Modal, Select } from 'antd';
+import {
+  Avatar,
+  Badge,
+  ConfigProvider,
+  Dropdown,
+  Image,
+  MenuProps,
+  Modal,
+  Select,
+} from 'antd';
 import Link from 'next/link';
 import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import Login from './Login';
@@ -26,9 +35,6 @@ export default memo(function Header() {
   const locale = useLocale();
   const loged = useAppSelector((state) => state.user.loged);
 
-  function handleChangeLanguage() {
-    router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
-  }
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
     // Sử dụng hàm async IIFE để lấy dữ liệu từ tệp dịch vụ (JSON)
@@ -45,9 +51,32 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
+  const handleChangeLanguage = () => {
+    router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
+  };
+  const handleShowModal = () => {
+    setShowModal(false);
+  };
   useEffect(() => {
     setUser(loged);
   }, [loged]);
+  const items: MenuProps['items'] = [
+    {
+      label: <p>1st menu item</p>,
+      key: '0',
+    },
+    {
+      label: <p>2nd menu item</p>,
+      key: '1',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: '3rd menu item',
+      key: '3',
+    },
+  ];
   return (
     <div
       className={`w-full ${
@@ -56,8 +85,8 @@ export default memo(function Header() {
     >
       <Link href={'/'}>
         <Image
-          width={50}
-          height={50}
+          width={40}
+          height={40}
           preview={false}
           className={`object-cover`}
           src={staticVariables.logoRaiden.src}
@@ -68,7 +97,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-3 px-10 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
+            className={`py-[15px] px-10 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
             href={`/${key}`}
           >
             <p className={`text-inherit`}>{t(`route.${key}`)}</p>
@@ -102,7 +131,13 @@ export default memo(function Header() {
           />
         </ConfigProvider>
         {user ? (
-          <div>User</div>
+          <div>
+            <Dropdown menu={{ items }}>
+              <Badge count={5} offset={[5, 10]} color="blue">
+                <Avatar src={staticVariables.logoRaiden.src} size="large" />
+              </Badge>
+            </Dropdown>
+          </div>
         ) : (
           <div
             className={`text-inherit'} cursor-pointer`}
@@ -120,7 +155,9 @@ export default memo(function Header() {
           footer={[]}
         >
           {currentForm === 'LOGIN' && <Login />}
-          {currentForm === 'REGISTER' && <Register />}
+          {currentForm === 'REGISTER' && (
+            <Register onFinish={handleShowModal} />
+          )}
           <div className="flex justify-around	">
             <p>Forget?</p>
             <p

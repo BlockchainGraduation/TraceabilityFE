@@ -13,7 +13,7 @@ import Rules from './Rules';
 import { useAppDispatch } from '@/hooks';
 import { initialUser, setLogin } from '@/reducers/userSlice';
 
-export default function Register() {
+export default function Register({ onFinish }: { onFinish: () => void }) {
   const [current, setCurrent] = useState(0);
   const dispatch = useAppDispatch();
 
@@ -48,6 +48,7 @@ export default function Register() {
           extra={[
             <Button
               onClick={() => {
+                onFinish();
                 dispatch(setLogin({ loged: true, user: initialUser }));
               }}
               key="buy"
