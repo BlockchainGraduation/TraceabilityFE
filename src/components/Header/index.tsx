@@ -109,31 +109,31 @@ export default memo(function Header() {
             onClick={() => setShowModal(true)}
           >
             Đăng nhập
-            <Modal
-              open={showModal && !user}
-              width={currentForm === 'REGISTER' ? 1000 : 520}
-              className={``}
-              centered
-              onCancel={() => setShowModal(false)}
-              footer={[]}
-            >
-              {currentForm === 'LOGIN' && <Login />}
-              {currentForm === 'REGISTER' && <Register />}
-              <div className="flex justify-around	">
-                <p>Forget?</p>
-                <p
-                  onClick={() =>
-                    currentForm === 'LOGIN'
-                      ? setCurrentForm('REGISTER')
-                      : setCurrentForm('LOGIN')
-                  }
-                >
-                  {currentForm === 'LOGIN' ? 'Register' : 'Login'}
-                </p>
-              </div>
-            </Modal>
           </div>
         )}
+        <Modal
+          open={showModal}
+          width={currentForm === 'REGISTER' ? 1000 : 520}
+          className={``}
+          centered
+          onCancel={() => setShowModal(false)}
+          footer={[]}
+        >
+          {currentForm === 'LOGIN' && <Login />}
+          {currentForm === 'REGISTER' && <Register />}
+          <div className="flex justify-around	">
+            <p>Forget?</p>
+            <p
+              onClick={() =>
+                currentForm === 'LOGIN'
+                  ? setCurrentForm('REGISTER')
+                  : setCurrentForm('LOGIN')
+              }
+            >
+              {currentForm === 'LOGIN' ? 'Register' : 'Login'}
+            </p>
+          </div>
+        </Modal>
       </div>
     </div>
   );
