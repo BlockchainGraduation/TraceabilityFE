@@ -6,6 +6,8 @@ import {
   Button,
   Col,
   Image,
+  Input,
+  List,
   Modal,
   Row,
   Table,
@@ -16,6 +18,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowTrendUp,
+  faClockRotateLeft,
   faLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
@@ -142,13 +145,43 @@ export default function ProductInfo() {
       <div>
         <div className="w-fit flex items-center p-[20px] border-[1px]">
           <FontAwesomeIcon
-            icon={faArrowTrendUp}
             size={'2xl'}
-            style={{ color: '#29c214' }}
+            icon={faClockRotateLeft}
+            style={{ color: '#8f8f8f' }}
           />
           <p className="pl-[20px]">Lich su giao dich</p>
         </div>
-        <TransactionItem/>
+        <div>
+          <Input.Search
+            className="my-[30px]"
+            placeholder="Search transaction"
+          />
+          <div className="overflow-hidden	rounded">
+            <Row className="border-[1px] py-[20px] bg-[#d1d1d1]" align="middle">
+              <Col span={8}>
+                <p className="text-center">Cong ty</p>
+              </Col>
+              <Col span={4}>So luong</Col>
+              <Col span={4}>Tong gia tri</Col>
+              <Col span={4}>Ngay giao dich</Col>
+            </Row>
+            <List
+              pagination={{
+                onChange: (page) => {
+                  console.log(page);
+                },
+                pageSize: 5,
+                align: 'center',
+              }}
+              dataSource={[...Array(20)].map((_, index) => (
+                <TransactionItem key={index} />
+              ))}
+              renderItem={(item) => item}
+            />
+          </div>
+        </div>
+
+        {/* <Transac  tionItem /> */}
       </div>
     </div>
   );

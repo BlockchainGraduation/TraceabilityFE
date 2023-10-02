@@ -13,11 +13,6 @@ export const metadata: Metadata = {
   description: 'Traceability',
 };
 
-export default function LocaleLayout(
-    { children }: { children: ReactNode }
-) {
-
-  return (
-    <div className='pt-[100px]'>{children}</div>
-  );
+export default function LocaleLayout({ children }: { children: ReactNode }) {
+  return <div className="py-[100px]">{children}</div>;
 }

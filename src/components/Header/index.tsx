@@ -18,7 +18,6 @@ export default memo(function Header() {
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
 
-  
   const router = useRouter();
   const t = useTranslations('header');
   const pathname = pathLanguage();
@@ -60,7 +59,7 @@ export default memo(function Header() {
         />
       </Link>
       <div className={`flex`}>
-        {Object.keys((dataHeader as any).route||{}).map((key, index) => (
+        {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
             className={`py-3 px-10 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
@@ -69,30 +68,6 @@ export default memo(function Header() {
             <p className={`text-inherit`}>{t(`route.${key}`)}</p>
           </Link>
         ))}
-        {/* <Link
-          className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/'}
-        >
-          <p className={`text-inherit`}>Trang chủ</p>
-        </Link>
-        <Link
-          className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/home'}
-        >
-          <p className={`text-inherit`}>Nhật kí</p>
-        </Link>
-        <Link
-          className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/hitory'}
-        >
-          <p className={`text-inherit`}>Sản phẩm</p>
-        </Link>
-        <Link
-          className={`py-3 px-10 hover:scale-125 hover:border-b-[1px]`}
-          href={'/hitory'}
-        >
-          <p className={`text-inherit`}>Hỗ trợ</p>
-        </Link> */}
       </div>
       <div className="flex items-center">
         <ConfigProvider
@@ -102,7 +77,7 @@ export default memo(function Header() {
               // colorBgElevated: `${isHomePage && '#363636FF'}`,
             },
             components: {
-              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}`},
+              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
             },
           }}
         >
@@ -111,7 +86,7 @@ export default memo(function Header() {
             style={{ width: 120 }}
             onChange={handleChangeLanguage}
             bordered={false}
-            dropdownStyle={isHomePage?{background:'#363636FF'}:{}}
+            dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
             className={`text-inherit mr-[20px]`}
             size={'small'}
             options={[
