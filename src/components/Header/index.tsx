@@ -9,6 +9,7 @@ import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/hooks';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -23,6 +24,8 @@ export default memo(function Header() {
   const pathname = pathLanguage();
   const path = usePathname();
   const locale = useLocale();
+  const loged = useAppSelector((state) => state.user.loged);
+
   function handleChangeLanguage() {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
   }
@@ -42,6 +45,9 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
+  useEffect(() => {
+    setUser(loged);
+  }, [loged]);
   return (
     <div
       className={`w-full ${
@@ -103,32 +109,32 @@ export default memo(function Header() {
             onClick={() => setShowModal(true)}
           >
             Đăng nhập
+            <Modal
+              open={showModal && !user}
+              width={currentForm === 'REGISTER' ? 1000 : 520}
+              className={``}
+              centered
+              onCancel={() => setShowModal(false)}
+              footer={[]}
+            >
+              {currentForm === 'LOGIN' && <Login />}
+              {currentForm === 'REGISTER' && <Register />}
+              <div className="flex justify-around	">
+                <p>Forget?</p>
+                <p
+                  onClick={() =>
+                    currentForm === 'LOGIN'
+                      ? setCurrentForm('REGISTER')
+                      : setCurrentForm('LOGIN')
+                  }
+                >
+                  {currentForm === 'LOGIN' ? 'Register' : 'Login'}
+                </p>
+              </div>
+            </Modal>
           </div>
         )}
       </div>
-      <Modal
-        open={showModal}
-        width={currentForm === 'REGISTER' ? 1000 : 520}
-        className={``}
-        centered
-        onCancel={() => setShowModal(false)}
-        footer={[]}
-      >
-        {currentForm === 'LOGIN' && <Login />}
-        {currentForm === 'REGISTER' && <Register />}
-        <div className="flex justify-around	">
-          <p>Forget?</p>
-          <p
-            onClick={() =>
-              currentForm === 'LOGIN'
-                ? setCurrentForm('REGISTER')
-                : setCurrentForm('LOGIN')
-            }
-          >
-            {currentForm === 'LOGIN' ? 'Register' : 'Login'}
-          </p>
-        </div>
-      </Modal>
     </div>
   );
 });
