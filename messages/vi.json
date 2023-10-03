@@ -2,11 +2,12 @@
     "Index": {
       "title": "Xin caho!"
     },
-    "header":{
-      "tag":{
+    "header": {
+      "route":{
         "home":"Trang chủ",
-        "diary":"Nhật ký",
-        "products":"Sản phẩm"
+        "product":"Sản phảm",
+        "history":"Lịch sử",
+        "support":"Hỗ trợ"
       }
     }
   }

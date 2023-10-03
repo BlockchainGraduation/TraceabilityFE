@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
@@ -28,7 +29,8 @@ export default async function LocaleLayout({
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Header />
-              <div>{children}</div>
+            <div>{children}</div>
+            <Footer />
           </NextIntlClientProvider>
         </Providers>
       </body>

@@ -9,7 +9,7 @@ export default function Index() {
   const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
   return (
-    <div className={`mainpage text-white h-[2000px] px-[20px] pt-[100px]`}>
+    <div className={`mainpage text-white px-[20px] pt-[100px]`}>
       <h1>{t('title')}</h1>
       <div>{count}</div>
       <button onClick={() => dispatch(increment())}>Incre</button>
@@ -40,7 +40,7 @@ export default function Index() {
         <div className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}>Uy tín</div>
         <div className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}>Minh bạch</div>
       </div>
-      <div className='w-full text-black  rounded-sm bg-[#F5F5F5ED]'>
+      <div className='w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]'>
         <HomeDescription alignRight={false}/>
         <HomeDescription alignRight={true}/>
         <HomeDescription alignRight={false}/>

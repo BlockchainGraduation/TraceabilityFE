@@ -10,7 +10,9 @@ import { ThemeProvider } from 'next-themes';
 export const Providers = (props: React.PropsWithChildren) => {
   return (
     <Provider store={store}>
-      <ThemeProvider>{props.children}</ThemeProvider>
+      {/* <ThemeProvider> */}
+      {props.children}
+      {/* </ThemeProvider> */}
     </Provider>
   );
 };

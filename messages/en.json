@@ -1,5 +1,13 @@
 {
     "Index": {
       "title": "Hello world!"
+    },
+    "header": {
+      "route":{
+        "home":"Home",
+        "product":"Product",
+        "history":"History",
+        "support":"Support"
+      }
     }
-  }
+}
