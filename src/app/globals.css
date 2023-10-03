@@ -6,6 +6,7 @@
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   }
 }
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,6 +17,27 @@
 [data-theme='dark'] {
   --background: rgba(0, 0, 0, 0.723);
   --foreground: white;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgb(208, 208, 208); 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(163, 163, 163); 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #777777; 
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +55,7 @@
 }
 
 body {
+  
   /* color: black; */
   /* color: rgb(var(--foreground-rgb)); */
   /* background: linear-gradient(
