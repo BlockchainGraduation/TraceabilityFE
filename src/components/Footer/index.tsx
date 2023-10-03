@@ -10,12 +10,14 @@ export default function Footer() {
   return (
     <div>
       <FloatButton
+        badge={{ count: 12 }}
         shape="square"
         type="primary"
         onClick={() => setOpenDrawer(true)}
         style={{ right: 24 }}
         icon={<MessageOutlined />}
       />
+
       <Drawer
         title="Messenger"
         placement="right"

@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function GrowUpItem() {
   return (
-    <div className="flex items-center py-[50px] translate-y-[50%]">
+    <div className="flex items-center py-[30px] translate-y-[50%]">
       <div
         className={`relative pl-[100px] before:content-[''] before:absolute before:bg-[#1677ff] before:border-[5px] before:rounded-[50%] before:left-[0px] before:top-1/2 before:translate-y-[-50%] before:w-[20px] before:h-[20px] after:content-[''] after:absolute after:z-[-1] after:left-0 after:top-1/2 after:translate-y-[-50%]  after:w-[110%] after:h-[2px] after:bg-[#0505050f]`}
       >
@@ -14,7 +14,7 @@ export default function GrowUpItem() {
           preview={false}
           // onClick={() => setOpenModal(true)}
           alt=""
-          className='object-cover rounded'
+          className="object-cover rounded"
           width={300}
           height={200}
           src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"

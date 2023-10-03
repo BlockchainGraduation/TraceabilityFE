@@ -24,35 +24,13 @@ import {
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
 import DescriptionItem from '@/components/Contents/ProductInfo/DescriptionItem';
 import TransactionItem from '@/components/Contents/ProductInfo/TransactionItem';
+import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 
 export default function ProductInfo() {
   const [openModal, setOpenModal] = useState(false);
   return (
     <div className="w-4/5 m-auto">
-      <div className="flex items-center border-b-[1px] pb-[50px]">
-        <div className="flex items-center gap-y-5 flex-col w-1/5">
-          <Avatar size={150} src={staticVariables.logoRaiden.src} />
-          <Button>Xem them</Button>
-        </div>
-        <div className="flex gap-y-5 flex-col border-[1px] px-[30px] py-[20px] rounded">
-          <div className="">
-            <MailOutlined />
-            Nguyen Van A
-          </div>
-          <div className="">
-            <PhoneOutlined />
-            0123131313
-          </div>
-          <div className="flex">
-            <FontAwesomeIcon width={20} icon={faLocationDot} />
-            Nguyen Van A
-          </div>
-          <div className="flex">
-            <FontAwesomeIcon width={20} icon={faLocationDot} />
-            14 - Doan Uan - Khue My - NHS - DN
-          </div>
-        </div>
-      </div>
+      <UserInfoCard />
       <div className="flex w-full flex-col">
         <Typography.Title level={2}>Sau rieng viet nam</Typography.Title>
         <div className="w-full flex bg-gray-400	px-[100px] py-[20px] rounded">
