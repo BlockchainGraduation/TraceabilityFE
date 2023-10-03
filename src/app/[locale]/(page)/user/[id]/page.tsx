@@ -1,3 +1,4 @@
+'use client';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import {
   ArrowUpOutlined,
@@ -10,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { faHandshake } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Card, Carousel, Col, Row, Statistic } from 'antd';
+import { Card, Carousel, Col, Row, Statistic, Typography } from 'antd';
 import React from 'react';
 
 export default function UserInfo() {
@@ -22,6 +23,64 @@ export default function UserInfo() {
     background: '#364d79',
     borderRadius: '10px',
   };
+  const statisticItems = [
+    {
+      title: 'San pham',
+      value: 20,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <InboxOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'Giao dich',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <BookOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'Khach hang',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <TeamOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'Cuoc tro chuyen',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <MessageOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'Xep hang giao dich',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <ArrowUpOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'Danh gia',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <StarOutlined />,
+      suffix: '',
+    },
+    {
+      title: 'San pham ban ra',
+      value: 40,
+      valueStyle: { color: '#3f8600' },
+      precision: 0,
+      prefix: <ArrowUpOutlined />,
+      suffix: '',
+    },
+  ];
   return (
     <div className="px-[50px]">
       <UserInfoCard />
@@ -44,91 +103,32 @@ export default function UserInfo() {
         </div>
         <div className="flex px-[30px]">
           <Row gutter={[50, 12]} justify={'space-around'} align={'middle'}>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="San pham"
-                  value={40}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<InboxOutlined />}
-                  // suffix="San pham"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="Giao dich"
-                  value={150}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<BookOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="Khach hang"
-                  value={150}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<TeamOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="Cuoc tro chuyen"
-                  value={150}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<MessageOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="Xep hang giao dich"
-                  value={5}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<ArrowUpOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="Danh gia"
-                  value={9.5}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<StarOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
-            <Col>
-              <Card className="w-fit" bordered={false}>
-                <Statistic
-                  title="San pham ban ra"
-                  value={200}
-                  // precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                  prefix={<ScheduleOutlined />}
-                  // suffix="%"
-                />
-              </Card>
-            </Col>
+            {statisticItems.map((item, index) => (
+              <Col key={index}>
+                <Card hoverable className="w-fit" bordered={false}>
+                  <Statistic
+                    title={item.title}
+                    value={item.value}
+                    precision={item.precision || 0}
+                    valueStyle={item.valueStyle || {}}
+                    prefix={item.prefix}
+                    suffix={item.suffix}
+                  />
+                </Card>
+              </Col>
+            ))}
           </Row>
+        </div>
+      </div>
+      <div>
+        <div className="border-2 mt-[100px]">
+          <Typography.Title
+            className="absolute py-[10px] px-[20px] border-2 translate-y-[-50%]"
+            level={2}
+            style={{ margin: 0 }}
+          >
+            Danh sach san pham
+          </Typography.Title>
         </div>
       </div>
     </div>
