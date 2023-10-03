@@ -1,5 +1,7 @@
 'use client';
+import ProductItem from '@/components/Contents/Home/ProductItem';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
+import staticVariables from '@/static';
 import {
   ArrowUpOutlined,
   BookOutlined,
@@ -83,8 +85,8 @@ export default function UserInfo() {
   ];
   return (
     <div className="px-[50px]">
-      <UserInfoCard />
-      <div className="flex">
+      <UserInfoCard showButton={false} />
+      <div className="flex mt-[100px]">
         <div className="w-2/5">
           <Carousel waitForAnimate={true} effect="fade" autoplay>
             <div>
@@ -121,14 +123,30 @@ export default function UserInfo() {
         </div>
       </div>
       <div>
-        <div className="border-2 mt-[100px]">
+        <div className="border-[1px] my-[100px]">
           <Typography.Title
-            className="absolute py-[10px] px-[20px] border-2 translate-y-[-50%]"
+            className="absolute py-[10px] px-[20px] bg-slate-50 border-[1px] translate-y-[-50%]"
             level={2}
             style={{ margin: 0 }}
           >
             Danh sach san pham
           </Typography.Title>
+        </div>
+        <div className="flex items-center justify-center px-[50px] flex-wrap gap-20	">
+          {[...Array(10)].map((_, index) => (
+            <ProductItem
+              key={index}
+              productId="1"
+              productName="Sầu riêng DatBe"
+              productImg="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+              ownerName="SimpRaidenEi"
+              ownerImg={staticVariables.logoRaiden.src}
+              role="Fammer"
+              likeQuantity={12}
+              messageQuantity={12}
+              buyerQuantity={12}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -49,7 +49,7 @@ export default function Register({ onFinish }: { onFinish: () => void }) {
             <Button
               onClick={() => {
                 onFinish();
-                dispatch(setLogin({ loged: true, user: initialUser }));
+                dispatch(setLogin({ logged: true, user: initialUser }));
               }}
               key="buy"
             >

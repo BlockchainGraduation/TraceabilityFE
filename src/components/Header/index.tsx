@@ -18,7 +18,15 @@ import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
-import { useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { LogoutOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowRightFromBracket,
+  faCartShopping,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
+import { logOut } from '@/reducers/userSlice';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -33,7 +41,8 @@ export default memo(function Header() {
   const pathname = pathLanguage();
   const path = usePathname();
   const locale = useLocale();
-  const loged = useAppSelector((state) => state.user.loged);
+  const logged = useAppSelector((state) => state.user.logged);
+  const dispatch = useAppDispatch();
 
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
@@ -58,22 +67,40 @@ export default memo(function Header() {
     setShowModal(false);
   };
   useEffect(() => {
-    setUser(loged);
-  }, [loged]);
+    setUser(logged);
+  }, [logged]);
   const items: MenuProps['items'] = [
     {
-      label: <p>1st menu item</p>,
+      label: (
+        <div>
+          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
+          Thong tin
+        </div>
+      ),
       key: '0',
     },
     {
-      label: <p>2nd menu item</p>,
+      label: (
+        <div>
+          <FontAwesomeIcon className="mr-[10px]" icon={faCartShopping} />
+          Gio hang
+        </div>
+      ),
       key: '1',
     },
     {
       type: 'divider',
     },
     {
-      label: '3rd menu item',
+      label: (
+        <div onClick={() => dispatch(logOut())}>
+          <FontAwesomeIcon
+            className="mr-[10px]"
+            icon={faArrowRightFromBracket}
+          />
+          Logout
+        </div>
+      ),
       key: '3',
     },
   ];
