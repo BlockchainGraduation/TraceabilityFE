@@ -114,7 +114,7 @@ export default function ProductInfo() {
           />
           <p className="pl-[20px]">Qua trinh phat trien</p>
         </div>
-        <div className="ml-[-11px] mb-[200px]">
+        <div className="ml-[-111px] h-[500px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
           <GrowUpItem />
           <GrowUpItem />
           <GrowUpItem />

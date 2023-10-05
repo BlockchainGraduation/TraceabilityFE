@@ -66,6 +66,11 @@ export default memo(function Header() {
   const handleShowModal = () => {
     setShowModal(false);
   };
+  const handleLogout = () => {
+    dispatch(logOut());
+    setShowModal(true);
+    setCurrentForm('LOGIN');
+  };
   useEffect(() => {
     setUser(logged);
   }, [logged]);
@@ -93,7 +98,7 @@ export default memo(function Header() {
     },
     {
       label: (
-        <div onClick={() => dispatch(logOut())}>
+        <div onClick={handleLogout}>
           <FontAwesomeIcon
             className="mr-[10px]"
             icon={faArrowRightFromBracket}
