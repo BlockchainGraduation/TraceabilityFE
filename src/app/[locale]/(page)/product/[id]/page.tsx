@@ -14,7 +14,7 @@ import {
   Timeline,
   Typography,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowTrendUp,
@@ -25,46 +25,131 @@ import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
 import DescriptionItem from '@/components/Contents/ProductInfo/DescriptionItem';
 import TransactionItem from '@/components/Contents/ProductInfo/TransactionItem';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
+import Paragraph from 'antd/es/typography/Paragraph';
 
 export default function ProductInfo() {
   const [openModal, setOpenModal] = useState(false);
+  const [isOwner, setIsOwner] = useState(true);
+  const [editProductName, setEditProductName] = useState('Sau rieng thai.');
+  const [editProductOrigin, setEditProductOrigin] = useState(
+    'Cty hat giong SimpRaiden.'
+  );
+  const [editProductOwner, setEditProductOwner] = useState('DatBE');
+  const [editProductPrice, setEditProductPrice] = useState('2000vnd');
+  const [editProductQuantity, setEditProductQuantity] = useState('30');
+  const [editProductDescripton, setEditProductDescripton] = useState(
+    'DatBe tạo ra một hệ thống minh bạch cho việc theo dõi nguồn gốc của sản phẩm. Thông tin về quá trình sản xuất, vận chuyển và lưu trữ sản phẩm được ghi lại một cách an toàn và không thể thay đổi. Điều này giúp tăng độ tin cậy cho tất cả các bên liên quan, từ nhà sản xuất đến người tiêu dùng cuối cùng.'
+  );
+
   return (
     <div className="w-4/5 m-auto">
       <UserInfoCard />
       <div className="flex w-full flex-col">
         <Typography.Title level={2}>Sau rieng viet nam</Typography.Title>
-        <div className="w-full flex bg-gray-400	px-[100px] py-[20px] rounded">
+        <div className="w-full flex bg-gray-400	px-[50px] py-[20px] rounded">
           <div className="w-2/5 border-r-[1px]">
             <Row gutter={[0, 48]}>
               <Col span={6}>Ten san pham</Col>
-              <Col span={10}>Sau rieng viet nam</Col>
+              <Col span={10}>
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      // onChange: setEditNameProduct,
+                      onEnd: () => setEditProductOrigin,
+                    }}
+                  >
+                    {editProductName}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductName}</p>
+                )}
+              </Col>
             </Row>
             <Row>
               <Col span={6}>Nguon goc</Col>
-              <Col span={10}>Cty hat giong </Col>
+              <Col span={10}>
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      // onChange: setEditNameProduct,
+                      onEnd: () => setEditProductName,
+                    }}
+                  >
+                    {editProductOrigin}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductOrigin}</p>
+                )}
+              </Col>
             </Row>
             <Row>
               <Col span={6}>nguoi trong</Col>
-              <Col span={10}>Nguyen Van A</Col>
+              <Col span={10}>
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      onChange: setEditProductOwner,
+                      onEnd: () => setEditProductOwner,
+                    }}
+                  >
+                    {editProductOwner}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductOwner}</p>
+                )}
+              </Col>
             </Row>
             <Row>
               <Col span={6}>Gia</Col>
-              <Col span={10}>50.000</Col>
+              <Col span={10}>
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      // onChange: setEditNameProduct,
+                      onEnd: () => setEditProductPrice,
+                    }}
+                  >
+                    {editProductPrice}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductPrice}</p>
+                )}
+              </Col>
             </Row>
             <Row>
               <Col span={6}>So luong</Col>
-              <Col span={10}>30</Col>
+              <Col span={10}>
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      // onChange: setEditNameProduct,
+                      onEnd: () => setEditProductQuantity,
+                    }}
+                  >
+                    {editProductQuantity}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductQuantity}</p>
+                )}
+              </Col>
             </Row>
           </div>
           <div className="w-3/5 pl-[50px]">
             <Row>
               <Col span={3}>Mo ta</Col>
               <Col span={20}>
-                DatBe tạo ra một hệ thống minh bạch cho việc theo dõi nguồn gốc
-                của sản phẩm. Thông tin về quá trình sản xuất, vận chuyển và lưu
-                trữ sản phẩm được ghi lại một cách an toàn và không thể thay
-                đổi. Điều này giúp tăng độ tin cậy cho tất cả các bên liên quan,
-                từ nhà sản xuất đến người tiêu dùng cuối cùng
+                {isOwner ? (
+                  <Paragraph
+                    editable={{
+                      // onChange: setEditNameProduct,
+                      onEnd: () => setEditProductDescripton,
+                    }}
+                  >
+                    {editProductDescripton}
+                  </Paragraph>
+                ) : (
+                  <p>{editProductDescripton}</p>
+                )}
               </Col>
             </Row>
           </div>

@@ -8,6 +8,7 @@ import {
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Button, Col, Row, Tag } from 'antd';
+import Link from 'next/link';
 import React from 'react';
 
 export default function HistoryItem() {
@@ -20,16 +21,12 @@ export default function HistoryItem() {
           className="flex hover:-translate-y-1 hover:scale-125 duration-300 justify-start"
           span={5}
         >
-          <div className=" flex flex-col items-center w-fit ">
-            <div className=" flex items-center">
-              <Avatar
-                className="mr-[5px]"
-                size={'large'}
-                src={staticVariables.logoRaiden.src}
-              />
+          <Link href={'/user/1'}>
+            <div className=" flex items-center w-fit ">
+              <Avatar size={'large'} src={staticVariables.logoRaiden.src} />
               <p className="py-[10px] px-[20px]">Ong A</p>
             </div>
-          </div>
+          </Link>
         </Col>
         <Col
           className="flex flex-col hover:-translate-y-1 hover:scale-125 duration-300 justify-center items-center"
@@ -64,20 +61,24 @@ export default function HistoryItem() {
         </Col>
 
         <Col
-          className="flex hover:-translate-y-1 hover:scale-125 duration-300 flex-col justify-center items-center"
+          className=" hover:-translate-y-1 hover:scale-125 duration-300 flex-col justify-center items-center"
           span={5}
         >
-          <Avatar shape="square" src={staticVariables.logoRaiden.src} />
-          <p>Sau rieng viet</p>
+          <Link className="flex flex-col items-center" href={'/product/1'}>
+            <Avatar shape="square" src={staticVariables.logoRaiden.src} />
+            <p>Sau rieng viet</p>
+          </Link>
         </Col>
         <Col
           className="flex hover:transition hover:delay-150 hover:duration-300 hover:ease-in-out justify-end"
           span={5}
         >
-          <div className="flex hover:-translate-y-1 hover:scale-125 duration-300 items-center">
-            <p className="py-[10px] px-[20px]">Ong B</p>
-            <Avatar size={'large'} src={staticVariables.logoRaiden.src} />
-          </div>
+          <Link href={'/user/1'}>
+            <div className="flex hover:-translate-y-1 hover:scale-125 duration-300 items-center">
+              <p className="py-[10px] px-[20px]">Ong B</p>
+              <Avatar size={'large'} src={staticVariables.logoRaiden.src} />
+            </div>
+          </Link>
         </Col>
       </Row>
     </div>

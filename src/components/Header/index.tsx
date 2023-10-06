@@ -77,10 +77,10 @@ export default memo(function Header() {
   const items: MenuProps['items'] = [
     {
       label: (
-        <div>
+        <Link href={'/user/1'}>
           <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
           Thong tin
-        </div>
+        </Link>
       ),
       key: '0',
     },
