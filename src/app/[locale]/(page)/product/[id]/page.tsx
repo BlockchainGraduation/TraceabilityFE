@@ -30,6 +30,7 @@ import DescriptionItem from '@/components/Contents/ProductInfo/DescriptionItem';
 import TransactionItem from '@/components/Contents/ProductInfo/TransactionItem';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import Paragraph from 'antd/es/typography/Paragraph';
+import CustomInput from '@/components/Contents/ProductInfo/CustomInput';
 
 export default function ProductInfo() {
   const [openModal, setOpenModal] = useState(false);
@@ -56,14 +57,12 @@ export default function ProductInfo() {
               <Col span={6}>Ten san pham</Col>
               <Col span={10}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      // onChange: setEditNameProduct,
-                      onEnd: () => setEditProductOrigin,
-                    }}
-                  >
-                    {editProductName}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    className={'w-max'}
+                    initialValue={editProductName}
+                    onKeyDown={() => {}}
+                  />
                 ) : (
                   <p>{editProductName}</p>
                 )}
@@ -73,14 +72,12 @@ export default function ProductInfo() {
               <Col span={6}>Nguon goc</Col>
               <Col span={10}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      // onChange: setEditNameProduct,
-                      onEnd: () => setEditProductName,
-                    }}
-                  >
-                    {editProductOrigin}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    className={'w-max'}
+                    initialValue={editProductOrigin}
+                    onEnter={() => {}}
+                  />
                 ) : (
                   <p>{editProductOrigin}</p>
                 )}
@@ -90,14 +87,12 @@ export default function ProductInfo() {
               <Col span={6}>nguoi trong</Col>
               <Col span={10}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      onChange: setEditProductOwner,
-                      onEnd: () => setEditProductOwner,
-                    }}
-                  >
-                    {editProductOwner}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    className={'w-max'}
+                    initialValue={editProductOwner}
+                    onEnter={() => {}}
+                  />
                 ) : (
                   <p>{editProductOwner}</p>
                 )}
@@ -107,14 +102,12 @@ export default function ProductInfo() {
               <Col span={6}>Gia</Col>
               <Col span={10}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      // onChange: setEditNameProduct,
-                      onEnd: () => setEditProductPrice,
-                    }}
-                  >
-                    {editProductPrice}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    className={'w-max'}
+                    initialValue={editProductPrice}
+                    onEnter={() => {}}
+                  />
                 ) : (
                   <p>{editProductPrice}</p>
                 )}
@@ -124,14 +117,12 @@ export default function ProductInfo() {
               <Col span={6}>So luong</Col>
               <Col span={10}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      // onChange: setEditNameProduct,
-                      onEnd: () => setEditProductQuantity,
-                    }}
-                  >
-                    {editProductQuantity}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    className={'w-max'}
+                    initialValue={editProductQuantity}
+                    onEnter={() => {}}
+                  />
                 ) : (
                   <p>{editProductQuantity}</p>
                 )}
@@ -143,14 +134,11 @@ export default function ProductInfo() {
               <Col span={3}>Mo ta</Col>
               <Col span={20}>
                 {isOwner ? (
-                  <Paragraph
-                    editable={{
-                      // onChange: setEditNameProduct,
-                      onEnd: () => setEditProductDescripton,
-                    }}
-                  >
-                    {editProductDescripton}
-                  </Paragraph>
+                  <CustomInput
+                    name="name"
+                    initialValue={editProductDescripton}
+                    onEnter={() => {}}
+                  />
                 ) : (
                   <p>{editProductDescripton}</p>
                 )}
