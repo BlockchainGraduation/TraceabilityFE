@@ -1,6 +1,10 @@
 'use client';
 import staticVariables from '@/static';
-import { MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import {
+  MailOutlined,
+  PhoneOutlined,
+  PlusCircleTwoTone,
+} from '@ant-design/icons';
 import {
   Avatar,
   Button,
@@ -191,14 +195,19 @@ export default function ProductInfo() {
         //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
         className={`border-l-2 block w-fit m-auto mt-[150px]`}
       >
-        <div className="w-fit flex items-center p-[20px] border-[1px] border-l-0">
+        <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
           <FontAwesomeIcon
             icon={faArrowTrendUp}
             size={'2xl'}
             style={{ color: '#29c214' }}
           />
-          <p className="pl-[20px]">Qua trinh phat trien</p>
+          <p className="pl-[20px]">Qua trinh phat trien </p>
+          <PlusCircleTwoTone
+            onClick={() => {}}
+            className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
+          />
         </div>
+
         <div className="ml-[-111px] h-[500px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
           <GrowUpItem />
           <GrowUpItem />

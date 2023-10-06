@@ -1,5 +1,6 @@
 'use client';
 import ProductItem from '@/components/Contents/Home/ProductItem';
+import CreateProductForm from '@/components/Contents/User/CreateProductForm';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import staticVariables from '@/static';
 import {
@@ -7,16 +8,29 @@ import {
   BookOutlined,
   InboxOutlined,
   MessageOutlined,
+  PlusCircleOutlined,
+  PlusCircleTwoTone,
   ScheduleOutlined,
   StarOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { faHandshake } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Card, Carousel, Col, Row, Statistic, Typography } from 'antd';
-import React from 'react';
+import {
+  Card,
+  Carousel,
+  Col,
+  Modal,
+  Popover,
+  Row,
+  Statistic,
+  Tooltip,
+  Typography,
+} from 'antd';
+import React, { useState } from 'react';
 
 export default function UserInfo() {
+  const [showCreateProductModal, setShowCreateProductModal] = useState(false);
   const contentStyle: React.CSSProperties = {
     height: '300px',
     color: '#fff',
@@ -125,13 +139,27 @@ export default function UserInfo() {
       <div>
         <div className="border-[1px] my-[100px]">
           <Typography.Title
-            className="absolute py-[10px] px-[20px] bg-slate-50 border-[1px] translate-y-[-50%]"
+            className="absolute py-[10px] pl-[20px] pr-[40px] bg-slate-50 border-[1px] translate-y-[-50%]"
             level={2}
             style={{ margin: 0 }}
           >
             Danh sach san pham
+            <Tooltip title="Them san pham">
+              <PlusCircleTwoTone
+                onClick={() => setShowCreateProductModal(true)}
+                className="absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
+              />
+            </Tooltip>
           </Typography.Title>
         </div>
+        <Modal
+          onCancel={() => setShowCreateProductModal(false)}
+          open={showCreateProductModal}
+          footer={[]}
+        >
+          <p className="text-center py-[50px]">Them san pham</p>
+          <CreateProductForm />
+        </Modal>
         <div className="flex items-center justify-center px-[50px] flex-wrap gap-20	">
           {[...Array(10)].map((_, index) => (
             <ProductItem
