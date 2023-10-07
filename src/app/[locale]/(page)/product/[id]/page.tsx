@@ -30,7 +30,8 @@ import DescriptionItem from '@/components/Contents/ProductInfo/DescriptionItem';
 import TransactionItem from '@/components/Contents/ProductInfo/TransactionItem';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import Paragraph from 'antd/es/typography/Paragraph';
-import CustomInput from '@/components/Contents/ProductInfo/CustomInput';
+import CustomInput from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
+import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
 
 export default function ProductInfo() {
   const [openModal, setOpenModal] = useState(false);
@@ -134,7 +135,7 @@ export default function ProductInfo() {
               <Col span={3}>Mo ta</Col>
               <Col span={20}>
                 {isOwner ? (
-                  <CustomInput
+                  <TextAreaCustom
                     name="name"
                     initialValue={editProductDescripton}
                     onEnter={() => {}}

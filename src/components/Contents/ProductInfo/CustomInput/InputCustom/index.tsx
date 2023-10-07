@@ -1,5 +1,6 @@
 import { EditTwoTone } from '@ant-design/icons';
 import { Input, InputRef } from 'antd';
+import { TextAreaRef } from 'antd/es/input/TextArea';
 import React, {
   ReactNode,
   KeyboardEvent,
@@ -10,15 +11,19 @@ import React, {
 } from 'react';
 import { ClassElement } from 'typescript';
 
+const { TextArea } = Input;
+
 export default function CustomInput({
   name,
   initialValue,
   className,
   onBlur,
   onKeyDown,
+  type = 'input',
   onEnter,
 }: {
   name: string;
+  type?: 'input' | 'textarea';
   initialValue: string;
   className?: string;
   onBlur?: () => void;
@@ -42,7 +47,21 @@ export default function CustomInput({
     return () => {
       window.removeEventListener('mousedown', handleOutSideClick);
     };
-  }, [ref]);
+  }, []);
+
+  // useEffect(() => {
+  //   const handleOutSideClick = (event: MouseEvent) => {
+  //     if (!areaRef.current?.contains?.(event.target as Node)) {
+  //       setEditAble(false);
+  //     }
+  //   };
+
+  //   window.addEventListener('mousedown', handleOutSideClick);
+
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleOutSideClick);
+  //   };
+  // }, [areaRef]);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     onKeyDown?.(e);
