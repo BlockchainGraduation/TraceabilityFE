@@ -7,6 +7,12 @@ import Footer from '@/components/Footer';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  weight: '500',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Traceability',
@@ -24,7 +30,7 @@ export default async function LocaleLayout({
     notFound();
   }
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={''}>
       <body>
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>

@@ -8,12 +8,15 @@ import React, {
   useEffect,
   useRef,
   RefAttributes,
+  ChangeEvent,
+  ChangeEventHandler,
+  KeyboardEventHandler,
 } from 'react';
 import { ClassElement } from 'typescript';
 
 const { TextArea } = Input;
 
-export default function CustomInput({
+export default function InputCustom({
   name,
   initialValue,
   className,
@@ -21,6 +24,7 @@ export default function CustomInput({
   onKeyDown,
   type = 'input',
   onEnter,
+  onChange = () => {},
 }: {
   name: string;
   type?: 'input' | 'textarea';
@@ -28,7 +32,8 @@ export default function CustomInput({
   className?: string;
   onBlur?: () => void;
   onEnter?: () => void;
-  onKeyDown?: (e?: KeyboardEvent) => void;
+  onKeyDown?: KeyboardEventHandler;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
@@ -49,19 +54,10 @@ export default function CustomInput({
     };
   }, []);
 
-  // useEffect(() => {
-  //   const handleOutSideClick = (event: MouseEvent) => {
-  //     if (!areaRef.current?.contains?.(event.target as Node)) {
-  //       setEditAble(false);
-  //     }
-  //   };
-
-  //   window.addEventListener('mousedown', handleOutSideClick);
-
-  //   return () => {
-  //     window.removeEventListener('mousedown', handleOutSideClick);
-  //   };
-  // }, [areaRef]);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e);
+    setValue(e.target.value);
+  };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     onKeyDown?.(e);
@@ -77,7 +73,7 @@ export default function CustomInput({
           ref={ref}
           autoFocus
           onBlur={onBlur}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={handleChange}
           value={value}
           onKeyDown={(e) => handleKeyDown(e)}
         />

@@ -15,7 +15,7 @@
   --foreground: black;
 }
 [data-theme='dark'] {
-  --background: rgba(0, 0, 0, 0.723);
+  --background: rgba(33, 33, 33, 0.723);
   --foreground: white;
 }
 
@@ -54,9 +54,14 @@
   background-attachment: fixed;
 }
 
+*{
+  box-sizing: border-box;
+}
+
 body {
   
-  /* color: black; */
+  color: rgb(46, 46, 46);
+  /* font-family: 'Roboto', sans-serif; */
   /* color: rgb(var(--foreground-rgb)); */
   /* background: linear-gradient(
       to bottom,

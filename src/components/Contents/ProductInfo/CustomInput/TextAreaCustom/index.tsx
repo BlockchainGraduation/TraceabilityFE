@@ -8,6 +8,9 @@ import React, {
   useEffect,
   useRef,
   RefAttributes,
+  ChangeEvent,
+  ChangeEventHandler,
+  KeyboardEventHandler,
 } from 'react';
 import { ClassElement } from 'typescript';
 
@@ -18,13 +21,15 @@ export default function TextAreaCustom({
   onBlur,
   onKeyDown,
   onEnter,
+  onChange,
 }: {
   name: string;
   initialValue: string;
   className?: string;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
   onBlur?: () => void;
   onEnter?: () => void;
-  onKeyDown?: (e?: KeyboardEvent) => void;
+  onKeyDown?: KeyboardEventHandler;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
@@ -45,6 +50,11 @@ export default function TextAreaCustom({
     };
   }, []);
 
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(e);
+    setValue(e.target.value);
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     onKeyDown?.(e);
     if (e.key === 'Enter') {
@@ -59,7 +69,7 @@ export default function TextAreaCustom({
           ref={ref}
           autoFocus
           onBlur={onBlur}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={handleChange}
           value={value}
           autoSize
           onKeyDown={(e) => handleKeyDown(e)}

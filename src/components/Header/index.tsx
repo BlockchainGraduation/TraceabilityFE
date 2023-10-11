@@ -6,8 +6,10 @@ import {
   ConfigProvider,
   Dropdown,
   Image,
+  Input,
   MenuProps,
   Modal,
+  Popover,
   Select,
 } from 'antd';
 import Link from 'next/link';
@@ -27,10 +29,12 @@ import {
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut } from '@/reducers/userSlice';
+import SearchItem from './SearchItem';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showSearchItems, setShowSearchItems] = useState(false);
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
@@ -136,6 +140,24 @@ export default memo(function Header() {
           </Link>
         ))}
       </div>
+      <div className="relative w-1/3">
+        <Popover
+          title="Danh sach tim kiem"
+          className="w-full"
+          content={[...Array(5)].map((_, index) => (
+            <SearchItem key={index} />
+          ))}
+          // open={showSearchItems}
+          trigger="focus"
+          placement={'bottom'}
+        >
+          <Input.Search
+            // onChange={() => setShowSearchItems(true)}
+            // onBlur={() => setShowSearchItems(false)}
+            placeholder="Search Product"
+          />
+        </Popover>
+      </div>
       <div className="flex items-center">
         <ConfigProvider
           theme={{
@@ -190,7 +212,7 @@ export default memo(function Header() {
           {currentForm === 'REGISTER' && (
             <Register onFinish={handleShowModal} />
           )}
-          <div className="flex justify-around	">
+          <div className="m-auto flex justify-around	max-w-[300px]">
             <p>Forget?</p>
             <p
               onClick={() =>
