@@ -1,10 +1,10 @@
 import { Button, Form, Input } from 'antd';
 import React from 'react';
 
-export default function RegisterForm({nextStep}:{nextStep:()=>void}) {
+export default function RegisterForm({ nextStep }: { nextStep: () => void }) {
   type FieldType = {
-    first_name?:string;
-    last_name?:string;
+    first_name?: string;
+    last_name?: string;
     phone?: string;
     username?: string;
     email?: string;
@@ -13,9 +13,9 @@ export default function RegisterForm({nextStep}:{nextStep:()=>void}) {
   };
   return (
     <div>
-      <p className='text-center text-3xl my-[50px]'>Đăng ký</p>
+      <p className="text-center text-3xl my-[50px]">Đăng ký</p>
       <Form
-      className='m-auto'
+        className="m-auto"
         name="basic"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 16 }}
@@ -71,12 +71,16 @@ export default function RegisterForm({nextStep}:{nextStep:()=>void}) {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
-          <Button  className='mt-[30px] bg-[#1677ff]' type="primary" htmlType="submit">
+          <Button
+            className="mt-[30px] bg-[#1677ff]"
+            type="primary"
+            htmlType="submit"
+          >
             Submit
           </Button>
         </Form.Item>
       </Form>
-      <Button onClick={nextStep}>OK</Button>
+      {/* <Button onClick={nextStep}>OK</Button> */}
     </div>
   );
 }

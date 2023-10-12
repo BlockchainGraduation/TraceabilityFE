@@ -14,7 +14,7 @@ export default function GrowUpItem() {
           preview={false}
           // onClick={() => setOpenModal(true)}
           alt=""
-          className="object-cover rounded"
+          className="object-cover rounded drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]"
           width={300}
           height={200}
           src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"

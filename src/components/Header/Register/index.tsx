@@ -84,8 +84,9 @@ export default function Register({ onFinish }: { onFinish: () => void }) {
   ];
   return (
     <div>
-      <p className="text-center text-3xl my-[50px]">Đăng kí và xác thực</p>
-      <Steps
+      {/* <p className="text-center text-3xl my-[50px]">Đăng kí và xác thực</p> */}
+      <RegisterForm nextStep={nextStep} />
+      {/* <Steps
         current={current}
         items={items.map((item, index) => ({
           key: index,
@@ -98,7 +99,7 @@ export default function Register({ onFinish }: { onFinish: () => void }) {
         {steps[current].content}
         <div onClick={() => setCurrent(current - 1)}>previous</div>
         <div onClick={nextStep}>next</div>
-      </div>
+      </div> */}
     </div>
   );
 }
