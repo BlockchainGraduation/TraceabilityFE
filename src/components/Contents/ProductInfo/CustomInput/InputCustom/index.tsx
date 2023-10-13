@@ -1,5 +1,5 @@
 import { EditTwoTone } from '@ant-design/icons';
-import { Input, InputRef } from 'antd';
+import { Input, InputProps, InputRef } from 'antd';
 import { TextAreaRef } from 'antd/es/input/TextArea';
 import React, {
   ReactNode,
@@ -12,24 +12,22 @@ import React, {
   ChangeEventHandler,
   KeyboardEventHandler,
 } from 'react';
-import { ClassElement } from 'typescript';
-
-const { TextArea } = Input;
-
 export default function InputCustom({
   name,
   initialValue,
   className,
+  input,
   onBlur,
+  classNameLabel,
   onKeyDown,
-  type = 'input',
   onEnter,
   onChange = () => {},
 }: {
   name: string;
-  type?: 'input' | 'textarea';
   initialValue: string;
   className?: string;
+  classNameLabel?: string;
+  input?: InputProps;
   onBlur?: () => void;
   onEnter?: () => void;
   onKeyDown?: KeyboardEventHandler;
@@ -67,9 +65,10 @@ export default function InputCustom({
     }
   };
   return (
-    <div className={`flex item-center ${className}`}>
+    <div className={`flex w-fit h-fit item-center ${className}`}>
       {editAble ? (
         <Input
+          {...input}
           ref={ref}
           autoFocus
           onBlur={onBlur}
@@ -78,7 +77,7 @@ export default function InputCustom({
           onKeyDown={(e) => handleKeyDown(e)}
         />
       ) : (
-        <p>{value}</p>
+        <p className={classNameLabel}>{value}</p>
       )}
       <EditTwoTone
         className="px-[10px]"

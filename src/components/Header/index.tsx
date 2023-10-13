@@ -7,6 +7,7 @@ import {
   Dropdown,
   Image,
   Input,
+  InputNumber,
   MenuProps,
   Modal,
   Popover,
@@ -98,6 +99,15 @@ export default memo(function Header() {
       key: '1',
     },
     {
+      label: (
+        <Link href={'/cms'}>
+          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
+          Quản lí
+        </Link>
+      ),
+      key: '2',
+    },
+    {
       type: 'divider',
     },
     {
@@ -151,10 +161,11 @@ export default memo(function Header() {
           trigger="focus"
           placement={'bottom'}
         >
-          <Input.Search
+          <input
+            tabIndex={1}
+            placeholder="Search Product"
             // onChange={() => setShowSearchItems(true)}
             // onBlur={() => setShowSearchItems(false)}
-            placeholder="Search Product"
           />
         </Popover>
       </div>
@@ -208,7 +219,7 @@ export default memo(function Header() {
           onCancel={() => setShowModal(false)}
           footer={[]}
         >
-          {currentForm === 'LOGIN' && <Login />}
+          {currentForm === 'LOGIN' && <Login onFinish={handleShowModal} />}
           {currentForm === 'REGISTER' && (
             <Register onFinish={handleShowModal} />
           )}

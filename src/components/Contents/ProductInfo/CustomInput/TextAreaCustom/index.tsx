@@ -18,6 +18,7 @@ export default function TextAreaCustom({
   name,
   initialValue,
   className,
+  classNameLabel,
   onBlur,
   onKeyDown,
   onEnter,
@@ -26,6 +27,7 @@ export default function TextAreaCustom({
   name: string;
   initialValue: string;
   className?: string;
+  classNameLabel?: string;
   onChange?: ChangeEventHandler<HTMLTextAreaElement>;
   onBlur?: () => void;
   onEnter?: () => void;
@@ -75,7 +77,11 @@ export default function TextAreaCustom({
           onKeyDown={(e) => handleKeyDown(e)}
         />
       ) : (
-        <p>{value}</p>
+        <p
+          className={`max-w-[100%] text-ellipsis overflow-hidden ${classNameLabel}`}
+        >
+          {value}
+        </p>
       )}
       <EditTwoTone
         className="px-[10px]"
