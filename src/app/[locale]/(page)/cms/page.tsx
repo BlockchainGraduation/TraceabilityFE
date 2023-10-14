@@ -10,6 +10,9 @@ import {
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import GeneralInformation from '@/components/CMS/GeneralInformation';
+import ChangPassword from '@/components/CMS/ChangePassword';
+import ProductCMS from '@/components/CMS/Product';
+import TransactionCMS from '@/components/CMS/Transaction';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -43,7 +46,14 @@ const items: MenuItem[] = [
   ]),
   getItem('Files', '6', <FileOutlined />),
 ];
-const contents = [<div key={1}>Content1</div>, <GeneralInformation key={2} />];
+const contents = [
+  <div key={1}>Content1</div>,
+  <GeneralInformation key={2} />,
+  <ChangPassword className="w-2/5 m-auto" key={3} />,
+  <></>,
+  <ProductCMS key={4} />,
+  <TransactionCMS key={5} />,
+];
 
 export default function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
@@ -77,7 +87,7 @@ export default function CMSPage() {
           <div
             style={{
               padding: 24,
-              minHeight: 360,
+              minHeight: 500,
               background: colorBgContainer,
             }}
           >

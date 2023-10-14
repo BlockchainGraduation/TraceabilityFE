@@ -14,7 +14,7 @@ import {
   Select,
 } from 'antd';
 import Link from 'next/link';
-import React, { ChangeEvent, memo, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
 import Login from './Login';
 import Register from './Register';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
@@ -31,6 +31,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
+import useOutsideAlerter from '@/services/eventOutside';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -79,6 +80,8 @@ export default memo(function Header() {
   useEffect(() => {
     setUser(logged);
   }, [logged]);
+  const ref = useRef(null);
+  useOutsideAlerter(ref, () => setShowSearchItems(false));
   const items: MenuProps['items'] = [
     {
       label: (
@@ -154,17 +157,24 @@ export default memo(function Header() {
         <Popover
           title="Danh sach tim kiem"
           className="w-full"
-          content={[...Array(5)].map((_, index) => (
-            <SearchItem key={index} />
-          ))}
-          // open={showSearchItems}
-          trigger="focus"
+          content={
+            <div ref={ref}>
+              {[...Array(5)].map((_, index) => (
+                <SearchItem
+                  onClick={() => setShowSearchItems(false)}
+                  key={index}
+                />
+              ))}
+            </div>
+          }
+          open={showSearchItems}
+          // trigger={'focus'}
           placement={'bottom'}
         >
           <input
             tabIndex={1}
             placeholder="Search Product"
-            // onChange={() => setShowSearchItems(true)}
+            onFocus={() => setShowSearchItems(true)}
             // onBlur={() => setShowSearchItems(false)}
           />
         </Popover>

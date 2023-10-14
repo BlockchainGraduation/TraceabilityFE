@@ -221,7 +221,7 @@ export default function ProductInfo() {
                 className="w-full flex justify-between items-center py-[5px]"
               >
                 <p>Nguyen Van A</p>
-                <p>Sasdasd</p>
+                <Paragraph copyable>Sasdasd</Paragraph>
               </div>
             ))}
           </div>
