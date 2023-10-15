@@ -36,7 +36,7 @@ interface Props {
 
 export default function ProductItem(props: Props) {
   return (
-    <div className="w-fit">
+    <div data-aos="flip-right" className="w-fit">
       <Card
         hoverable
         style={{ width: 300 }}

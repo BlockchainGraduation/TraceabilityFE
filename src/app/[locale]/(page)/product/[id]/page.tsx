@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
+  ShoppingCartOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -48,6 +49,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import type { UploadChangeParam } from 'antd/es/upload';
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import { ColumnsType } from 'antd/es/table';
+import { checkoutForm } from '@/services/checkoutForm';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -84,6 +86,7 @@ export default function ProductInfo() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [showModalPay, setShowModalPay] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const contentStyle: React.CSSProperties = {
@@ -93,7 +96,7 @@ export default function ProductInfo() {
     lineHeight: '160px',
     textAlign: 'center',
     background: '#364d79',
-    borderRadius: '5px',
+    borderRadius: '10px',
   };
 
   const handleCancel = () => setPreviewOpen(false);
@@ -201,7 +204,31 @@ export default function ProductInfo() {
             <div className="w-fit flex items-center text-xs m-auto my-[20px]">
               Price<p className="text-3xl">123123 VND</p>
             </div>
-            <Button className="w-full">Buy now</Button>
+            <div className="flex items-center mt-[10px]">
+              <Button onClick={() => setShowModalPay(true)} className="w-full">
+                Buy now
+              </Button>
+              <Button
+                onClick={() => {
+                  // setBuyOrCart('CART');
+                  setShowModalPay(true);
+                }}
+                className="flex items-center"
+              >
+                <ShoppingCartOutlined />
+              </Button>
+            </div>
+            <Modal
+              onCancel={() => setShowModalPay(false)}
+              open={showModalPay}
+              footer={[]}
+            >
+              {checkoutForm(
+                { onFinish: (e) => console.log(e) },
+                'Trung',
+                '12312312312'
+              )}
+            </Modal>
           </div>
         </div>
       </div>
@@ -241,9 +268,11 @@ export default function ProductInfo() {
             </div>
           </div>
         </div>
-        <div className="w-3/5 pl-[20px]">
+        <div className="w-3/5 pl-[20px] rounded overflow-hidden">
           <Carousel
             className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
+            waitForAnimate={true}
+            effect="fade"
             autoplay
           >
             <div>

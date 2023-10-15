@@ -3,6 +3,7 @@ import {
   Badge,
   Carousel,
   Input,
+  Modal,
   Pagination,
   Segmented,
   Select,
@@ -135,14 +136,14 @@ export default function HomePage() {
           <ProductTodayItem />
         </div>
       </div>
-      <div className="flex">
+      {/* <div className="flex">
         <Search
           className="m-auto"
           placeholder="Search product"
           onSearch={() => {}}
           style={{ width: 500 }}
         />
-      </div>
+      </div> */}
       <div className="w-1/2 flex items-center justify-around mt-[50px]">
         <Segmented
           size={'large'}

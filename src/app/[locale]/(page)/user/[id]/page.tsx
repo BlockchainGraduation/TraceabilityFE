@@ -170,7 +170,7 @@ export default function UserInfo() {
             <div className="w-[500px] m-auto">
               <Carousel waitForAnimate={true} effect="fade" autoplay>
                 <div>
-                  <h3 style={contentStyle}>1</h3>
+                  <h3 style={contentStyle}>1qwe</h3>
                 </div>
                 <div>
                   <h3 style={contentStyle}>2</h3>

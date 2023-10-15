@@ -12,6 +12,7 @@ import {
   Modal,
   Popover,
   Select,
+  message,
 } from 'antd';
 import Link from 'next/link';
 import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
@@ -172,8 +173,9 @@ export default memo(function Header() {
           placement={'bottom'}
         >
           <input
-            tabIndex={1}
-            placeholder="Search Product"
+            // tabIndex={1}
+            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900"
+            placeholder="Search Product..."
             onFocus={() => setShowSearchItems(true)}
             // onBlur={() => setShowSearchItems(false)}
           />

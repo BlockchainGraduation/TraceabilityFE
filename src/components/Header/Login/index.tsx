@@ -1,7 +1,8 @@
 'use client';
 import { useAppDispatch } from '@/hooks';
 import { initialUser, setLogin } from '@/reducers/userSlice';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
+import { title } from 'process';
 import React from 'react';
 
 type FieldType = {
@@ -48,6 +49,10 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
             onClick={() => {
               dispatch(setLogin({ logged: true, user: initialUser }));
               onFinish();
+              notification.success({
+                message: 'Thông báo',
+                description: 'Xin chào simpraidenei',
+              });
             }}
             className="mt-[30px] bg-[#1677ff]"
             type="primary"
