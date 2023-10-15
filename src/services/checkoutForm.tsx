@@ -14,7 +14,7 @@ export const checkoutForm = (
       {...form}
     >
       <Typography.Title className="text-center" level={3}>
-        Mua hàng
+        Đặt hàng
       </Typography.Title>
       <Form.Item
         label="Số lượng bạn muốn mua"

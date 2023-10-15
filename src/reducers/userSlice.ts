@@ -2,7 +2,7 @@ import { Action, PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Auth {
   logged: boolean;
-  user: {};
+  user: User;
 }
 interface User {
   id: string;
@@ -41,7 +41,7 @@ export const userSlice = createSlice({
   reducers: {
     setLogin: (state, action: PayloadAction<Auth>) => {
       state.logged = true;
-      state.user = action.payload;
+      state.user = action.payload.user;
     },
     logOut: (state) => {
       state.logged = false;

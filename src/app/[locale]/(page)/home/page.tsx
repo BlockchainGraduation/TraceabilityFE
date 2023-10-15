@@ -7,6 +7,7 @@ import {
   Pagination,
   Segmented,
   Select,
+  Skeleton,
   Typography,
 } from 'antd';
 import React, { ReactNode, useState } from 'react';
@@ -16,9 +17,17 @@ import staticVariables from '@/static';
 import TopBanner from '@/components/Contents/Home/TopBanner';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import Table, { ColumnsType } from 'antd/es/table';
-import ProductTodayItem from '@/components/Contents/Home/ProductTodayItem';
+// import ProductTodayItem from '@/components/Contents/Home/ProductTodayItem';
+import dynamic from 'next/dynamic';
 
 const { Search } = Input;
+const ProductTodayItem = dynamic(
+  () => import('@/components/Contents/Home/ProductTodayItem'),
+  {
+    loading: () => <Skeleton />,
+    ssr: false,
+  }
+);
 interface DataType {
   key: React.Key;
   index: number;

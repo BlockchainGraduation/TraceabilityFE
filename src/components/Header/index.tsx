@@ -49,8 +49,8 @@ export default memo(function Header() {
   const path = usePathname();
   const locale = useLocale();
   const logged = useAppSelector((state) => state.user.logged);
+  const currentUser = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
-
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
     // Sử dụng hàm async IIFE để lấy dữ liệu từ tệp dịch vụ (JSON)
@@ -112,6 +112,17 @@ export default memo(function Header() {
       key: '2',
     },
     {
+      label: currentUser.isActive ? (
+        <Link href={'/cms'}>
+          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
+          Đăng kí thành viên
+        </Link>
+      ) : (
+        ''
+      ),
+      key: '3',
+    },
+    {
       type: 'divider',
     },
     {
@@ -124,7 +135,7 @@ export default memo(function Header() {
           Logout
         </div>
       ),
-      key: '3',
+      key: '4',
     },
   ];
   return (
