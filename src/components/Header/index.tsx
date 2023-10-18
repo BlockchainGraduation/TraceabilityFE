@@ -15,7 +15,7 @@ import {
   message,
 } from 'antd';
 import Link from 'next/link';
-import { deleteCookie } from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
 import Login from './Login';
 import Register from './Register';
@@ -36,6 +36,7 @@ import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
 import useOutsideAlerter from '@/services/eventOutside';
 import instanceAxios from '@/api/instanceAxios';
+import { setshowFormLogin } from '@/reducers/showFormSlice';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -53,6 +54,7 @@ export default memo(function Header() {
   const locale = useLocale();
   const logged = useAppSelector((state) => state.user.logged);
   const currentUser = useAppSelector((state) => state.user.user);
+  const showFormLogin = useAppSelector((state) => state.showForm.showFormLogin);
   const dispatch = useAppDispatch();
 
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
@@ -71,19 +73,24 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
+  useEffect(() => {
+    if (showFormLogin) {
+      setCurrentForm('LOGIN');
+      setShowModal(true);
+    }
+  }, [showFormLogin]);
 
   useEffect(() => {
     const fethGetUser = async () => {
       await instanceAxios
         .get('user/me')
         .then((res) => {
-          console.log(res.data.data);
           dispatch(setLogin({ logged: true, user: res.data }));
         })
         .catch((err) => console.log(err));
     };
     fethGetUser();
-  }, []);
+  }, [dispatch]);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -99,6 +106,8 @@ export default memo(function Header() {
     deleteCookie('access_token');
     setShowModal(true);
     setCurrentForm('LOGIN');
+    const access = getCookie('access_token');
+    instanceAxios.defaults.headers.delete.Authorization = `Bearer ${access}`;
   };
   useEffect(() => {
     setUser(logged);
@@ -261,7 +270,10 @@ export default memo(function Header() {
           // width={currentForm === 'REGISTER' ? 1000 : 520}
           className={``}
           centered
-          onCancel={() => setShowModal(false)}
+          onCancel={() => {
+            setShowModal(false);
+            dispatch(setshowFormLogin({ showFormLogin: false }));
+          }}
           footer={[]}
         >
           {currentForm === 'LOGIN' && <Login onFinish={handleShowModal} />}

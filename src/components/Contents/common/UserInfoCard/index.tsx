@@ -23,7 +23,6 @@ export default function UserInfoCard({
   const [userEmail, setUserEmail] = useState('simpraidenei@gmail.com');
   const [userAddress, setuserAddress] = useState('14 - Doan Uan - Khue My');
 
-  console.log(userName);
   return (
     <div>
       <div className="flex items-center border-b-[1px] pb-[50px]">

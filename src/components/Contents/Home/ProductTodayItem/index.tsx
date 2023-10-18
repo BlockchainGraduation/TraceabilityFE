@@ -1,3 +1,7 @@
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { nextEvent } from '@/reducers/nextEventSlice';
+import { setshowFormLogin } from '@/reducers/showFormSlice';
+import useLogin from '@/services/requireLogin';
 import staticVariables from '@/static';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import {
@@ -20,11 +24,17 @@ export default function ProductTodayItem({
   props?: HTMLAttributes<HTMLDivElement>;
   button?: HTMLAttributes<HTMLButtonElement>;
 }) {
+  const dispatch = useAppDispatch();
+  const logged = useAppSelector((state) => state.user.logged);
   const [showModalPay, setShowModalPay] = useState(false);
   const [buyOrCart, setBuyOrCart] = useState<'BUY' | 'CART'>('BUY');
-
+  const { login } = useLogin();
   const handleSubmit = (e: any) => {
     buyOrCart === 'BUY' ? alert('Buy') : alert('CART');
+  };
+  const handleShowModalPay = () => {
+    setBuyOrCart('CART');
+    setShowModalPay(true);
   };
 
   return (
@@ -47,15 +57,24 @@ export default function ProductTodayItem({
         </div>
         <div className="flex items-center mt-[10px]">
           <Button
-            onClick={() => setShowModalPay(true)}
+            onClick={() => {
+              logged
+                ? setShowModalPay(true)
+                : login(() => setShowModalPay(true));
+            }}
             className="w-full block "
           >
             Buy now
           </Button>
           <Button
             onClick={() => {
-              setBuyOrCart('CART');
-              setShowModalPay(true);
+              logged ? setShowModalPay(true) : login(handleShowModalPay);
+              // dispatch(
+              //   nextEvent({
+              //     requireLogin: handleShowModalPay,
+              //   })
+              // );
+              // dispatch(setshowFormLogin({ showFormLogin: true }));
             }}
             className="flex items-center"
           >

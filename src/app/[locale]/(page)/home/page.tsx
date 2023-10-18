@@ -1,6 +1,7 @@
 'use client';
 import {
   Badge,
+  Button,
   Carousel,
   Image,
   Input,
@@ -47,6 +48,7 @@ export default function HomePage() {
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState([]);
+  const { mutate } = useSWRConfig();
 
   const fetchListMarket = useCallback(async () => {
     await instanceAxios
@@ -56,7 +58,6 @@ export default function HomePage() {
         }&skip=${skip}&limit=${limit}`
       )
       .then((res) => {
-        console.log(res.data.data);
         setListMarket(res.data.data.list_marketplace);
       })
       .catch((err) => console.log(err));
@@ -64,9 +65,9 @@ export default function HomePage() {
 
   const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
 
-  useEffect(() => {
-    fetchListMarket();
-  }, [fetchListMarket]);
+  // useEffect(() => {
+  //   fetchListMarket();
+  // }, [fetchListMarket]);
 
   const contentStyle: React.CSSProperties = {
     height: 100,

@@ -6,7 +6,6 @@ export default function ConfirmOTP({ nextStep }: { nextStep: () => void }) {
   const [loading, setLoading] = useState(false);
   const fethRegister = async (data: any) => {
     setLoading(true);
-    console.log(data);
     await instanceAxios
       .put(
         `auth/verify_code?email=${data.email}&verify_code=${data.verify_code}&new_password=${data.new_password}&password_confirm=${data.password_confirm}`

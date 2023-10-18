@@ -1,6 +1,7 @@
 'use client';
 import instanceAxios from '@/api/instanceAxios';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { nextEvent } from '@/reducers/nextEventSlice';
 import { User, initialUser, setLogin } from '@/reducers/userSlice';
 import { Button, Form, Input, notification } from 'antd';
 import { setCookie } from 'cookies-next';
@@ -17,22 +18,28 @@ type FieldType = {
 
 export default function Login({ onFinish }: { onFinish: () => void }) {
   const dispatch = useAppDispatch();
+  const requireLogin = useAppSelector((state) => state.nextEvent.requireLogin);
   const { mutate } = useSWRConfig();
 
   const fethLogin = async (data: object) => {
     await instanceAxios
       .post('auth/login', data)
       .then((res) => {
-        mutate('marketplace/list');
         dispatch(setLogin({ logged: true, user: res.data.data.user as User }));
         onFinish();
         setCookie('access_token', res.data.data.access_token);
+        instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.data.access_token}`;
         notification.success({
           message: 'Thông báo',
           description: `Xin chào ${res.data.data.user.username}`,
         });
+        requireLogin();
+        dispatch(nextEvent({ requireLogin: () => {} }));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        mutate('marketplace/list');
+      });
   };
   // const fethGetUser = async () => {
   //   await instanceAxios
