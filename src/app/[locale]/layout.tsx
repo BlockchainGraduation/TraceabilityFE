@@ -11,6 +11,7 @@ import { Roboto } from 'next/font/google';
 import { getCookie } from 'cookies-next';
 import instanceAxios from '@/api/instanceAxios';
 import { SWRConfig } from 'swr';
+import { ConfigProvider } from 'antd';
 
 const roboto = Roboto({
   weight: '500',
@@ -52,13 +53,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning className={''}>
       <body>
-        <Providers>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Header />
-            <div>{children}</div>
-            <Footer />
-          </NextIntlClientProvider>
-        </Providers>
+        <ConfigProvider locale={locale}>
+          <Providers>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <Header />
+              <div>{children}</div>
+              <Footer />
+            </NextIntlClientProvider>
+          </Providers>
+        </ConfigProvider>
       </body>
     </html>
   );
