@@ -15,6 +15,7 @@ import {
   message,
 } from 'antd';
 import Link from 'next/link';
+import { deleteCookie } from 'cookies-next';
 import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
 import Login from './Login';
 import Register from './Register';
@@ -23,6 +24,7 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import useSWR from 'swr';
 import { LogoutOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -30,9 +32,10 @@ import {
   faCartShopping,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { logOut } from '@/reducers/userSlice';
+import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
 import useOutsideAlerter from '@/services/eventOutside';
+import instanceAxios from '@/api/instanceAxios';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -51,6 +54,7 @@ export default memo(function Header() {
   const logged = useAppSelector((state) => state.user.logged);
   const currentUser = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
+
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
     // Sử dụng hàm async IIFE để lấy dữ liệu từ tệp dịch vụ (JSON)
@@ -67,14 +71,32 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
+
+  useEffect(() => {
+    const fethGetUser = async () => {
+      await instanceAxios
+        .get('user/me')
+        .then((res) => {
+          console.log(res.data.data);
+          dispatch(setLogin({ logged: true, user: res.data }));
+        })
+        .catch((err) => console.log(err));
+    };
+    fethGetUser();
+  }, []);
+
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
+  };
+  const onFinishOTP = () => {
+    setCurrentForm('LOGIN');
   };
   const handleShowModal = () => {
     setShowModal(false);
   };
   const handleLogout = () => {
     dispatch(logOut());
+    deleteCookie('access_token');
     setShowModal(true);
     setCurrentForm('LOGIN');
   };
@@ -112,7 +134,7 @@ export default memo(function Header() {
       key: '2',
     },
     {
-      label: currentUser.isActive ? (
+      label: currentUser.is_active ? (
         <Link href={'/cms'}>
           <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
           Đăng kí thành viên
@@ -236,7 +258,7 @@ export default memo(function Header() {
         )}
         <Modal
           open={showModal}
-          width={currentForm === 'REGISTER' ? 1000 : 520}
+          // width={currentForm === 'REGISTER' ? 1000 : 520}
           className={``}
           centered
           onCancel={() => setShowModal(false)}
@@ -244,7 +266,7 @@ export default memo(function Header() {
         >
           {currentForm === 'LOGIN' && <Login onFinish={handleShowModal} />}
           {currentForm === 'REGISTER' && (
-            <Register onFinish={handleShowModal} />
+            <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
           )}
           <div className="m-auto flex justify-around	max-w-[300px]">
             <p>Forget?</p>

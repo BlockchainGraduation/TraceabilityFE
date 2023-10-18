@@ -1,7 +1,9 @@
 'use client';
+import instanceAxios from '@/api/instanceAxios';
 import ProductItem from '@/components/Contents/Home/ProductItem';
 import CreateProductForm from '@/components/Contents/User/CreateProductForm';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
+import { useAppSelector } from '@/hooks';
 import staticVariables from '@/static';
 import {
   ArrowUpOutlined,
@@ -34,10 +36,34 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export default function UserInfo() {
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
+  const currentUser = useAppSelector((state) => state.user.user);
+
+  const [nameProduct, setNameProduct] = useState('');
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [listProduct, setListProduct] = useState([]);
+
+  const fetchListProductMe = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `product/me?skip=${skip}&limit=${limit}&${
+          nameProduct ? `name=${nameProduct}` : ''
+        }`
+      )
+      .then((res) => {
+        setListProduct(res.data.data[1]);
+      })
+      .catch((err) => console.log(err));
+  }, [limit, nameProduct, skip]);
+
+  useEffect(() => {
+    fetchListProductMe();
+  }, [fetchListProductMe]);
+
   const contentStyle: React.CSSProperties = {
     height: '300px',
     color: '#fff',
@@ -124,7 +150,7 @@ export default function UserInfo() {
             src={staticVariables.logo.src}
           />
           <Typography.Title level={3} className="mt-[20px]">
-            Nguyen Van A
+            {currentUser.username}
           </Typography.Title>
         </div>
       </div>
@@ -228,18 +254,20 @@ export default function UserInfo() {
             <CreateProductForm />
           </Modal>
           <div className="flex items-center justify-center px-[50px] flex-wrap gap-20	">
-            {[...Array(10)].map((_, index) => (
+            {listProduct.map((item: any, index) => (
               <ProductItem
                 key={index}
-                productId="1"
-                productName="Sầu riêng DatBe"
-                productImg="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-                ownerName="SimpRaidenEi"
-                ownerImg={staticVariables.logoRaiden.src}
-                role="Fammer"
+                productId={item.id}
+                productName={item.name}
+                productImg={item.banner}
+                // ownerName="SimpRaidenEi"
+                // ownerImg={staticVariables.logoRaiden.src}
+                // role="Fammer"
                 likeQuantity={12}
                 messageQuantity={12}
                 buyerQuantity={12}
+                price={item.price}
+                quantity={item.quantity}
               />
             ))}
           </div>

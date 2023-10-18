@@ -2,6 +2,7 @@
 import {
   Badge,
   Carousel,
+  Image,
   Input,
   Modal,
   Pagination,
@@ -10,7 +11,7 @@ import {
   Skeleton,
   Typography,
 } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import ProductItem from '@/components/Contents/Home/ProductItem';
 import staticVariables from '@/static';
@@ -19,6 +20,8 @@ import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import Table, { ColumnsType } from 'antd/es/table';
 // import ProductTodayItem from '@/components/Contents/Home/ProductTodayItem';
 import dynamic from 'next/dynamic';
+import instanceAxios from '@/api/instanceAxios';
+import useSWR, { useSWRConfig } from 'swr';
 
 const { Search } = Input;
 const ProductTodayItem = dynamic(
@@ -39,13 +42,36 @@ interface DataType {
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [OrderType, setOrderType] = useState('');
+  const [nameProduct, setNameProduct] = useState('');
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [listMarket, setListMarket] = useState([]);
+
+  const fetchListMarket = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `marketplace/list?${OrderType ? 'order_type=FARMER' : ''}${
+          nameProduct ? 'name_product=12' : ''
+        }&skip=${skip}&limit=${limit}`
+      )
+      .then((res) => {
+        console.log(res.data.data);
+        setListMarket(res.data.data.list_marketplace);
+      })
+      .catch((err) => console.log(err));
+  }, [OrderType, limit, nameProduct, skip]);
+
+  const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
+
+  useEffect(() => {
+    fetchListMarket();
+  }, [fetchListMarket]);
+
   const contentStyle: React.CSSProperties = {
-    height: '400px',
-    color: '#fff',
-    lineHeight: '160px',
-    textAlign: 'center',
-    background: '#364d79',
+    height: 100,
     borderRadius: '10px',
+    objectFit: 'cover',
   };
 
   const columns: ColumnsType<DataType> = [
@@ -87,19 +113,32 @@ export default function HomePage() {
     <div className="w-full px-[50px]">
       <div className="w-full flex items-center justify-around">
         <div className="w-1/2">
-          <Carousel autoplay>
-            <div>
-              <h3 style={contentStyle}>1</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>2</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>3</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>4</h3>
-            </div>
+          <Carousel
+            className=" rounded-[10px] overflow-hidden h-[400px]"
+            autoplay
+          >
+            <Image
+              className="w-full h-full object-cover"
+              width={'100%'}
+              height={400}
+              alt=""
+              src={staticVariables.qc1.src}
+            />
+
+            <Image
+              width={'100%'}
+              height={400}
+              alt=""
+              src={staticVariables.qc3.src}
+            />
+
+            <Image
+              width={'100%'}
+              height={400}
+              className="w-full h-full object-cover"
+              alt=""
+              src={staticVariables.qc2.src}
+            />
           </Carousel>
         </div>
         <div className="flex flex-col gap-y-5">
@@ -176,18 +215,20 @@ export default function HomePage() {
         />
       </div>
       <div className="w-full flex flex-wrap gap-y-24 gap-x-12 m-auto mt-[80px] item-center justify-center">
-        {[...Array(10)].map((_, index) => (
+        {listMarket.map((item: any, index) => (
           <Badge.Ribbon text="Hot" color="blue" key={index}>
             <ProductItem
-              productId="1"
-              productName="Sầu riêng DatBe"
-              productImg="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-              ownerName="SimpRaidenEi"
+              productId={item.product.id}
+              productName={item.product.name}
+              productImg={item.product.banner}
+              ownerName={item.product.user.username}
               ownerImg={staticVariables.logoRaiden.src}
               role="Fammer"
               likeQuantity={12}
               messageQuantity={12}
               buyerQuantity={12}
+              price={item.product.price}
+              quantity={item.product.quantity}
             />
           </Badge.Ribbon>
         ))}

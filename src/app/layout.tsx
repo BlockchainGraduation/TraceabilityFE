@@ -9,6 +9,7 @@ type Props = {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from 'react';
+import { SWRConfig } from 'swr';
 
 library.add(fas);
 // Since we have a `not-found.tsx` page on the root, a layout file
@@ -17,5 +18,15 @@ export default function RootLayout({ children }: Props) {
   useEffect(() => {
     AOS.init();
   });
-  return children;
+  return (
+    <SWRConfig
+      value={{
+        refreshInterval: 3000,
+        fetcher: (resource, init) =>
+          fetch(resource, init).then((res) => res.json()),
+      }}
+    >
+      {children}
+    </SWRConfig>
+  );
 }

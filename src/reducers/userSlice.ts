@@ -4,31 +4,31 @@ interface Auth {
   logged: boolean;
   user: User;
 }
-interface User {
+export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
   username: string;
   email: string;
+  avatar: string;
+  full_name: string;
+  birthday: string;
   phone: string;
-  image: string;
-  walletAddress: string;
-  role: string;
-  geographicalAddress: string;
-  isActive: boolean;
+  address_wallet: string;
+  address_real: string;
+  is_active: boolean;
+  system_role: string;
 }
 export const initialUser: User = {
-  id: '1',
-  firstName: '',
-  lastName: '',
-  username: 'Trung',
-  email: '',
-  phone: '',
-  image: '',
-  walletAddress: '',
-  role: '',
-  geographicalAddress: '',
-  isActive: false,
+  id: 'string',
+  username: 'string',
+  email: 'string',
+  avatar: 'string',
+  full_name: 'string',
+  birthday: 'string',
+  phone: 'string',
+  address_wallet: 'string',
+  address_real: 'string',
+  is_active: false,
+  system_role: 'string',
 };
 const initialAuth: Auth = {
   logged: false,

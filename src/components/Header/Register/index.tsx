@@ -1,4 +1,4 @@
-import { Button, Result, Steps } from 'antd';
+import { Button, Form, Result, Steps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   FormOutlined,
@@ -12,54 +12,64 @@ import RegisterEnterprise from './RegisterEnterprise';
 import Rules from './Rules';
 import { useAppDispatch } from '@/hooks';
 import { initialUser, setLogin } from '@/reducers/userSlice';
+import ConfirmOTP from './ConfirmOTP';
 
-export default function Register({ onFinish }: { onFinish: () => void }) {
+export default function Register({
+  onFinish,
+  onFinishOTP,
+}: {
+  onFinish: () => void;
+  onFinishOTP: () => void;
+}) {
   const [current, setCurrent] = useState(0);
   const dispatch = useAppDispatch();
-
   const nextStep = () => {
     if (current === steps.length - 1) {
-      return;
+      onFinishOTP();
     } else {
       setCurrent(current + 1);
     }
   };
-
   const steps = [
-    {
-      title: 'First',
-      content: <RegisterForm nextStep={nextStep} />,
-    },
-    {
-      title: 'Second',
-      content: <RegisterEnterprise />,
-    },
-    {
-      title: 'Last',
-      content: <Rules />,
-    },
-    {
-      title: 'Last',
-      content: (
-        <Result
-          status="success"
-          title="DK tai khoan thanh cong"
-          subTitle="bay h ban co the su dung trang web cua chung toi"
-          extra={[
-            <Button
-              onClick={() => {
-                onFinish();
-                dispatch(setLogin({ logged: true, user: initialUser }));
-              }}
-              key="buy"
-            >
-              OK
-            </Button>,
-          ]}
-        />
-      ),
-    },
+    <RegisterForm key={0} nextStep={nextStep} />,
+    <ConfirmOTP nextStep={nextStep} key={1} />,
   ];
+
+  // const steps = [
+  //   {
+  //     title: 'First',
+  //     content: <RegisterForm nextStep={nextStep} />,
+  //   },
+  //   {
+  //     title: 'Second',
+  //     content: <RegisterEnterprise />,
+  //   },
+  //   {
+  //     title: 'Last',
+  //     content: <Rules />,
+  //   },
+  //   {
+  //     title: 'Last',
+  //     content: (
+  //       <Result
+  //         status="success"
+  //         title="DK tai khoan thanh cong"
+  //         subTitle="bay h ban co the su dung trang web cua chung toi"
+  //         extra={[
+  //           <Button
+  //             onClick={() => {
+  //               onFinish();
+  //               dispatch(setLogin({ logged: true, user: initialUser }));
+  //             }}
+  //             key="buy"
+  //           >
+  //             OK
+  //           </Button>,
+  //         ]}
+  //       />
+  //     ),
+  //   },
+  // ];
   const items = [
     {
       title: 'Đăng ký tài khoản',
@@ -84,8 +94,9 @@ export default function Register({ onFinish }: { onFinish: () => void }) {
   ];
   return (
     <div>
+      <p className="text-center text-3xl my-[50px]">Đăng ký</p>
+      {steps[current]}
       {/* <p className="text-center text-3xl my-[50px]">Đăng kí và xác thực</p> */}
-      <RegisterForm nextStep={nextStep} />
       {/* <Steps
         current={current}
         items={items.map((item, index) => ({

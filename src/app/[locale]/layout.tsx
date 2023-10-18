@@ -8,6 +8,9 @@ import Footer from '@/components/Footer';
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
 import { Roboto } from 'next/font/google';
+import { getCookie } from 'cookies-next';
+import instanceAxios from '@/api/instanceAxios';
+import { SWRConfig } from 'swr';
 
 const roboto = Roboto({
   weight: '500',
@@ -29,6 +32,23 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound();
   }
+  // const cookie = getCookie('access_token');
+  // const fethGetUser = async () => {
+  //   if (cookie)
+  //     await instanceAxios
+  //       .get('user/me', {
+  //         headers: {
+  //           Authorization: `Bearer ${cookie}`,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         console.log(res.data.data);
+  //         // dispatch(setLogin({ logged: true, user: res.data.data }));
+  //       })
+  //       .catch((err) => console.log(err));
+  // };
+  // fethGetUser();
+
   return (
     <html lang={locale} suppressHydrationWarning className={''}>
       <body>
