@@ -1,5 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import { User, setLogin } from '@/reducers/userSlice';
@@ -10,14 +10,19 @@ import { useSWRConfig } from 'swr';
 
 function useLogin() {
   const dispatch = useAppDispatch();
+  const logged = useAppSelector((state) => state.user.logged);
 
   const login = async (beforeLoginSuccess?: () => void) => {
-    dispatch(
-      nextEvent({
-        requireLogin: () => beforeLoginSuccess?.(),
-      })
-    );
-    dispatch(setshowFormLogin({ showFormLogin: true }));
+    if (logged) {
+      return beforeLoginSuccess?.();
+    } else {
+      dispatch(
+        nextEvent({
+          requireLogin: () => beforeLoginSuccess?.(),
+        })
+      );
+      dispatch(setshowFormLogin({ showFormLogin: true }));
+    }
   };
 
   return { login };

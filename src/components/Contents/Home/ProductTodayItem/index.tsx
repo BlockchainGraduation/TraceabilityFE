@@ -58,9 +58,10 @@ export default function ProductTodayItem({
         <div className="flex items-center mt-[10px]">
           <Button
             onClick={() => {
-              logged
-                ? setShowModalPay(true)
-                : login(() => setShowModalPay(true));
+              login(() => setShowModalPay(true));
+              // logged
+              //   ? setShowModalPay(true)
+              //   : login(() => setShowModalPay(true));
             }}
             className="w-full block "
           >
@@ -68,7 +69,8 @@ export default function ProductTodayItem({
           </Button>
           <Button
             onClick={() => {
-              logged ? setShowModalPay(true) : login(handleShowModalPay);
+              login(handleShowModalPay);
+              // logged ? setShowModalPay(true) : login(handleShowModalPay);
               // dispatch(
               //   nextEvent({
               //     requireLogin: handleShowModalPay,

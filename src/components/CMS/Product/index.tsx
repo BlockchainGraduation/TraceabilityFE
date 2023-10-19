@@ -26,7 +26,8 @@ import {
 } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
 
 interface DataType {
   key: React.Key;
@@ -69,27 +70,31 @@ export default function ProductCMS() {
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
   const currentUser = useAppSelector((state) => state.user.user);
+  const { mutate } = useSWRConfig();
 
-  useEffect(() => {
-    const fetchProductMe = async () => {
-      await instanceAxios
-        .get(
-          `product/me?skip=${skip}&limit=${limit}&${name ? 'name=${name}' : ''}`
-        )
-        .then((res) => {
-          let newProducts: DataType[] = [];
-          setTotalProduct(res.data.data[0]);
-          [...res.data.data[1]].map((item, index) => {
-            return newProducts.push({ ...item, key: skip * limit + index + 1 });
-          });
-          setListProduct(newProducts);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    fetchProductMe();
+  const fetchProductMe = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `product/me?skip=${skip}&limit=${limit}&${name ? 'name=${name}' : ''}`
+      )
+      .then((res) => {
+        // let newProducts: DataType[] = [];
+        // [...res.data.data[1]].map((item, index) => {
+        //   return newProducts.push({ ...item, key: skip * limit + index + 1 });
+        // });
+        const newProducts = [...res.data.data[1]].map((item, index) => ({
+          ...item,
+          key: skip * limit + index + 1,
+        }));
+        setTotalProduct(res.data.data[0]);
+        setListProduct(newProducts);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [limit, name, skip]);
+
+  const { error, isLoading } = useSWR('product/me', fetchProductMe);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -156,11 +161,11 @@ export default function ProductCMS() {
     await instanceAxios
       .put(`product/${productId}/status?product_status=${status}`)
       .then((res) => {
-        console.log(res.data);
         notification.success({
           message: 'Thông báo',
-          description: 'Đổi trạng thái thành công',
+          description: `Đổi trạng thái thành công --> ${status}`,
         });
+        mutate('product/me');
       })
       .catch((err) => {});
   };
@@ -246,7 +251,11 @@ export default function ProductCMS() {
           </Col>
           <Col span={3}>
             {record.product_status === 'PUBLISH' ? (
-              <FontAwesomeIcon icon={faLock} style={{ color: '#a87171' }} />
+              <FontAwesomeIcon
+                onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
+                icon={faLock}
+                style={{ color: '#a87171' }}
+              />
             ) : (
               <FontAwesomeIcon
                 onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
