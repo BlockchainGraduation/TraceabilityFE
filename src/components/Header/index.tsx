@@ -85,7 +85,7 @@ export default memo(function Header() {
       await instanceAxios
         .get('user/me')
         .then((res) => {
-          dispatch(setLogin({ logged: true, user: res.data }));
+          dispatch(setLogin({ logged: true, user: res.data.data }));
         })
         .catch((err) => console.log(err));
     };

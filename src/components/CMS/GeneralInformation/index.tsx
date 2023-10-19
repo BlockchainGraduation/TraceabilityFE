@@ -1,6 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
 import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import { useAppSelector } from '@/hooks';
 import fetchUpdateUser from '@/services/fetchUpdateUser';
 import staticVariables from '@/static';
 import { PlusOutlined } from '@ant-design/icons';
@@ -41,6 +42,7 @@ export default function GeneralInformation() {
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const currentUser = useAppSelector((state) => state.user.user);
 
   const contentStyle: React.CSSProperties = {
     height: '300px',
@@ -107,9 +109,9 @@ export default function GeneralInformation() {
           <div className="flex flex-col gap-y-4">
             <div>
               <InputCustom
-                name="as"
+                name="full_name"
                 classNameLabel="text-2xl font-bold"
-                initialValue="Nguyen Van A"
+                initialValue={currentUser.full_name}
                 // input={{
                 //   onBlur: async (e) => {
 

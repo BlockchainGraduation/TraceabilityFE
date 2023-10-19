@@ -1,6 +1,6 @@
 import fetchUpdateUser from '@/services/fetchUpdateUser';
 import { EditTwoTone } from '@ant-design/icons';
-import { Input, InputProps, InputRef } from 'antd';
+import { Input, InputProps, InputRef, Modal } from 'antd';
 import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
@@ -33,6 +33,7 @@ export default memo(function InputCustom({
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
+  const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
   const ref = useRef<InputRef>(null);
 
@@ -49,22 +50,43 @@ export default memo(function InputCustom({
   //     window.removeEventListener('mousedown', handleOutSideClick);
   //   };
   // }, [editAble]);
-  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+  const fetchUpdate = async () => {
+    await fetchUpdateUser(
+      { full_name: value },
+      (res) => {
+        console.log(res);
+        setEditAble(false);
+        setOpenModalConfirm(false);
+        // setValue(e.target.value);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  };
+
+  const handleBlur = async () => {
     if (value === initialValue) {
       setEditAble(false);
     } else {
-      await fetchUpdateUser(
-        { full_name: e.target.value },
-        (res) => {
-          console.log(res);
-          setEditAble(false);
-          setValue(e.target.value);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      setOpenModalConfirm(true);
     }
+
+    // if (value === initialValue) {
+    //   setEditAble(false);
+    // } else {
+    //   await fetchUpdateUser(
+    //     { full_name: value },
+    //     (res) => {
+    //       console.log(res);
+    //       setEditAble(false);
+    //       // setValue(e.target.value);
+    //     },
+    //     (err) => {
+    //       console.log(err);
+    //     }
+    //   );
+    // }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,9 +94,10 @@ export default memo(function InputCustom({
     setValue(e.target.value);
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = async (e: KeyboardEvent) => {
     onKeyDown?.(e);
     if (e.key === 'Enter') {
+      await fetchUpdate();
       setEditAble(false);
     }
   };
@@ -97,7 +120,16 @@ export default memo(function InputCustom({
           {value}
         </p>
       )}
-
+      <Modal
+        title="Modal"
+        open={openModalConfirm}
+        onOk={fetchUpdate}
+        onCancel={() => {
+          setOpenModalConfirm(false), setValue(initialValue);
+        }}
+        cancelText="Huỷ"
+        okText="OK"
+      ></Modal>
       <EditTwoTone
         className="px-[10px]"
         onClick={() => setEditAble(!editAble)}
