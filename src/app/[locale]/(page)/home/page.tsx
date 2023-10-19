@@ -54,7 +54,7 @@ export default function HomePage() {
     await instanceAxios
       .get(
         `marketplace/list?${OrderType ? 'order_type=FARMER' : ''}${
-          nameProduct ? 'name_product=12' : ''
+          nameProduct ? '&name_product=12' : ''
         }&skip=${skip}&limit=${limit}`
       )
       .then((res) => {

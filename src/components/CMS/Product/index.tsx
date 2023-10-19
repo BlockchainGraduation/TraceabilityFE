@@ -1,3 +1,5 @@
+import instanceAxios from '@/api/instanceAxios';
+import { useAppSelector } from '@/hooks';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   faCircleXmark,
@@ -19,19 +21,31 @@ import {
   Tag,
   Typography,
   UploadFile,
+  notification,
 } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 interface DataType {
   key: React.Key;
   index: number;
-  productName: string;
+  name: string;
   quantity: number;
   price: number;
-  date: string;
-  status: string;
+  created_at: string;
+  product_status: string;
+}
+interface FormType {
+  key: React.Key;
+  name: string;
+  price: string;
+  quantity: string;
+  description: string;
+  created_at: string;
+  transaction_id: string;
+  banner: string;
+  avatar: string;
 }
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -45,7 +59,33 @@ export default function ProductCMS() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [listProduct, setListProduct] = useState<DataType[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileAvartar, setFileAvartar] = useState<UploadFile[]>([]);
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [name, setName] = useState('');
+  const currentUser = useAppSelector((state) => state.user.user);
+
+  useEffect(() => {
+    const fetchProductMe = async () => {
+      await instanceAxios
+        .get(
+          `product/me?skip=${skip}&limit=${limit}&${name ? 'name=${name}' : ''}`
+        )
+        .then((res) => {
+          let newProducts: DataType[] = [];
+          [...res.data.data[1]].map((item, index) => {
+            return newProducts.push({ ...item, key: index + 1 });
+          });
+          setListProduct(newProducts);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    fetchProductMe();
+  }, [limit, name, skip]);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -60,12 +100,21 @@ export default function ProductCMS() {
       file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1)
     );
   };
+
   const handleChange: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
   ) => {
     // console.log(newFileList);
     info.file.status = 'done';
     setFileList(info.fileList);
+  };
+
+  const handleChangeAvatar: UploadProps['onChange'] = (
+    info: UploadChangeParam<UploadFile>
+  ) => {
+    // console.log(newFileList);
+    info.file.status = 'done';
+    setFileAvartar(info.fileList);
   };
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -79,44 +128,79 @@ export default function ProductCMS() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  const onFinish = async (e: FormType) => {
+    let formData = new FormData();
+    formData.append('banner', fileAvartar[0]?.originFileObj as Blob);
+    await instanceAxios
+      .post(
+        `product/create?name=${e.name}${e.price ? `&price=${e.price}` : ''}${
+          e.quantity ? `&quantity=${e.quantity}` : ''
+        }${e.description ? `&description=${e.description}` : ''}${
+          e.transaction_id ? `&transaction_id=${e.transaction_id}` : ''
+        }`,
+        formData
+      )
+      .then((res) => {
+        setOpenModalCreate(false);
+        notification.success({
+          message: 'Thông báo',
+          description: 'Tạo sản phẩm thành công',
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        notification.error({
+          message: 'Thông báo',
+          description: 'Tạo sản phẩm thất bại',
+        });
+      });
+  };
   const columns: ColumnsType<DataType> = [
     {
+      key: 0,
       title: 'Stt',
-      dataIndex: 'index',
+      dataIndex: 'key',
       width: 65,
     },
     {
+      key: 1,
       title: 'Product Name',
-      dataIndex: 'productName',
+      dataIndex: 'name',
       width: 250,
     },
     {
+      key: 2,
       title: 'Số lượng',
       dataIndex: 'quantity',
     },
     {
+      key: 3,
+
       title: 'Giá đơn vị',
       dataIndex: 'price',
     },
     {
+      key: 4,
       title: 'Ngày bán',
-      dataIndex: 'date',
+      dataIndex: 'created_at',
     },
     {
+      key: 5,
       title: 'Trạng thái',
-      dataIndex: 'status',
+      dataIndex: 'product_status',
       render: (value, record, index) =>
-        record.index % 2 ? (
+        record.product_status === 'PUBLISH' ? (
           <Tag color={'success'}>Đang mở bán</Tag>
         ) : (
           <Tag color={'error'}>Đóng</Tag>
         ),
     },
     {
+      key: 6,
       title: 'Action',
       dataIndex: '',
-      key: 'x',
-      render: (e) => (
+      render: (value, record, index) => (
         <Row className="flex gap-x-2">
           <Col span={3}>
             <FontAwesomeIcon
@@ -125,7 +209,7 @@ export default function ProductCMS() {
             />
           </Col>
           <Col span={3}>
-            {e.index % 2 ? (
+            {record.product_status === 'PUBLISH' ? (
               <FontAwesomeIcon icon={faLock} style={{ color: '#a87171' }} />
             ) : (
               <FontAwesomeIcon icon={faLockOpen} style={{ color: '#27913c' }} />
@@ -141,18 +225,7 @@ export default function ProductCMS() {
       ),
     },
   ];
-  const data: DataType[] = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      index: i + 1,
-      productName: 'Sau reing',
-      quantity: 2,
-      price: 1233,
-      date: '12/12/12',
-      status: 'ok',
-    });
-  }
+
   return (
     <div>
       <div className="flex  items-center justify-between p-[20px] border-[1px] rounded-[10px]">
@@ -180,53 +253,59 @@ export default function ProductCMS() {
           <Form
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}
-            onFinish={(e) => console.log(e)}
+            onFinish={onFinish}
           >
-            <Form.Item
+            <Form.Item<FormType>
               label="Chon giao dịch"
-              name="transaction"
+              name="transaction_id"
               rules={[
-                { required: true, message: 'Please input your username!' },
+                {
+                  required: !(currentUser.system_role === 'SEEDLING_COMPANY'),
+                  message: 'Please input your username!',
+                },
               ]}
             >
               <Select
                 options={[
                   { label: 'Option1', value: 1 },
                   { label: 'Option2', value: 2 },
+                  currentUser.system_role === 'SEEDLING_COMPANY'
+                    ? { label: 'None', value: 0 }
+                    : {},
                 ]}
               />
             </Form.Item>
-            <Form.Item
+            <Form.Item<FormType>
               label="Tên sản phẩm"
-              name="product_name"
+              name="name"
               rules={[
                 { required: true, message: 'Please input your username!' },
               ]}
             >
               <Input />
             </Form.Item>
-            <Form.Item
+            <Form.Item<FormType>
               label="Số lượng bán"
               name="quantity"
               rules={[
                 { required: true, message: 'Please input your username!' },
               ]}
             >
-              <InputNumber />
+              <InputNumber min={0} />
             </Form.Item>
-            <Form.Item
+            <Form.Item<FormType>
               label="Giá bán cho từng đơn vị"
               name="price"
               rules={[
                 { required: true, message: 'Please input your username!' },
               ]}
             >
-              <InputNumber />
+              <InputNumber min={0} />
             </Form.Item>
-            <Form.Item
+            <Form.Item<FormType>
               label="Ảnh chính của sản phẩm"
               valuePropName="fileList"
-              name={'main-file'}
+              name={'avatar'}
               getValueFromEvent={normFile}
               rules={[
                 { required: true, message: 'Please choose your product image' },
@@ -235,19 +314,19 @@ export default function ProductCMS() {
               <Upload
                 // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                 listType="picture-card"
-                multiple
+                // multiple
                 // fileList={fileList}
                 maxCount={1}
                 onPreview={handlePreview}
-                onChange={handleChange}
+                onChange={handleChangeAvatar}
               >
-                {fileList.length >= 1 ? null : uploadButton}
+                {fileAvartar.length >= 1 ? null : uploadButton}
               </Upload>
             </Form.Item>
-            <Form.Item
+            <Form.Item<FormType>
               label="Ảnh banner"
               valuePropName="fileList"
-              name={'banner-file'}
+              name={'banner'}
               getValueFromEvent={normFile}
               rules={[
                 { required: true, message: 'Please choose your product image' },
@@ -274,7 +353,7 @@ export default function ProductCMS() {
       <div>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={listProduct}
           pagination={false}
           scroll={{ y: 340 }}
         />

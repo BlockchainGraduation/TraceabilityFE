@@ -1,6 +1,8 @@
+import { useAppDispatch } from '@/hooks';
+import { User, setUser } from '@/reducers/userSlice';
 import fetchUpdateUser from '@/services/fetchUpdateUser';
-import { EditTwoTone } from '@ant-design/icons';
-import { Input, InputProps, InputRef, Modal } from 'antd';
+import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
+import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
 import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
@@ -34,6 +36,7 @@ export default memo(function InputCustom({
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
+  const dispatch = useAppDispatch();
 
   const ref = useRef<InputRef>(null);
 
@@ -52,15 +55,24 @@ export default memo(function InputCustom({
   // }, [editAble]);
   const fetchUpdate = async () => {
     await fetchUpdateUser(
-      { full_name: value },
+      'user/update_me',
+      { [name]: value },
       (res) => {
         console.log(res);
         setEditAble(false);
         setOpenModalConfirm(false);
-        // setValue(e.target.value);
+        dispatch(setUser(res.data.data as User));
+        notification.success({
+          message: 'Success',
+          description: 'Cập nhật dữ liệu thành công',
+        });
       },
       (err) => {
         console.log(err);
+        // notification.error({
+        //   message: 'Error',
+        //   description: 'Cập nhật dữ liệu thất bại',
+        // });
       }
     );
   };
@@ -97,8 +109,11 @@ export default memo(function InputCustom({
   const handleKeyDown = async (e: KeyboardEvent) => {
     onKeyDown?.(e);
     if (e.key === 'Enter') {
-      await fetchUpdate();
-      setEditAble(false);
+      if (value === initialValue) {
+        setEditAble(false);
+      } else {
+        setOpenModalConfirm(true);
+      }
     }
   };
   return (
@@ -109,7 +124,7 @@ export default memo(function InputCustom({
           ref={ref}
           autoFocus
           onChange={handleChange}
-          // value={initialValue}
+          value={value}
           defaultValue={value}
           onKeyDown={(e) => handleKeyDown(e)}
           onBlur={handleBlur}
@@ -121,15 +136,37 @@ export default memo(function InputCustom({
         </p>
       )}
       <Modal
-        title="Modal"
+        title={
+          <div>
+            <WarningTwoTone className="mr-[10px]" />
+            Xác nhận thay đổi dữ liệu
+          </div>
+        }
+        centered
         open={openModalConfirm}
-        onOk={fetchUpdate}
+        // onOk={fetchUpdate}
         onCancel={() => {
           setOpenModalConfirm(false), setValue(initialValue);
         }}
-        cancelText="Huỷ"
-        okText="OK"
-      ></Modal>
+        // cancelText="Huỷ"
+        // okText="OK"
+        footer={[
+          <Button onClick={fetchUpdate} key={0}>
+            Xác nhận
+          </Button>,
+          <Button
+            onClick={() => {
+              setOpenModalConfirm(false), setValue(initialValue);
+            }}
+            key={1}
+          >
+            Hủy
+          </Button>,
+        ]}
+      >
+        Dữ liệu của bạn vừa nhập có sự thay đổi đối với dữ liệu gốc. Xác nhận
+        thay đổi!!!!
+      </Modal>
       <EditTwoTone
         className="px-[10px]"
         onClick={() => setEditAble(!editAble)}

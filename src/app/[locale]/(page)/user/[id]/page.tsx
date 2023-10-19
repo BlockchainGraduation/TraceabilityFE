@@ -50,8 +50,8 @@ export default function UserInfo() {
   const fetchListProductMe = useCallback(async () => {
     await instanceAxios
       .get(
-        `product/me?skip=${skip}&limit=${limit}&${
-          nameProduct ? `name=${nameProduct}` : ''
+        `product/me?skip=${skip}&limit=${limit}${
+          nameProduct ? `&name=${nameProduct}` : ''
         }`
       )
       .then((res) => {
@@ -150,7 +150,7 @@ export default function UserInfo() {
             src={staticVariables.logo.src}
           />
           <Typography.Title level={3} className="mt-[20px]">
-            {currentUser.username}
+            {currentUser.full_name}
           </Typography.Title>
         </div>
       </div>

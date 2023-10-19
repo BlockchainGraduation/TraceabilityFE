@@ -18,8 +18,10 @@ import {
   Avatar,
   Button,
   Carousel,
+  Col,
   Image,
   Modal,
+  Row,
   Tag,
   Typography,
   Upload,
@@ -105,70 +107,85 @@ export default function GeneralInformation() {
             />
           </Upload>
         </div>
-        <div className=" flex gap-x-[100px] justify-between">
-          <div className="flex flex-col gap-y-4">
+        <div className=" flex w-1/2 justify-between">
+          <div className="flex w-1/2 flex-col gap-y-4">
             <div>
               <InputCustom
-                name="full_name"
+                name="full_ame"
                 classNameLabel="text-2xl font-bold"
                 initialValue={currentUser.full_name}
-                // input={{
-                //   onBlur: async (e) => {
-
-                //   },
-                // }}
               />
               <Tag className="w-fit" color="success">
                 Fammer
               </Tag>
             </div>
-            <div className="flex items-center">
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                icon={faLocationDot}
-                size={'2xl'}
-                style={{ color: '#227c4e' }}
-              />
-              <InputCustom name="as" initialValue="14-Khuy My  - NHS - DN" />
-            </div>
-            <div className="flex items-center">
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                size={'2xl'}
-                icon={faWallet}
-                style={{ color: '#463eb1' }}
-              />
-              <p>12313213</p>
-            </div>
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faLocationDot}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <InputCustom name="as" initialValue="14-Khuy My  - NHS - DN" />
+              </Col>
+            </Row>
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faWallet}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <p>12313213</p>
+              </Col>
+            </Row>
           </div>
-          <div className="flex flex-col gap-y-4">
-            <div className="flex items-center">
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                size={'3x'}
-                icon={faSquareFacebook}
-                style={{ color: '#2754b0' }}
-              />
-              <InputCustom name="as" initialValue="http/asd/asdd" />
-            </div>
-            <div className="flex items-center">
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                size={'3x'}
-                icon={faEnvelope}
-                style={{ color: '#3367c1' }}
-              />
-              <InputCustom name="as" initialValue="adbc@gmail.com" />
-            </div>
-            <div className="flex items-center">
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                size={'3x'}
-                icon={faSquarePhone}
-                style={{ color: '#366fba' }}
-              />
-              <InputCustom name="as" initialValue="012313132" />
-            </div>
+          <div className="flex w-1/2 flex-col gap-y-4">
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faSquareFacebook}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <InputCustom name="as" initialValue="http/asd/asdd" />
+              </Col>
+            </Row>
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faEnvelope}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <InputCustom name="as" initialValue="adbc@gmail.com" />
+              </Col>
+            </Row>
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faSquarePhone}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <InputCustom name="as" initialValue="012313132" />
+              </Col>
+            </Row>
           </div>
         </div>
       </div>
