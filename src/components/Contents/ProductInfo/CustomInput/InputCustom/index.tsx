@@ -1,6 +1,7 @@
+import fetchUpdateUser from '@/services/fetchUpdateUser';
 import { EditTwoTone } from '@ant-design/icons';
 import { Input, InputProps, InputRef } from 'antd';
-import { TextAreaRef } from 'antd/es/input/TextArea';
+import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
   KeyboardEvent,
@@ -11,56 +12,69 @@ import React, {
   ChangeEvent,
   ChangeEventHandler,
   KeyboardEventHandler,
+  FocusEventHandler,
 } from 'react';
-export default function InputCustom({
+export default memo(function InputCustom({
   name,
   initialValue,
   className,
   input,
-  onBlur,
   classNameLabel,
   onKeyDown,
-  onEnter,
-  onChange = () => {},
-}: {
+}: // onChange = () => {},
+{
   name: string;
   initialValue: string;
   className?: string;
   classNameLabel?: string;
   input?: InputProps;
-  onBlur?: () => void;
-  onEnter?: () => void;
   onKeyDown?: KeyboardEventHandler;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
 
   const ref = useRef<InputRef>(null);
 
-  useEffect(() => {
-    const handleOutSideClick = (event: any) => {
-      if (!ref.current?.input?.contains?.(event.target)) {
-        setEditAble(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleOutSideClick = async (event: any) => {
+  //     if (!ref.current?.input?.contains?.(event.target)) {
+  //       setEditAble(false);
+  //     }
+  //   };
 
-    window.addEventListener('mousedown', handleOutSideClick);
+  //   window.addEventListener('mousedown', handleOutSideClick);
 
-    return () => {
-      window.removeEventListener('mousedown', handleOutSideClick);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleOutSideClick);
+  //   };
+  // }, [editAble]);
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    if (value === initialValue) {
+      setEditAble(false);
+    } else {
+      await fetchUpdateUser(
+        { full_name: e.target.value },
+        (res) => {
+          console.log(res);
+          setEditAble(false);
+          setValue(e.target.value);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange?.(e);
+    // onChange?.(e);
     setValue(e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     onKeyDown?.(e);
     if (e.key === 'Enter') {
-      onEnter?.();
       setEditAble(false);
     }
   };
@@ -71,18 +85,23 @@ export default function InputCustom({
           {...input}
           ref={ref}
           autoFocus
-          onBlur={onBlur}
           onChange={handleChange}
-          value={value}
+          // value={initialValue}
+          defaultValue={value}
           onKeyDown={(e) => handleKeyDown(e)}
+          onBlur={handleBlur}
+          onEnded={() => alert('OK')}
         />
       ) : (
-        <p className={classNameLabel}>{value}</p>
+        <p defaultValue={initialValue} className={classNameLabel}>
+          {value}
+        </p>
       )}
+
       <EditTwoTone
         className="px-[10px]"
         onClick={() => setEditAble(!editAble)}
       />
     </div>
   );
-}
+});

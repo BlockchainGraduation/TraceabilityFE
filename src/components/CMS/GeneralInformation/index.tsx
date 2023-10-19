@@ -1,5 +1,7 @@
+import instanceAxios from '@/api/instanceAxios';
 import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
 import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import fetchUpdateUser from '@/services/fetchUpdateUser';
 import staticVariables from '@/static';
 import { PlusOutlined } from '@ant-design/icons';
 import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
@@ -65,6 +67,19 @@ export default function GeneralInformation() {
     info.file.status = 'done';
     setFileList(info.fileList);
   };
+  const handleChangeAvatar = async (info: UploadChangeParam<UploadFile>) => {
+    info.file.status = 'done';
+    let formData = new FormData();
+    let data = info.file;
+    // URL.createObjectURL(info.file.originFileObj as RcFile);
+    formData.append('avatar', info.file.originFileObj as Blob, info.file.name);
+    await instanceAxios
+      .put('user/update_me', {
+        avatar: formData,
+      })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  };
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -76,7 +91,11 @@ export default function GeneralInformation() {
       <div className="flex">
         <div className="relative mr-[50px]">
           <Avatar size={300} src={staticVariables.logo.src} />
-          <Upload onChange={(e) => console.log(e)}>
+          <Upload
+            accept="image/*,.jpg,.png,.jpeg"
+            showUploadList={false}
+            onChange={handleChangeAvatar}
+          >
             <FontAwesomeIcon
               className="absolute top-[10%] right-[10%]"
               icon={faPenToSquare}
@@ -91,6 +110,11 @@ export default function GeneralInformation() {
                 name="as"
                 classNameLabel="text-2xl font-bold"
                 initialValue="Nguyen Van A"
+                // input={{
+                //   onBlur: async (e) => {
+
+                //   },
+                // }}
               />
               <Tag className="w-fit" color="success">
                 Fammer
