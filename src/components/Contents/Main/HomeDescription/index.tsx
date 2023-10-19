@@ -2,14 +2,18 @@ import staticVariables from '@/static';
 import { Image } from 'antd';
 import React from 'react';
 
-
-interface Props{
-  alignRight: boolean,
+interface Props {
+  alignRight: boolean;
 }
 
-export default function HomeDescription({alignRight}:Props) {
+export default function HomeDescription({ alignRight }: Props) {
   return (
-    <div className={`flex w-full ${alignRight?'flex-row-reverse':''} justify-around px-[100px]`}>
+    <div
+      data-aos="fade-up"
+      className={`flex w-full ${
+        alignRight ? 'flex-row-reverse' : ''
+      } justify-around px-[100px]`}
+    >
       <div className={`w-1/2`}>
         <p className={`text-5xl py-[20px]`}>Giám sát kĩ càng</p>
         <p>
@@ -20,7 +24,13 @@ export default function HomeDescription({alignRight}:Props) {
           người tiêu dùng cuối cùng
         </p>
       </div>
-        <Image width={400} height={350} className={`object-cover rounded m-auto`} alt='' src={staticVariables.logo.src}/>
+      <Image
+        width={400}
+        height={350}
+        className={`object-cover rounded m-auto`}
+        alt=""
+        src={staticVariables.logo.src}
+      />
     </div>
   );
 }

@@ -25,9 +25,12 @@ export default function Index() {
           Design by
         </div>
       </div>
-      <div className={`w-full flex text-lg mt-[200px] pr-[100px] justify-end`}>
-      {/* shadow-[0px_4px_50px_30px_#00000089] px-[30px] py-[20px] backdrop-blur-xl bg-[#00000089] rounded` */}
-        <p className={`w-[500px]`}>
+      <div
+        data-aos="fade-up"
+        className={`w-full flex text-lg mt-[200px] pr-[100px] justify-end`}
+      >
+        {/* shadow-[0px_4px_50px_30px_#00000089] px-[30px] py-[20px] backdrop-blur-xl bg-[#00000089] rounded` */}
+        <p data-aos="fade-up" className={`w-[500px]`}>
           DatBe tạo ra một hệ thống minh bạch cho việc theo dõi nguồn gốc của
           sản phẩm. Thông tin về quá trình sản xuất, vận chuyển và lưu trữ sản
           phẩm được ghi lại một cách an toàn và không thể thay đổi. Điều này
@@ -35,15 +38,30 @@ export default function Index() {
           người tiêu dùng cuối cùng
         </p>
       </div>
-      <div className={`w-full mt-[200px] relative justify-around flex before:content-[''] before:absolute before:block before:top-1/2 before:w-full before:h-[1px] before:bg-white`}>
-        <div className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}>Minh bạch</div>
-        <div className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}>Uy tín</div>
-        <div className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}>Minh bạch</div>
+      <div
+        data-aos="fade-up"
+        className={`w-full mt-[200px] relative justify-around flex before:content-[''] before:absolute before:block before:top-1/2 before:w-full before:h-[1px] before:bg-white`}
+      >
+        <div
+          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+        >
+          Minh bạch
+        </div>
+        <div
+          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+        >
+          Uy tín
+        </div>
+        <div
+          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+        >
+          Minh bạch
+        </div>
       </div>
-      <div className='w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]'>
-        <HomeDescription alignRight={false}/>
-        <HomeDescription alignRight={true}/>
-        <HomeDescription alignRight={false}/>
+      <div className="w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]">
+        <HomeDescription alignRight={false} />
+        <HomeDescription alignRight={true} />
+        <HomeDescription alignRight={false} />
       </div>
     </div>
   );

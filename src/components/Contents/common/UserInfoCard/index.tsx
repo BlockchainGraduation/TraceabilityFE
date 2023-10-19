@@ -1,16 +1,28 @@
 import staticVariables from '@/static';
-import { MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import {
+  MailOutlined,
+  PhoneOutlined,
+  RiseOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Button } from 'antd';
+import { Avatar, Button, Input } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
+import CustomInput from '../../ProductInfo/CustomInput/InputCustom';
 
 export default function UserInfoCard({
   showButton = true,
 }: {
   showButton?: boolean;
 }) {
+  const [isOwner, setIsOwner] = useState(true);
+  const [userName, setUserName] = useState('nguyen Van A');
+  const [userPhone, setUserPhone] = useState('01232131');
+  const [userEmail, setUserEmail] = useState('simpraidenei@gmail.com');
+  const [userAddress, setuserAddress] = useState('14 - Doan Uan - Khue My');
+
   return (
     <div>
       <div className="flex items-center border-b-[1px] pb-[50px]">
@@ -23,21 +35,54 @@ export default function UserInfoCard({
           )}
         </div>
         <div className="flex gap-y-5 flex-col border-[1px] px-[30px] py-[20px] rounded">
-          <div className="flex items-center">
-            <MailOutlined />
-            Nguyen Van A
+          <div className="flex items-center gap-x-3">
+            <UserOutlined style={{ fontSize: 25 }} />
+            {isOwner ? (
+              <CustomInput
+                name="name"
+                initialValue={userName}
+                onEnter={() => {}}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            ) : (
+              <p>{userName}</p>
+            )}
           </div>
-          <div className="flex items-center">
-            <PhoneOutlined />
-            0123131313
+          <div className="flex items-center gap-x-3">
+            <PhoneOutlined style={{ fontSize: 25 }} />
+            {isOwner ? (
+              <CustomInput
+                name="name"
+                initialValue={userPhone}
+                onEnter={() => {}}
+              />
+            ) : (
+              <p>{userPhone}</p>
+            )}
           </div>
-          <div className="flex items-center">
-            <FontAwesomeIcon width={20} icon={faLocationDot} />
-            Nguyen Van A
+          <div className="flex items-center gap-x-3">
+            <MailOutlined style={{ fontSize: 25 }} />
+            {isOwner ? (
+              <CustomInput
+                name="name"
+                initialValue={userEmail}
+                onEnter={() => {}}
+              />
+            ) : (
+              <p>{userEmail}</p>
+            )}
           </div>
-          <div className="flex items-center">
-            <FontAwesomeIcon width={20} icon={faLocationDot} />
-            14 - Doan Uan - Khue My - NHS - DN
+          <div className="flex items-center gap-x-3">
+            <RiseOutlined style={{ fontSize: 25 }} />
+            {isOwner ? (
+              <CustomInput
+                name="name"
+                initialValue={userAddress}
+                onEnter={() => {}}
+              />
+            ) : (
+              <p>{userAddress}</p>
+            )}
           </div>
         </div>
       </div>

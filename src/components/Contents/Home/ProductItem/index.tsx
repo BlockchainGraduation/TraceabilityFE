@@ -7,7 +7,16 @@ import {
   SettingOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
-import { Avatar, Card, Image, Space, Statistic, Tag, Typography } from 'antd';
+import {
+  Avatar,
+  Card,
+  ConfigProvider,
+  Image,
+  Space,
+  Statistic,
+  Tag,
+  Typography,
+} from 'antd';
 import React from 'react';
 import Link from 'next/link';
 
@@ -17,17 +26,19 @@ interface Props {
   productName: string;
   productImg: string;
   productId: string;
-  ownerName: string;
-  ownerImg: string;
-  role: string;
+  ownerName?: string;
+  ownerImg?: string;
+  role?: string;
   likeQuantity: number;
   messageQuantity: number;
   buyerQuantity: number;
+  price: number;
+  quantity: number;
 }
 
 export default function ProductItem(props: Props) {
   return (
-    <div className="w-fit">
+    <div data-aos="flip-right" className="w-fit">
       <Card
         hoverable
         style={{ width: 300 }}
@@ -66,13 +77,41 @@ export default function ProductItem(props: Props) {
       >
         <Link href={`/product/${props.productId}`}>
           <Meta
-            avatar={<Avatar src={props.ownerImg} />}
-            title={<Meta title={props.productName} />}
+            // avatar={<Avatar size={50} src={props.ownerImg} />}
+            title={
+              props.ownerName ||
+              props.ownerImg ||
+              (props.role && (
+                <div>
+                  <Meta className="text-center " title={props.productName} />
+                  <div className="flex mt-[10px] items-center">
+                    <Avatar size={50} src={props.ownerImg} />
+                    <div className="ml-[10px]">
+                      <p className="font-normal text-xs mr-[10px]">
+                        {props.ownerName}
+                      </p>
+                      <Tag className="font-light">{props.role}</Tag>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
             description={
-              <Space direction={'vertical'}>
-                <Typography.Text italic>{props.ownerName}</Typography.Text>
-                <Tag>{props.role}</Tag>
-              </Space>
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Statistic: {
+                      contentFontSize: 20,
+                      // titleFontSize: 12,
+                    },
+                  },
+                }}
+              >
+                <div className="flex justify-around">
+                  <Statistic title="Quantity" value={props.quantity} />
+                  <Statistic title="Price" suffix={'VND'} value={props.price} />
+                </div>
+              </ConfigProvider>
             }
           />
         </Link>

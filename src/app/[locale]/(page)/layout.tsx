@@ -14,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function LocaleLayout({ children }: { children: ReactNode }) {
-  return <div className="py-[100px]">{children}</div>;
+  return <div className="pt-[60px]">{children}</div>;
 }

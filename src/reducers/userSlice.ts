@@ -2,33 +2,33 @@ import { Action, PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Auth {
   logged: boolean;
-  user: {};
+  user: User;
 }
-interface User {
+export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
   username: string;
   email: string;
+  avatar: string;
+  full_name: string;
+  birthday: string;
   phone: string;
-  image: string;
-  walletAddress: string;
-  role: string;
-  geographicalAddress: string;
-  isActive: boolean;
+  address_wallet: string;
+  address_real: string;
+  is_active: boolean;
+  system_role: string;
 }
 export const initialUser: User = {
-  id: '1',
-  firstName: '',
-  lastName: '',
-  username: 'Trung',
-  email: '',
-  phone: '',
-  image: '',
-  walletAddress: '',
-  role: '',
-  geographicalAddress: '',
-  isActive: false,
+  id: 'string',
+  username: 'string',
+  email: 'string',
+  avatar: 'string',
+  full_name: 'string',
+  birthday: 'string',
+  phone: 'string',
+  address_wallet: 'string',
+  address_real: 'string',
+  is_active: false,
+  system_role: 'string',
 };
 const initialAuth: Auth = {
   logged: false,
@@ -41,16 +41,19 @@ export const userSlice = createSlice({
   reducers: {
     setLogin: (state, action: PayloadAction<Auth>) => {
       state.logged = true;
-      state.user = action.payload;
+      state.user = action.payload.user;
     },
     logOut: (state) => {
       state.logged = false;
       state.user = initialUser;
     },
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+    },
   },
 });
 
 const userReducer = userSlice.reducer;
-export const { setLogin, logOut } = userSlice.actions;
+export const { setLogin, logOut, setUser } = userSlice.actions;
 
 export default userReducer;
