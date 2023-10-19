@@ -2,7 +2,7 @@ import instanceAxios from '@/api/instanceAxios';
 import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
 import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
 import { useAppSelector } from '@/hooks';
-import fetchUpdateUser from '@/services/fetchUpdateUser';
+import fetchUpdateUser from '@/services/fetchUpdate';
 import staticVariables from '@/static';
 import { PlusOutlined } from '@ant-design/icons';
 import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';

@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/hooks';
 import { User, setUser } from '@/reducers/userSlice';
-import fetchUpdateUser from '@/services/fetchUpdateUser';
+import fetchUpdateUser from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
 import { FocusEvent, memo } from 'react';

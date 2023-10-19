@@ -3,7 +3,7 @@ import instanceAxios from '@/api/instanceAxios';
 const fetchUpdate = async (
   url: string,
   data: object,
-  onSucces: (res?: any) => void,
+  onSucces?: (res?: any) => void,
   onFailed?: (res?: any) => void,
   onFinally?: () => void
 ) => {

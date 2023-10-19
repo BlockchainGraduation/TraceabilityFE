@@ -1,5 +1,6 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
+import fetchUpdate from '@/services/fetchUpdate';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   faCircleXmark,
@@ -30,6 +31,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 interface DataType {
   key: React.Key;
   index: number;
+  id: string;
   name: string;
   quantity: number;
   price: number;
@@ -59,6 +61,7 @@ export default function ProductCMS() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [totalProduct, setTotalProduct] = useState(0);
   const [listProduct, setListProduct] = useState<DataType[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [fileAvartar, setFileAvartar] = useState<UploadFile[]>([]);
@@ -75,8 +78,9 @@ export default function ProductCMS() {
         )
         .then((res) => {
           let newProducts: DataType[] = [];
+          setTotalProduct(res.data.data[0]);
           [...res.data.data[1]].map((item, index) => {
-            return newProducts.push({ ...item, key: index + 1 });
+            return newProducts.push({ ...item, key: skip * limit + index + 1 });
           });
           setListProduct(newProducts);
         })
@@ -128,6 +132,38 @@ export default function ProductCMS() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  const fetchCreateMarket = async (productId: string) => {
+    await instanceAxios
+      .post(`marketplace/create?product_id=${productId}`)
+      .then((res) => {
+        notification.success({
+          message: 'Thông báo',
+          description: 'Tạo market thành công',
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: 'Thông báo',
+          description: 'Tạo market thất bại',
+        });
+      });
+  };
+  const fetchUpdateProductStatus = async (
+    productId: string,
+    status: string
+  ) => {
+    await instanceAxios
+      .put(`product/${productId}/status?product_status=${status}`)
+      .then((res) => {
+        console.log(res.data);
+        notification.success({
+          message: 'Thông báo',
+          description: 'Đổi trạng thái thành công',
+        });
+      })
+      .catch((err) => {});
+  };
 
   const onFinish = async (e: FormType) => {
     let formData = new FormData();
@@ -212,7 +248,11 @@ export default function ProductCMS() {
             {record.product_status === 'PUBLISH' ? (
               <FontAwesomeIcon icon={faLock} style={{ color: '#a87171' }} />
             ) : (
-              <FontAwesomeIcon icon={faLockOpen} style={{ color: '#27913c' }} />
+              <FontAwesomeIcon
+                onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
+                icon={faLockOpen}
+                style={{ color: '#27913c' }}
+              />
             )}
           </Col>
           <Col span={3}>
@@ -354,7 +394,12 @@ export default function ProductCMS() {
         <Table
           columns={columns}
           dataSource={listProduct}
-          pagination={false}
+          // pagination={false}
+          pagination={{
+            onChange: (e) => setSkip(e - 1),
+            pageSize: 10,
+            total: totalProduct,
+          }}
           scroll={{ y: 340 }}
         />
       </div>
