@@ -16,7 +16,14 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import { deleteCookie, getCookie } from 'cookies-next';
-import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Login from './Login';
 import Register from './Register';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
@@ -37,6 +44,7 @@ import SearchItem from './SearchItem';
 import useOutsideAlerter from '@/services/eventOutside';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
+import ForgetForm from './Register/ForgetForm';
 
 export default memo(function Header() {
   const [user, setUser] = useState(false);
@@ -80,17 +88,15 @@ export default memo(function Header() {
     }
   }, [showFormLogin]);
 
-  useEffect(() => {
-    const fethGetUser = async () => {
-      await instanceAxios
-        .get('user/me')
-        .then((res) => {
-          dispatch(setLogin({ logged: true, user: res.data.data }));
-        })
-        .catch((err) => console.log(err));
-    };
-    fethGetUser();
+  const fethGetUser = useCallback(async () => {
+    await instanceAxios
+      .get('user/me')
+      .then((res) => {
+        dispatch(setLogin({ logged: true, user: res.data.data }));
+      })
+      .catch((err) => console.log(err));
   }, [dispatch]);
+  useSWR('user/me', fethGetUser);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -280,8 +286,9 @@ export default memo(function Header() {
           {currentForm === 'REGISTER' && (
             <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
           )}
+          {currentForm === 'FORGET' && <ForgetForm onFinishOTP={onFinishOTP} />}
           <div className="m-auto flex justify-around	max-w-[300px]">
-            <p>Forget?</p>
+            <p onClick={() => setCurrentForm('FORGET')}>Forget?</p>
             <p
               onClick={() =>
                 currentForm === 'LOGIN'

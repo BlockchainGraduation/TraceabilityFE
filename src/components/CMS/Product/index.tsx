@@ -253,14 +253,14 @@ export default function ProductCMS() {
             {record.product_status === 'PUBLISH' ? (
               <FontAwesomeIcon
                 onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                icon={faLock}
-                style={{ color: '#a87171' }}
+                icon={faLockOpen}
+                style={{ color: '#27913c' }}
               />
             ) : (
               <FontAwesomeIcon
                 onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                icon={faLockOpen}
-                style={{ color: '#27913c' }}
+                icon={faLock}
+                style={{ color: '#a87171' }}
               />
             )}
           </Col>

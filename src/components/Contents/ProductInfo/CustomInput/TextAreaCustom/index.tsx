@@ -1,6 +1,10 @@
-import { EditTwoTone } from '@ant-design/icons';
-import { Input, InputRef } from 'antd';
-import { TextAreaRef } from 'antd/es/input/TextArea';
+import { useAppDispatch } from '@/hooks';
+import { User, setUser } from '@/reducers/userSlice';
+import fetchUpdateUser from '@/services/fetchUpdate';
+import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
+import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
+import { TextAreaProps } from 'antd/es/input';
+import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
   KeyboardEvent,
@@ -11,82 +15,166 @@ import React, {
   ChangeEvent,
   ChangeEventHandler,
   KeyboardEventHandler,
+  FocusEventHandler,
 } from 'react';
-import { ClassElement } from 'typescript';
-
-export default function TextAreaCustom({
+export default memo(function TextAreaCustom({
   name,
   initialValue,
   className,
+  input,
   classNameLabel,
-  onBlur,
   onKeyDown,
-  onEnter,
-  onChange,
-}: {
+}: // onChange = () => {},
+{
   name: string;
   initialValue: string;
   className?: string;
   classNameLabel?: string;
-  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
-  onBlur?: () => void;
-  onEnter?: () => void;
+  input?: TextAreaProps;
   onKeyDown?: KeyboardEventHandler;
+  // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
+  const [openModalConfirm, setOpenModalConfirm] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const ref = useRef<TextAreaRef>(null);
+  const ref = useRef<InputRef>(null);
 
-  useEffect(() => {
-    const handleOutSideClick = (event: any) => {
-      if (!ref.current?.resizableTextArea?.textArea?.contains?.(event.target)) {
+  // useEffect(() => {
+  //   const handleOutSideClick = async (event: any) => {
+  //     if (!ref.current?.input?.contains?.(event.target)) {
+  //       setEditAble(false);
+  //     }
+  //   };
+
+  //   window.addEventListener('mousedown', handleOutSideClick);
+
+  //   return () => {
+  //     window.removeEventListener('mousedown', handleOutSideClick);
+  //   };
+  // }, [editAble]);
+  const fetchUpdate = async () => {
+    await fetchUpdateUser(
+      'user/update_me',
+      { [name]: value },
+      (res) => {
+        console.log(res);
         setEditAble(false);
+        setOpenModalConfirm(false);
+        dispatch(setUser(res.data.data as User));
+        notification.success({
+          message: 'Success',
+          description: 'Cập nhật dữ liệu thành công',
+        });
+      },
+      (err) => {
+        console.log(err);
+        // notification.error({
+        //   message: 'Error',
+        //   description: 'Cập nhật dữ liệu thất bại',
+        // });
       }
-    };
+    );
+  };
 
-    window.addEventListener('mousedown', handleOutSideClick);
+  const handleBlur = async () => {
+    if (value === initialValue) {
+      setEditAble(false);
+    } else {
+      setOpenModalConfirm(true);
+    }
 
-    return () => {
-      window.removeEventListener('mousedown', handleOutSideClick);
-    };
-  }, []);
+    // if (value === initialValue) {
+    //   setEditAble(false);
+    // } else {
+    //   await fetchUpdateUser(
+    //     { full_name: value },
+    //     (res) => {
+    //       console.log(res);
+    //       setEditAble(false);
+    //       // setValue(e.target.value);
+    //     },
+    //     (err) => {
+    //       console.log(err);
+    //     }
+    //   );
+    // }
+  };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange?.(e);
+    // onChange?.(e);
     setValue(e.target.value);
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = async (e: KeyboardEvent) => {
     onKeyDown?.(e);
     if (e.key === 'Enter') {
-      onEnter?.();
-      setEditAble(false);
+      if (value === initialValue) {
+        setEditAble(false);
+      } else {
+        setOpenModalConfirm(true);
+      }
     }
   };
   return (
-    <div className={`flex item-center ${className}`}>
+    <div className={`flex w-fit h-fit item-center ${className}`}>
       {editAble ? (
         <Input.TextArea
+          {...input}
           ref={ref}
           autoFocus
-          onBlur={onBlur}
           onChange={handleChange}
           value={value}
-          autoSize
+          defaultValue={value}
           onKeyDown={(e) => handleKeyDown(e)}
+          onBlur={handleBlur}
+          onEnded={() => alert('OK')}
         />
       ) : (
         <p
+          defaultValue={initialValue}
           className={`max-w-[100%] text-ellipsis overflow-hidden ${classNameLabel}`}
         >
           {value}
         </p>
       )}
+      <Modal
+        title={
+          <div>
+            <WarningTwoTone className="mr-[10px]" />
+            Xác nhận thay đổi dữ liệu
+          </div>
+        }
+        centered
+        open={openModalConfirm}
+        // onOk={fetchUpdate}
+        onCancel={() => {
+          setOpenModalConfirm(false), setValue(initialValue);
+        }}
+        // cancelText="Huỷ"
+        // okText="OK"
+        footer={[
+          <Button onClick={fetchUpdate} key={0}>
+            Xác nhận
+          </Button>,
+          <Button
+            onClick={() => {
+              setOpenModalConfirm(false), setValue(initialValue);
+            }}
+            key={1}
+          >
+            Hủy
+          </Button>,
+        ]}
+      >
+        Dữ liệu của bạn vừa nhập có sự thay đổi đối với dữ liệu gốc. Xác nhận
+        thay đổi!!!!
+      </Modal>
       <EditTwoTone
         className="px-[10px]"
         onClick={() => setEditAble(!editAble)}
       />
     </div>
   );
-}
+});

@@ -113,7 +113,7 @@ export default function HomePage() {
   return (
     <div className="w-full px-[50px]">
       <div className="w-full flex items-center justify-around">
-        <div className="w-1/2">
+        <div data-aos="fade-right" className="w-1/2">
           <Carousel
             className=" rounded-[10px] overflow-hidden h-[400px]"
             autoplay

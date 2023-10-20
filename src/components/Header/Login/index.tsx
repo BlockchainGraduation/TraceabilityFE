@@ -3,6 +3,7 @@ import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
 import { User, initialUser, setLogin } from '@/reducers/userSlice';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, notification } from 'antd';
 import { setCookie } from 'cookies-next';
 import { title } from 'process';
@@ -36,7 +37,12 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
         requireLogin();
         dispatch(nextEvent({ requireLogin: () => {} }));
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {
+        notification.error({
+          message: 'Thông báo',
+          description: `Đăng nhập thất bại`,
+        });
+      })
       .finally(() => {
         mutate('marketplace/list');
       });
@@ -65,7 +71,8 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
         Đăng nhập
       </p>
       <Form
-        name="basic"
+        name="normal_login"
+        className="login-form"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 16 }}
         // style={{ maxWidth: 600 }}
@@ -79,7 +86,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           name="email"
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Input />
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -87,7 +94,9 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           name="password"
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
-          <Input.Password />
+          <Input.Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+          />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 10, span: 16 }}>

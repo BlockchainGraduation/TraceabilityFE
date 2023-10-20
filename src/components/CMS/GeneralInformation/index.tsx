@@ -28,7 +28,9 @@ import {
   UploadFile,
 } from 'antd';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+// import Image from 'next/image';
 import React, { useState } from 'react';
+import { useSWRConfig } from 'swr';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -45,6 +47,7 @@ export default function GeneralInformation() {
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const currentUser = useAppSelector((state) => state.user.user);
+  const { mutate } = useSWRConfig();
 
   const contentStyle: React.CSSProperties = {
     height: '300px',
@@ -78,10 +81,11 @@ export default function GeneralInformation() {
     // URL.createObjectURL(info.file.originFileObj as RcFile);
     formData.append('avatar', info.file.originFileObj as Blob, info.file.name);
     await instanceAxios
-      .put('user/update_me', {
-        avatar: formData,
+      .put('user/avatar', formData)
+      .then((res) => {
+        console.log(res.data);
+        mutate('user/me');
       })
-      .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
   };
   const uploadButton = (
@@ -94,7 +98,12 @@ export default function GeneralInformation() {
     <div>
       <div className="flex">
         <div className="relative mr-[50px]">
-          <Avatar size={300} src={staticVariables.logo.src} />
+          <Avatar
+            // className="rounded-[50%] object-cover"
+            alt=""
+            size={300}
+            src={currentUser.avatar}
+          />
           <Upload
             accept="image/*,.jpg,.png,.jpeg"
             showUploadList={false}
@@ -130,6 +139,25 @@ export default function GeneralInformation() {
               </Col>
               <Col>
                 <InputCustom name="as" initialValue="14-Khuy My  - NHS - DN" />
+              </Col>
+            </Row>
+            <Row className="w-full flex items-center">
+              <Col span={3}>
+                <FontAwesomeIcon
+                  className="mr-[10px]"
+                  size={'2xl'}
+                  icon={faLocationDot}
+                  style={{ color: '#2754b0' }}
+                />
+              </Col>
+              <Col>
+                <InputCustom
+                  input={{
+                    type: 'date',
+                  }}
+                  name="birthday"
+                  initialValue={currentUser.birthday}
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -253,7 +281,10 @@ export default function GeneralInformation() {
         </div>
         <div className="w-2/5">
           <Typography.Title level={4}>Giới thiệu bản thân</Typography.Title>
-          <TextAreaCustom name="asdd" initialValue="asdasdasdasdadadasda" />
+          <TextAreaCustom
+            name="description"
+            initialValue="asdasdasdasdadadasda"
+          />
         </div>
       </div>
     </div>
