@@ -47,8 +47,11 @@ export const userSlice = createSlice({
       state.logged = false;
       state.user = initialUser;
     },
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    // setUser: (state, action: PayloadAction<User>) => {
+    //   state.user = action.payload ;
+    // },
+    setUser: (state, action: PayloadAction<Object>) => {
+      state.user = { ...state.user, ...action.payload };
     },
   },
 });

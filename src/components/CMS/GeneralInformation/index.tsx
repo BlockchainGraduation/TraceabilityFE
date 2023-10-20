@@ -2,9 +2,10 @@ import instanceAxios from '@/api/instanceAxios';
 import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
 import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
 import { useAppSelector } from '@/hooks';
+import { setUser } from '@/reducers/userSlice';
 import fetchUpdateUser from '@/services/fetchUpdate';
 import staticVariables from '@/static';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 import {
   faEnvelope,
@@ -22,14 +23,17 @@ import {
   Image,
   Modal,
   Row,
+  Spin,
   Tag,
   Typography,
   Upload,
   UploadFile,
+  notification,
 } from 'antd';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 // import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useSWRConfig } from 'swr';
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -43,10 +47,12 @@ const getBase64 = (file: RcFile): Promise<string> =>
 export default function GeneralInformation() {
   const [showModalUpload, setShowModalUpload] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const currentUser = useAppSelector((state) => state.user.user);
+  const dispatch = useDispatch();
   const { mutate } = useSWRConfig();
 
   const contentStyle: React.CSSProperties = {
@@ -74,20 +80,39 @@ export default function GeneralInformation() {
     info.file.status = 'done';
     setFileList(info.fileList);
   };
-  const handleChangeAvatar = async (info: UploadChangeParam<UploadFile>) => {
-    info.file.status = 'done';
-    let formData = new FormData();
-    let data = info.file;
-    // URL.createObjectURL(info.file.originFileObj as RcFile);
-    formData.append('avatar', info.file.originFileObj as Blob, info.file.name);
-    await instanceAxios
-      .put('user/avatar', formData)
-      .then((res) => {
-        console.log(res.data);
-        mutate('user/me');
-      })
-      .catch((err) => console.log(err));
-  };
+  // const fetchUpdateAvatar = () => {};
+  const handleChangeAvatar = useCallback(
+    async (info: UploadChangeParam<UploadFile>) => {
+      setLoadingImage(true);
+      info.file.status = 'done';
+      let formData = new FormData();
+      let data = info.file;
+      // URL.createObjectURL(info.file.originFileObj as RcFile);
+      formData.append(
+        'avatar',
+        info.file.originFileObj as Blob,
+        info.file.name
+      );
+      await instanceAxios
+        .put('user/avatar', formData)
+        .then((res) => {
+          console.log(res.data);
+          dispatch(
+            setUser({
+              avatar: res.data,
+            })
+          );
+          // mutate('user/me');
+          notification.success({
+            message: 'Thông báo',
+            description: 'Cập nhật thành công',
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoadingImage(false));
+    },
+    [dispatch]
+  );
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -98,23 +123,26 @@ export default function GeneralInformation() {
     <div>
       <div className="flex">
         <div className="relative mr-[50px]">
-          <Avatar
-            // className="rounded-[50%] object-cover"
-            alt=""
-            size={300}
-            src={currentUser.avatar}
-          />
-          <Upload
-            accept="image/*,.jpg,.png,.jpeg"
-            showUploadList={false}
-            onChange={handleChangeAvatar}
-          >
-            <FontAwesomeIcon
-              className="absolute top-[10%] right-[10%]"
-              icon={faPenToSquare}
-              style={{ color: '#295094' }}
+          <Spin spinning={loadingImage}>
+            <Avatar
+              // className="rounded-[50%] object-cover"
+              icon={<UserOutlined />}
+              alt=""
+              size={300}
+              src={currentUser.avatar}
             />
-          </Upload>
+            <Upload
+              accept="image/*,.jpg,.png,.jpeg"
+              showUploadList={false}
+              onChange={handleChangeAvatar}
+            >
+              <FontAwesomeIcon
+                className="absolute top-[10%] right-[10%]"
+                icon={faPenToSquare}
+                style={{ color: '#295094' }}
+              />
+            </Upload>
+          </Spin>
         </div>
         <div className=" flex w-1/2 justify-between">
           <div className="flex w-1/2 flex-col gap-y-4">
