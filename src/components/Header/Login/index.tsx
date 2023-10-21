@@ -86,7 +86,13 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           name="email"
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} />
+          <Input
+            // style={{
+            //   boxShadow: `rgba(133, 189, 215, 0.8784313725) 0px 12px 10px -8px`,
+            // }}
+            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
+            prefix={<UserOutlined className="site-form-item-icon" />}
+          />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -95,6 +101,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password
+            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
             prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>

@@ -1,6 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import fetchUpdate from '@/services/fetchUpdate';
+import useLogin from '@/services/requireLogin';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   faCircleXmark,
@@ -69,15 +70,17 @@ export default function ProductCMS() {
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
+  const [hasChange, setHasChange] = useState(0);
   const currentUser = useAppSelector((state) => state.user.user);
   const { mutate } = useSWRConfig();
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
       .get(
-        `product/me?skip=${skip}&limit=${limit}&${name ? 'name=${name}' : ''}`
+        `product/me?skip=${skip}&limit=${limit}${name ? '&name=${name}' : ''}`
       )
       .then((res) => {
+        console.log(res.data);
         // let newProducts: DataType[] = [];
         // [...res.data.data[1]].map((item, index) => {
         //   return newProducts.push({ ...item, key: skip * limit + index + 1 });
@@ -94,7 +97,10 @@ export default function ProductCMS() {
       });
   }, [limit, name, skip]);
 
-  const { error, isLoading } = useSWR('product/me', fetchProductMe);
+  useEffect(() => {
+    fetchProductMe();
+  }, [fetchProductMe, limit, name, skip, hasChange]);
+  // const { error, isLoading } = useSWR('product/me', fetchProductMe);
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -161,6 +167,7 @@ export default function ProductCMS() {
     await instanceAxios
       .put(`product/${productId}/status?product_status=${status}`)
       .then((res) => {
+        setHasChange(hasChange + 1);
         notification.success({
           message: 'Thông báo',
           description: `Đổi trạng thái thành công --> ${status}`,
@@ -405,9 +412,12 @@ export default function ProductCMS() {
           dataSource={listProduct}
           // pagination={false}
           pagination={{
-            onChange: (e) => setSkip(e - 1),
+            onChange: (e) => {
+              setSkip(e - 1);
+            },
             pageSize: 10,
             total: totalProduct,
+            position: ['bottomCenter'],
           }}
           scroll={{ y: 340 }}
         />

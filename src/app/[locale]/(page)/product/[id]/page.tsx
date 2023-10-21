@@ -49,7 +49,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import type { UploadChangeParam } from 'antd/es/upload';
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import { ColumnsType } from 'antd/es/table';
-import { checkoutForm } from '@/services/checkoutForm';
+import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -223,11 +223,16 @@ export default function ProductInfo() {
               open={showModalPay}
               footer={[]}
             >
-              {checkoutForm(
+              <CheckoutForm
+                form={{ onFinish: (e) => console.log(e) }}
+                initialUser="Trung"
+                initialPhone="123123123123"
+              />
+              {/* {checkoutForm(
                 { onFinish: (e) => console.log(e) },
                 'Trung',
                 '12312312312'
-              )}
+              )} */}
             </Modal>
           </div>
         </div>

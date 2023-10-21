@@ -16,6 +16,7 @@ import {
   Typography,
 } from 'antd';
 import React, { HTMLAttributes, useState } from 'react';
+import { CheckoutForm } from '../../common/CheckoutForm';
 
 export default function ProductTodayItem({
   props,
@@ -38,7 +39,7 @@ export default function ProductTodayItem({
   };
 
   return (
-    <div {...props} className="flex p-[20px] h-fit justify-between w-[600px]">
+    <div {...props} className="flex p-[20px] h-fit justify-between w-[600px] ">
       <Image
         className="object-cover rounded"
         alt=""
@@ -52,7 +53,7 @@ export default function ProductTodayItem({
           Sản phẩm của<p className="text-[#313064] font-medium">SimpRaiden</p>
         </div>
         <div className="flex justify-between pr-[50px]">
-          <Statistic title="Sold " value={112893} />
+          <Statistic title="Sold" value={112893} />
           <Statistic title="Transaction" value={112893} />
         </div>
         <div className="flex items-center mt-[10px]">
@@ -63,7 +64,7 @@ export default function ProductTodayItem({
               //   ? setShowModalPay(true)
               //   : login(() => setShowModalPay(true));
             }}
-            className="w-full block "
+            className="w-full block shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
           >
             Buy now
           </Button>
@@ -78,7 +79,7 @@ export default function ProductTodayItem({
               // );
               // dispatch(setshowFormLogin({ showFormLogin: true }));
             }}
-            className="flex items-center"
+            className="flex items-center shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
           >
             <ShoppingCartOutlined />
           </Button>
@@ -121,7 +122,8 @@ export default function ProductTodayItem({
             <Typography.Title className="border-b-[1px] my-[20px]" level={4}>
               Thông tin đặt hàng
             </Typography.Title>
-            <Form
+            <CheckoutForm />
+            {/* <Form
               className="mt-[20px]"
               labelCol={{ span: 10 }}
               wrapperCol={{ span: 14 }}
@@ -167,7 +169,7 @@ export default function ProductTodayItem({
                   },
                 ]}
               >
-                <Input />
+                <Input  />
               </Form.Item>
               <Form.Item
                 label="Địa chỉ nhận hàng"
@@ -184,7 +186,7 @@ export default function ProductTodayItem({
               <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
                 <Button htmlType="submit">Submit</Button>
               </Form.Item>
-            </Form>
+            </Form> */}
           </div>
         </Modal>
       </div>

@@ -26,6 +26,7 @@ import React, {
 } from 'react';
 import Login from './Login';
 import Register from './Register';
+import { useDebounce, useOnClickOutside } from 'usehooks-ts';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
@@ -41,7 +42,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
-import useOutsideAlerter from '@/services/eventOutside';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
@@ -54,6 +54,9 @@ export default memo(function Header() {
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
+  const [valueSearch, setValueSearch] = useState('');
+  const [resultSearch, setResultSearch] = useState([]);
+  const debouncedValue = useDebounce<string>(valueSearch, 500);
 
   const router = useRouter();
   const t = useTranslations('header');
@@ -98,6 +101,22 @@ export default memo(function Header() {
   }, [dispatch]);
   useSWR('user/me', fethGetUser);
 
+  const fethMarketSearch = useCallback(async () => {
+    await instanceAxios
+      .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
+      .then((res) => {
+        setResultSearch(res.data.data.list_marketplace);
+        console.log(res);
+        // dispatch(setLogin({ logged: true, user: res.data.data }));
+      })
+      .catch((err) => console.log(err));
+  }, [debouncedValue]);
+  useEffect(() => {
+    if (debouncedValue) {
+      fethMarketSearch();
+    }
+  }, [debouncedValue, fethMarketSearch]);
+
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
   };
@@ -119,7 +138,7 @@ export default memo(function Header() {
     setUser(logged);
   }, [logged]);
   const ref = useRef(null);
-  useOutsideAlerter(ref, () => setShowSearchItems(false));
+  useOnClickOutside(ref, () => setShowSearchItems(false));
   const items: MenuProps['items'] = [
     {
       label: (
@@ -204,16 +223,28 @@ export default memo(function Header() {
       </div>
       <div className="relative w-1/3">
         <Popover
-          title="Danh sach tim kiem"
+          title={
+            <p className=" w-full truncate">
+              {`Kết quả tìm kiếm: ${debouncedValue}`}
+            </p>
+          }
           className="w-full"
           content={
-            <div ref={ref}>
-              {[...Array(5)].map((_, index) => (
-                <SearchItem
-                  onClick={() => setShowSearchItems(false)}
-                  key={index}
-                />
-              ))}
+            <div ref={ref} className="w-full ">
+              {resultSearch.length ? (
+                resultSearch.map((item: any, index) => (
+                  <SearchItem
+                    parent={{ onClick: () => setShowSearchItems(false) }}
+                    key={index}
+                    productName={item.product.name}
+                    owner={item.product.user.username}
+                    quantity={item.product.quantity}
+                    price={item.product.price}
+                  />
+                ))
+              ) : (
+                <p className="text-center"> Không tìm thấy dữ liệu</p>
+              )}
             </div>
           }
           open={showSearchItems}
@@ -222,10 +253,20 @@ export default memo(function Header() {
         >
           <input
             // tabIndex={1}
-            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900"
-            placeholder="Search Product..."
-            onFocus={() => setShowSearchItems(true)}
-            // onBlur={() => setShowSearchItems(false)}
+            maxLength={50}
+            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900 "
+            placeholder="Search Product...(Max 50 char)"
+            onChange={(e) => {
+              setValueSearch(e.target.value);
+              setShowSearchItems(true);
+            }}
+            onFocus={(e) => {
+              if (!e.target.value) {
+                return;
+              }
+              setShowSearchItems(true);
+              fethMarketSearch();
+            }}
           />
         </Popover>
       </div>
@@ -274,7 +315,6 @@ export default memo(function Header() {
         <Modal
           open={showModal}
           // width={currentForm === 'REGISTER' ? 1000 : 520}
-          className={``}
           centered
           onCancel={() => {
             setShowModal(false);
@@ -287,7 +327,7 @@ export default memo(function Header() {
             <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
           )}
           {currentForm === 'FORGET' && <ForgetForm onFinishOTP={onFinishOTP} />}
-          <div className="m-auto flex justify-around	max-w-[300px]">
+          <div className=" m-auto flex justify-around	max-w-[300px]">
             <p onClick={() => setCurrentForm('FORGET')}>Forget?</p>
             <p
               onClick={() =>

@@ -253,7 +253,7 @@ export default function UserInfo() {
             <p className="text-center py-[50px]">Them san pham</p>
             <CreateProductForm />
           </Modal>
-          <div className="flex items-center justify-center px-[50px] flex-wrap gap-20	">
+          <div className="flex items-center justify-center flex-wrap gap-10	">
             {listProduct.map((item: any, index) => (
               <ProductItem
                 key={index}

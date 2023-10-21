@@ -113,9 +113,9 @@ export default function HomePage() {
   return (
     <div className="w-full px-[50px]">
       <div className="w-full flex items-center justify-around">
-        <div data-aos="fade-right" className="w-1/2">
+        <div data-aos="fade-right" className="w-1/2 drop-shadow-lg">
           <Carousel
-            className=" rounded-[10px] overflow-hidden h-[400px]"
+            className=" shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)] rounded-[10px] overflow-hidden h-[400px]"
             autoplay
           >
             <Image

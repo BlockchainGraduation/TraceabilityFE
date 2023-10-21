@@ -6,7 +6,7 @@ export default function TopBanner() {
   return (
     <div
       data-aos="fade-left"
-      className="w-[700px] flex items-center rounded bg-[#D0EBD1] p-[20px] pr-[40px] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+      className="w-[700px] flex items-center rounded bg-[#D0EBD1] p-[20px] pr-[40px] shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
     >
       <div className="w-1/2 border-r-2 border-stone-100">
         <Typography.Title level={2}>1st Fammer</Typography.Title>

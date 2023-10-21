@@ -103,10 +103,10 @@ export default function GeneralInformation() {
             })
           );
           // mutate('user/me');
-          notification.success({
-            message: 'Thông báo',
-            description: 'Cập nhật thành công',
-          });
+          // notification.success({
+          //   message: 'Thông báo',
+          //   description: 'Cập nhật thành công',
+          // });
         })
         .catch((err) => console.log(err))
         .finally(() => setLoadingImage(false));

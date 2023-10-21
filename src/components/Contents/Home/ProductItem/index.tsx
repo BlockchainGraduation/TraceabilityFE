@@ -19,6 +19,7 @@ import {
 } from 'antd';
 import React from 'react';
 import Link from 'next/link';
+import useLogin from '@/services/requireLogin';
 
 const { Meta } = Card;
 
@@ -37,8 +38,9 @@ interface Props {
 }
 
 export default function ProductItem(props: Props) {
+  const { login } = useLogin();
   return (
-    <div data-aos="flip-right" className="w-fit">
+    <div data-aos="flip-right" className="w-fit ">
       <Card
         hoverable
         style={{ width: 300 }}
@@ -54,36 +56,38 @@ export default function ProductItem(props: Props) {
           </div>
         }
         actions={[
-          <div onClick={() => alert('OK')} key="like">
+          <div onClick={() => login()} key="like">
             <Statistic
               valueStyle={{ fontSize: '10px' }}
               title={<LikeOutlined />}
               value={`112893`}
             />
           </div>,
-          <Statistic
-            key="message"
-            valueStyle={{ fontSize: '10px' }}
-            title={<MessageOutlined />}
-            value={`${props.likeQuantity} Messenger`}
-          />,
-          <Statistic
-            key="cart"
-            valueStyle={{ fontSize: '10px' }}
-            title={<ShoppingCartOutlined />}
-            value={`${props.buyerQuantity} Buyer`}
-          />,
+          <div key="message" onClick={() => login()}>
+            <Statistic
+              valueStyle={{ fontSize: '10px' }}
+              title={<MessageOutlined />}
+              value={`${props.likeQuantity} Messenger`}
+            />
+          </div>,
+          <div key="cart" onClick={() => login()}>
+            <Statistic
+              valueStyle={{ fontSize: '10px' }}
+              title={<ShoppingCartOutlined />}
+              value={`${props.buyerQuantity} Buyer`}
+            />
+          </div>,
         ]}
       >
         <Link href={`/product/${props.productId}`}>
           <Meta
             // avatar={<Avatar size={50} src={props.ownerImg} />}
             title={
-              props.ownerName ||
-              props.ownerImg ||
-              (props.role && (
-                <div>
-                  <Meta className="text-center " title={props.productName} />
+              <div>
+                <div className="mb-[15px]">
+                  <Meta className="text-center" title={props.productName} />
+                </div>
+                {props.ownerName || props.ownerImg || props.role ? (
                   <div className="flex mt-[10px] items-center">
                     <Avatar size={50} src={props.ownerImg} />
                     <div className="ml-[10px]">
@@ -93,8 +97,10 @@ export default function ProductItem(props: Props) {
                       <Tag className="font-light">{props.role}</Tag>
                     </div>
                   </div>
-                </div>
-              ))
+                ) : (
+                  ''
+                )}
+              </div>
             }
             description={
               <ConfigProvider
