@@ -1,5 +1,5 @@
 import staticVariables from '@/static';
-import { Avatar, Tag } from 'antd';
+import { Avatar, Tag, Typography } from 'antd';
 import React from 'react';
 
 export default function CommentItem({
@@ -17,12 +17,12 @@ export default function CommentItem({
     <div className="mb-[20px]">
       <div className="flex ">
         <Avatar src={userAvatar} />
-        <div className="flex ml-[10px] flex-col">
-          {userName}
+        <div className="flex ml-[10px] flex-col ">
+          <p className="font-medium">{userName}</p>
           <Tag className="w-fit">{userRole}</Tag>
         </div>
       </div>
-      <div className="max-w-[400px] w-fit p-[20px] ml-[40px] mt-[5px] bg-gray-200 rounded text-xs	drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+      <div className="max-w-[400px] w-fit p-[15px] rounded-bl-[10px] rounded-r-[10px] ml-[40px] mt-[5px] bg-gray-200 text-xs drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
         {content}
       </div>
     </div>

@@ -97,12 +97,12 @@ export default function GeneralInformation() {
         .put('user/avatar', formData)
         .then((res) => {
           console.log(res.data);
-          dispatch(
-            setUser({
-              avatar: res.data,
-            })
-          );
-          // mutate('user/me');
+          // dispatch(
+          //   setUser({
+          //     avatar: res.data,
+          //   })
+          // );
+          mutate('user/me');
           // notification.success({
           //   message: 'Thông báo',
           //   description: 'Cập nhật thành công',
@@ -111,7 +111,7 @@ export default function GeneralInformation() {
         .catch((err) => console.log(err))
         .finally(() => setLoadingImage(false));
     },
-    [dispatch]
+    [mutate]
   );
   const uploadButton = (
     <div>
