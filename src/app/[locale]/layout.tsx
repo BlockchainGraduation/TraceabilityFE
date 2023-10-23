@@ -10,7 +10,7 @@ export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'vi' }];
 }
 import { Roboto } from 'next/font/google';
-import { ConfigProvider, message } from 'antd';
+import { ConfigProvider, Spin, message } from 'antd';
 import theme from '@/theme/themeConfig';
 
 const roboto = Roboto({

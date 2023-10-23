@@ -11,15 +11,21 @@ import {
   Avatar,
   Card,
   ConfigProvider,
+  Empty,
   Image,
+  Modal,
   Space,
   Statistic,
   Tag,
   Typography,
 } from 'antd';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import useLogin from '@/services/requireLogin';
+import CommentItem from '../../ProductInfo/CommentItem';
+import CommentInput from '../../common/CommentInput';
+import instanceAxios from '@/api/instanceAxios';
+import useSWR from 'swr';
 
 const { Meta } = Card;
 
@@ -40,8 +46,34 @@ interface Props {
 
 export default function ProductItem(props: Props) {
   const { login } = useLogin();
+  const [openComment, setOpenComment] = useState(false);
+  const [commentList, setCommentList] = useState([]);
+  const [skip, setKkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const fetchDataComment = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `comments/list?marketplace_id=${props.marketId}&skip=${skip}&limit=${limit}`
+      )
+      .then((res) => {
+        setCommentList(res.data.data.list_comment);
+      })
+      .catch((err) => {
+        setCommentList([]);
+        console.log(err);
+      });
+  }, [limit, props.marketId, skip]);
+  const afterOpenChange = async (e: boolean) => {
+    if (e) {
+      fetchDataComment();
+    }
+  };
+  // useEffect(() => {
+  //   fetchDataComment();
+  // }, [fetchDataComment, limit, props.marketId, skip]);
+  // const { isLoading } = useSWR(``, fetchDataComment);
   return (
-    <div data-aos="flip-right" className="w-fit ">
+    <div data-aos="flip-right" className="w-fit">
       <Card
         hoverable
         style={{ width: 300 }}
@@ -64,7 +96,7 @@ export default function ProductItem(props: Props) {
               value={`112893`}
             />
           </div>,
-          <div key="message" onClick={() => login()}>
+          <div key="message" onClick={() => login(() => setOpenComment(true))}>
             <Statistic
               valueStyle={{ fontSize: '10px' }}
               title={<MessageOutlined />}
@@ -123,6 +155,26 @@ export default function ProductItem(props: Props) {
           />
         </Link>
       </Card>
+      <Modal
+        onCancel={() => setOpenComment(false)}
+        centered
+        title={'Bình luận về AA'}
+        open={openComment}
+        afterOpenChange={afterOpenChange}
+        footer={[]}
+      >
+        <div className="max-h-[500px] overflow-auto">
+          {commentList.length ? (
+            commentList.map((_, index) => <CommentItem key={index} />)
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_DEFAULT}
+              description={'Chưa có bình luận nào'}
+            />
+          )}
+        </div>
+        <CommentInput marketId={props.marketId || ''} />
+      </Modal>
     </div>
   );
 }

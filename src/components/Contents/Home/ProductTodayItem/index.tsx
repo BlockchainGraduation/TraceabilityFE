@@ -85,6 +85,7 @@ export default function ProductTodayItem({
           </Button>
         </div>
         <Modal
+          centered
           open={showModalPay}
           onCancel={() => setShowModalPay(false)}
           footer={[]}

@@ -324,19 +324,6 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
                     <CommentItem />
                     <CommentItem />
                   </div>
-                  <div className="flex mt-[20px]">
-                    <Avatar
-                      className="mr-[10px]"
-                      src={staticVariables.logoRaiden.src}
-                    />
-                    <Input />
-                    <Button className="flex mx-[10px] items-center">
-                      <SendOutlined
-                        style={{ color: '#366ece' }}
-                        className="text-xl text-green"
-                      />
-                    </Button>
-                  </div>
                 </div>
               )}
               {changePageRight === 'HISTORY' && (

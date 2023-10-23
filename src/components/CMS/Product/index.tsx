@@ -9,6 +9,7 @@ import {
   faLockOpen,
   faPenToSquare,
   faSquarePlus,
+  faStore,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -305,6 +306,14 @@ export default function ProductCMS() {
                   style={{ color: '#a87171' }}
                 />
               )}
+            </Col>
+            <Col span={3}>
+              <Popconfirm
+                title="Sure to open market ?"
+                onConfirm={() => fetchCreateMarket(record.id)}
+              >
+                <FontAwesomeIcon icon={faStore} style={{ color: '#65dd55' }} />
+              </Popconfirm>
             </Col>
             <Col span={3}>
               <Popconfirm

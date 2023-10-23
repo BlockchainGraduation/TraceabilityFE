@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import { User, setLogin } from '@/reducers/userSlice';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import { setCookie } from 'cookies-next';
 import { useState, useEffect } from 'react';
 import { useSWRConfig } from 'swr';
@@ -16,6 +16,7 @@ function useLogin() {
     if (logged) {
       return beforeLoginSuccess?.();
     } else {
+      message.info('Bạn cần phải đăng nhập!!!!');
       dispatch(
         nextEvent({
           requireLogin: () => beforeLoginSuccess?.(),

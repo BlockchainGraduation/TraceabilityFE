@@ -127,7 +127,7 @@ export default memo(function Header() {
     setShowModal(false);
   };
   const handleLogout = async () => {
-    const access = getCookie('access_token');
+    // const access = getCookie('access_token');
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
