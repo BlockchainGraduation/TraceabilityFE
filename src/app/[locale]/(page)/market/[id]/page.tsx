@@ -17,6 +17,7 @@ import {
   Carousel,
   Col,
   DatePicker,
+  Empty,
   Form,
   Image,
   Input,
@@ -78,6 +79,7 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
     'DatBe tạo ra một hệ thống minh bạch cho việc theo dõi nguồn gốc của sản phẩm. Thông tin về quá trình sản xuất, vận chuyển và lưu trữ sản phẩm được ghi lại một cách an toàn và không thể thay đổi. Điều này giúp tăng độ tin cậy cho tất cả các bên liên quan, từ nhà sản xuất đến người tiêu dùng cuối cùng.'
   );
 
+  const [commentList, setCommentList] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
@@ -321,8 +323,22 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
               {changePageRight === 'COMMENT' && (
                 <div className="p-[20px] border-[1px] rounded">
                   <div className="max-h-[500px] overflow-auto">
-                    <CommentItem />
-                    <CommentItem />
+                    {commentList.length ? (
+                      commentList.map((item: any, index) => (
+                        <CommentItem
+                          userRole={item.user.email}
+                          userName={item.user.username}
+                          userAvatar={item.user.avatar}
+                          content={item.content}
+                          key={index}
+                        />
+                      ))
+                    ) : (
+                      <Empty
+                        image={Empty.PRESENTED_IMAGE_DEFAULT}
+                        description={'Chưa có bình luận nào'}
+                      />
+                    )}
                   </div>
                 </div>
               )}

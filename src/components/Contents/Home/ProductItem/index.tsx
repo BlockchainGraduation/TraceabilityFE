@@ -56,6 +56,7 @@ export default function ProductItem(props: Props) {
         `comments/list?marketplace_id=${props.marketId}&skip=${skip}&limit=${limit}`
       )
       .then((res) => {
+        console.log(res.data.data.list_comment);
         setCommentList(res.data.data.list_comment);
       })
       .catch((err) => {
@@ -165,7 +166,15 @@ export default function ProductItem(props: Props) {
       >
         <div className="max-h-[500px] overflow-auto">
           {commentList.length ? (
-            commentList.map((_, index) => <CommentItem key={index} />)
+            commentList.map((item: any, index) => (
+              <CommentItem
+                userRole={item.user.email}
+                userName={item.user.username}
+                userAvatar={item.user.avatar}
+                content={item.content}
+                key={index}
+              />
+            ))
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_DEFAULT}
