@@ -95,7 +95,7 @@ export default function ProductTodayItem({
               Mua hàng
             </Typography.Title>
             <Typography.Title className="text-center" level={5}>
-              Sầu riêng tokuda
+              Sầu riêng
             </Typography.Title>
             <div className="block m-auto">
               <Image

@@ -29,10 +29,6 @@ export const CheckoutForm = ({
             required: true,
             message: 'Please choose your product quantity',
           },
-          // {
-          //   type: 'number',
-          //   min: 0,
-          // },
         ]}
       >
         <InputNumber

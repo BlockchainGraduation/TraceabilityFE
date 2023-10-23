@@ -43,14 +43,8 @@ import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import { ColumnsType } from 'antd/es/table';
 import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
 import instanceAxios from '@/api/instanceAxios';
+import GrowUpForm from '@/components/Contents/ProductInfo/GrowUpForm';
 
-const getBase64 = (file: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 interface DataType {
   key: React.Key;
   buyer: ReactNode;
@@ -80,11 +74,8 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
   );
 
   const [commentList, setCommentList] = useState([]);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
+
   const [showModalPay, setShowModalPay] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     const fethMarket = async () => {
@@ -116,33 +107,6 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
     borderRadius: '10px',
   };
 
-  const handleCancel = () => setPreviewOpen(false);
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1)
-    );
-  };
-
-  const handleChange: UploadProps['onChange'] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    info.file.status = 'done';
-    setFileList(info.fileList);
-  };
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
   const columns: ColumnsType<DataType> = [
     {
       title: 'Buyer',
@@ -177,13 +141,6 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
       status: i,
     });
   }
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
 
   return (
     <div className="w-full px-[50px] m-auto">
@@ -245,11 +202,6 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
                 initialUser="Trung"
                 initialPhone="123123123123"
               />
-              {/* {checkoutForm(
-                { onFinish: (e) => console.log(e) },
-                'Trung',
-                '12312312312'
-              )} */}
             </Modal>
           </div>
         </div>
@@ -384,48 +336,8 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
           <Typography.Title level={3}>
             Cap nhat qua trinh phat trien
           </Typography.Title>
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            onFinish={(e) => console.log(e)}
-          >
-            <Form.Item label={'Chon ngay'} name="date">
-              <DatePicker onChange={() => {}} />
-            </Form.Item>
-            <Form.Item
-              label="Upload"
-              valuePropName="fileList"
-              name={'file'}
-              getValueFromEvent={normFile}
-            >
-              <Upload
-                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                listType="picture-card"
-                multiple
-                // fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 8 ? null : uploadButton}
-              </Upload>
-            </Form.Item>
-            <Form.Item label={'Mota'} name={'description'}>
-              <Input.TextArea onChange={() => {}} />
-            </Form.Item>
-            <Form.Item>
-              <Button htmlType="submit">OK</Button>
-            </Form.Item>
-          </Form>
-          <Modal
-            open={previewOpen}
-            title={previewTitle}
-            footer={null}
-            onCancel={handleCancel}
-          >
-            <Image alt="example" style={{ width: '100%' }} src={previewImage} />
-          </Modal>
+
+          <GrowUpForm />
         </Modal>
       </div>
       <div>
