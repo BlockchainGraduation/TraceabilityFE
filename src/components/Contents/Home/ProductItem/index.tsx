@@ -26,7 +26,8 @@ const { Meta } = Card;
 interface Props {
   productName: string;
   productImg: string;
-  productId: string;
+  productId?: string;
+  marketId?: string;
   ownerName?: string;
   ownerImg?: string;
   role?: string;
@@ -79,7 +80,7 @@ export default function ProductItem(props: Props) {
           </div>,
         ]}
       >
-        <Link href={`/product/${props.productId}`}>
+        <Link href={`/market/${props.marketId}`}>
           <Meta
             // avatar={<Avatar size={50} src={props.ownerImg} />}
             title={

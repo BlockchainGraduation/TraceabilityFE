@@ -60,7 +60,10 @@ export default function HomePage() {
       .then((res) => {
         setListMarket(res.data.data.list_marketplace);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setListMarket([]);
+      });
   }, [OrderType, limit, nameProduct, skip]);
 
   const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
@@ -224,6 +227,7 @@ export default function HomePage() {
               productImg={item.product.banner}
               ownerName={item.product.user.username}
               ownerImg={staticVariables.logoRaiden.src}
+              marketId={item.id}
               role="Fammer"
               likeQuantity={12}
               messageQuantity={12}

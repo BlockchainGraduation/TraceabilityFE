@@ -47,7 +47,7 @@ import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
 
 export default memo(function Header() {
-  const [user, setUser] = useState(false);
+  // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [currentForm, setCurrentForm] = useState<
@@ -126,17 +126,17 @@ export default memo(function Header() {
   const handleShowModal = () => {
     setShowModal(false);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const access = getCookie('access_token');
+    delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
     setShowModal(true);
     setCurrentForm('LOGIN');
-    const access = getCookie('access_token');
-    instanceAxios.defaults.headers.delete.Authorization = `Bearer ${access}`;
   };
-  useEffect(() => {
-    setUser(logged);
-  }, [logged]);
+  // useEffect(() => {
+  //   setUser(logged);
+  // }, [logged]);
   const ref = useRef(null);
   useOnClickOutside(ref, () => setShowSearchItems(false));
   const items: MenuProps['items'] = [
@@ -296,7 +296,7 @@ export default memo(function Header() {
             ]}
           />
         </ConfigProvider>
-        {user ? (
+        {logged ? (
           <div>
             <Dropdown menu={{ items }}>
               <Badge count={5} offset={[5, 10]} color="blue">

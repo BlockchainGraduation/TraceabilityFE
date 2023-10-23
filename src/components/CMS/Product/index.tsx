@@ -14,10 +14,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Col,
+  ConfigProvider,
   Form,
   Input,
   InputNumber,
   Modal,
+  Popconfirm,
   Row,
   Select,
   Tag,
@@ -27,6 +29,7 @@ import {
 } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import Link from 'next/link';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -73,6 +76,7 @@ export default function ProductCMS() {
   const [hasChange, setHasChange] = useState(0);
   const currentUser = useAppSelector((state) => state.user.user);
   const { mutate } = useSWRConfig();
+  const [form] = Form.useForm();
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
@@ -177,6 +181,21 @@ export default function ProductCMS() {
       .catch((err) => {});
   };
 
+  const fetchDeleteProduct = async (productId: string) => {
+    await instanceAxios
+      .delete(`product/${productId}/delete`)
+      .then((res) => {
+        setHasChange(hasChange + 1);
+        notification.success({
+          message: 'Thông báo',
+          description: `Đã xóa sản phẩm`,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const onFinish = async (e: FormType) => {
     let formData = new FormData();
     formData.append('banner', fileAvartar[0]?.originFileObj as Blob);
@@ -191,6 +210,8 @@ export default function ProductCMS() {
       )
       .then((res) => {
         setOpenModalCreate(false);
+        setHasChange(hasChange + 1);
+        form.resetFields();
         notification.success({
           message: 'Thông báo',
           description: 'Tạo sản phẩm thành công',
@@ -249,35 +270,55 @@ export default function ProductCMS() {
       title: 'Action',
       dataIndex: '',
       render: (value, record, index) => (
-        <Row className="flex gap-x-2">
-          <Col span={3}>
-            <FontAwesomeIcon
-              icon={faPenToSquare}
-              style={{ color: '#2657ab' }}
-            />
-          </Col>
-          <Col span={3}>
-            {record.product_status === 'PUBLISH' ? (
-              <FontAwesomeIcon
-                onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                icon={faLockOpen}
-                style={{ color: '#27913c' }}
-              />
-            ) : (
-              <FontAwesomeIcon
-                onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                icon={faLock}
-                style={{ color: '#a87171' }}
-              />
-            )}
-          </Col>
-          <Col span={3}>
-            <FontAwesomeIcon
-              icon={faCircleXmark}
-              style={{ color: '#c01616' }}
-            />
-          </Col>
-        </Row>
+        <ConfigProvider
+          theme={{
+            components: {
+              Button: {
+                primaryColor: '#e62929',
+              },
+            },
+            token: {
+              colorBgContainer: '#7f84d4',
+            },
+          }}
+        >
+          <Row className="flex gap-x-2">
+            <Col span={3}>
+              <Link href={`/product/${record.id}`}>
+                <FontAwesomeIcon
+                  icon={faPenToSquare}
+                  style={{ color: '#2657ab' }}
+                />
+              </Link>
+            </Col>
+            <Col span={3}>
+              {record.product_status === 'PUBLISH' ? (
+                <FontAwesomeIcon
+                  onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
+                  icon={faLockOpen}
+                  style={{ color: '#27913c' }}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
+                  icon={faLock}
+                  style={{ color: '#a87171' }}
+                />
+              )}
+            </Col>
+            <Col span={3}>
+              <Popconfirm
+                title="Sure to delete?"
+                onConfirm={() => fetchDeleteProduct(record.id)}
+              >
+                <FontAwesomeIcon
+                  icon={faCircleXmark}
+                  style={{ color: '#c01616' }}
+                />
+              </Popconfirm>
+            </Col>
+          </Row>
+        </ConfigProvider>
       ),
     },
   ];
@@ -307,6 +348,7 @@ export default function ProductCMS() {
             Thêm sản phẩm
           </Typography.Title>
           <Form
+            form={form}
             labelCol={{ span: 10 }}
             wrapperCol={{ span: 14 }}
             onFinish={onFinish}
@@ -410,7 +452,6 @@ export default function ProductCMS() {
         <Table
           columns={columns}
           dataSource={listProduct}
-          // pagination={false}
           pagination={{
             onChange: (e) => {
               setSkip(e - 1);

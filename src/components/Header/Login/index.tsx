@@ -21,6 +21,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
   const dispatch = useAppDispatch();
   const requireLogin = useAppSelector((state) => state.nextEvent.requireLogin);
   const { mutate } = useSWRConfig();
+  const [form] = Form.useForm();
 
   const fethLogin = async (data: object) => {
     await instanceAxios
@@ -34,6 +35,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           message: 'Thông báo',
           description: `Xin chào ${res.data.data.user.username}`,
         });
+        form.resetFields();
         requireLogin();
         dispatch(nextEvent({ requireLogin: () => {} }));
       })
@@ -71,6 +73,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
         Đăng nhập
       </p>
       <Form
+        form={form}
         name="normal_login"
         className="login-form"
         labelCol={{ span: 6 }}
