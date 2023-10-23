@@ -12,7 +12,14 @@ import { useEffect } from 'react';
 import { SWRConfig } from 'swr';
 import instanceAxios from '@/api/instanceAxios';
 import { getCookie } from 'cookies-next';
+import Pusher from 'pusher-js';
+import { Inter } from 'next/font/google';
 
+import StyledComponentsRegistry from '../lib/AntdRegistry';
+
+export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
+});
 library.add(fas);
 // Since we have a `not-found.tsx` page on the root, a layout file
 // is required, even if it's just passing children through.
@@ -20,6 +27,16 @@ export default function RootLayout({ children }: Props) {
   useEffect(() => {
     AOS.init();
   });
+  useEffect(() => {
+    const channel = pusher.subscribe('general-channel');
+    channel.bind('general-channel', (data: any) => {
+      console.log(data);
+    });
+
+    return () => {
+      pusher.unsubscribe('general-channel');
+    };
+  }, []);
 
   return (
     <SWRConfig
@@ -29,7 +46,7 @@ export default function RootLayout({ children }: Props) {
           fetch(resource, init).then((res) => res.json()),
       }}
     >
-      {children}
+      <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
     </SWRConfig>
   );
 }

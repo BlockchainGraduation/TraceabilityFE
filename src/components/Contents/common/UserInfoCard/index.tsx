@@ -41,8 +41,11 @@ export default function UserInfoCard({
               <CustomInput
                 name="name"
                 initialValue={userName}
-                onEnter={() => {}}
-                onChange={(e) => setUserName(e.target.value)}
+                input={{
+                  onChange: (e) => {
+                    setUserName(e.target.value);
+                  },
+                }}
               />
             ) : (
               <p>{userName}</p>
@@ -51,11 +54,7 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <PhoneOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput
-                name="name"
-                initialValue={userPhone}
-                onEnter={() => {}}
-              />
+              <CustomInput name="name" initialValue={userPhone} />
             ) : (
               <p>{userPhone}</p>
             )}
@@ -63,11 +62,7 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <MailOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput
-                name="name"
-                initialValue={userEmail}
-                onEnter={() => {}}
-              />
+              <CustomInput name="name" initialValue={userEmail} />
             ) : (
               <p>{userEmail}</p>
             )}
@@ -75,11 +70,7 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <RiseOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput
-                name="name"
-                initialValue={userAddress}
-                onEnter={() => {}}
-              />
+              <CustomInput name="name" initialValue={userAddress} />
             ) : (
               <p>{userAddress}</p>
             )}

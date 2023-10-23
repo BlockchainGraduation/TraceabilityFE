@@ -60,7 +60,10 @@ export default function HomePage() {
       .then((res) => {
         setListMarket(res.data.data.list_marketplace);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setListMarket([]);
+      });
   }, [OrderType, limit, nameProduct, skip]);
 
   const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
@@ -113,9 +116,9 @@ export default function HomePage() {
   return (
     <div className="w-full px-[50px]">
       <div className="w-full flex items-center justify-around">
-        <div className="w-1/2">
+        <div data-aos="fade-right" className="w-1/2 drop-shadow-lg">
           <Carousel
-            className=" rounded-[10px] overflow-hidden h-[400px]"
+            className=" shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)] rounded-[10px] overflow-hidden h-[400px]"
             autoplay
           >
             <Image
@@ -224,6 +227,7 @@ export default function HomePage() {
               productImg={item.product.banner}
               ownerName={item.product.user.username}
               ownerImg={staticVariables.logoRaiden.src}
+              marketId={item.id}
               role="Fammer"
               likeQuantity={12}
               messageQuantity={12}

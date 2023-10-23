@@ -1,11 +1,16 @@
 import { Button, Form, FormProps, Input, InputNumber, Typography } from 'antd';
+import { CompoundedComponent } from 'antd/es/float-button/interface';
 import { ReactNode } from 'react';
 
-export const checkoutForm = (
-  form: FormProps,
-  initialUser: string,
-  initialPhone: string
-) => {
+export const CheckoutForm = ({
+  form = {},
+  initialPhone = '',
+  initialUser = '',
+}: {
+  form?: FormProps;
+  initialUser?: string;
+  initialPhone?: string;
+}) => {
   return (
     <Form
       className="mt-[20px]"
@@ -29,6 +34,7 @@ export const checkoutForm = (
         <InputNumber
           addonBefore={'Số lượng'}
           addonAfter={<div onClick={() => alert('OK')}>Max</div>}
+          min={0}
           max={12}
         />
       </Form.Item>

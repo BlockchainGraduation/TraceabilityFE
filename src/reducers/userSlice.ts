@@ -18,17 +18,17 @@ export interface User {
   system_role: string;
 }
 export const initialUser: User = {
-  id: 'string',
-  username: 'string',
-  email: 'string',
-  avatar: 'string',
-  full_name: 'string',
-  birthday: 'string',
-  phone: 'string',
-  address_wallet: 'string',
-  address_real: 'string',
+  id: '',
+  username: '',
+  email: '',
+  avatar: '',
+  full_name: '',
+  birthday: '',
+  phone: '',
+  address_wallet: '',
+  address_real: '',
   is_active: false,
-  system_role: 'string',
+  system_role: '',
 };
 const initialAuth: Auth = {
   logged: false,
@@ -47,8 +47,11 @@ export const userSlice = createSlice({
       state.logged = false;
       state.user = initialUser;
     },
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    // setUser: (state, action: PayloadAction<User>) => {
+    //   state.user = action.payload ;
+    // },
+    setUser: (state, action: PayloadAction<Object>) => {
+      state.user = { ...state.user, ...action.payload };
     },
   },
 });

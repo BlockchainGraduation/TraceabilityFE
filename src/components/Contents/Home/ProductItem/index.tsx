@@ -11,21 +11,29 @@ import {
   Avatar,
   Card,
   ConfigProvider,
+  Empty,
   Image,
+  Modal,
   Space,
   Statistic,
   Tag,
   Typography,
 } from 'antd';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import useLogin from '@/services/requireLogin';
+import CommentItem from '../../ProductInfo/CommentItem';
+import CommentInput from '../../common/CommentInput';
+import instanceAxios from '@/api/instanceAxios';
+import useSWR from 'swr';
 
 const { Meta } = Card;
 
 interface Props {
   productName: string;
   productImg: string;
-  productId: string;
+  productId?: string;
+  marketId?: string;
   ownerName?: string;
   ownerImg?: string;
   role?: string;
@@ -37,6 +45,34 @@ interface Props {
 }
 
 export default function ProductItem(props: Props) {
+  const { login } = useLogin();
+  const [openComment, setOpenComment] = useState(false);
+  const [commentList, setCommentList] = useState([]);
+  const [skip, setKkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const fetchDataComment = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `comments/list?marketplace_id=${props.marketId}&skip=${skip}&limit=${limit}`
+      )
+      .then((res) => {
+        console.log(res.data.data.list_comment);
+        setCommentList(res.data.data.list_comment);
+      })
+      .catch((err) => {
+        setCommentList([]);
+        console.log(err);
+      });
+  }, [limit, props.marketId, skip]);
+  const afterOpenChange = async (e: boolean) => {
+    if (e) {
+      fetchDataComment();
+    }
+  };
+  // useEffect(() => {
+  //   fetchDataComment();
+  // }, [fetchDataComment, limit, props.marketId, skip]);
+  // const { isLoading } = useSWR(``, fetchDataComment);
   return (
     <div data-aos="flip-right" className="w-fit">
       <Card
@@ -54,36 +90,38 @@ export default function ProductItem(props: Props) {
           </div>
         }
         actions={[
-          <div onClick={() => alert('OK')} key="like">
+          <div onClick={() => login()} key="like">
             <Statistic
               valueStyle={{ fontSize: '10px' }}
               title={<LikeOutlined />}
               value={`112893`}
             />
           </div>,
-          <Statistic
-            key="message"
-            valueStyle={{ fontSize: '10px' }}
-            title={<MessageOutlined />}
-            value={`${props.likeQuantity} Messenger`}
-          />,
-          <Statistic
-            key="cart"
-            valueStyle={{ fontSize: '10px' }}
-            title={<ShoppingCartOutlined />}
-            value={`${props.buyerQuantity} Buyer`}
-          />,
+          <div key="message" onClick={() => login(() => setOpenComment(true))}>
+            <Statistic
+              valueStyle={{ fontSize: '10px' }}
+              title={<MessageOutlined />}
+              value={`${props.likeQuantity} Messenger`}
+            />
+          </div>,
+          <div key="cart" onClick={() => login()}>
+            <Statistic
+              valueStyle={{ fontSize: '10px' }}
+              title={<ShoppingCartOutlined />}
+              value={`${props.buyerQuantity} Buyer`}
+            />
+          </div>,
         ]}
       >
-        <Link href={`/product/${props.productId}`}>
+        <Link href={`/market/${props.marketId}`}>
           <Meta
             // avatar={<Avatar size={50} src={props.ownerImg} />}
             title={
-              props.ownerName ||
-              props.ownerImg ||
-              (props.role && (
-                <div>
-                  <Meta className="text-center " title={props.productName} />
+              <div>
+                <div className="mb-[15px]">
+                  <Meta className="text-center" title={props.productName} />
+                </div>
+                {props.ownerName || props.ownerImg || props.role ? (
                   <div className="flex mt-[10px] items-center">
                     <Avatar size={50} src={props.ownerImg} />
                     <div className="ml-[10px]">
@@ -93,8 +131,10 @@ export default function ProductItem(props: Props) {
                       <Tag className="font-light">{props.role}</Tag>
                     </div>
                   </div>
-                </div>
-              ))
+                ) : (
+                  ''
+                )}
+              </div>
             }
             description={
               <ConfigProvider
@@ -116,6 +156,34 @@ export default function ProductItem(props: Props) {
           />
         </Link>
       </Card>
+      <Modal
+        onCancel={() => setOpenComment(false)}
+        centered
+        title={'Bình luận về AA'}
+        open={openComment}
+        afterOpenChange={afterOpenChange}
+        footer={[]}
+      >
+        <div className="max-h-[500px] overflow-auto">
+          {commentList.length ? (
+            commentList.map((item: any, index) => (
+              <CommentItem
+                userRole={item.user.email}
+                userName={item.user.username}
+                userAvatar={item.user.avatar}
+                content={item.content}
+                key={index}
+              />
+            ))
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_DEFAULT}
+              description={'Chưa có bình luận nào'}
+            />
+          )}
+        </div>
+        <CommentInput marketId={props.marketId || ''} />
+      </Modal>
     </div>
   );
 }

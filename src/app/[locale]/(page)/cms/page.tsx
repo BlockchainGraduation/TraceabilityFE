@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -13,6 +13,8 @@ import GeneralInformation from '@/components/CMS/GeneralInformation';
 import ChangPassword from '@/components/CMS/ChangePassword';
 import ProductCMS from '@/components/CMS/Product';
 import TransactionCMS from '@/components/CMS/Transaction';
+import { useAppSelector } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -61,6 +63,14 @@ export default function CMSPage() {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const currentUser = useAppSelector((state) => state.user);
+  const route = useRouter();
+  useEffect(() => {
+    if (!currentUser.logged) {
+      route.push('/home');
+    }
+  }, [currentUser.logged, route]);
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider

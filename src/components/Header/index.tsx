@@ -16,9 +16,17 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import { deleteCookie, getCookie } from 'cookies-next';
-import React, { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Login from './Login';
 import Register from './Register';
+import { useDebounce, useOnClickOutside } from 'usehooks-ts';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
@@ -34,18 +42,21 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
-import useOutsideAlerter from '@/services/eventOutside';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
+import ForgetForm from './Register/ForgetForm';
 
 export default memo(function Header() {
-  const [user, setUser] = useState(false);
+  // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
+  const [valueSearch, setValueSearch] = useState('');
+  const [resultSearch, setResultSearch] = useState([]);
+  const debouncedValue = useDebounce<string>(valueSearch, 500);
 
   const router = useRouter();
   const t = useTranslations('header');
@@ -80,17 +91,31 @@ export default memo(function Header() {
     }
   }, [showFormLogin]);
 
-  useEffect(() => {
-    const fethGetUser = async () => {
-      await instanceAxios
-        .get('user/me')
-        .then((res) => {
-          dispatch(setLogin({ logged: true, user: res.data.data }));
-        })
-        .catch((err) => console.log(err));
-    };
-    fethGetUser();
+  const fethGetUser = useCallback(async () => {
+    await instanceAxios
+      .get('user/me')
+      .then((res) => {
+        dispatch(setLogin({ logged: true, user: res.data.data }));
+      })
+      .catch((err) => console.log(err));
   }, [dispatch]);
+  useSWR('user/me', fethGetUser);
+
+  const fethMarketSearch = useCallback(async () => {
+    await instanceAxios
+      .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
+      .then((res) => {
+        setResultSearch(res.data.data.list_marketplace);
+        console.log(res);
+        // dispatch(setLogin({ logged: true, user: res.data.data }));
+      })
+      .catch((err) => console.log(err));
+  }, [debouncedValue]);
+  useEffect(() => {
+    if (debouncedValue) {
+      fethMarketSearch();
+    }
+  }, [debouncedValue, fethMarketSearch]);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -101,19 +126,19 @@ export default memo(function Header() {
   const handleShowModal = () => {
     setShowModal(false);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // const access = getCookie('access_token');
+    delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
     setShowModal(true);
     setCurrentForm('LOGIN');
-    const access = getCookie('access_token');
-    instanceAxios.defaults.headers.delete.Authorization = `Bearer ${access}`;
   };
-  useEffect(() => {
-    setUser(logged);
-  }, [logged]);
+  // useEffect(() => {
+  //   setUser(logged);
+  // }, [logged]);
   const ref = useRef(null);
-  useOutsideAlerter(ref, () => setShowSearchItems(false));
+  useOnClickOutside(ref, () => setShowSearchItems(false));
   const items: MenuProps['items'] = [
     {
       label: (
@@ -198,16 +223,28 @@ export default memo(function Header() {
       </div>
       <div className="relative w-1/3">
         <Popover
-          title="Danh sach tim kiem"
+          title={
+            <p className=" w-full truncate">
+              {`Kết quả tìm kiếm: ${debouncedValue}`}
+            </p>
+          }
           className="w-full"
           content={
-            <div ref={ref}>
-              {[...Array(5)].map((_, index) => (
-                <SearchItem
-                  onClick={() => setShowSearchItems(false)}
-                  key={index}
-                />
-              ))}
+            <div ref={ref} className="w-full ">
+              {resultSearch.length ? (
+                resultSearch.map((item: any, index) => (
+                  <SearchItem
+                    parent={{ onClick: () => setShowSearchItems(false) }}
+                    key={index}
+                    productName={item.product.name}
+                    owner={item.product.user.username}
+                    quantity={item.product.quantity}
+                    price={item.product.price}
+                  />
+                ))
+              ) : (
+                <p className="text-center"> Không tìm thấy dữ liệu</p>
+              )}
             </div>
           }
           open={showSearchItems}
@@ -216,10 +253,20 @@ export default memo(function Header() {
         >
           <input
             // tabIndex={1}
-            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900"
-            placeholder="Search Product..."
-            onFocus={() => setShowSearchItems(true)}
-            // onBlur={() => setShowSearchItems(false)}
+            maxLength={50}
+            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900 "
+            placeholder="Search Product...(Max 50 char)"
+            onChange={(e) => {
+              setValueSearch(e.target.value);
+              setShowSearchItems(true);
+            }}
+            onFocus={(e) => {
+              if (!e.target.value) {
+                return;
+              }
+              setShowSearchItems(true);
+              fethMarketSearch();
+            }}
           />
         </Popover>
       </div>
@@ -249,7 +296,7 @@ export default memo(function Header() {
             ]}
           />
         </ConfigProvider>
-        {user ? (
+        {logged ? (
           <div>
             <Dropdown menu={{ items }}>
               <Badge count={5} offset={[5, 10]} color="blue">
@@ -268,7 +315,6 @@ export default memo(function Header() {
         <Modal
           open={showModal}
           // width={currentForm === 'REGISTER' ? 1000 : 520}
-          className={``}
           centered
           onCancel={() => {
             setShowModal(false);
@@ -280,8 +326,9 @@ export default memo(function Header() {
           {currentForm === 'REGISTER' && (
             <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
           )}
-          <div className="m-auto flex justify-around	max-w-[300px]">
-            <p>Forget?</p>
+          {currentForm === 'FORGET' && <ForgetForm onFinishOTP={onFinishOTP} />}
+          <div className=" m-auto flex justify-around	max-w-[300px]">
+            <p onClick={() => setCurrentForm('FORGET')}>Forget?</p>
             <p
               onClick={() =>
                 currentForm === 'LOGIN'
