@@ -184,8 +184,22 @@ export default function HomePage() {
         </div>
         <div>
           <Typography.Title level={3}>Top ban chay hom nay</Typography.Title>
-          <ProductTodayItem />
-          <ProductTodayItem />
+          <ProductTodayItem
+            productName={'Trung'}
+            productAvatar={staticVariables.qc1.src}
+            ownerName={'Trung'}
+            ownerId="1231"
+            soldQuantity={12313}
+            transactionQuantity={1231}
+          />
+          <ProductTodayItem
+            productName={'Trung'}
+            productAvatar={staticVariables.qc2.src}
+            ownerName={'Trung'}
+            ownerId="1231"
+            soldQuantity={12313}
+            transactionQuantity={1231}
+          />
         </div>
       </div>
       {/* <div className="flex">

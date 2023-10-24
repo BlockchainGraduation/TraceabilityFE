@@ -1,16 +1,10 @@
+import { useAppSelector } from '@/hooks';
 import { Button, Form, FormProps, Input, InputNumber, Typography } from 'antd';
 import { CompoundedComponent } from 'antd/es/float-button/interface';
 import { ReactNode } from 'react';
 
-export const CheckoutForm = ({
-  form = {},
-  initialPhone = '',
-  initialUser = '',
-}: {
-  form?: FormProps;
-  initialUser?: string;
-  initialPhone?: string;
-}) => {
+export const CheckoutForm = ({ form = {} }: { form?: FormProps }) => {
+  const currentUser = useAppSelector((state) => state.user.user);
   return (
     <Form
       className="mt-[20px]"
@@ -41,7 +35,7 @@ export const CheckoutForm = ({
       <Form.Item
         label="Tên người nhận"
         name={'username'}
-        initialValue={'Nguyen van A'}
+        initialValue={currentUser.username}
         rules={[
           {
             required: true,
@@ -54,7 +48,7 @@ export const CheckoutForm = ({
       <Form.Item
         label="Số điện thoại"
         name={'phone'}
-        initialValue={'12312312312312'}
+        initialValue={currentUser.phone}
         rules={[
           {
             required: true,

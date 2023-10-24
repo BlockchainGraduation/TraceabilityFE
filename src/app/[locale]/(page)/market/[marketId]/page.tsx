@@ -54,33 +54,25 @@ interface DataType {
   status: ReactNode;
 }
 
-export default function MarketInfo({ params }: { params: { id: string } }) {
+export default function MarketInfo({
+  params,
+}: {
+  params: { marketId: string };
+}) {
   const [openListImageModal, setOpenListImageModal] = useState(false);
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
-  const [dataMarket, setDataMarket] = useState({});
+  const [dataMarket, setDataMarket] = useState<any>({});
   const [dataOwner, setDataOwner] = useState({});
   const [dataProduct, setDataProduct] = useState({});
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(true);
-  const [editProductName, setEditProductName] = useState('Sau rieng thai.');
-  const [editProductOrigin, setEditProductOrigin] = useState(
-    'Cty hat giong SimpRaiden.'
-  );
-  const [editProductOwner, setEditProductOwner] = useState('DatBE');
-  const [editProductPrice, setEditProductPrice] = useState('2000vnd');
-  const [editProductQuantity, setEditProductQuantity] = useState('30');
-  const [editProductDescripton, setEditProductDescripton] = useState(
-    'DatBe tạo ra một hệ thống minh bạch cho việc theo dõi nguồn gốc của sản phẩm. Thông tin về quá trình sản xuất, vận chuyển và lưu trữ sản phẩm được ghi lại một cách an toàn và không thể thay đổi. Điều này giúp tăng độ tin cậy cho tất cả các bên liên quan, từ nhà sản xuất đến người tiêu dùng cuối cùng.'
-  );
-
   const [commentList, setCommentList] = useState([]);
-
   const [showModalPay, setShowModalPay] = useState(false);
 
   useEffect(() => {
     const fethMarket = async () => {
       await instanceAxios
-        .get(`marketplace/${params.id}`)
+        .get(`marketplace/${params.marketId}`)
         .then(async (res) => {
           setDataMarket(res.data.data);
           await instanceAxios
@@ -95,7 +87,7 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
         .catch((err) => console.log(err));
     };
     fethMarket();
-  }, [params.id]);
+  }, [params.marketId]);
 
   const contentStyle: React.CSSProperties = {
     margin: 0,
@@ -144,7 +136,7 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
 
   return (
     <div className="w-full px-[50px] m-auto">
-      <div className="flex justify-between">
+      <div className="flex gap-x-10">
         <Image
           className="object-cover rounded drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
           alt=""
@@ -155,7 +147,7 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
         <div>
           <Typography.Title level={2}>Sau rieng viet nam</Typography.Title>
           <div className="flex gap-x-2 text-[#7B7B7B] font-light">
-            San pham cua{' '}
+            San pham cua
             <p className="text-[#313064] font-bold">SimpRaidenEi</p>
           </div>
           <div className="flex gap-x-4 my-[20px]">
@@ -197,24 +189,14 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
               open={showModalPay}
               footer={[]}
             >
-              <CheckoutForm
-                form={{ onFinish: (e) => console.log(e) }}
-                initialUser="Trung"
-                initialPhone="123123123123"
-              />
+              <CheckoutForm form={{ onFinish: (e) => console.log(e) }} />
             </Modal>
           </div>
         </div>
       </div>
       <div className="w-full flex mt-[50px]">
         <div className="w-2/5 ">
-          <Segmented
-            size={'large'}
-            options={[
-              { label: 'Thông tin', value: '1' },
-              { label: 'Lịch sử phát triển', value: '2' },
-            ]}
-          />
+          <p className="py-[10px] border-b-[1px]">Thông tin về sản phẩm</p>
           <div className="flex flex-col w-2/3 px-[20px] py-[15px] border-[1px] rounded">
             {[...Array(4)].map((_, index) => (
               <div
@@ -306,40 +288,41 @@ export default function MarketInfo({ params }: { params: { id: string } }) {
           </div>
         </div>
       </div>
-      <div
-        //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
-        className={`border-l-2 block w-fit m-auto mt-[150px]`}
-      >
-        <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
-          <FontAwesomeIcon
-            icon={faArrowTrendUp}
-            size={'2xl'}
-            style={{ color: '#29c214' }}
-          />
-          <p className="pl-[20px]">Qua trinh phat trien </p>
-          <PlusCircleTwoTone
-            onClick={() => setOpenGrowUpModal(true)}
-            className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
-          />
-        </div>
-        {}
-        <div className="ml-[-111px] h-[500px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
-          <GrowUpItem />
-          <GrowUpItem />
-          <GrowUpItem />
-        </div>
-        <Modal
-          open={openGrowUpModal}
-          onCancel={() => setOpenGrowUpModal(false)}
-          footer={[]}
+      {dataMarket.order_type === 'FAMMER' && (
+        <div
+          //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
+          className={`border-l-2 block w-fit m-auto mt-[150px]`}
         >
-          <Typography.Title level={3}>
-            Cap nhat qua trinh phat trien
-          </Typography.Title>
+          <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
+            <FontAwesomeIcon
+              icon={faArrowTrendUp}
+              size={'2xl'}
+              style={{ color: '#29c214' }}
+            />
+            <p className="pl-[20px]">Qua trinh phat trien </p>
+            <PlusCircleTwoTone
+              onClick={() => setOpenGrowUpModal(true)}
+              className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
+            />
+          </div>
+          <div className="ml-[-111px] h-[500px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
+            <GrowUpItem />
+            <GrowUpItem />
+            <GrowUpItem />
+          </div>
+          <Modal
+            open={openGrowUpModal}
+            onCancel={() => setOpenGrowUpModal(false)}
+            footer={[]}
+          >
+            <Typography.Title level={3}>
+              Cap nhat qua trinh phat trien
+            </Typography.Title>
 
-          <GrowUpForm />
-        </Modal>
-      </div>
+            <GrowUpForm productId={dataMarket.order_id} />
+          </Modal>
+        </div>
+      )}
       <div>
         <Typography.Title level={1}>
           Giới thiệu chi tiết về sản phẩm

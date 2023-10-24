@@ -19,11 +19,23 @@ import React, { HTMLAttributes, useState } from 'react';
 import { CheckoutForm } from '../../common/CheckoutForm';
 
 export default function ProductTodayItem({
-  props,
+  divElement,
   button,
+  productName,
+  productAvatar,
+  ownerId,
+  ownerName,
+  soldQuantity,
+  transactionQuantity,
 }: {
-  props?: HTMLAttributes<HTMLDivElement>;
+  divElement?: HTMLAttributes<HTMLDivElement>;
   button?: HTMLAttributes<HTMLButtonElement>;
+  productName?: string;
+  ownerName?: string;
+  productAvatar?: string;
+  ownerId?: string;
+  soldQuantity?: number;
+  transactionQuantity?: number;
 }) {
   const dispatch = useAppDispatch();
   const logged = useAppSelector((state) => state.user.logged);
@@ -39,22 +51,27 @@ export default function ProductTodayItem({
   };
 
   return (
-    <div {...props} className="flex p-[20px] h-fit justify-between w-[600px] ">
+    <div
+      {...divElement}
+      className="flex p-[20px] h-fit justify-between w-[600px] "
+    >
       <Image
         className="object-cover rounded"
         alt=""
         width={200}
         height={200}
-        src={staticVariables.logoRaiden.src}
+        src={productAvatar}
       />
       <div className="w-3/5 py-[10px]">
-        <Typography.Title level={3}>Bad private</Typography.Title>
+        <Typography.Title className="text-center" level={3}>
+          {productName}
+        </Typography.Title>
         <div className="flex mb-[10px] gap-x-3 font-thin text-base">
-          Sản phẩm của<p className="text-[#313064] font-medium">SimpRaiden</p>
+          Sản phẩm của<p className="text-[#313064] font-medium">{ownerName}</p>
         </div>
-        <div className="flex justify-between pr-[50px]">
-          <Statistic title="Sold" value={112893} />
-          <Statistic title="Transaction" value={112893} />
+        <div className="flex justify-between pl-[20px] pr-[50px]">
+          <Statistic title="Sold" value={soldQuantity} />
+          <Statistic title="Transaction" value={transactionQuantity} />
         </div>
         <div className="flex items-center mt-[10px]">
           <Button
@@ -92,9 +109,9 @@ export default function ProductTodayItem({
         >
           <div className="flex flex-col">
             <Typography.Title className="text-center" level={3}>
-              Mua hàng
+              Đặt hàng
             </Typography.Title>
-            <Typography.Title className="text-center" level={5}>
+            <Typography.Title className="text-center" level={4}>
               Sầu riêng
             </Typography.Title>
             <div className="block m-auto">
@@ -124,70 +141,6 @@ export default function ProductTodayItem({
               Thông tin đặt hàng
             </Typography.Title>
             <CheckoutForm />
-            {/* <Form
-              className="mt-[20px]"
-              labelCol={{ span: 10 }}
-              wrapperCol={{ span: 14 }}
-              onFinish={handleSubmit}
-            >
-              <Form.Item
-                label="Số lượng bạn muốn mua"
-                name={'quatity'}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please choose your product quantity',
-                  },
-                ]}
-              >
-                <InputNumber
-                  addonBefore={'Số lượng'}
-                  addonAfter={<div onClick={() => alert('OK')}>Max</div>}
-                  max={12}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Tên người nhận"
-                name={'username'}
-                initialValue={'Nguyen van A'}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please choose your address',
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="Số điện thoại"
-                name={'phone'}
-                initialValue={'12312312312312'}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please choose your address',
-                  },
-                ]}
-              >
-                <Input  />
-              </Form.Item>
-              <Form.Item
-                label="Địa chỉ nhận hàng"
-                name={'address'}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please choose your address',
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-                <Button htmlType="submit">Submit</Button>
-              </Form.Item>
-            </Form> */}
           </div>
         </Modal>
       </div>

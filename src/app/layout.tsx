@@ -44,6 +44,9 @@ export default function RootLayout({ children }: Props) {
         // refreshInterval: 3000,
         fetcher: (resource, init) =>
           fetch(resource, init).then((res) => res.json()),
+        revalidateIfStale: false,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
       }}
     >
       <StyledComponentsRegistry>{children}</StyledComponentsRegistry>

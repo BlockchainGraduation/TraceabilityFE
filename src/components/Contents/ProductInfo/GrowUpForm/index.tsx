@@ -1,3 +1,4 @@
+import instanceAxios from '@/api/instanceAxios';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -9,8 +10,16 @@ import {
   Upload,
   UploadFile,
 } from 'antd';
+import { DatePickerType } from 'antd/es/date-picker';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { type } from 'os';
 import React, { useState } from 'react';
+
+type FormType = {
+  file?: UploadFile;
+  description?: string;
+  date?: DatePickerType;
+};
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -19,8 +28,9 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-export default function GrowUpForm() {
+export default function GrowUpForm({ productId }: { productId: string }) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const handleCancel = () => setPreviewOpen(false);
@@ -51,7 +61,20 @@ export default function GrowUpForm() {
     setFileList(info.fileList);
   };
 
-  const onFinish = async () => {};
+  const onFinish = async (e: FormType) => {
+    setLoading(true);
+    console.log(e);
+    let formData = new FormData();
+    formData.append('image', e.file?.originFileObj as Blob);
+    await instanceAxios
+      .post(
+        `product/grow_up?product_id=${productId}&description=${e.description}`,
+        formData
+      )
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
 
   const uploadButton = (
     <div>
@@ -66,15 +89,15 @@ export default function GrowUpForm() {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
-        onFinish={(e) => console.log(e)}
+        onFinish={onFinish}
       >
-        <Form.Item label={'Chon ngay'} name="date">
+        <Form.Item<FormType> label={'Chon ngay'} name="date">
           <DatePicker
             disabledDate={(d) => !d || d.isAfter(Date.now())}
             format="YYYY-MM-DD"
           />
         </Form.Item>
-        <Form.Item
+        <Form.Item<FormType>
           label="Upload"
           valuePropName="fileList"
           name={'file'}
@@ -91,11 +114,13 @@ export default function GrowUpForm() {
             {fileList.length >= 8 ? null : uploadButton}
           </Upload>
         </Form.Item>
-        <Form.Item label={'Mota'} name={'description'}>
-          <Input.TextArea onChange={() => {}} />
+        <Form.Item<FormType> label={'Mota'} name={'description'}>
+          <Input.TextArea />
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">OK</Button>
+          <Button loading={loading} htmlType="submit">
+            Thêm
+          </Button>
         </Form.Item>
       </Form>
       <Modal

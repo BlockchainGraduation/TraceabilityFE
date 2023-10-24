@@ -5,6 +5,7 @@ import {
   Badge,
   ConfigProvider,
   Dropdown,
+  Empty,
   Image,
   Input,
   InputNumber,
@@ -38,6 +39,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRightFromBracket,
   faCartShopping,
+  faEarthAsia,
+  faHouse,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut, setLogin } from '@/reducers/userSlice';
@@ -45,6 +48,9 @@ import SearchItem from './SearchItem';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
@@ -198,7 +204,9 @@ export default memo(function Header() {
     <div
       className={`w-full ${
         isHomePage && 'text-white'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent`}
+      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent ${
+        inter.className
+      } `}
     >
       <Link href={'/'}>
         <Image
@@ -214,10 +222,17 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-10 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
+            className={`py-[15px] px-10 flex items-center gap-x-2 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
             href={`/${key}`}
           >
-            <p className={`text-inherit`}>{t(`route.${key}`)}</p>
+            <FontAwesomeIcon
+              size="1x"
+              icon={faHouse}
+              style={{ color: '#37be47' }}
+            />
+            <p className={`text-inherit font-bold font-mono`}>
+              {t(`route.${key}`)}
+            </p>
           </Link>
         ))}
       </div>
@@ -230,7 +245,7 @@ export default memo(function Header() {
           }
           className="w-full"
           content={
-            <div ref={ref} className="w-full ">
+            <div ref={ref} className="w-full max-h-[400px] overflow-y-auto">
               {resultSearch.length ? (
                 resultSearch.map((item: any, index) => (
                   <SearchItem
@@ -243,7 +258,10 @@ export default memo(function Header() {
                   />
                 ))
               ) : (
-                <p className="text-center"> Không tìm thấy dữ liệu</p>
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description={'Ko tìm thấy kết quả'}
+                />
               )}
             </div>
           }
@@ -257,15 +275,22 @@ export default memo(function Header() {
             className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900 "
             placeholder="Search Product...(Max 50 char)"
             onChange={(e) => {
-              setValueSearch(e.target.value);
-              setShowSearchItems(true);
-            }}
-            onFocus={(e) => {
-              if (!e.target.value) {
+              if (e.target.value.trim()) {
+                setValueSearch(e.target.value);
+                setShowSearchItems(true);
+              } else {
+                setResultSearch([]);
+                setShowSearchItems(false);
                 return;
               }
-              setShowSearchItems(true);
-              fethMarketSearch();
+            }}
+            onFocus={(e) => {
+              if (!e.target.value.trim()) {
+                return;
+              } else {
+                setShowSearchItems(true);
+                fethMarketSearch();
+              }
             }}
           />
         </Popover>
@@ -282,6 +307,11 @@ export default memo(function Header() {
             },
           }}
         >
+          <FontAwesomeIcon
+            size="1x"
+            icon={faEarthAsia}
+            style={{ color: '#3748c8' }}
+          />
           <Select
             defaultValue={locale}
             style={{ width: 120 }}
