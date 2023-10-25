@@ -63,7 +63,7 @@ export default function ProductTodayItem({
         src={productAvatar}
       />
       <div className="w-3/5 py-[10px]">
-        <Typography.Title className="text-center" level={3}>
+        <Typography.Title className="text-center border-[1px]" level={3}>
           {productName}
         </Typography.Title>
         <div className="flex mb-[10px] gap-x-3 font-thin text-base">

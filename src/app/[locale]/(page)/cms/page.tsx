@@ -43,12 +43,12 @@ export default function CMSPage() {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
-  const route = useRouter();
-  useEffect(() => {
-    if (!currentUser.logged) {
-      route.push('/home');
-    }
-  }, [currentUser.logged, route]);
+  // const route = useRouter();
+  // useEffect(() => {
+  //   if (!currentUser.logged) {
+  //     route.push('/home');
+  //   }
+  // }, [currentUser.logged, route]);
 
   ////Render taskbar
   const items: MenuItem[] = [
@@ -65,7 +65,7 @@ export default function CMSPage() {
     currentUser.user.system_role === 'ADMIN'
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           getItem('Quản lí user', '6'),
-          getItem('Quản lí giao dịch', '7'),
+          getItem('Quản lí sản phẩm', '7'),
         ])
       : null,
     getItem('Files', '8', <FileOutlined />),

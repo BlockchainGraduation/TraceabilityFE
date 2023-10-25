@@ -174,14 +174,15 @@ export default memo(function Header() {
       key: '2',
     },
     {
-      label: currentUser.is_active ? (
-        <Link href={'/cms'}>
-          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
-          Đăng kí thành viên
-        </Link>
-      ) : (
-        ''
-      ),
+      label:
+        currentUser.system_role === 'MEMBER' ? (
+          <Link href={'/register-rule'}>
+            <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
+            Đăng kí thành viên
+          </Link>
+        ) : (
+          ''
+        ),
       key: '3',
     },
     {
@@ -204,7 +205,7 @@ export default memo(function Header() {
     <div
       className={`w-full ${
         isHomePage && 'text-white'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-transparent ${
+      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-slate-100	 ${
         inter.className
       } `}
     >

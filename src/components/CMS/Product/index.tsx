@@ -246,7 +246,6 @@ export default function ProductCMS() {
     },
     {
       key: 3,
-
       title: 'Giá đơn vị',
       dataIndex: 'price',
     },
