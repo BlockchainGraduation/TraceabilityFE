@@ -54,6 +54,7 @@ import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAr
 import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
 import { useAppSelector } from '@/hooks';
 import { useEffectOnce } from 'usehooks-ts';
+import CommentInput from '@/components/Contents/common/CommentInput';
 
 interface DataType {
   key: React.Key;
@@ -186,12 +187,14 @@ export default function MarketInfo({
               </div>
               <div className="flex items-center mt-[10px]">
                 <Button
+                  disabled={dataProduct.created_by === currentUser.id}
                   onClick={() => setShowModalPay(true)}
                   className="w-full"
                 >
                   Buy now
                 </Button>
                 <Button
+                  disabled={dataProduct.created_by === currentUser.id}
                   onClick={() => {
                     // setBuyOrCart('CART');
                     setShowModalPay(true);
@@ -298,6 +301,7 @@ export default function MarketInfo({
                         />
                       )}
                     </div>
+                    <CommentInput marketId={''} />
                   </div>
                 )}
                 {changePageRight === 'HISTORY' && (
@@ -354,7 +358,7 @@ export default function MarketInfo({
       <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
         <p className="text-5xl mb-[50px]">Giới thiệu chi tiết về sản phẩm</p>
         <div className="max-h-[600px] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto">
-          {[...Array(1)].map((_, index) => (
+          {[...Array(5)].map((_, index) => (
             <div
               key={index}
               className={`relative flex ${
@@ -369,7 +373,7 @@ export default function MarketInfo({
                 alt=""
                 src={staticVariables.qc1.src}
               />
-              <div className=" w-1/2 px-[50px]">
+              <div className="w-1/2 px-[50px]">
                 <InputCustom
                   className="text-4xl mb-[20px]"
                   name={''}

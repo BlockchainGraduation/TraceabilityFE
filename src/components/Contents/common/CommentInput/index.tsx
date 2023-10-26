@@ -26,9 +26,15 @@ export default function CommentInput({
       .catch((err) => console.log(err));
   };
   return (
-    <div className={`flex mt-[20px] ${className}`}>
-      <Avatar className="mr-[10px]" src={staticVariables.logoRaiden.src} />
-      <Input.TextArea onChange={(e) => setCommentValue(e.target.value)} />
+    <div className={`flex items-center mt-[20px] ${className}`}>
+      <div>
+        <Avatar className="mr-[10px]" size="large" src={currentUser.avatar} />
+      </div>
+      <Input.TextArea
+        autoSize
+        className="max-h-[300px]"
+        onChange={(e) => setCommentValue(e.target.value)}
+      />
       {/* <Button
         onClick={() => login(fetchSubmitComment)}
         className="flex items-center"

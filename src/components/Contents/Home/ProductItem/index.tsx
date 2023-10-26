@@ -113,7 +113,7 @@ export default function ProductItem(props: Props) {
           </div>,
         ]}
       >
-        <Link href={`/market/${props.marketId}`}>
+        <Link href={`/market/${props.marketId || props.productId}`}>
           <Meta
             // avatar={<Avatar size={50} src={props.ownerImg} />}
             title={

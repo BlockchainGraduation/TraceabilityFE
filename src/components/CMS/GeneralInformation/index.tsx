@@ -132,7 +132,7 @@ export default function GeneralInformation() {
               src={currentUser.avatar}
             />
             <Upload
-              accept="image/*,.jpg,.png,.jpeg"
+              accept="image/png, image/jpeg, image/jpg"
               showUploadList={false}
               onChange={handleChangeAvatar}
             >
@@ -290,6 +290,7 @@ export default function GeneralInformation() {
             </Typography.Title>
             <Upload
               // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+              accept="image/png, image/jpeg, image/jpg"
               listType="picture-card"
               multiple
               maxCount={8}

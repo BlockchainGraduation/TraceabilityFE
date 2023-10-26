@@ -110,12 +110,13 @@ export default function GrowUpForm({ productId }: { productId: string }) {
             // fileList={fileList}
             onPreview={handlePreview}
             onChange={handleChange}
+            accept="image/png, image/jpeg, image/jpg"
           >
             {fileList.length >= 8 ? null : uploadButton}
           </Upload>
         </Form.Item>
         <Form.Item<FormType> label={'Mota'} name={'description'}>
-          <Input.TextArea />
+          <Input.TextArea autoSize />
         </Form.Item>
         <Form.Item>
           <Button loading={loading} htmlType="submit">
