@@ -33,9 +33,9 @@ export default function GrowUpForm({ productId }: { productId: string }) {
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  const handleCancel = () => setPreviewOpen(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  const handleCancel = () => setPreviewOpen(false);
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
@@ -63,9 +63,9 @@ export default function GrowUpForm({ productId }: { productId: string }) {
 
   const onFinish = async (e: FormType) => {
     setLoading(true);
-    console.log(e);
+    console.log(fileList[0].originFileObj);
     let formData = new FormData();
-    formData.append('image', e.file?.originFileObj as Blob);
+    formData.append('image', fileList[0].originFileObj as Blob);
     await instanceAxios
       .post(
         `product/grow_up?product_id=${productId}&description=${e.description}`,

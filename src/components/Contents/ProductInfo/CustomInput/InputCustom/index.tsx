@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/hooks';
 import { User, setUser } from '@/reducers/userSlice';
-import fetchUpdateUser from '@/services/fetchUpdate';
+import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
 import { FocusEvent, memo } from 'react';
@@ -22,6 +22,8 @@ export default memo(function InputCustom({
   className,
   input,
   classNameLabel,
+  APIurl,
+  queryType,
   onKeyDown,
 }: // onChange = () => {},
 {
@@ -29,13 +31,18 @@ export default memo(function InputCustom({
   initialValue: string;
   className?: string;
   classNameLabel?: string;
+  APIurl: string;
   input?: InputProps;
+  queryType: 'user' | 'product';
+
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useAppDispatch();
 
   const ref = useRef<InputRef>(null);
@@ -53,15 +60,18 @@ export default memo(function InputCustom({
   //     window.removeEventListener('mousedown', handleOutSideClick);
   //   };
   // }, [editAble]);
-  const fetchUpdate = async () => {
-    await fetchUpdateUser(
-      'user/update_me',
+  const handleOk = async () => {
+    setLoading(true);
+    await fetchUpdate(
+      APIurl,
       { [name]: value },
       (res) => {
         console.log(res);
         setEditAble(false);
         setOpenModalConfirm(false);
-        dispatch(setUser(res.data.data as User));
+        if (queryType == 'user') {
+          dispatch(setUser(res.data.data as User));
+        }
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',
@@ -69,17 +79,18 @@ export default memo(function InputCustom({
       },
       (err) => {
         console.log(err);
-        // notification.error({
-        //   message: 'Error',
-        //   description: 'Cập nhật dữ liệu thất bại',
-        // });
-      }
+        notification.error({
+          message: 'Error',
+          description: 'Cập nhật dữ liệu thất bại',
+        });
+      },
+      () => setLoading(false)
     );
   };
 
   const handleBlur = async () => {
     if (value === initialValue) {
-      setEditAble(false);
+      setTimeout(() => setEditAble(false), 200);
     } else {
       setOpenModalConfirm(true);
     }
@@ -151,10 +162,11 @@ export default memo(function InputCustom({
         // cancelText="Huỷ"
         // okText="OK"
         footer={[
-          <Button onClick={fetchUpdate} key={0}>
+          <Button loading={loading} onClick={handleOk} key={0}>
             Xác nhận
           </Button>,
           <Button
+            disabled={loading}
             onClick={() => {
               setOpenModalConfirm(false), setValue(initialValue);
             }}

@@ -44,6 +44,7 @@ import { ColumnsType } from 'antd/es/table';
 import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
 import instanceAxios from '@/api/instanceAxios';
 import GrowUpForm from '@/components/Contents/ProductInfo/GrowUpForm';
+import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
 
 interface DataType {
   key: React.Key;
@@ -216,19 +217,23 @@ export default function MarketInfo({
               <div className="pb-[10px] pl-[20px] border-b-[1px]">
                 Decription
               </div>
-              <div className="p-[20px] ">
-                Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết sớm
-                nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ có 2 tay
-                + trời mưa to đường trơn mà nhà c cũng không gần KTX lắm nên
-                việc Sót đơn hoặc để các em chờ hơi lâu là một thiết sót lớn với
-                chịCác em bao dung sự bất tiện này nhé LÊN ĐƠN KÈM SỐ PHÒNG DÙM
-                CHỊ BÉ NHÓShip chừ tới #12h đêm giờ nào cũng có các em yên tâm
-                nhaaaChị bé ship cả ngoài kí túc xá nên cứ mạnh dạn lên đơn Đồ
-                ăn chị có : -SET KIMPAD ĐÙI GÀ #30k -ĐUI GÀ CHIÊN XÙ #20k
-                -KIMPAD TRUYỀN THỐNG #15_20k -GỎI CUỐN TÔM THỊT KÈM MẮM #5k
-                -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT #15_20k
-                -CÁ VIÊN CHIÊN MẮM #20k
-              </div>
+              <TextAreaCustom
+                queryType="product"
+                APIurl={`product/update/${dataMarket.order_id}`}
+                className="p-[20px]"
+                name={'description'}
+                initialValue={`Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết sớm
+              nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ có 2 tay
+              + trời mưa to đường trơn mà nhà c cũng không gần KTX lắm nên
+              việc Sót đơn hoặc để các em chờ hơi lâu là một thiết sót lớn với
+              chịCác em bao dung sự bất tiện này nhé LÊN ĐƠN KÈM SỐ PHÒNG DÙM
+              CHỊ BÉ NHÓShip chừ tới #12h đêm giờ nào cũng có các em yên tâm
+              nhaaaChị bé ship cả ngoài kí túc xá nên cứ mạnh dạn lên đơn Đồ
+              ăn chị có : -SET KIMPAD ĐÙI GÀ #30k -ĐUI GÀ CHIÊN XÙ #20k
+              -KIMPAD TRUYỀN THỐNG #15_20k -GỎI CUỐN TÔM THỊT KÈM MẮM #5k
+              -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT #15_20k
+              -CÁ VIÊN CHIÊN MẮM #20k`}
+              />
             </div>
           </div>
           <div className="w-3/5 pl-[20px] rounded overflow-hidden">
@@ -295,74 +300,72 @@ export default function MarketInfo({
             </div>
           </div>
         </div>
-        {dataMarket.order_type === 'FAMMER' && (
-          <div
-            //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
-            className={`border-l-2 block w-fit m-auto mt-[150px]`}
-          >
-            <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
-              <FontAwesomeIcon
-                icon={faArrowTrendUp}
-                size={'2xl'}
-                style={{ color: '#29c214' }}
-              />
-              <p className="pl-[20px]">Qua trinh phat trien </p>
-              <PlusCircleTwoTone
-                onClick={() => setOpenGrowUpModal(true)}
-                className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
-              />
-            </div>
-            <div className="ml-[-111px] h-[500px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
-              <GrowUpItem />
-              <GrowUpItem />
-              <GrowUpItem />
-            </div>
-            <Modal
-              open={openGrowUpModal}
-              onCancel={() => setOpenGrowUpModal(false)}
-              footer={[]}
-            >
-              <Typography.Title level={3}>
-                Cap nhat qua trinh phat trien
-              </Typography.Title>
-
-              <GrowUpForm productId={dataMarket.order_id} />
-            </Modal>
+        {/* {dataMarket.order_type === 'FAMMER' && ( */}
+        <div
+          //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
+          className={`border-l-2 block w-2/3 m-auto mt-[150px]`}
+        >
+          <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
+            <FontAwesomeIcon
+              icon={faArrowTrendUp}
+              size={'2xl'}
+              style={{ color: '#29c214' }}
+            />
+            <p className="pl-[20px]">Quá trình phát triển </p>
+            <PlusCircleTwoTone
+              onClick={() => setOpenGrowUpModal(true)}
+              className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
+            />
           </div>
-        )}
+          <div className="ml-[-111px]  max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
+            <GrowUpItem />
+            <GrowUpItem />
+            <GrowUpItem />
+          </div>
+          <Modal
+            open={openGrowUpModal}
+            onCancel={() => setOpenGrowUpModal(false)}
+            footer={[]}
+          >
+            <Typography.Title level={3}>
+              Thêm qua trinh phat trien
+            </Typography.Title>
+
+            <GrowUpForm productId={dataMarket.order_id} />
+          </Modal>
+        </div>
+        {/* )} */}
       </div>
       <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
-        <p className="text-5xl mb-[20px]">Giới thiệu chi tiết về sản phẩm</p>
+        <p className="text-5xl mb-[50px]">Giới thiệu chi tiết về sản phẩm</p>
         <div className="max-h-[600px] w-fit flex flex-col gap-y-10 overflow-auto">
           {[...Array(5)].map((_, index) => (
-            <>
-              <div className="flex rounded w-full">
-                <Image
-                  className="object-cover w-1/2 "
-                  width={550}
-                  height={450}
-                  style={{ borderRadius: '10px' }}
-                  alt=""
-                  src={staticVariables.qc1.src}
-                />
-                <div className="w-1/2 px-[50px]">
-                  <p className="text-2xl mb-[20px]"> Gioi thieu san pham</p>
-                  <div>
-                    Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết
-                    sớm nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ
-                    có 2 tay + trời mưa to đường trơn mà nhà c cũng không gần
-                    KTX lắm nên việc Sót đơn hoặc để các em chờ hơi lâu là một
-                    thiết sót lớn với chịCác em bao dung sự bất tiện này nhé LÊN
-                    ĐƠN KÈM SỐ PHÒNG DÙM CHỊ BÉ NHÓShip chừ tới #12h đêm giờ nào
-                    cũng có các em yên tâm nhaaaChị bé ship cả ngoài kí túc xá
-                    nên cứ mạnh dạn lên đơn Đồ ăn chị có : -SET KIMPAD ĐÙI GÀ
-                    #30k -ĐUI GÀ CHIÊN XÙ #20k -KIMPAD TRUYỀN THỐNG #15_20k -GỎI
-                    CUỐN TÔM THỊT KÈM MẮM #5k -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN
-                    CHIÊN CHẤM TƯƠNG ỚT #15_20k -CÁ VIÊN CHIÊN MẮM #20k
-                  </div>
+            <div key={index} className="flex rounded w-full">
+              <Image
+                className="object-cover w-1/2 "
+                width={550}
+                height={350}
+                style={{ borderRadius: '10px' }}
+                alt=""
+                src={staticVariables.qc1.src}
+              />
+              <div className="w-1/2 px-[50px]">
+                <p className="text-2xl mb-[20px]"> Gioi thieu san pham</p>
+                <div>
+                  Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết
+                  sớm nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ có
+                  2 tay + trời mưa to đường trơn mà nhà c cũng không gần KTX lắm
+                  nên việc Sót đơn hoặc để các em chờ hơi lâu là một thiết sót
+                  lớn với chịCác em bao dung sự bất tiện này nhé LÊN ĐƠN KÈM SỐ
+                  PHÒNG DÙM CHỊ BÉ NHÓShip chừ tới #12h đêm giờ nào cũng có các
+                  em yên tâm nhaaaChị bé ship cả ngoài kí túc xá nên cứ mạnh dạn
+                  lên đơn Đồ ăn chị có : -SET KIMPAD ĐÙI GÀ #30k -ĐUI GÀ CHIÊN
+                  XÙ #20k -KIMPAD TRUYỀN THỐNG #15_20k -GỎI CUỐN TÔM THỊT KÈM
+                  MẮM #5k -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT
+                  #15_20k -CÁ VIÊN CHIÊN MẮM #20k
                 </div>
               </div>
-            </>
+            </div>
           ))}
         </div>
       </div>

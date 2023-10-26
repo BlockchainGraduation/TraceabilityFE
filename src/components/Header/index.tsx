@@ -205,9 +205,8 @@ export default memo(function Header() {
     <div
       className={`w-full ${
         isHomePage && 'text-white'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-slate-100	 ${
-        inter.className
-      } `}
+      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-slate-100 shadow-[0px_12px_10px_-8px_rgba(110,110,110,0.8784313725)]
+      ${inter.className} `}
     >
       <Link href={'/'}>
         <Image
@@ -331,7 +330,7 @@ export default memo(function Header() {
           <div>
             <Dropdown menu={{ items }}>
               <Badge count={5} offset={[5, 10]} color="blue">
-                <Avatar src={staticVariables.logoRaiden.src} size="large" />
+                <Avatar src={currentUser.avatar} size="large" />
               </Badge>
             </Dropdown>
           </div>

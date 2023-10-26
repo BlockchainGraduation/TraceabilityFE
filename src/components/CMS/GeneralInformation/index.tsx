@@ -148,6 +148,8 @@ export default function GeneralInformation() {
           <div className="flex w-1/2 flex-col gap-y-4">
             <div>
               <InputCustom
+                APIurl={'user/update_me'}
+                queryType={'user'}
                 name="full_ame"
                 classNameLabel="text-2xl font-bold"
                 initialValue={currentUser.full_name}
@@ -166,7 +168,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="14-Khuy My  - NHS - DN" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="14-Khuy My  - NHS - DN"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -185,6 +192,8 @@ export default function GeneralInformation() {
                   }}
                   name="birthday"
                   initialValue={currentUser.birthday}
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
                 />
               </Col>
             </Row>
@@ -213,7 +222,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="http/asd/asdd" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="http/asd/asdd"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -226,7 +240,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="adbc@gmail.com" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="adbc@gmail.com"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -239,7 +258,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="012313132" />
+                <InputCustom
+                  name="as"
+                  initialValue="012313132"
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                />
               </Col>
             </Row>
           </div>
@@ -312,6 +336,8 @@ export default function GeneralInformation() {
           <TextAreaCustom
             name="description"
             initialValue="asdasdasdasdadadasda"
+            APIurl={'user/update_me'}
+            queryType={'user'}
           />
         </div>
       </div>

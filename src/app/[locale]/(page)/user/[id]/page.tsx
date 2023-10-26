@@ -1,6 +1,7 @@
 'use client';
 import instanceAxios from '@/api/instanceAxios';
 import ProductItem from '@/components/Contents/Home/ProductItem';
+import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
 import CreateProductForm from '@/components/Contents/User/CreateProductForm';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import { useAppSelector } from '@/hooks';
@@ -28,6 +29,7 @@ import {
   Card,
   Carousel,
   Col,
+  Empty,
   Image,
   Modal,
   Popover,
@@ -181,6 +183,7 @@ export default function UserInfo() {
                 <p>asdasdaadd</p>
               </Col>
             </Row>
+
             <div className="pr-[50px] text-justify">
               {`This limited series of Midnight Society Access Passes grants the
               holder studio-specific perks including but not limited to: a
@@ -254,22 +257,26 @@ export default function UserInfo() {
             <CreateProductForm />
           </Modal>
           <div className="flex items-center justify-center flex-wrap gap-10	">
-            {listProduct.map((item: any, index) => (
-              <ProductItem
-                key={index}
-                productId={item.id}
-                productName={item.name}
-                productImg={item.banner}
-                // ownerName="SimpRaidenEi"
-                // ownerImg={staticVariables.logoRaiden.src}
-                // role="Fammer"
-                likeQuantity={12}
-                messageQuantity={12}
-                buyerQuantity={12}
-                price={item.price}
-                quantity={item.quantity}
-              />
-            ))}
+            {listProduct.length ? (
+              listProduct.map((item: any, index) => (
+                <ProductItem
+                  key={index}
+                  productId={item.id}
+                  productName={item.name}
+                  productImg={item.banner}
+                  // ownerName="SimpRaidenEi"
+                  // ownerImg={staticVariables.logoRaiden.src}
+                  // role="Fammer"
+                  likeQuantity={12}
+                  messageQuantity={12}
+                  buyerQuantity={12}
+                  price={item.price}
+                  quantity={item.quantity}
+                />
+              ))
+            ) : (
+              <Empty description={'Không có dữ liệu về sản phẩm của bạn'} />
+            )}
           </div>
         </div>
       </div>
