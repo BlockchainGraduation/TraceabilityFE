@@ -25,6 +25,7 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
+import { useEffectOnce } from 'usehooks-ts';
 export default memo(function TextAreaCustom({
   name,
   initialValue,
@@ -34,6 +35,7 @@ export default memo(function TextAreaCustom({
   APIurl,
   queryType,
   onKeyDown,
+  showEdit = true,
 }: // onChange = () => {},
 {
   name: string;
@@ -42,6 +44,7 @@ export default memo(function TextAreaCustom({
   classNameLabel?: string;
   APIurl: string;
   queryType: 'user' | 'product';
+  showEdit?: boolean;
   input?: TextAreaProps;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -51,9 +54,10 @@ export default memo(function TextAreaCustom({
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
-
   const ref = useRef<InputRef>(null);
-
+  useEffectOnce(() => {
+    console.log(showEdit);
+  });
   // useEffect(() => {
   //   const handleOutSideClick = async (event: any) => {
   //     if (!ref.current?.input?.contains?.(event.target)) {
@@ -191,10 +195,12 @@ export default memo(function TextAreaCustom({
         Dữ liệu của bạn vừa nhập có sự thay đổi đối với dữ liệu gốc. Xác nhận
         thay đổi!!!!
       </Modal>
-      <EditTwoTone
-        className="px-[10px]"
-        onClick={() => setEditAble(!editAble)}
-      />
+      {showEdit && (
+        <EditTwoTone
+          className="px-[10px]"
+          onClick={() => setEditAble(!editAble)}
+        />
+      )}
     </div>
   );
 });

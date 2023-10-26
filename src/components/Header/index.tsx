@@ -27,7 +27,7 @@ import React, {
 } from 'react';
 import Login from './Login';
 import Register from './Register';
-import { useDebounce, useOnClickOutside } from 'usehooks-ts';
+import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
 import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
@@ -43,7 +43,7 @@ import {
   faHouse,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { logOut, setLogin } from '@/reducers/userSlice';
+import { User, logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
@@ -101,10 +101,14 @@ export default memo(function Header() {
     await instanceAxios
       .get('user/me')
       .then((res) => {
-        dispatch(setLogin({ logged: true, user: res.data.data }));
+        // console.log(res.data.data);
+        dispatch(setLogin({ logged: true, user: { ...res.data.data } }));
       })
       .catch((err) => console.log(err));
   }, [dispatch]);
+  // useEffectOnce(() => {
+  //   fethGetUser();
+  // });
   useSWR('user/me', fethGetUser);
 
   const fethMarketSearch = useCallback(async () => {
@@ -204,8 +208,8 @@ export default memo(function Header() {
   return (
     <div
       className={`w-full ${
-        isHomePage && 'text-white'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit bg-slate-100 shadow-[0px_12px_10px_-8px_rgba(110,110,110,0.8784313725)]
+        isHomePage ? 'text-white bg-transparent' : 'bg-slate-100'
+      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit  shadow-[0px_12px_10px_-8px_rgba(110,110,110,0.8784313725)]
       ${inter.className} `}
     >
       <Link href={'/'}>

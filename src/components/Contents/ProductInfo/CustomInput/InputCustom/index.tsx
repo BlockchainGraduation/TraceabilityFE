@@ -24,6 +24,7 @@ export default memo(function InputCustom({
   classNameLabel,
   APIurl,
   queryType,
+  showEdit = true,
   onKeyDown,
 }: // onChange = () => {},
 {
@@ -33,6 +34,7 @@ export default memo(function InputCustom({
   classNameLabel?: string;
   APIurl: string;
   input?: InputProps;
+  showEdit?: boolean;
   queryType: 'user' | 'product';
 
   onKeyDown?: KeyboardEventHandler;
@@ -66,7 +68,6 @@ export default memo(function InputCustom({
       APIurl,
       { [name]: value },
       (res) => {
-        console.log(res);
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
@@ -179,10 +180,12 @@ export default memo(function InputCustom({
         Dữ liệu của bạn vừa nhập có sự thay đổi đối với dữ liệu gốc. Xác nhận
         thay đổi!!!!
       </Modal>
-      <EditTwoTone
-        className="px-[10px]"
-        onClick={() => setEditAble(!editAble)}
-      />
+      {showEdit && (
+        <EditTwoTone
+          className="px-[10px]"
+          onClick={() => setEditAble(!editAble)}
+        />
+      )}
     </div>
   );
 });

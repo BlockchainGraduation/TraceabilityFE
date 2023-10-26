@@ -31,7 +31,13 @@ import {
   Typography,
   Upload,
 } from 'antd';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp } from '@fortawesome/free-solid-svg-icons';
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
@@ -45,6 +51,9 @@ import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
 import instanceAxios from '@/api/instanceAxios';
 import GrowUpForm from '@/components/Contents/ProductInfo/GrowUpForm';
 import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
+import { useAppSelector } from '@/hooks';
+import { useEffectOnce } from 'usehooks-ts';
 
 interface DataType {
   key: React.Key;
@@ -64,32 +73,35 @@ export default function MarketInfo({
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataMarket, setDataMarket] = useState<any>({});
   const [dataOwner, setDataOwner] = useState({});
-  const [dataProduct, setDataProduct] = useState({});
+  const [dataProduct, setDataProduct] = useState<any>({});
   const [changePageRight, setChangePageRight] = useState('COMMENT');
-  const [isOwner, setIsOwner] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
   const [commentList, setCommentList] = useState([]);
   const [showModalPay, setShowModalPay] = useState(false);
+  const currentUser = useAppSelector((state) => state.user.user);
 
-  useEffect(() => {
-    const fethMarket = async () => {
-      await instanceAxios
-        .get(`marketplace/${params.marketId}`)
-        .then(async (res) => {
-          setDataMarket(res.data.data);
-          await instanceAxios
-            .get(`product/${res.data.data.order_id}`)
-            .then((res) => setDataProduct(res.data.data))
-            .catch((err) => console.log('asdadasd'));
-          // await instanceAxios
-          //   .get(`user/${res.data.data.order_id}`)
-          //   .then((res) => setDataOwner(res.data.data))
-          //   .catch((err) => console.log('asdadasd'));
-        })
-        .catch((err) => console.log(err));
-    };
+  const fethMarket = async () => {
+    await instanceAxios
+      .get(`marketplace/${params.marketId}`)
+      .then(async (res) => {
+        setDataMarket(res.data.data);
+        await instanceAxios
+          .get(`product/${res.data.data.order_id}`)
+          .then((res) => {
+            setDataProduct(res.data.data);
+          })
+          .catch((err) => console.log('asdadasd'));
+        // await instanceAxios
+        //   .get(`user/${res.data.data.order_id}`)
+        //   .then((res) => setDataOwner(res.data.data))
+        //   .catch((err) => console.log('asdadasd'));
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffectOnce(() => {
     fethMarket();
-  }, [params.marketId]);
-
+  });
+  // setOwner();
   const contentStyle: React.CSSProperties = {
     margin: 0,
     height: '300px',
@@ -330,7 +342,10 @@ export default function MarketInfo({
             <Typography.Title level={3}>
               Thêm qua trinh phat trien
             </Typography.Title>
-
+            <p className="text-rose-600">
+              * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng tải quá
+              trình phát triển
+            </p>
             <GrowUpForm productId={dataMarket.order_id} />
           </Modal>
         </div>
@@ -338,21 +353,36 @@ export default function MarketInfo({
       </div>
       <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
         <p className="text-5xl mb-[50px]">Giới thiệu chi tiết về sản phẩm</p>
-        <div className="max-h-[600px] w-fit flex flex-col gap-y-10 overflow-auto">
-          {[...Array(5)].map((_, index) => (
-            <div key={index} className="flex rounded w-full">
+        <div className="max-h-[600px] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto">
+          {[...Array(1)].map((_, index) => (
+            <div
+              key={index}
+              className={`relative flex ${
+                index % 2 && 'flex-row-reverse'
+              } items-center justify-between rounded w-full`}
+            >
               <Image
                 className="object-cover w-1/2 "
                 width={550}
-                height={350}
+                height={650}
                 style={{ borderRadius: '10px' }}
                 alt=""
                 src={staticVariables.qc1.src}
               />
-              <div className="w-1/2 px-[50px]">
-                <p className="text-2xl mb-[20px]"> Gioi thieu san pham</p>
-                <div>
-                  Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết
+              <div className=" w-1/2 px-[50px]">
+                <InputCustom
+                  className="text-4xl mb-[20px]"
+                  name={''}
+                  initialValue={'Nay chị Sốt nên lên bài hơi trễMưa'}
+                  APIurl={''}
+                  showEdit={dataProduct.created_by === currentUser.id}
+                  queryType={'user'}
+                  input={{ maxLength: 30 }}
+                />
+                <TextAreaCustom
+                  name={''}
+                  showEdit={dataProduct.created_by === currentUser.id}
+                  initialValue={`Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết
                   sớm nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ có
                   2 tay + trời mưa to đường trơn mà nhà c cũng không gần KTX lắm
                   nên việc Sót đơn hoặc để các em chờ hơi lâu là một thiết sót
@@ -362,8 +392,11 @@ export default function MarketInfo({
                   lên đơn Đồ ăn chị có : -SET KIMPAD ĐÙI GÀ #30k -ĐUI GÀ CHIÊN
                   XÙ #20k -KIMPAD TRUYỀN THỐNG #15_20k -GỎI CUỐN TÔM THỊT KÈM
                   MẮM #5k -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT
-                  #15_20k -CÁ VIÊN CHIÊN MẮM #20k
-                </div>
+                  #15_20k -CÁ VIÊN CHIÊN MẮM #20k`}
+                  APIurl={''}
+                  queryType={'product'}
+                  input={{ maxLength: 1000 }}
+                />
               </div>
             </div>
           ))}
