@@ -22,17 +22,19 @@ export default function Register({
   onFinishOTP: () => void;
 }) {
   const [current, setCurrent] = useState(0);
+  const [email, setEmail] = useState('');
   const dispatch = useAppDispatch();
-  const nextStep = () => {
+  const nextStep = (e?: string) => {
     if (current === steps.length - 1) {
       onFinishOTP();
     } else {
       setCurrent(current + 1);
+      if (e) setEmail(e);
     }
   };
   const steps = [
     <RegisterForm key={0} nextStep={nextStep} />,
-    <ConfirmOTP nextStep={nextStep} key={1} />,
+    <ConfirmOTP email={email} nextStep={nextStep} key={1} />,
   ];
 
   // const steps = [
