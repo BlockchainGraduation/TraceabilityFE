@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { Providers } from '@/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import 'moment/locale/pt-br';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'vi' }];
@@ -12,6 +13,7 @@ export function generateStaticParams() {
 import { Roboto } from 'next/font/google';
 import { ConfigProvider, Spin, message } from 'antd';
 import theme from '@/theme/themeConfig';
+import moment from 'moment';
 
 const roboto = Roboto({
   weight: '500',
@@ -22,9 +24,6 @@ export const metadata: Metadata = {
   title: 'Traceability',
   description: 'Traceability',
 };
-// export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
-//   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
-// });
 
 export default async function LocaleLayout({
   children,
@@ -36,13 +35,7 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound();
   }
-
-  // const channel = pusher.subscribe('general-channel');
-  // channel.bind('general-channel', (data: any) => {
-  //   message.success('asdasda');
-  //   console.log(data);
-  //   // Method to be dispatched on trigger.
-  // });
+  moment.locale('fr');
 
   // const cookie = getCookie('access_token');
   // const fethGetUser = async () => {
@@ -81,13 +74,13 @@ export default async function LocaleLayout({
             },
           }}
         >
-          <Providers>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <Header />
-              <div>{children}</div>
-              <Footer />
-            </NextIntlClientProvider>
-          </Providers>
+          {/* <Providers> */}
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Header />
+            <div>{children}</div>
+            <Footer />
+          </NextIntlClientProvider>
+          {/* </Providers> */}
         </ConfigProvider>
       </body>
     </html>

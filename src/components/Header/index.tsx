@@ -207,6 +207,8 @@ export default memo(function Header() {
   ];
   return (
     <div
+      data-aos="fade-down"
+      data-aos-duration="1500"
       className={`w-full ${
         isHomePage ? 'text-white bg-transparent' : 'bg-slate-100'
       } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit  shadow-[0px_12px_10px_-8px_rgba(110,110,110,0.8784313725)]

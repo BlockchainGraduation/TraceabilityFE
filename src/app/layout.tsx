@@ -14,8 +14,8 @@ import instanceAxios from '@/api/instanceAxios';
 import { getCookie } from 'cookies-next';
 import Pusher from 'pusher-js';
 import { Inter } from 'next/font/google';
-
 import StyledComponentsRegistry from '../lib/AntdRegistry';
+import { Providers } from '@/providers';
 
 export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
@@ -49,7 +49,9 @@ export default function RootLayout({ children }: Props) {
         revalidateOnReconnect: false,
       }}
     >
-      <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+      <Providers>
+        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+      </Providers>
     </SWRConfig>
   );
 }

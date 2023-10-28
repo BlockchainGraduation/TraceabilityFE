@@ -64,6 +64,21 @@ interface DataType {
   time: string;
   status: ReactNode;
 }
+interface ProductType {
+  id?: string;
+  name?: string;
+  number_of_sales?: number;
+  banner?: string;
+  created_by?: string;
+  description?: string;
+  created_at?: string;
+  price?: number;
+  updated_at?: string;
+  quantity?: number;
+  hashed_data?: string;
+  product_status?: string;
+  product_type?: string;
+}
 
 export default function MarketInfo({
   params,
@@ -74,7 +89,7 @@ export default function MarketInfo({
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataMarket, setDataMarket] = useState<any>({});
   const [dataOwner, setDataOwner] = useState({});
-  const [dataProduct, setDataProduct] = useState<any>({});
+  const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
   const [commentList, setCommentList] = useState([]);
@@ -93,7 +108,7 @@ export default function MarketInfo({
           })
           .catch((err) => console.log('asdadasd'));
         // await instanceAxios
-        //   .get(`user/${res.data.data.order_id}`)
+        //   .get(`user/${res.data.data.order_by}`)
         //   .then((res) => setDataOwner(res.data.data))
         //   .catch((err) => console.log('asdadasd'));
       })
@@ -160,10 +175,12 @@ export default function MarketInfo({
             src={staticVariables.logo.src}
           />
           <div>
-            <Typography.Title level={2}>Sau rieng viet nam</Typography.Title>
+            <Typography.Title level={2}>{dataProduct.name}</Typography.Title>
             <div className="flex gap-x-2 text-[#7B7B7B] font-light">
               San pham cua
-              <p className="text-[#313064] font-bold">SimpRaidenEi</p>
+              <p className="text-[#313064] font-bold">
+                {dataProduct.created_by}
+              </p>
             </div>
             <div className="flex gap-x-4 my-[20px]">
               {[...Array(4)].map((_, index) => (
@@ -181,9 +198,15 @@ export default function MarketInfo({
                 <FieldTimeOutlined className="px-[10px] text-2xl" />
                 Sell day - 12/12/12
               </div>
-              <div>The current price of durian fruit is $1,000 per fruit</div>
+              <div>
+                The current price of durian fruit is $
+                {dataProduct.price?.toLocaleString()} per fruit
+              </div>
               <div className="w-fit flex items-center text-xs m-auto my-[20px]">
-                Price<p className="text-3xl">123123 VND</p>
+                Price
+                <p className="text-3xl">
+                  {dataProduct.price?.toLocaleString()}$
+                </p>
               </div>
               <div className="flex items-center mt-[10px]">
                 <Button
@@ -209,7 +232,12 @@ export default function MarketInfo({
                 open={showModalPay}
                 footer={[]}
               >
-                <CheckoutForm form={{ onFinish: (e) => console.log(e) }} />
+                <CheckoutForm
+                  producId={dataProduct?.id || ''}
+                  price={dataProduct.price || 0}
+                  quantity={dataProduct.quantity || 0}
+                  onSuccess={() => setShowModalPay(false)}
+                />
               </Modal>
             </div>
           </div>
@@ -350,7 +378,10 @@ export default function MarketInfo({
               * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng tải quá
               trình phát triển
             </p>
-            <GrowUpForm productId={dataMarket.order_id} />
+            <GrowUpForm
+              onSuccess={() => setOpenGrowUpModal(false)}
+              productId={dataMarket.order_id}
+            />
           </Modal>
         </div>
         {/* )} */}

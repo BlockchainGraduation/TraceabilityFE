@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import React, { HTMLAttributes, useState } from 'react';
 import { CheckoutForm } from '../../common/CheckoutForm';
+import instanceAxios from '@/api/instanceAxios';
 
 export default function ProductTodayItem({
   divElement,
@@ -140,7 +141,7 @@ export default function ProductTodayItem({
             <Typography.Title className="border-b-[1px] my-[20px]" level={4}>
               Thông tin đặt hàng
             </Typography.Title>
-            <CheckoutForm />
+            <CheckoutForm producId={''} price={0} quantity={10} />
           </div>
         </Modal>
       </div>
