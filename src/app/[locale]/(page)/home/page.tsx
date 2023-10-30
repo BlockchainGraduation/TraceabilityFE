@@ -43,28 +43,33 @@ interface DataType {
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [OrderType, setOrderType] = useState('');
-  const [nameProduct, setNameProduct] = useState('');
-  const [skip, setSkip] = useState(0);
+  const [orderType, setOrderType] = useState('');
+  const [productName, setProductName] = useState('');
+  // const [skip, setSkip] = useState(1);
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState([]);
+  const [totalMarket, setTotalMarket] = useState(0);
   const { mutate } = useSWRConfig();
 
   const fetchListMarket = useCallback(async () => {
     await instanceAxios
       .get(
-        `marketplace/list?${OrderType ? 'order_type=FARMER' : ''}${
-          nameProduct ? '&name_product=12' : ''
-        }&skip=${skip}&limit=${limit}`
+        `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
+          productName ? `&name_product=${productName}` : ''
+        }&skip=${currentPage - 1}&limit=${limit}`
       )
       .then((res) => {
         setListMarket(res.data.data.list_marketplace);
+        setTotalMarket(res.data.data.total_marketplace);
       })
       .catch((err) => {
         console.log(err);
         setListMarket([]);
       });
-  }, [OrderType, limit, nameProduct, skip]);
+  }, [currentPage, limit, orderType, productName]);
+  useEffect(() => {
+    fetchListMarket();
+  }, [fetchListMarket]);
 
   const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
 
@@ -213,7 +218,14 @@ export default function HomePage() {
       <div className="w-1/2 flex items-center justify-around mt-[50px]">
         <Segmented
           size={'large'}
-          options={['All', 'Fammer', 'Seed Company', 'Distributer', 'Factory']}
+          onChange={(e) => setOrderType(e.toString())}
+          options={[
+            { label: 'All', value: '' },
+            { label: 'Fammer', value: 'FAMMER' },
+            { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
+            { label: 'Distributer', value: 'DISTRIBUTER' },
+            { label: 'Factory', value: 'FACTORY' },
+          ]}
         />
         <Select
           labelInValue
@@ -256,7 +268,7 @@ export default function HomePage() {
         className="w-fit m-auto mt-[50px]"
         current={currentPage}
         onChange={(e) => setCurrentPage(e)}
-        total={50}
+        total={totalMarket}
       />
     </div>
   );

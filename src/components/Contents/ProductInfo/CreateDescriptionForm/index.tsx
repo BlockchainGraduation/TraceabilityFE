@@ -29,7 +29,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-export default function GrowUpForm({
+export default function CreateDescriptionForm({
   productId,
   onSuccess,
 }: {
@@ -81,7 +81,7 @@ export default function GrowUpForm({
       .then((res) => {
         notification.success({
           message: 'Thành công',
-          description: 'Upload quá trình phát triển thành công',
+          description: 'Thêm mô tả thành công',
         });
         onSuccess?.();
       })
@@ -110,21 +110,6 @@ export default function GrowUpForm({
         onFinish={onFinish}
       >
         <Form.Item<FormType>
-          label={'Chon ngay'}
-          name="date"
-          rules={[
-            {
-              required: true,
-              message: 'Vui lòng chọn ngày phát triển của giống',
-            },
-          ]}
-        >
-          <DatePicker
-            disabledDate={(d) => !d || d.isAfter(Date.now())}
-            format="YYYY-MM-DD"
-          />
-        </Form.Item>
-        <Form.Item<FormType>
           label="Upload"
           valuePropName="fileList"
           name={'file'}
@@ -132,7 +117,7 @@ export default function GrowUpForm({
           rules={[
             {
               required: true,
-              message: 'Vui lòng upload bằng chứng phát triển của cây',
+              message: 'Vui lòng upload hình ảnh mô tả',
             },
           ]}
         >
@@ -145,7 +130,7 @@ export default function GrowUpForm({
             onChange={handleChange}
             accept="image/png, image/jpeg, image/jpg"
           >
-            {fileList.length >= 8 ? null : uploadButton}
+            {fileList.length >= 1 ? null : uploadButton}
           </Upload>
         </Form.Item>
         <Form.Item<FormType>
@@ -154,7 +139,7 @@ export default function GrowUpForm({
           rules={[
             {
               required: true,
-              message: 'Vui lòng thêm mô tả về sự phát triển của giống',
+              message: 'Vui lòng thêm mô tả',
             },
           ]}
         >

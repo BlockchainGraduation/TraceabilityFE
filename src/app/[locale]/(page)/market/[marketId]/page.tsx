@@ -1,6 +1,8 @@
 'use client';
 import staticVariables from '@/static';
 import {
+  DeleteTwoTone,
+  EditTwoTone,
   EyeOutlined,
   FieldTimeOutlined,
   MailOutlined,
@@ -16,6 +18,7 @@ import {
   Button,
   Carousel,
   Col,
+  ConfigProvider,
   DatePicker,
   Empty,
   Form,
@@ -23,6 +26,8 @@ import {
   Input,
   List,
   Modal,
+  Popconfirm,
+  Popover,
   Row,
   Segmented,
   Table,
@@ -30,6 +35,7 @@ import {
   Timeline,
   Typography,
   Upload,
+  UploadFile,
 } from 'antd';
 import React, {
   ReactNode,
@@ -42,9 +48,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp } from '@fortawesome/free-solid-svg-icons';
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
 import Paragraph from 'antd/es/typography/Paragraph';
-import type { RcFile, UploadProps } from 'antd/es/upload';
-import type { UploadFile } from 'antd/es/upload/interface';
-import type { UploadChangeParam } from 'antd/es/upload';
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import { ColumnsType } from 'antd/es/table';
 import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
@@ -55,6 +58,10 @@ import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
 import { useAppSelector } from '@/hooks';
 import { useEffectOnce } from 'usehooks-ts';
 import CommentInput from '@/components/Contents/common/CommentInput';
+import moment from 'moment';
+import { useTranslations } from 'next-intl';
+import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
+import { UploadChangeParam } from 'antd/es/upload';
 
 interface DataType {
   key: React.Key;
@@ -79,6 +86,38 @@ interface ProductType {
   product_status?: string;
   product_type?: string;
 }
+interface GrowUpType {
+  id?: string;
+  product_farmer_id?: string;
+  description?: string;
+  image?: string;
+  video?: string;
+  hashed_data?: string;
+  created_at?: string;
+  product_farmer?: {
+    id?: string;
+    product_id?: string;
+    transaction_sf_id?: string;
+    product?: {
+      id?: string;
+      product_type?: string;
+      product_status?: string;
+      name?: string;
+      description?: string;
+      price?: number;
+      quantity?: number;
+      banner?: string;
+      created_by?: string;
+      created_at?: string;
+      user?: {
+        id?: string;
+        avatar?: string;
+        username?: string;
+        email?: string;
+      };
+    };
+  };
+}
 
 export default function MarketInfo({
   params,
@@ -86,10 +125,13 @@ export default function MarketInfo({
   params: { marketId: string };
 }) {
   const [openListImageModal, setOpenListImageModal] = useState(false);
+  const [openCreateDescriptionModal, setOpenCreateDescriptionModal] =
+    useState(false);
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataMarket, setDataMarket] = useState<any>({});
   const [dataOwner, setDataOwner] = useState({});
   const [dataProduct, setDataProduct] = useState<ProductType>({});
+  const [dataGrowUp, setDataGrowUp] = useState<GrowUpType[]>([]);
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
   const [commentList, setCommentList] = useState([]);
@@ -105,6 +147,12 @@ export default function MarketInfo({
           .get(`product/${res.data.data.order_id}`)
           .then((res) => {
             setDataProduct(res.data.data);
+          })
+          .catch((err) => console.log('asdadasd'));
+        await instanceAxios
+          .get(`product/${res.data.data.order_id}/grow_up?skip=0&limit=100`)
+          .then((res) => {
+            setDataGrowUp(res.data.data.list_grow_up);
           })
           .catch((err) => console.log('asdadasd'));
         // await instanceAxios
@@ -163,8 +211,12 @@ export default function MarketInfo({
     });
   }
 
+  const onUpload = (e: UploadChangeParam<UploadFile<any>>) => {
+    console.log(e);
+  };
+
   return (
-    <div className="w-full  m-auto">
+    <div className="w-full m-auto">
       <div className="px-[50px]">
         <div className="flex gap-x-10">
           <Image
@@ -172,7 +224,7 @@ export default function MarketInfo({
             alt=""
             width={700}
             height={500}
-            src={staticVariables.logo.src}
+            src={dataProduct.banner}
           />
           <div>
             <Typography.Title level={2}>{dataProduct.name}</Typography.Title>
@@ -196,7 +248,10 @@ export default function MarketInfo({
             <div className="border-[1px] rounded p-[20px]">
               <div className="flex pb-[10px] mb-[10px] border-b-[1px]">
                 <FieldTimeOutlined className="px-[10px] text-2xl" />
-                Sell day - 12/12/12
+                <p>
+                  Sell day -
+                  {moment(dataProduct.created_at).format('DD/MM/YYYY')}
+                </p>
               </div>
               <div>
                 The current price of durian fruit is $
@@ -344,66 +399,119 @@ export default function MarketInfo({
             </div>
           </div>
         </div>
-        {/* {dataMarket.order_type === 'FAMMER' && ( */}
-        <div
-          //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
-          className={`border-l-2 block w-2/3 m-auto mt-[150px]`}
-        >
-          <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
-            <FontAwesomeIcon
-              icon={faArrowTrendUp}
-              size={'2xl'}
-              style={{ color: '#29c214' }}
-            />
-            <p className="pl-[20px]">Quá trình phát triển </p>
-            <PlusCircleTwoTone
-              onClick={() => setOpenGrowUpModal(true)}
-              className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
-            />
-          </div>
-          <div className="ml-[-111px]  max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
-            <GrowUpItem />
-            <GrowUpItem />
-            <GrowUpItem />
-          </div>
-          <Modal
-            open={openGrowUpModal}
-            onCancel={() => setOpenGrowUpModal(false)}
-            footer={[]}
+        {dataMarket.order_type === 'FARMER' && (
+          <div
+            //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
+            className={`border-l-2 block w-2/3 m-auto mt-[150px]`}
           >
-            <Typography.Title level={3}>
-              Thêm qua trinh phat trien
-            </Typography.Title>
-            <p className="text-rose-600">
-              * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng tải quá
-              trình phát triển
-            </p>
-            <GrowUpForm
-              onSuccess={() => setOpenGrowUpModal(false)}
-              productId={dataMarket.order_id}
-            />
-          </Modal>
-        </div>
-        {/* )} */}
+            <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
+              <FontAwesomeIcon
+                icon={faArrowTrendUp}
+                size={'2xl'}
+                style={{ color: '#29c214' }}
+              />
+              <p className="pl-[20px]">Quá trình phát triển </p>
+              {dataProduct.created_by === currentUser.id && (
+                <PlusCircleTwoTone
+                  onClick={() => setOpenGrowUpModal(true)}
+                  className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
+                />
+              )}
+            </div>
+            <div className="ml-[-111px]  max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
+              {dataGrowUp.length ? (
+                dataGrowUp.map((item, index) => (
+                  <GrowUpItem {...item} key={index} />
+                ))
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description={'Chưa có dữ liệu!!'}
+                />
+              )}
+            </div>
+            <Modal
+              open={openGrowUpModal}
+              onCancel={() => setOpenGrowUpModal(false)}
+              footer={[]}
+            >
+              <Typography.Title level={3}>
+                Thêm qua trinh phat trien
+              </Typography.Title>
+              <p className="text-rose-600">
+                * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng tải
+                quá trình phát triển
+              </p>
+              <GrowUpForm
+                onSuccess={() => setOpenGrowUpModal(false)}
+                productId={dataMarket.order_id}
+              />
+            </Modal>
+          </div>
+        )}
       </div>
       <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
-        <p className="text-5xl mb-[50px]">Giới thiệu chi tiết về sản phẩm</p>
-        <div className="max-h-[600px] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto">
+        <div className="text-5xl mb-[50px]">
+          Giới thiệu chi tiết về sản phẩm
+          <Popover title="Tạo thêm mô tả về sản phẩm">
+            <PlusCircleTwoTone
+              onClick={() => setOpenCreateDescriptionModal(true)}
+              className="ml-[50px] text-2xl"
+            />
+          </Popover>
+          <Modal
+            centered
+            open={openCreateDescriptionModal}
+            onCancel={() => setOpenCreateDescriptionModal(false)}
+            footer={[]}
+          >
+            <CreateDescriptionForm productId={'123'} />
+          </Modal>
+        </div>
+        <div className="max-h-[600px] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto pt-[50px]">
           {[...Array(5)].map((_, index) => (
             <div
               key={index}
               className={`relative flex ${
                 index % 2 && 'flex-row-reverse'
-              } items-center justify-between rounded w-full`}
+              } items-center justify-between rounded w-full pr-[50px]`}
             >
-              <Image
-                className="object-cover w-1/2 "
-                width={550}
-                height={650}
-                style={{ borderRadius: '10px' }}
-                alt=""
-                src={staticVariables.qc1.src}
-              />
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Button: {
+                      primaryColor: '#e62929',
+                    },
+                  },
+                  token: {
+                    colorBgContainer: '#7f84d4',
+                  },
+                }}
+              >
+                <Popconfirm
+                  title={'Xác nhận xóa mô tả này'}
+                  onConfirm={() => alert('OK')}
+                >
+                  <DeleteTwoTone className="absolute top-1/2 right-0 text-2xl" />
+                </Popconfirm>
+              </ConfigProvider>
+              <div className="relative">
+                <Image
+                  className="object-cover w-1/2 "
+                  width={550}
+                  height={650}
+                  style={{ borderRadius: '10px' }}
+                  alt=""
+                  src={staticVariables.qc1.src}
+                />
+                <Upload
+                  showUploadList={false}
+                  multiple={false}
+                  onChange={onUpload}
+                >
+                  <EditTwoTone className="absolute top-0 right-0 translate-x-full translate-y-[-100%] text-2xl" />
+                </Upload>
+              </div>
               <div className="w-1/2 px-[50px]">
                 <InputCustom
                   className="text-4xl mb-[20px]"

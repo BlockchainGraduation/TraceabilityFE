@@ -9,5 +9,12 @@
         "history":"History",
         "support":"Support"
       }
+    },
+    "action":{
+      "deleted":"deleted by",
+      "updated":"updated by"
+    },
+    "notification":{
+      "PRODUCT_NOTIFICATION":"the product"
     }
 }

@@ -1,8 +1,10 @@
+import instanceAxios from '@/api/instanceAxios';
 import staticVariables from '@/static';
 import { DeleteTwoTone } from '@ant-design/icons';
-import { Avatar } from 'antd';
+import { Avatar, ConfigProvider, Popconfirm, message } from 'antd';
 import moment from 'moment';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
+import { useSWRConfig } from 'swr';
 
 interface NotificationItemProp {
   avatar?: string;
@@ -16,13 +18,46 @@ interface NotificationItemProp {
 }
 
 export default function NotificationItem(props: NotificationItemProp) {
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
+  const { mutate } = useSWRConfig();
+  const fetchDeleteNotification = async () => {
+    await instanceAxios
+      .delete(`notifications/${props.notification_id}`)
+      .then((res) => {
+        message.success('Bạn đã xóa thông báo');
+        mutate('notifications/list');
+      })
+      .catch((err) => message.error('Xóa thông báo thất bại'));
+  };
   return (
     <div
       className={`relative flex items-center p-[10px] hover:bg-sky-200 ${
         props.unread && `bg-sky-50`
       } rounded max-w-[400px] gap-x-3`}
+      onMouseOver={() => setShowDeleteIcon(true)}
+      onMouseOut={() => setShowDeleteIcon(false)}
     >
-      <DeleteTwoTone className="absolute top-1/2 right-[10px]" />
+      {showDeleteIcon && (
+        <ConfigProvider
+          theme={{
+            components: {
+              Button: {
+                primaryColor: '#e62929',
+              },
+            },
+            token: {
+              colorBgContainer: '#7f84d4',
+            },
+          }}
+        >
+          <Popconfirm
+            title={'Xóa thông báo'}
+            onConfirm={fetchDeleteNotification}
+          >
+            <DeleteTwoTone className="absolute top-1/2 right-[10px]" />
+          </Popconfirm>
+        </ConfigProvider>
+      )}
       <Avatar
         size={'large'}
         src={props.avatar || staticVariables.logoRaiden.src}

@@ -31,6 +31,6 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
     return () => {
       pusher.unsubscribe('general-channel');
     };
-  }, [currentUser]);
+  }, [currentUser, mutate]);
   return <div className="pt-[60px]">{children}</div>;
 }

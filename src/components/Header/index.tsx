@@ -204,6 +204,10 @@ export default memo(function Header() {
             created_at={item.data?.created_at}
             content={item.message}
             unread={item.data?.unread}
+            product_id={item.params?.product_id}
+            product_name={item.params?.product_name}
+            notification_type={item.params?.notification_type}
+            notification_id={item.data?.notification_id}
           />
         ))
       ) : (
@@ -340,7 +344,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-10 flex items-center gap-x-2 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px] `}
+            className={`py-[15px] px-10 flex items-center gap-x-2 rounded hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px]`}
             href={`/${key}`}
           >
             <FontAwesomeIcon
