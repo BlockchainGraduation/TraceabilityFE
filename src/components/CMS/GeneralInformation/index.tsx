@@ -1,6 +1,6 @@
 import instanceAxios from '@/api/instanceAxios';
-import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
-import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
+import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
 import { useAppSelector } from '@/hooks';
 import { setUser } from '@/reducers/userSlice';
 import fetchUpdateUser from '@/services/fetchUpdate';
@@ -150,7 +150,7 @@ export default function GeneralInformation() {
               <InputCustom
                 APIurl={'user/update_me'}
                 queryType={'user'}
-                name="full_ame"
+                name="full_name"
                 classNameLabel="text-2xl font-bold"
                 initialValue={currentUser.full_name}
               />

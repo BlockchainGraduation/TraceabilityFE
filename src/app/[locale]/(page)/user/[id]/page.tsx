@@ -1,7 +1,7 @@
 'use client';
 import instanceAxios from '@/api/instanceAxios';
 import ProductItem from '@/components/Contents/Home/ProductItem';
-import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
 import CreateProductForm from '@/components/Contents/User/CreateProductForm';
 import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import { useAppSelector } from '@/hooks';

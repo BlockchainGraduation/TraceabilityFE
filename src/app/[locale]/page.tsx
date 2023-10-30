@@ -1,5 +1,6 @@
 'use client';
 import HomeDescription from '@/components/Contents/Main/HomeDescription';
+import Header from '@/components/Header';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { increment } from '@/reducers/counterSlice';
 import { useTranslations } from 'next-intl';

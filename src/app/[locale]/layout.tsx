@@ -3,18 +3,22 @@ import { notFound } from 'next/navigation';
 // import Pusher from 'pusher-js';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
-import Header from '@/components/Header';
+// import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import 'moment/locale/pt-br';
-
-export function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'vi' }];
-}
 import { Roboto } from 'next/font/google';
-import { ConfigProvider, Spin, message } from 'antd';
+import { App, ConfigProvider, Skeleton, Spin, message } from 'antd';
 import theme from '@/theme/themeConfig';
-import moment from 'moment';
+import dynamic from 'next/dynamic';
+// import { Suspense } from 'react';
 
+const Header = dynamic(() => import('@/components/Header'), {
+  ssr: false,
+  loading: () => <Skeleton active />,
+});
+// export function generateStaticParams() {
+//   return [{ locale: 'en' }, { locale: 'vi' }];
+// }
 const roboto = Roboto({
   weight: '500',
   subsets: ['latin'],
@@ -35,53 +39,38 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound();
   }
-  moment.locale('fr');
-
-  // const cookie = getCookie('access_token');
-  // const fethGetUser = async () => {
-  //   if (cookie)
-  //     await instanceAxios
-  //       .get('user/me', {
-  //         headers: {
-  //           Authorization: `Bearer ${cookie}`,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         console.log(res.data.data);
-  //         // dispatch(setLogin({ logged: true, user: res.data.data }));
-  //       })
-  //       .catch((err) => console.log(err));
-  // };
-  // fethGetUser();
 
   return (
     <html lang={locale} suppressHydrationWarning className={''}>
       <head></head>
       <body>
-        <ConfigProvider
-          locale={locale}
-          theme={{
-            ...theme,
-            token: {
-              colorBgLayout: '#F5F8FDFF',
-            },
-            components: {
-              Segmented: {
-                itemSelectedBg: '#C5D8FDFF',
-                itemSelectedColor: '#2A57C9FF',
-                // itemHoverBg: '#D7E4FDFF',
+        <App>
+          <ConfigProvider
+            locale={locale}
+            theme={{
+              ...theme,
+              token: {
+                colorBgLayout: '#F5F8FDFF',
               },
-            },
-          }}
-        >
-          {/* <Providers> */}
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Header />
-            <div>{children}</div>
-            <Footer />
-          </NextIntlClientProvider>
-          {/* </Providers> */}
-        </ConfigProvider>
+              components: {
+                Segmented: {
+                  itemSelectedBg: '#C5D8FDFF',
+                  itemSelectedColor: '#2A57C9FF',
+                  // itemHoverBg: '#D7E4FDFF',
+                },
+              },
+            }}
+          >
+            {/* <Providers> */}
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <Header />
+              {/* <Suspense fallback={<Skeleton active />}>{children}</Suspense> */}
+              <div>{children}</div>
+              <Footer />
+            </NextIntlClientProvider>
+            {/* </Providers> */}
+          </ConfigProvider>
+        </App>
       </body>
     </html>
   );

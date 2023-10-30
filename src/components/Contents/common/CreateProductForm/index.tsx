@@ -46,6 +46,7 @@ export default function CreateProductForm({
 }) {
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
@@ -105,6 +106,7 @@ export default function CreateProductForm({
     </div>
   );
   const onFinish = async (e: FormType) => {
+    setLoading(true);
     let formData = new FormData();
     formData.append('banner', fileAvartar[0]?.originFileObj as Blob);
     await instanceAxios
@@ -128,7 +130,8 @@ export default function CreateProductForm({
           message: 'Thông báo',
           description: 'Tạo sản phẩm thất bại',
         });
-      });
+      })
+      .finally(() => setLoading(false));
   };
   return (
     <div>
@@ -224,7 +227,9 @@ export default function CreateProductForm({
           </Upload>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button htmlType="submit">Submit</Button>
+          <Button loading={loading} htmlType="submit">
+            Submit
+          </Button>
         </Form.Item>
       </Form>
       <Modal

@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Props) {
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
     channel.bind('general-channel', (data: any) => {
-      console.log(data);
+      console.log('Pusherrrrr', data);
     });
 
     return () => {

@@ -32,7 +32,13 @@ import {
 import Table, { ColumnsType } from 'antd/es/table';
 import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import Link from 'next/link';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, {
+  ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
 import TransactionSelectItem from './TransactionSelectItem';
@@ -76,7 +82,7 @@ interface TransactionType {
   };
 }
 
-export default function ProductCMS() {
+export default memo(function ProductCMS() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [totalProduct, setTotalProduct] = useState(0);
   const [listProduct, setListProduct] = useState<DataType[]>([]);
@@ -111,7 +117,7 @@ export default function ProductCMS() {
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
       .get(
-        `product/me?skip=${skip}&limit=${limit}${name ? '&name=${name}' : ''}`
+        `product/me?skip=${skip}&limit=${limit}${name ? `&name=${name}` : ''}`
       )
       .then((res) => {
         console.log(res.data);
@@ -371,4 +377,4 @@ export default function ProductCMS() {
       </div>
     </div>
   );
-}
+});

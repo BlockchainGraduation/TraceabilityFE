@@ -3,6 +3,7 @@ import staticVariables from '@/static';
 import {
   Avatar,
   Badge,
+  Col,
   ConfigProvider,
   Dropdown,
   Empty,
@@ -12,13 +13,16 @@ import {
   MenuProps,
   Modal,
   Popover,
+  Row,
   Select,
+  Space,
   message,
 } from 'antd';
 import Link from 'next/link';
 import { deleteCookie, getCookie } from 'cookies-next';
 import React, {
   ChangeEvent,
+  ReactNode,
   memo,
   useCallback,
   useEffect,
@@ -42,6 +46,7 @@ import {
   faEarthAsia,
   faHouse,
   faUser,
+  faUserGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { User, logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
@@ -49,9 +54,27 @@ import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
 import { Inter } from 'next/font/google';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
+import NotificationItem from './NotificationItem';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const inter = Inter({ subsets: ['latin'] });
 
+interface NotificationItemType {
+  avatar?: string;
+  message?: string;
+  params?: {
+    product_id?: string;
+    product_name?: string;
+    notification_type?: string;
+  };
+  data?: {
+    created_at?: number;
+    unread?: boolean;
+    notification_id?: string;
+  };
+}
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -62,6 +85,11 @@ export default memo(function Header() {
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
   const [resultSearch, setResultSearch] = useState([]);
+  const [listNotifications, setListNotifications] = useState<
+    NotificationItemType[]
+  >([]);
+  const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
+  const [totalNotifications, setTotalNotifications] = useState(0);
   const debouncedValue = useDebounce<string>(valueSearch, 500);
 
   const router = useRouter();
@@ -73,6 +101,7 @@ export default memo(function Header() {
   const currentUser = useAppSelector((state) => state.user.user);
   const showFormLogin = useAppSelector((state) => state.showForm.showFormLogin);
   const dispatch = useAppDispatch();
+  moment.locale(locale);
 
   const isHomePage = path === '/' + (locale === 'vi' ? '' : locale);
   useEffect(() => {
@@ -111,12 +140,28 @@ export default memo(function Header() {
   // });
   useSWR('user/me', fethGetUser);
 
+  const fetchNotifications = async () => {
+    await instanceAxios
+      .get(`notifications/list`)
+      .then((res) => {
+        setListNotifications(res.data.data.data);
+        setListUnreadNotifications(res.data.data.meta.unread_total);
+        setTotalNotifications(res.data.data.meta.total);
+      })
+      .catch((err) => console.log(err));
+  };
+  useSWR('notifications/list', fetchNotifications);
+
+  useEffectOnce(() => {
+    fetchNotifications();
+  });
+
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
       .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
       .then((res) => {
         setResultSearch(res.data.data.list_marketplace);
-        console.log(res);
+        // console.log(res);
         // dispatch(setLogin({ logged: true, user: res.data.data }));
       })
       .catch((err) => console.log(err));
@@ -141,6 +186,7 @@ export default memo(function Header() {
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
+    router.push('/');
     setShowModal(true);
     setCurrentForm('LOGIN');
   };
@@ -149,45 +195,107 @@ export default memo(function Header() {
   // }, [logged]);
   const ref = useRef(null);
   useOnClickOutside(ref, () => setShowSearchItems(false));
+  const contentNotifications = (
+    <div className="max-h-[500px] overflow-auto">
+      {listNotifications.length ? (
+        listNotifications.map((item, index) => (
+          <NotificationItem
+            key={index}
+            created_at={item.data?.created_at}
+            content={item.message}
+            unread={item.data?.unread}
+          />
+        ))
+      ) : (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={'Chưa có thông báo nào'}
+        />
+      )}
+    </div>
+  );
   const items: MenuProps['items'] = [
     {
       label: (
         <Link href={'/user/1'}>
-          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
-          Thong tin
+          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+            <Col className="justify-center" span={6}>
+              <FontAwesomeIcon icon={faUser} />
+            </Col>
+            <Col span={24}>Thong tin</Col>
+          </Row>
         </Link>
       ),
       key: '0',
     },
     {
       label: (
-        <div>
-          <FontAwesomeIcon className="mr-[10px]" icon={faCartShopping} />
-          Gio hang
-        </div>
+        <Popover
+          title="Thông báo của bạn"
+          placement={'left'}
+          content={contentNotifications}
+        >
+          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+            <Col className="justify-center" span={6}>
+              <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
+            </Col>
+            <Col span={24}>
+              {listUnreadNotifications ? (
+                <Badge
+                  count={listUnreadNotifications}
+                  offset={[5, 8]}
+                  color="blue"
+                >
+                  <p className="pr-[10px]">Thông báo</p>
+                </Badge>
+              ) : (
+                <p className="pr-[10px]">Thông báo</p>
+              )}
+            </Col>
+          </Row>
+        </Popover>
       ),
       key: '1',
     },
     {
       label: (
-        <Link href={'/cms'}>
-          <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
-          Quản lí
-        </Link>
+        <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+          <Col className="justify-center" span={6}>
+            <FontAwesomeIcon icon={faCartShopping} />
+          </Col>
+          <Col span={24}>Gio hang</Col>
+        </Row>
       ),
       key: '2',
+    },
+    {
+      label: (
+        <Link href={'/cms'}>
+          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+            <Col className="justify-center" span={6}>
+              <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
+            </Col>
+            <Col>Quản lí</Col>
+          </Row>
+        </Link>
+      ),
+      key: '3',
     },
     {
       label:
         currentUser.system_role === 'MEMBER' ? (
           <Link href={'/register-rule'}>
-            <FontAwesomeIcon className="mr-[10px]" icon={faUser} />
-            Đăng kí thành viên
+            <Row wrap={false} justify={'start'}>
+              <Col className="justify-center" span={6}>
+                <FontAwesomeIcon icon={faUser} />
+              </Col>
+              <Col span={24}>Đăng kí thành viên</Col>
+            </Row>
           </Link>
         ) : (
           ''
         ),
-      key: '3',
+      key: '4',
     },
     {
       type: 'divider',
@@ -195,14 +303,18 @@ export default memo(function Header() {
     {
       label: (
         <div onClick={handleLogout}>
-          <FontAwesomeIcon
-            className="mr-[10px]"
-            icon={faArrowRightFromBracket}
-          />
-          Logout
+          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+            <Col span={6}>
+              <FontAwesomeIcon
+                className="mr-[10px]"
+                icon={faArrowRightFromBracket}
+              />
+            </Col>
+            <Col span={24}>Logout</Col>
+          </Row>
         </div>
       ),
-      key: '4',
+      key: '5',
     },
   ];
   return (
@@ -257,6 +369,7 @@ export default memo(function Header() {
                   <SearchItem
                     parent={{ onClick: () => setShowSearchItems(false) }}
                     key={index}
+                    productImage={item.product.banner}
                     productName={item.product.name}
                     owner={item.product.user.username}
                     quantity={item.product.quantity}
@@ -320,7 +433,7 @@ export default memo(function Header() {
           />
           <Select
             defaultValue={locale}
-            style={{ width: 120 }}
+            style={{ width: 100 }}
             onChange={handleChangeLanguage}
             bordered={false}
             dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
@@ -333,13 +446,19 @@ export default memo(function Header() {
           />
         </ConfigProvider>
         {logged ? (
-          <div>
-            <Dropdown menu={{ items }}>
-              <Badge count={5} offset={[5, 10]} color="blue">
+          <Dropdown menu={{ items }}>
+            {listUnreadNotifications ? (
+              <Badge
+                count={listUnreadNotifications}
+                offset={[5, 10]}
+                color="blue"
+              >
                 <Avatar src={currentUser.avatar} size="large" />
               </Badge>
-            </Dropdown>
-          </div>
+            ) : (
+              <Avatar src={currentUser.avatar} size="large" />
+            )}
+          </Dropdown>
         ) : (
           <div
             className={`text-inherit'} cursor-pointer`}
