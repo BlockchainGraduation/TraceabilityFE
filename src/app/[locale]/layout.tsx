@@ -50,13 +50,16 @@ export default async function LocaleLayout({
             theme={{
               ...theme,
               token: {
-                colorBgLayout: '#F5F8FDFF',
+                colorBgLayout: '#d9eee1',
               },
               components: {
                 Segmented: {
-                  itemSelectedBg: '#C5D8FDFF',
-                  itemSelectedColor: '#2A57C9FF',
+                  itemSelectedBg: '#48b89f',
+                  itemSelectedColor: '#0b1d19',
                   // itemHoverBg: '#D7E4FDFF',
+                },
+                Button: {
+                  colorPrimaryHover: '#ffffff',
                 },
               },
             }}

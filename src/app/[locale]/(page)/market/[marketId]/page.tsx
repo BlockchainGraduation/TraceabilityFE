@@ -62,6 +62,7 @@ import moment from 'moment';
 import { useTranslations } from 'next-intl';
 import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
 import { UploadChangeParam } from 'antd/es/upload';
+import useSWR from 'swr';
 
 interface DataType {
   key: React.Key;
@@ -85,6 +86,12 @@ interface ProductType {
   hashed_data?: string;
   product_status?: string;
   product_type?: string;
+  user?: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+  };
 }
 interface GrowUpType {
   id?: string;
@@ -155,6 +162,7 @@ export default function MarketInfo({
             setDataGrowUp(res.data.data.list_grow_up);
           })
           .catch((err) => console.log('asdadasd'));
+        fetchDataComment();
         // await instanceAxios
         //   .get(`user/${res.data.data.order_by}`)
         //   .then((res) => setDataOwner(res.data.data))
@@ -165,6 +173,52 @@ export default function MarketInfo({
   useEffectOnce(() => {
     fethMarket();
   });
+  const fetchDataComment = async () => {
+    await instanceAxios
+      .get(
+        `comments/list?marketplace_id=${
+          params.marketId
+        }&skip=${0}&limit=${1000}`
+      )
+      .then((res) => {
+        setCommentList(res.data.data.list_comment);
+      })
+      .catch((err) => {
+        setCommentList([]);
+        console.log(err);
+      });
+  };
+  useSWR(`comments/list?marketplace_id=${params.marketId}`, fetchDataComment);
+  const listInformation = [
+    {
+      label: 'Tên sản phẩm',
+      value: dataProduct.name,
+    },
+    {
+      label: 'Giá đơn vị',
+      value: dataProduct.price,
+    },
+    {
+      label: 'Ngày đăng bán',
+      value: moment(dataProduct.created_at).format('DD/MM/YYYY'),
+    },
+    {
+      label: 'Loại sản phẩm',
+      value: dataProduct.product_type,
+    },
+    {
+      label: 'Trạng thái sản phẩm',
+      value: dataProduct.product_status,
+    },
+    {
+      label: 'Sở hửu bởi',
+      value: dataProduct.user?.username,
+    },
+    {
+      label: 'Email liên hệ',
+      value: dataProduct.user?.email,
+    },
+  ];
   // setOwner();
   const contentStyle: React.CSSProperties = {
     margin: 0,
@@ -218,7 +272,7 @@ export default function MarketInfo({
   return (
     <div className="w-full m-auto">
       <div className="px-[50px]">
-        <div className="flex gap-x-10">
+        <div className="relative w-fit flex gap-x-10">
           <Image
             className="object-cover rounded drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
             alt=""
@@ -226,12 +280,12 @@ export default function MarketInfo({
             height={500}
             src={dataProduct.banner}
           />
-          <div>
+          <div className="absolute w-full top-4/12 left-[98%] bg-[#f5fbf7] border-[1px] border-green-600 rounded	p-[30px] drop-shadow-[0_10px_10px_rgba(22,163,74,0.2)] hover:drop-shadow-[0_10px_10px_rgba(22,163,74,0.5)]">
             <Typography.Title level={2}>{dataProduct.name}</Typography.Title>
             <div className="flex gap-x-2 text-[#7B7B7B] font-light">
-              San pham cua
+              Sản phẩm của
               <p className="text-[#313064] font-bold">
-                {dataProduct.created_by}
+                {dataProduct.user?.username}
               </p>
             </div>
             <div className="flex gap-x-4 my-[20px]">
@@ -259,7 +313,7 @@ export default function MarketInfo({
               </div>
               <div className="w-fit flex items-center text-xs m-auto my-[20px]">
                 Price
-                <p className="text-3xl">
+                <p className="text-3xl skew-y-3">
                   {dataProduct.price?.toLocaleString()}$
                 </p>
               </div>
@@ -267,9 +321,9 @@ export default function MarketInfo({
                 <Button
                   disabled={dataProduct.created_by === currentUser.id}
                   onClick={() => setShowModalPay(true)}
-                  className="w-full"
+                  className="w-full  shadow-[0px_12px_10px_-8px_rgba(72,184,159,0.8784313725)]"
                 >
-                  Buy now
+                  <p className="text-4xl text-[#1f5145]">Buy now</p>
                 </Button>
                 <Button
                   disabled={dataProduct.created_by === currentUser.id}
@@ -299,15 +353,15 @@ export default function MarketInfo({
         </div>
         <div className="w-full flex mt-[50px]">
           <div className="w-2/5 ">
-            <p className="py-[10px] border-b-[1px]">Thông tin về sản phẩm</p>
+            <p className="py-[10px] ">Thông tin về sản phẩm</p>
             <div className="flex flex-col w-2/3 px-[20px] py-[15px] border-[1px] rounded">
-              {[...Array(4)].map((_, index) => (
+              {listInformation.map((item, index) => (
                 <div
                   key={index}
                   className="w-full flex justify-between items-center py-[5px]"
                 >
-                  <p>Nguyen Van A</p>
-                  <Paragraph copyable>Sasdasd</Paragraph>
+                  <p>{item.label}</p>
+                  <Paragraph copyable>{item.value}</Paragraph>
                 </div>
               ))}
             </div>
@@ -384,7 +438,7 @@ export default function MarketInfo({
                         />
                       )}
                     </div>
-                    <CommentInput marketId={''} />
+                    <CommentInput marketId={params.marketId} />
                   </div>
                 )}
                 {changePageRight === 'HISTORY' && (
@@ -453,12 +507,14 @@ export default function MarketInfo({
       <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
         <div className="text-5xl mb-[50px]">
           Giới thiệu chi tiết về sản phẩm
-          <Popover title="Tạo thêm mô tả về sản phẩm">
-            <PlusCircleTwoTone
-              onClick={() => setOpenCreateDescriptionModal(true)}
-              className="ml-[50px] text-2xl"
-            />
-          </Popover>
+          {dataProduct.created_by === currentUser.id && (
+            <Popover title="Tạo thêm mô tả về sản phẩm">
+              <PlusCircleTwoTone
+                onClick={() => setOpenCreateDescriptionModal(true)}
+                className="ml-[50px] text-2xl"
+              />
+            </Popover>
+          )}
           <Modal
             centered
             open={openCreateDescriptionModal}
@@ -488,12 +544,14 @@ export default function MarketInfo({
                   },
                 }}
               >
-                <Popconfirm
-                  title={'Xác nhận xóa mô tả này'}
-                  onConfirm={() => alert('OK')}
-                >
-                  <DeleteTwoTone className="absolute top-1/2 right-0 text-2xl" />
-                </Popconfirm>
+                {dataProduct.created_by === currentUser.id && (
+                  <Popconfirm
+                    title={'Xác nhận xóa mô tả này'}
+                    onConfirm={() => alert('OK')}
+                  >
+                    <DeleteTwoTone className="absolute top-1/2 right-0 text-2xl" />
+                  </Popconfirm>
+                )}
               </ConfigProvider>
               <div className="relative">
                 <Image
@@ -504,13 +562,15 @@ export default function MarketInfo({
                   alt=""
                   src={staticVariables.qc1.src}
                 />
-                <Upload
-                  showUploadList={false}
-                  multiple={false}
-                  onChange={onUpload}
-                >
-                  <EditTwoTone className="absolute top-0 right-0 translate-x-full translate-y-[-100%] text-2xl" />
-                </Upload>
+                {dataProduct.created_by === currentUser.id && (
+                  <Upload
+                    showUploadList={false}
+                    multiple={false}
+                    onChange={onUpload}
+                  >
+                    <EditTwoTone className="absolute top-0 right-0 translate-x-full translate-y-[-100%] text-2xl" />
+                  </Upload>
+                )}
               </div>
               <div className="w-1/2 px-[50px]">
                 <InputCustom

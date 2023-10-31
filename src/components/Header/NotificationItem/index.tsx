@@ -43,6 +43,7 @@ export default function NotificationItem(props: NotificationItemProp) {
             components: {
               Button: {
                 primaryColor: '#e62929',
+                colorPrimaryBgHover: '#e62929',
               },
             },
             token: {

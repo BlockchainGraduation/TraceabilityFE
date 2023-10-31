@@ -1,7 +1,7 @@
 import staticVariables from '@/static';
 import { Button, ConfigProvider, Image, Statistic } from 'antd';
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface PropsType {
   transactionId: string;
@@ -15,8 +15,13 @@ interface PropsType {
 }
 
 export default function TransactionSelectItem(props: PropsType) {
+  const [showButton, setShowButton] = useState(false);
   return (
-    <div className="flex w-full flex-col p-[20px]">
+    <div
+      onMouseOver={() => setShowButton(true)}
+      onMouseOut={() => setShowButton(false)}
+      className="flex w-full flex-col p-[20px] transition-all	ease-in duration-300"
+    >
       <div className="flex gap-x-5">
         <Image
           className="object-cover rounded"
@@ -49,12 +54,14 @@ export default function TransactionSelectItem(props: PropsType) {
           </div>
         </div>
       </div>
-      <Button
-        onClick={() => props.onFinish?.(props.transactionId)}
-        className="m-auto mt-[10px] w-2/3 "
-      >
-        Chọn
-      </Button>
+      {showButton && (
+        <Button
+          onClick={() => props.onFinish?.(props.transactionId)}
+          className="m-auto mt-[10px] w-2/3 "
+        >
+          Chọn
+        </Button>
+      )}
     </div>
   );
 }

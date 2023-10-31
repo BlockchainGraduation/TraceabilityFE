@@ -41,7 +41,7 @@ export default function CreateProductForm({
   transactionId,
   onSuccess,
 }: {
-  transactionId: string;
+  transactionId?: string;
   onSuccess?: () => void;
 }) {
   const [previewImage, setPreviewImage] = useState('');
@@ -111,7 +111,11 @@ export default function CreateProductForm({
     formData.append('banner', fileAvartar[0]?.originFileObj as Blob);
     await instanceAxios
       .post(
-        `product/create?name=${e.name}&price=${e.price}&quantity=${e.quantity}&description=${e.description}&transaction_id=${transactionId}`,
+        `product/create?name=${e.name}&price=${e.price}&quantity=${
+          e.quantity
+        }&description=${e.description}${
+          transactionId ? `&transaction_id=${transactionId}` : ''
+        }`,
         formData
       )
       .then((res) => {

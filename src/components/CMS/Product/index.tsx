@@ -329,26 +329,36 @@ export default memo(function ProductCMS() {
           footer={[]}
         >
           <Typography.Title className="w-fit m-auto" level={3}>
-            Thêm sản phẩm
+            {currentModalPage === 'CREATE_PRODUCT'
+              ? `Thêm sản phẩm`
+              : `Chọn hóa đơn`}
           </Typography.Title>
-          <p className="py-[10px]">
-            * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty hạt giống
-          </p>
           {currentModalPage === 'SELECT_TRANSACTION' && (
-            <div className="max-h-[600px] overflow-auto">
-              {listTransaction.map((item, index) => (
-                <TransactionSelectItem
-                  transactionId={item.id || ''}
-                  onFinish={changeCurrentModalPageToCreate}
-                  key={index}
-                  image={item.product?.banner || ''}
-                  productName={item.product?.name || ''}
-                  owner={item.product?.user?.username || ''}
-                  priceTotal={item.price || 0}
-                  buyQuantity={item.quantity || 0}
-                  buyDay={item.created_at || ''}
-                />
-              ))}
+            <div>
+              <p className="py-[10px]">
+                * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty hạt
+                giống
+              </p>
+              <div className="max-h-[600px] overflow-auto">
+                {listTransaction.map((item, index) => (
+                  <TransactionSelectItem
+                    transactionId={item.id || ''}
+                    onFinish={changeCurrentModalPageToCreate}
+                    key={index}
+                    image={item.product?.banner || ''}
+                    productName={item.product?.name || ''}
+                    owner={item.product?.user?.username || ''}
+                    priceTotal={item.price || 0}
+                    buyQuantity={item.quantity || 0}
+                    buyDay={item.created_at || ''}
+                  />
+                ))}
+                {currentUser.system_role !== 'SEEDLING_COMPANY' && (
+                  <Button onClick={() => setCurrentModalPage('CREATE_PRODUCT')}>
+                    Bỏ qua
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 

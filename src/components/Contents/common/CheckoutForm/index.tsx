@@ -1,5 +1,6 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
   ConfigProvider,
@@ -27,10 +28,12 @@ export const CheckoutForm = ({
   onSuccess?: () => void;
 }) => {
   const [priceTotal, setPriceTotal] = useState(price);
+  const [loading, setLoading] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
   const [useForm] = Form.useForm();
 
   const onFinish = async (e: any) => {
+    setLoading(true);
     await instanceAxios
       .put(
         `product/${producId}/purchase?price=${priceTotal}&quantity=${e.quantity}`
@@ -43,7 +46,13 @@ export const CheckoutForm = ({
         onSuccess?.();
         useForm.resetFields();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        notification.error({
+          message: 'Mua hàng thất bại',
+          description: 'Bạn có thể vui lòng xem lại thông tin',
+        });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -138,7 +147,9 @@ export const CheckoutForm = ({
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-        <Button htmlType="submit">Xác nhận</Button>
+        <Button disabled={!!!quantity} loading={loading} htmlType="submit">
+          Xác nhận
+        </Button>
       </Form.Item>
     </Form>
   );

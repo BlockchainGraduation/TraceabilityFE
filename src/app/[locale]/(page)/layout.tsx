@@ -13,6 +13,19 @@ import { useSWRConfig } from 'swr';
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
 
+interface NotificationType {
+  message: string;
+  params: {
+    marketplace_id: string;
+    notification_type: string;
+  };
+  data: {
+    created_at: number;
+    unread: string;
+    notification_id: string;
+  };
+}
+
 export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
 });
@@ -22,8 +35,11 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
   const { mutate } = useSWRConfig();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.id, (data: any) => {
+    channel.bind(currentUser.id, (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
+      if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
+        mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
+      }
       mutate('notifications/list');
       console.log(data);
     });

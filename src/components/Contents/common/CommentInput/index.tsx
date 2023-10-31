@@ -5,24 +5,32 @@ import staticVariables from '@/static';
 import { SendOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, message } from 'antd';
 import React, { useState } from 'react';
+import { useSWRConfig } from 'swr';
 
 export default function CommentInput({
   marketId,
+  productId,
   className,
 }: {
   marketId: string;
   className?: string;
+  productId?: string;
 }) {
   const currentUser = useAppSelector((state) => state.user.user);
   const [commentValue, setCommentValue] = useState('');
   const { login } = useLogin();
+  const { mutate } = useSWRConfig();
   const fetchSubmitComment = async () => {
     if (!commentValue.trim()) {
       message.warning('Vui lòng nhập nội dung');
     }
     await instanceAxios
       .post(`comments/`, { marketplace_id: marketId, content: commentValue })
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        message.success('Đã bình luận');
+        mutate(`comments/list?marketplace_id=${marketId}`);
+        setCommentValue('');
+      })
       .catch((err) => console.log(err));
   };
   return (
@@ -33,6 +41,7 @@ export default function CommentInput({
       <Input.TextArea
         autoSize
         className="max-h-[300px]"
+        value={commentValue}
         onChange={(e) => setCommentValue(e.target.value)}
       />
       {/* <Button
