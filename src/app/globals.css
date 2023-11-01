@@ -8,12 +8,12 @@
   }
 }
 .ant-btn:not([disabled]) {
-  background:#48b89f ;
+  background:#42bb67 ;
   color: rgb(255, 255, 255);
 }
 .ant-btn:not([disabled]):hover {
   font-weight: bold;
-  color:#2c6e60
+  color:#48b89f
 }
 :root {
   --foreground-rgb: 0, 0, 0;

@@ -54,12 +54,13 @@ export default async function LocaleLayout({
               },
               components: {
                 Segmented: {
-                  itemSelectedBg: '#48b89f',
-                  itemSelectedColor: '#0b1d19',
+                  itemSelectedBg: '#42bb67',
+                  itemSelectedColor: '#ffffff',
                   // itemHoverBg: '#D7E4FDFF',
                 },
                 Button: {
                   colorPrimaryHover: '#ffffff',
+                  colorPrimaryBgHover: '#42bb67',
                 },
               },
             }}

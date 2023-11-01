@@ -21,6 +21,7 @@ import {
   Tag,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import moment from 'moment';
 import Link from 'next/link';
 import React, {
   ReactNode,
@@ -104,6 +105,7 @@ export default memo(function ManageUser() {
     {
       title: 'Ngày tham gia',
       dataIndex: 'created_at',
+      render: (value, record, index) => moment(value).format('DD/MM/YYYY'),
     },
     ...columnsWaiting,
     {

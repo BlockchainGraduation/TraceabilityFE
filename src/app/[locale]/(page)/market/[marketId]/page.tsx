@@ -45,7 +45,11 @@ import React, {
   useState,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowTrendUp } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowTrendUp,
+  faEnvelope,
+  faMobileScreenButton,
+} from '@fortawesome/free-solid-svg-icons';
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
 import Paragraph from 'antd/es/typography/Paragraph';
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
@@ -63,6 +67,7 @@ import { useTranslations } from 'next-intl';
 import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
 import { UploadChangeParam } from 'antd/es/upload';
 import useSWR from 'swr';
+import SeedOrigin from './components/PoductOrigin';
 
 interface DataType {
   key: React.Key;
@@ -71,6 +76,83 @@ interface DataType {
   price: number;
   time: string;
   status: ReactNode;
+}
+interface HistoryType {
+  id?: string;
+  product_id?: string;
+  transaction_sf_id?: string;
+  product?: {
+    id?: string;
+    product_type?: string;
+    product_status?: string;
+    name?: string;
+    description?: string;
+    price?: number;
+    quantity?: number;
+    banner?: string;
+    created_by?: string;
+    created_at?: string;
+    user?: {
+      id?: string;
+      avatar?: string;
+      username?: string;
+      email?: string;
+    };
+  };
+  transactions_fm?: {
+    id?: string;
+    product_id?: string;
+    user_id?: string;
+    price?: number;
+    quantity?: number;
+    created_at?: string;
+    updated_at?: string;
+    product?: {
+      id?: string;
+      product_type?: string;
+      product_status?: string;
+      name?: string;
+      description?: string;
+      price?: number;
+      quantity?: number;
+      banner?: number;
+      created_by?: number;
+      created_at?: number;
+      user?: {
+        id?: string;
+        avatar?: string;
+        username?: string;
+        email?: string;
+      };
+    };
+  };
+  transactions_sf?: {
+    id?: string;
+    product_id?: string;
+    user_id?: string;
+    price?: number;
+    quantity?: number;
+    created_at?: string;
+    updated_at?: string;
+    product?: {
+      id?: string;
+      product_type?: string;
+      product_status?: string;
+      name?: string;
+      description?: string;
+      price?: number;
+      quantity?: number;
+      banner?: number;
+      created_by?: number;
+      created_at?: number;
+      user?: {
+        id?: string;
+        avatar?: string;
+        username?: string;
+        email?: string;
+      };
+    };
+  };
 }
 interface ProductType {
   id?: string;
@@ -91,6 +173,7 @@ interface ProductType {
     avatar?: string;
     username?: string;
     email?: string;
+    phone?: string;
   };
 }
 interface GrowUpType {
@@ -121,6 +204,7 @@ interface GrowUpType {
         avatar?: string;
         username?: string;
         email?: string;
+        phone?: string;
       };
     };
   };
@@ -138,6 +222,7 @@ export default function MarketInfo({
   const [dataMarket, setDataMarket] = useState<any>({});
   const [dataOwner, setDataOwner] = useState({});
   const [dataProduct, setDataProduct] = useState<ProductType>({});
+  const [dataHistory, setDataHistory] = useState<HistoryType>({});
   const [dataGrowUp, setDataGrowUp] = useState<GrowUpType[]>([]);
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
@@ -160,6 +245,12 @@ export default function MarketInfo({
           .get(`product/${res.data.data.order_id}/grow_up?skip=0&limit=100`)
           .then((res) => {
             setDataGrowUp(res.data.data.list_grow_up);
+          })
+          .catch((err) => console.log('asdadasd'));
+        await instanceAxios
+          .get(`product/${res.data.data.order_id}/history`)
+          .then((res) => {
+            setDataHistory(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
         fetchDataComment();
@@ -272,35 +363,46 @@ export default function MarketInfo({
   return (
     <div className="w-full m-auto">
       <div className="px-[50px]">
-        <div className="relative w-fit flex gap-x-10">
+        <div className="relative flex justify-between gap-x-10">
           <Image
             className="object-cover rounded drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
             alt=""
-            width={700}
+            width={900}
             height={500}
             src={dataProduct.banner}
           />
-          <div className="absolute w-full top-4/12 left-[98%] bg-[#f5fbf7] border-[1px] border-green-600 rounded	p-[30px] drop-shadow-[0_10px_10px_rgba(22,163,74,0.2)] hover:drop-shadow-[0_10px_10px_rgba(22,163,74,0.5)]">
-            <Typography.Title level={2}>{dataProduct.name}</Typography.Title>
+          <div className="w-1/2 top-4/12 left-[98%] rounded">
+            <p className="text-[30px] text-[#222222] font-[Work Sans]">
+              {dataProduct.name}
+            </p>
             <div className="flex gap-x-2 text-[#7B7B7B] font-light">
               Sản phẩm của
               <p className="text-[#313064] font-bold">
                 {dataProduct.user?.username}
               </p>
             </div>
+            <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
+              $ {dataProduct.price?.toLocaleString()}
+            </p>
+            <div className="text-[16px] leading-10 font-[Nunito] text-[#707070] text-justify">
+              Ivy gourd protects the nervous system, provides more energy and a
+              healthy metabolism! Ivy gourd is rich in beta-carotene that
+              ensures the optimal functioning of the heart and prevents heart
+              ailments. Ivy gourd can be stored safely in a cool, dry room.
+            </div>
             <div className="flex gap-x-4 my-[20px]">
               {[...Array(4)].map((_, index) => (
                 <div
                   key={index}
-                  className="w-fit items-center py-[10px] px-[20px] bg-lime-50 rounded-2xl border-[1px] border-stone-300"
+                  className="w-fit items-center py-[10px] px-[20px] bg-lime-50 rounded border-[1px] border-[#1f5145]"
                 >
                   <EyeOutlined className="mr-[5px]" />
                   12313
                 </div>
               ))}
             </div>
-            <div className="border-[1px] rounded p-[20px]">
-              <div className="flex pb-[10px] mb-[10px] border-b-[1px]">
+            <div className="rounded p-[20px]">
+              {/* <div className="flex pb-[10px] mb-[10px] border-b-[1px]">
                 <FieldTimeOutlined className="px-[10px] text-2xl" />
                 <p>
                   Sell day -
@@ -316,7 +418,7 @@ export default function MarketInfo({
                 <p className="text-3xl skew-y-3">
                   {dataProduct.price?.toLocaleString()}$
                 </p>
-              </div>
+              </div> */}
               <div className="flex items-center mt-[10px]">
                 <Button
                   disabled={dataProduct.created_by === currentUser.id}
@@ -326,7 +428,10 @@ export default function MarketInfo({
                   <p className="text-4xl text-[#1f5145]">Buy now</p>
                 </Button>
                 <Button
-                  disabled={dataProduct.created_by === currentUser.id}
+                  disabled={
+                    dataProduct.created_by === currentUser.id ||
+                    dataProduct.quantity === 0
+                  }
                   onClick={() => {
                     // setBuyOrCart('CART');
                     setShowModalPay(true);
@@ -353,8 +458,10 @@ export default function MarketInfo({
         </div>
         <div className="w-full flex mt-[50px]">
           <div className="w-2/5 ">
-            <p className="py-[10px] ">Thông tin về sản phẩm</p>
-            <div className="flex flex-col w-2/3 px-[20px] py-[15px] border-[1px] rounded">
+            <p className="py-[10px] border-2 text-white bg-[#42bb67] rounded text-center ">
+              Thông tin về sản phẩm
+            </p>
+            <div className="flex flex-col w-2/3 m-auto px-[20px] py-[15px] border-[1px] border-[#42bb67] rounded">
               {listInformation.map((item, index) => (
                 <div
                   key={index}
@@ -365,9 +472,10 @@ export default function MarketInfo({
                 </div>
               ))}
             </div>
-            <div className="px-[10px] py-[15px] mt-[50px] rounded border-[1px]">
-              <div className="pb-[10px] pl-[20px] border-b-[1px]">
-                Decription
+            {/* Giới thiệu sản  phẩm */}
+            <div className="mt-[50px] rounded border-[1px] border-current-color">
+              <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+                Giới thiệu về sản phẩm
               </div>
               <TextAreaCustom
                 queryType="product"
@@ -386,6 +494,39 @@ export default function MarketInfo({
               -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT #15_20k
               -CÁ VIÊN CHIÊN MẮM #20k`}
               />
+            </div>
+            {/* Giới thiệu chủ sử hữu */}
+            <div className="mt-[50px] rounded border-[1px] border-current-color">
+              <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+                Chủ sở hữu
+              </div>
+              <div className="p-[20px] flex justify-around">
+                <div className="flex items-center flex-col">
+                  <Avatar size={100} src={dataProduct.user?.avatar} />
+                  <p className="text-2xl font-bold text-[#222222]">
+                    {dataProduct.user?.username}
+                  </p>
+                </div>
+                <div className="flex w-1/2 h-fit flex-col rounded ">
+                  <p className="text-center text-white bg-current-color p-[5px] rounded-tl rounded-tr">
+                    Liên hệ
+                  </p>
+                  <Paragraph
+                    className=" border-current-color border-[1px] border-t-0 p-[5px]"
+                    copyable
+                  >
+                    {dataProduct.user?.email}
+                  </Paragraph>
+                  {dataProduct.user?.phone && (
+                    <Paragraph
+                      className="border-current-color border-[1px] border-t-0 p-[5px]"
+                      copyable
+                    >
+                      {dataProduct.user?.phone}
+                    </Paragraph>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
           <div className="w-3/5 pl-[20px] rounded overflow-hidden">
@@ -419,7 +560,7 @@ export default function MarketInfo({
               />
               <div className="w-full mt-[20px]">
                 {changePageRight === 'COMMENT' && (
-                  <div className="p-[20px] border-[1px] rounded">
+                  <div className="p-[20px] border-[1px] border-current-color rounded">
                     <div className="max-h-[500px] overflow-auto">
                       {commentList.length ? (
                         commentList.map((item: any, index) => (
@@ -453,12 +594,23 @@ export default function MarketInfo({
             </div>
           </div>
         </div>
+        {((dataMarket.order_type !== 'SEEDLING_COMPANY' &&
+          dataHistory.transactions_sf) ||
+          dataHistory.transactions_fm) && (
+          <SeedOrigin
+            originType={'seed'}
+            transactions={
+              dataHistory.transactions_sf || dataHistory.transactions_fm
+            }
+            {...dataHistory}
+          />
+        )}
         {dataMarket.order_type === 'FARMER' && (
           <div
             //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
-            className={`border-l-2 block w-2/3 m-auto mt-[150px]`}
+            className={`border-l-2 border-[#42bb67] block w-2/3 m-auto mt-[150px]`}
           >
-            <div className="relative w-fit flex items-center p-[20px] border-[1px] border-l-0">
+            <div className="relative w-fit flex items-center p-[20px] border-[1px] border-[#42bb67] border-l-0">
               <FontAwesomeIcon
                 icon={faArrowTrendUp}
                 size={'2xl'}
@@ -504,8 +656,8 @@ export default function MarketInfo({
           </div>
         )}
       </div>
-      <div className="max-h-[800px] text-slate-200 p-[50px] bg-zinc-900">
-        <div className="text-5xl mb-[50px]">
+      <div className="max-h-[800px] text-white pt-[50px] bg-[#42bb67]">
+        <div className="text-5xl mb-[50px] pl-[100px]">
           Giới thiệu chi tiết về sản phẩm
           {dataProduct.created_by === currentUser.id && (
             <Popover title="Tạo thêm mô tả về sản phẩm">
@@ -524,18 +676,19 @@ export default function MarketInfo({
             <CreateDescriptionForm productId={'123'} />
           </Modal>
         </div>
-        <div className="max-h-[600px] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto pt-[50px]">
+        <div className="max-h-[600px] snap-y bg-white rounded text-[#373737] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto pt-[50px]">
           {[...Array(5)].map((_, index) => (
             <div
               key={index}
               className={`relative flex ${
                 index % 2 && 'flex-row-reverse'
-              } items-center justify-between rounded w-full pr-[50px]`}
+              } items-center scroll-ml-6 justify-between rounded w-full pr-[50px]`}
             >
               <ConfigProvider
                 theme={{
                   components: {
                     Button: {
+                      colorPrimaryHover: '#2db457',
                       primaryColor: '#e62929',
                     },
                   },

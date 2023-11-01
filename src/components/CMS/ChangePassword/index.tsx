@@ -1,14 +1,33 @@
-import { Button, Form, Input, Typography } from 'antd';
-import React from 'react';
+import instanceAxios from '@/api/instanceAxios';
+import { Button, Form, Input, Typography, notification } from 'antd';
+import React, { useState } from 'react';
 
 type FieldType = {
   old_password?: string;
   new_password?: string;
-  re_new_password?: string;
+  new_password_confirm?: string;
 };
 export default function ChangPassword({ className }: { className?: string }) {
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const onFinish = async (data: FieldType) => {
+    setLoading(true);
+    await instanceAxios
+      .put(`auth/reset_password`, data)
+      .then((res) => {
+        notification.success({
+          message: 'Thông báo',
+          description: 'Đổi mật khẩu thành công',
+        });
+        form.resetFields();
+      })
+      .catch((err) =>
+        notification.error({
+          message: 'Thông báo',
+          description: 'Đổi mật khẩu thất bại',
+        })
+      )
+      .finally(() => setLoading(false));
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -20,6 +39,7 @@ export default function ChangPassword({ className }: { className?: string }) {
         Thay đổi mật khẩu
       </Typography.Title>
       <Form
+        form={form}
         name="basic"
         className="mt-[50px]"
         labelCol={{ span: 8 }}
@@ -51,7 +71,7 @@ export default function ChangPassword({ className }: { className?: string }) {
         </Form.Item>
         <Form.Item<FieldType>
           label="Pre New Password"
-          name="re_new_password"
+          name="new_password_confirm"
           rules={[
             { required: true, message: 'Please input your Pre New Password!' },
           ]}
@@ -60,7 +80,7 @@ export default function ChangPassword({ className }: { className?: string }) {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button className="blovk m-auto" htmlType="submit">
+          <Button loading={loading} className="block m-auto" htmlType="submit">
             Submit
           </Button>
         </Form.Item>

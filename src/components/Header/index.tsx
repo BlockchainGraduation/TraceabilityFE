@@ -338,8 +338,8 @@ export default memo(function Header() {
     <div
       data-aos="fade-down"
       data-aos-duration="1500"
-      className={`w-full text-green-700	 ${
-        isHomePage ? 'text-white bg-transparent' : 'bg-slate-100'
+      className={`w-full	text-white ${
+        isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
       } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit shadow-[0px_12px_10px_-8px_rgb(134,167,137,0.8)]
       ${inter.className} `}
     >
@@ -357,7 +357,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[20px] px-10 flex text-xl items-center gap-x-2 rounded hover:text-teal-950	 hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px]`}
+            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-white	 hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px]`}
             href={`/${key}`}
           >
             {listIcon[index]}

@@ -55,9 +55,6 @@ export default memo(function TextAreaCustom({
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
   const ref = useRef<InputRef>(null);
-  useEffectOnce(() => {
-    console.log(showEdit);
-  });
   // useEffect(() => {
   //   const handleOutSideClick = async (event: any) => {
   //     if (!ref.current?.input?.contains?.(event.target)) {
@@ -77,7 +74,6 @@ export default memo(function TextAreaCustom({
       APIurl,
       { [name]: value },
       (res) => {
-        console.log(res);
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
@@ -101,26 +97,10 @@ export default memo(function TextAreaCustom({
 
   const handleBlur = async () => {
     if (value === initialValue) {
-      setTimeout(() => setEditAble(false), 200);
+      setTimeout(() => setEditAble(false), 300);
     } else {
       setOpenModalConfirm(true);
     }
-
-    // if (value === initialValue) {
-    //   setEditAble(false);
-    // } else {
-    //   await fetchUpdateUser(
-    //     { full_name: value },
-    //     (res) => {
-    //       console.log(res);
-    //       setEditAble(false);
-    //       // setValue(e.target.value);
-    //     },
-    //     (err) => {
-    //       console.log(err);
-    //     }
-    //   );
-    // }
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

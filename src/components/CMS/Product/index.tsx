@@ -242,6 +242,8 @@ export default memo(function ProductCMS() {
             components: {
               Button: {
                 primaryColor: '#e62929',
+                colorPrimaryHover: '#2db457',
+                // colorBgTextHover: '#e62929',
               },
             },
             token: {

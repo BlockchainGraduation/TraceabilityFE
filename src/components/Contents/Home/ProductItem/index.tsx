@@ -26,8 +26,25 @@ import CommentItem from '../../ProductInfo/CommentItem';
 import CommentInput from '../../common/CommentInput';
 import instanceAxios from '@/api/instanceAxios';
 import useSWR from 'swr';
+import currency from '@/services/currency';
 
 const { Meta } = Card;
+
+interface CommentType {
+  content?: string;
+  marketplace_id?: string;
+  user_id?: string;
+  id?: string;
+  created_at?: string;
+  user: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+    phone: null;
+  };
+  reply_comments: [];
+}
 
 interface Props {
   id?: string;
@@ -184,7 +201,7 @@ export default function ProductItem(props: Props) {
                   <Statistic title="Quantity" value={props.product?.quantity} />
                   <Statistic
                     title="Price"
-                    suffix={'VND'}
+                    suffix={currency}
                     value={props.product?.price}
                   />
                 </div>

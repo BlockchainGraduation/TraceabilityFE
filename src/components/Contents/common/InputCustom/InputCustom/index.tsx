@@ -91,7 +91,7 @@ export default memo(function InputCustom({
 
   const handleBlur = async () => {
     if (value === initialValue) {
-      setTimeout(() => setEditAble(false), 200);
+      setTimeout(() => setEditAble(false), 300);
     } else {
       setOpenModalConfirm(true);
     }
