@@ -1,3 +1,5 @@
+import instanceAxios from '@/api/instanceAxios';
+import currency from '@/services/currency';
 import {
   faCircleXmark,
   faLock,
@@ -8,7 +10,38 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Row, Segmented, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
-import React, { ReactNode, useState } from 'react';
+import moment from 'moment';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+
+interface TransactionType {
+  id?: string;
+  product_id?: string;
+  user_id?: string;
+  price?: number;
+  quantity?: number;
+  created_at?: string;
+  updated_at?: string;
+  product?: {
+    id?: string;
+    product_type?: string;
+    product_status?: string;
+    name?: string;
+    description?: string;
+    price?: number;
+    quantity?: number;
+    number_of_sales?: number;
+    banner?: string;
+    created_by?: string;
+    created_at?: string;
+    user?: {
+      id?: string;
+      avatar?: string;
+      username?: string;
+      email?: string;
+      phone?: string;
+    };
+  };
+}
 
 interface DataType {
   key: React.Key;
@@ -23,20 +56,47 @@ interface DataType {
 }
 export default function TransactionCMS() {
   const [currentTable, setCurrentTable] = useState('BUY');
-  const columns: ColumnsType<DataType> = [
+  const [skip, setSkip] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [transactionTotal, setTransactionTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
+
+  const fetchDataTransaction = useCallback(async () => {
+    setLoading(true);
+    await instanceAxios
+      .get(`transaction_sf/list?skip=${skip - 1}&limit=${limit}`)
+      .then((res) => {
+        console.log(res.data.data.list_transaction_sf);
+        setTransactionTotal(res.data.data.total_transaction_sf);
+        const newListTransaction = [...res.data.data.list_transaction_sf].map(
+          (item, index) => ({ key: (skip - 1) * limit + index + 1, ...item })
+        );
+        setListTransaction(newListTransaction);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  }, [limit, skip]);
+  useEffect(() => {
+    fetchDataTransaction();
+  }, [fetchDataTransaction]);
+
+  const columns: ColumnsType<TransactionType> = [
     {
       title: 'Stt',
-      dataIndex: 'index',
+      dataIndex: 'key',
       width: 65,
     },
     {
       title: currentTable === 'BUY' ? 'Người bán' : 'Người mua',
-      dataIndex: 'user',
+      dataIndex: 'product.user.username',
+      render: (value, record, index) => record.product?.user?.username,
       width: 250,
     },
     {
       title: 'Tên sản phẩm',
-      dataIndex: 'productName',
+      dataIndex: 'product.name',
+      render: (value, record, index) => record.product?.name,
     },
     {
       title: 'Số lượng bán',
@@ -45,20 +105,25 @@ export default function TransactionCMS() {
     {
       title: 'Giá đơn vị',
       dataIndex: 'price',
+      render: (value, record, index) => value.toLocaleString() + currency,
     },
     {
       title: 'Tổng giá trị',
       dataIndex: 'total',
+      render: (value, record, index) =>
+        ((record.price || 0) * (record.quantity || 0)).toLocaleString() +
+        currency,
     },
     {
       title: 'Ngày giao dịch',
-      dataIndex: 'date',
+      dataIndex: 'created_at',
+      render: (value, record, index) => moment(value).format('DD/MM/YYYY'),
     },
     {
       title: 'Trạng thái',
       dataIndex: '',
       render: (value, record, index) =>
-        record.index % 2 ? (
+        record.price || 0 % 2 ? (
           <Tag color={'success'}>Thành công</Tag>
         ) : (
           <Tag color={'error'}>Thất bại</Tag>
@@ -95,9 +160,18 @@ export default function TransactionCMS() {
       />
       <div>
         <Table
+          loading={loading}
           columns={columns}
-          dataSource={data}
-          pagination={false}
+          dataSource={listTransaction}
+          pagination={{
+            onChange: (e) => {
+              setSkip(e - 1);
+            },
+            current: skip,
+            pageSize: 10,
+            total: transactionTotal,
+            position: ['bottomCenter'],
+          }}
           scroll={{ y: 340 }}
         />
       </div>

@@ -9,10 +9,12 @@ export default function SearchItem({
   productName,
   owner,
   quantity,
+  productImage,
   price,
 }: {
   parent?: HTMLAttributes<HTMLDivElement>;
   productName?: string;
+  productImage?: string;
   owner?: string;
   quantity?: number;
   price?: number;
@@ -26,7 +28,7 @@ export default function SearchItem({
         {...parent}
         className={`flex gap-x-5 items-center ${parent.className}`}
       >
-        <Avatar size={50} src={staticVariables.logoRaiden.src} />
+        <Avatar size={50} src={productImage} />
         <div>
           <p className="text-lg font-medium">{productName}</p>
           <div className="flex gap-x-2">

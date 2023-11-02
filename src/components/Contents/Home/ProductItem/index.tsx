@@ -26,22 +26,60 @@ import CommentItem from '../../ProductInfo/CommentItem';
 import CommentInput from '../../common/CommentInput';
 import instanceAxios from '@/api/instanceAxios';
 import useSWR from 'swr';
+import currency from '@/services/currency';
 
 const { Meta } = Card;
 
+interface CommentType {
+  content?: string;
+  marketplace_id?: string;
+  user_id?: string;
+  id?: string;
+  created_at?: string;
+  user: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+    phone: null;
+  };
+  reply_comments: [];
+}
+
 interface Props {
-  productName: string;
-  productImg: string;
-  productId?: string;
-  marketId?: string;
-  ownerName?: string;
-  ownerImg?: string;
-  role?: string;
-  likeQuantity: number;
-  messageQuantity: number;
-  buyerQuantity: number;
-  price: number;
-  quantity: number;
+  id?: string;
+  order_type?: string;
+  order_id?: string;
+  order_by?: string;
+  hash_data?: string;
+  created_at?: string;
+  product?: {
+    id?: string;
+    product_type?: string;
+    product_status?: string;
+    name?: string;
+    description?: string;
+    price?: string;
+    quantity?: string;
+    banner?: string;
+    created_by?: string;
+    created_at?: string;
+    user?: {
+      id?: string;
+      avatar?: string;
+      username?: string;
+      email?: string;
+    };
+  };
+  comments?: {
+    content?: string;
+    marketplace_id?: string;
+    user_id?: string;
+    id?: string;
+    created_at?: string;
+    user?: string;
+    reply_comments?: string;
+  };
 }
 
 export default function ProductItem(props: Props) {
@@ -53,7 +91,7 @@ export default function ProductItem(props: Props) {
   const fetchDataComment = useCallback(async () => {
     await instanceAxios
       .get(
-        `comments/list?marketplace_id=${props.marketId}&skip=${skip}&limit=${limit}`
+        `comments/list?marketplace_id=${props.id}&skip=${skip}&limit=${limit}`
       )
       .then((res) => {
         console.log(res.data.data.list_comment);
@@ -63,7 +101,8 @@ export default function ProductItem(props: Props) {
         setCommentList([]);
         console.log(err);
       });
-  }, [limit, props.marketId, skip]);
+  }, [limit, props.id, skip]);
+  useSWR(`comments/list?marketplace_id=${props.id}`, fetchDataComment);
   const afterOpenChange = async (e: boolean) => {
     if (e) {
       fetchDataComment();
@@ -85,7 +124,7 @@ export default function ProductItem(props: Props) {
               height={200}
               alt=""
               className="object-cover"
-              src={props.productImg}
+              src={props.product?.banner}
             />
           </div>
         }
@@ -101,34 +140,45 @@ export default function ProductItem(props: Props) {
             <Statistic
               valueStyle={{ fontSize: '10px' }}
               title={<MessageOutlined />}
-              value={`${props.likeQuantity} Messenger`}
+              value={`${props.product?.quantity} Messenger`}
             />
           </div>,
           <div key="cart" onClick={() => login()}>
             <Statistic
               valueStyle={{ fontSize: '10px' }}
               title={<ShoppingCartOutlined />}
-              value={`${props.buyerQuantity} Buyer`}
+              value={`${props.product?.quantity} Buyer`}
             />
           </div>,
         ]}
       >
-        <Link href={`/market/${props.marketId}`}>
+        <Link href={`/market/${props.id || props.order_id}`}>
           <Meta
             // avatar={<Avatar size={50} src={props.ownerImg} />}
             title={
               <div>
                 <div className="mb-[15px]">
-                  <Meta className="text-center" title={props.productName} />
+                  <Meta className="text-center" title={props.product?.name} />
                 </div>
-                {props.ownerName || props.ownerImg || props.role ? (
+                {props.product?.user?.username ||
+                props.product?.user?.avatar ||
+                props.order_type ? (
                   <div className="flex mt-[10px] items-center">
-                    <Avatar size={50} src={props.ownerImg} />
+                    <Avatar size={50} src={props.product?.user?.avatar} />
                     <div className="ml-[10px]">
                       <p className="font-normal text-xs mr-[10px]">
-                        {props.ownerName}
+                        {props.product?.user?.username}
                       </p>
-                      <Tag className="font-light">{props.role}</Tag>
+                      <Tag
+                        color={
+                          props.order_type === 'FARMER'
+                            ? 'green'
+                            : 'blue-inverse'
+                        }
+                        className="font-light"
+                      >
+                        {props.order_type}
+                      </Tag>
                     </div>
                   </div>
                 ) : (
@@ -148,8 +198,12 @@ export default function ProductItem(props: Props) {
                 }}
               >
                 <div className="flex justify-around">
-                  <Statistic title="Quantity" value={props.quantity} />
-                  <Statistic title="Price" suffix={'VND'} value={props.price} />
+                  <Statistic title="Quantity" value={props.product?.quantity} />
+                  <Statistic
+                    title="Price"
+                    suffix={currency}
+                    value={props.product?.price}
+                  />
                 </div>
               </ConfigProvider>
             }
@@ -182,7 +236,10 @@ export default function ProductItem(props: Props) {
             />
           )}
         </div>
-        <CommentInput marketId={props.marketId || ''} />
+        <CommentInput
+          marketId={props.id || ''}
+          productId={props.order_id || ''}
+        />
       </Modal>
     </div>
   );

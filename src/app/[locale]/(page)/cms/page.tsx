@@ -15,6 +15,8 @@ import ProductCMS from '@/components/CMS/Product';
 import TransactionCMS from '@/components/CMS/Transaction';
 import { useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
+import ManageUser from '@/components/CMS/Admin/ManageUser';
+import ManageProduct from '@/components/CMS/Admin/ManageProduct';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -34,29 +36,6 @@ function getItem(
   } as MenuItem;
 }
 
-const items: MenuItem[] = [
-  getItem('Thống kê', '0', <PieChartOutlined />),
-  // getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-    getItem('Thông tin chung', '1'),
-    getItem('Đổi mật khẩu', '2'),
-    getItem('Liên kết', '3'),
-  ]),
-  getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-    getItem('Quản lí sản phâm', '4'),
-    getItem('Lịch sử giao dịch', '5'),
-  ]),
-  getItem('Files', '6', <FileOutlined />),
-];
-const contents = [
-  <div key={1}>Content1</div>,
-  <GeneralInformation key={2} />,
-  <ChangPassword className="w-2/5 m-auto" key={3} />,
-  <></>,
-  <ProductCMS key={4} />,
-  <TransactionCMS key={5} />,
-];
-
 export default function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState('0');
@@ -64,12 +43,45 @@ export default function CMSPage() {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
-  const route = useRouter();
-  useEffect(() => {
-    if (!currentUser.logged) {
-      route.push('/home');
-    }
-  }, [currentUser.logged, route]);
+  // const route = useRouter();
+  // useEffect(() => {
+  //   if (!currentUser.logged) {
+  //     route.push('/home');
+  //   }
+  // }, [currentUser.logged, route]);
+
+  ////Render taskbar
+  const items: MenuItem[] = [
+    getItem('Thống kê', '0', <PieChartOutlined />),
+    getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
+      getItem('Thông tin chung', '1'),
+      getItem('Đổi mật khẩu', '2'),
+      getItem('Liên kết', '3'),
+    ]),
+    getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
+      getItem('Quản lí sản phâm', '4'),
+      getItem('Lịch sử giao dịch', '5'),
+    ]),
+    currentUser.user.system_role === 'ADMIN'
+      ? getItem('Admin', 'sub3', <TeamOutlined />, [
+          getItem('Quản lí user', '6'),
+          getItem('Quản lí sản phẩm', '7'),
+        ])
+      : null,
+    getItem('Files', '8', <FileOutlined />),
+  ];
+  const contents = [
+    <div key={1}>Content1</div>,
+    <GeneralInformation key={2} />,
+    <ChangPassword className="w-2/5 m-auto" key={3} />,
+    <></>,
+    <ProductCMS key={4} />,
+    <TransactionCMS key={5} />,
+
+    currentUser.user.system_role === 'ADMIN'
+      ? [<ManageUser key={6} />, <ManageProduct key={7} />]
+      : null,
+  ];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>

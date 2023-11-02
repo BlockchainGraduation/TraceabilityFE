@@ -2,13 +2,19 @@ import instanceAxios from '@/api/instanceAxios';
 import { Button, Form, Input, notification } from 'antd';
 import React, { useState } from 'react';
 
-export default function ConfirmOTP({ nextStep }: { nextStep: () => void }) {
+export default function ConfirmOTP({
+  nextStep,
+  email,
+}: {
+  nextStep: () => void;
+  email: string;
+}) {
   const [loading, setLoading] = useState(false);
   const fethRegister = async (data: any) => {
     setLoading(true);
     await instanceAxios
       .put(
-        `auth/verify_code?email=${data.email}&verify_code=${data.verify_code}&new_password=${data.new_password}&password_confirm=${data.password_confirm}`
+        `auth/verify_code?email=${email}&verify_code=${data.verify_code}&new_password=${data.new_password}&password_confirm=${data.password_confirm}`
       )
       .then((res) => {
         nextStep();
@@ -39,9 +45,9 @@ export default function ConfirmOTP({ nextStep }: { nextStep: () => void }) {
         onFinishFailed={() => console.log('OK')}
         autoComplete="off"
       >
-        <Form.Item label="Email" name="email" rules={[{ required: true }]}>
+        {/* <Form.Item label="Email" name="email" rules={[{ required: true }]}>
           <Input />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Verify code"
           name="verify_code"

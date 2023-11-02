@@ -1,6 +1,6 @@
 import instanceAxios from '@/api/instanceAxios';
-import InputCustom from '@/components/Contents/ProductInfo/CustomInput/InputCustom';
-import TextAreaCustom from '@/components/Contents/ProductInfo/CustomInput/TextAreaCustom';
+import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
+import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
 import { useAppSelector } from '@/hooks';
 import { setUser } from '@/reducers/userSlice';
 import fetchUpdateUser from '@/services/fetchUpdate';
@@ -132,7 +132,7 @@ export default function GeneralInformation() {
               src={currentUser.avatar}
             />
             <Upload
-              accept="image/*,.jpg,.png,.jpeg"
+              accept="image/png, image/jpeg, image/jpg"
               showUploadList={false}
               onChange={handleChangeAvatar}
             >
@@ -148,7 +148,9 @@ export default function GeneralInformation() {
           <div className="flex w-1/2 flex-col gap-y-4">
             <div>
               <InputCustom
-                name="full_ame"
+                APIurl={'user/update_me'}
+                queryType={'user'}
+                name="full_name"
                 classNameLabel="text-2xl font-bold"
                 initialValue={currentUser.full_name}
               />
@@ -166,7 +168,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="14-Khuy My  - NHS - DN" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="14-Khuy My  - NHS - DN"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -185,6 +192,8 @@ export default function GeneralInformation() {
                   }}
                   name="birthday"
                   initialValue={currentUser.birthday}
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
                 />
               </Col>
             </Row>
@@ -213,7 +222,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="http/asd/asdd" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="http/asd/asdd"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -226,7 +240,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="adbc@gmail.com" />
+                <InputCustom
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                  name="as"
+                  initialValue="adbc@gmail.com"
+                />
               </Col>
             </Row>
             <Row className="w-full flex items-center">
@@ -239,7 +258,12 @@ export default function GeneralInformation() {
                 />
               </Col>
               <Col>
-                <InputCustom name="as" initialValue="012313132" />
+                <InputCustom
+                  name="as"
+                  initialValue="012313132"
+                  APIurl={'user/update_me'}
+                  queryType={'user'}
+                />
               </Col>
             </Row>
           </div>
@@ -266,6 +290,7 @@ export default function GeneralInformation() {
             </Typography.Title>
             <Upload
               // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+              accept="image/png, image/jpeg, image/jpg"
               listType="picture-card"
               multiple
               maxCount={8}
@@ -312,6 +337,8 @@ export default function GeneralInformation() {
           <TextAreaCustom
             name="description"
             initialValue="asdasdasdasdadadasda"
+            APIurl={'user/update_me'}
+            queryType={'user'}
           />
         </div>
       </div>

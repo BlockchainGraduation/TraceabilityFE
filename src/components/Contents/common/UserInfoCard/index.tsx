@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Button, Input } from 'antd';
 import Link from 'next/link';
 import React, { ChangeEvent, useState } from 'react';
-import CustomInput from '../../ProductInfo/CustomInput/InputCustom';
+import CustomInput from '../InputCustom/InputCustom';
 
 export default function UserInfoCard({
   showButton = true,

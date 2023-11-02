@@ -1,4 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
+import CreateProductForm from '@/components/Contents/common/CreateProductForm';
 import { useAppSelector } from '@/hooks';
 import fetchUpdate from '@/services/fetchUpdate';
 import useLogin from '@/services/requireLogin';
@@ -31,8 +32,17 @@ import {
 import Table, { ColumnsType } from 'antd/es/table';
 import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import Link from 'next/link';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, {
+  ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import { useEffectOnce } from 'usehooks-ts';
+import TransactionSelectItem from './TransactionSelectItem';
+import moment from 'moment';
 
 interface DataType {
   key: React.Key;
@@ -44,45 +54,70 @@ interface DataType {
   created_at: string;
   product_status: string;
 }
-interface FormType {
-  key: React.Key;
-  name: string;
-  price: string;
-  quantity: string;
-  description: string;
-  created_at: string;
-  transaction_id: string;
-  banner: string;
-  avatar: string;
+interface TransactionType {
+  id?: string;
+  product_id?: string;
+  user_id?: string;
+  price?: number;
+  quantity?: number;
+  created_at?: string;
+  updated_at?: string;
+  product?: {
+    id?: string;
+    product_type?: string;
+    product_status?: string;
+    name?: string;
+    description?: string;
+    price?: number;
+    quantity?: number;
+    banner?: string;
+    created_by?: string;
+    created_at?: string;
+    user?: {
+      id?: string;
+      avatar?: string;
+      username?: string;
+      email?: string;
+    };
+  };
 }
-const getBase64 = (file: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-export default function ProductCMS() {
+
+export default memo(function ProductCMS() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
   const [totalProduct, setTotalProduct] = useState(0);
   const [listProduct, setListProduct] = useState<DataType[]>([]);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [fileAvartar, setFileAvartar] = useState<UploadFile[]>([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
   const [hasChange, setHasChange] = useState(0);
+  const [transactionId, setTransactionId] = useState('');
+  const [currentModalPage, setCurrentModalPage] = useState<
+    'SELECT_TRANSACTION' | 'CREATE_PRODUCT'
+  >('SELECT_TRANSACTION');
+  const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
   const currentUser = useAppSelector((state) => state.user.user);
   const { mutate } = useSWRConfig();
-  const [form] = Form.useForm();
+
+  useEffectOnce(() => {
+    fetchListTransaction();
+  });
+
+  const changeCurrentModalPageToCreate = (e: string) => {
+    setCurrentModalPage('CREATE_PRODUCT');
+    setTransactionId(e);
+  };
+  const fetchListTransaction = async () => {
+    await instanceAxios(`transaction_sf/list?skip=0&limit=100`)
+      .then((res) => {
+        setListTransaction(res.data.data.list_transaction_sf);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
       .get(
-        `product/me?skip=${skip}&limit=${limit}${name ? '&name=${name}' : ''}`
+        `product/me?skip=${skip}&limit=${limit}${name ? `&name=${name}` : ''}`
       )
       .then((res) => {
         console.log(res.data);
@@ -107,47 +142,7 @@ export default function ProductCMS() {
   }, [fetchProductMe, limit, name, skip, hasChange]);
   // const { error, isLoading } = useSWR('product/me', fetchProductMe);
 
-  const handleCancel = () => setPreviewOpen(false);
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1)
-    );
-  };
-
-  const handleChange: UploadProps['onChange'] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    // console.log(newFileList);
-    info.file.status = 'done';
-    setFileList(info.fileList);
-  };
-
-  const handleChangeAvatar: UploadProps['onChange'] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    // console.log(newFileList);
-    info.file.status = 'done';
-    setFileAvartar(info.fileList);
-  };
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+  // const handleCancel = () => setPreviewOpen(false);
 
   const fetchCreateMarket = async (productId: string) => {
     await instanceAxios
@@ -197,35 +192,6 @@ export default function ProductCMS() {
       });
   };
 
-  const onFinish = async (e: FormType) => {
-    let formData = new FormData();
-    formData.append('banner', fileAvartar[0]?.originFileObj as Blob);
-    await instanceAxios
-      .post(
-        `product/create?name=${e.name}${e.price ? `&price=${e.price}` : ''}${
-          e.quantity ? `&quantity=${e.quantity}` : ''
-        }${e.description ? `&description=${e.description}` : ''}${
-          e.transaction_id ? `&transaction_id=${e.transaction_id}` : ''
-        }`,
-        formData
-      )
-      .then((res) => {
-        setOpenModalCreate(false);
-        setHasChange(hasChange + 1);
-        form.resetFields();
-        notification.success({
-          message: 'Thông báo',
-          description: 'Tạo sản phẩm thành công',
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        notification.error({
-          message: 'Thông báo',
-          description: 'Tạo sản phẩm thất bại',
-        });
-      });
-  };
   const columns: ColumnsType<DataType> = [
     {
       key: 0,
@@ -246,7 +212,6 @@ export default function ProductCMS() {
     },
     {
       key: 3,
-
       title: 'Giá đơn vị',
       dataIndex: 'price',
     },
@@ -254,6 +219,7 @@ export default function ProductCMS() {
       key: 4,
       title: 'Ngày bán',
       dataIndex: 'created_at',
+      render: (value, record, index) => <p>{moment(value).format('L')}</p>,
     },
     {
       key: 5,
@@ -276,6 +242,8 @@ export default function ProductCMS() {
             components: {
               Button: {
                 primaryColor: '#e62929',
+                colorPrimaryHover: '#2db457',
+                // colorBgTextHover: '#e62929',
               },
             },
             token: {
@@ -334,7 +302,7 @@ export default function ProductCMS() {
 
   return (
     <div>
-      <div className="flex  items-center justify-between p-[20px] border-[1px] rounded-[10px]">
+      <div className="flex items-center justify-between p-[20px] border-[1px] rounded-[10px]">
         <p className="text-3xl font-medium	">Danh sách sản phẩm</p>
         <div
           onClick={() => setOpenModalCreate(true)}
@@ -349,112 +317,59 @@ export default function ProductCMS() {
           Thêm sản phẩm
         </div>
         <Modal
+          centered
           open={openModalCreate}
+          width={700}
+          title={
+            currentModalPage === 'CREATE_PRODUCT' && (
+              <p onClick={() => setCurrentModalPage('SELECT_TRANSACTION')}>
+                Quay lại
+              </p>
+            )
+          }
           onCancel={() => setOpenModalCreate(false)}
           footer={[]}
         >
           <Typography.Title className="w-fit m-auto" level={3}>
-            Thêm sản phẩm
+            {currentModalPage === 'CREATE_PRODUCT'
+              ? `Thêm sản phẩm`
+              : `Chọn hóa đơn`}
           </Typography.Title>
-          <Form
-            form={form}
-            labelCol={{ span: 10 }}
-            wrapperCol={{ span: 14 }}
-            onFinish={onFinish}
-          >
-            <Form.Item<FormType>
-              label="Chon giao dịch"
-              name="transaction_id"
-              rules={[
-                {
-                  required: !(currentUser.system_role === 'SEEDLING_COMPANY'),
-                  message: 'Please input your username!',
-                },
-              ]}
-            >
-              <Select
-                options={[
-                  { label: 'Option1', value: 1 },
-                  { label: 'Option2', value: 2 },
-                  currentUser.system_role === 'SEEDLING_COMPANY'
-                    ? { label: 'None', value: 0 }
-                    : {},
-                ]}
-              />
-            </Form.Item>
-            <Form.Item<FormType>
-              label="Tên sản phẩm"
-              name="name"
-              rules={[
-                { required: true, message: 'Please input your username!' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item<FormType>
-              label="Số lượng bán"
-              name="quantity"
-              rules={[
-                { required: true, message: 'Please input your username!' },
-              ]}
-            >
-              <InputNumber min={0} />
-            </Form.Item>
-            <Form.Item<FormType>
-              label="Giá bán cho từng đơn vị"
-              name="price"
-              rules={[
-                { required: true, message: 'Please input your username!' },
-              ]}
-            >
-              <InputNumber min={0} />
-            </Form.Item>
-            <Form.Item<FormType>
-              label="Ảnh chính của sản phẩm"
-              valuePropName="fileList"
-              name={'avatar'}
-              getValueFromEvent={normFile}
-              rules={[
-                { required: true, message: 'Please choose your product image' },
-              ]}
-            >
-              <Upload
-                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                listType="picture-card"
-                // multiple
-                // fileList={fileList}
-                maxCount={1}
-                onPreview={handlePreview}
-                onChange={handleChangeAvatar}
-              >
-                {fileAvartar.length >= 1 ? null : uploadButton}
-              </Upload>
-            </Form.Item>
-            <Form.Item<FormType>
-              label="Ảnh banner"
-              valuePropName="fileList"
-              name={'banner'}
-              getValueFromEvent={normFile}
-              rules={[
-                { required: true, message: 'Please choose your product image' },
-              ]}
-            >
-              <Upload
-                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                listType="picture-card"
-                multiple
-                // fileList={fileList}
-                maxCount={8}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 6 ? null : uploadButton}
-              </Upload>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button htmlType="submit">Submit</Button>
-            </Form.Item>
-          </Form>
+          {currentModalPage === 'SELECT_TRANSACTION' && (
+            <div>
+              <p className="py-[10px]">
+                * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty hạt
+                giống
+              </p>
+              <div className="max-h-[600px] overflow-auto">
+                {listTransaction.map((item, index) => (
+                  <TransactionSelectItem
+                    transactionId={item.id || ''}
+                    onFinish={changeCurrentModalPageToCreate}
+                    key={index}
+                    image={item.product?.banner || ''}
+                    productName={item.product?.name || ''}
+                    owner={item.product?.user?.username || ''}
+                    priceTotal={item.price || 0}
+                    buyQuantity={item.quantity || 0}
+                    buyDay={item.created_at || ''}
+                  />
+                ))}
+                {currentUser.system_role !== 'SEEDLING_COMPANY' && (
+                  <Button onClick={() => setCurrentModalPage('CREATE_PRODUCT')}>
+                    Bỏ qua
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {currentModalPage === 'CREATE_PRODUCT' && (
+            <CreateProductForm
+              onSuccess={() => setOpenModalCreate(false)}
+              transactionId={transactionId}
+            />
+          )}
         </Modal>
       </div>
       <div>
@@ -474,4 +389,4 @@ export default function ProductCMS() {
       </div>
     </div>
   );
-}
+});

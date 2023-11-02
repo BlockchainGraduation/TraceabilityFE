@@ -1,9 +1,19 @@
 import { useAppDispatch } from '@/hooks';
 import { User, setUser } from '@/reducers/userSlice';
-import fetchUpdateUser from '@/services/fetchUpdate';
+import currency from '@/services/currency';
+import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
-import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
-import { TextAreaProps } from 'antd/es/input';
+import {
+  Button,
+  Input,
+  InputNumber,
+  InputNumberProps,
+  InputProps,
+  InputRef,
+  Modal,
+  notification,
+} from 'antd';
+import { valueType } from 'antd/es/statistic/utils';
 import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
@@ -17,29 +27,39 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
-export default memo(function TextAreaCustom({
+export default memo(function InputNumberCustom({
   name,
   initialValue,
   className,
   input,
   classNameLabel,
+  APIurl,
+  queryType,
+  showEdit = true,
+  showCurrence = false,
   onKeyDown,
+  onSuccess,
 }: // onChange = () => {},
 {
   name: string;
-  initialValue: string;
+  initialValue: number;
   className?: string;
   classNameLabel?: string;
-  input?: TextAreaProps;
+  APIurl: string;
+  input?: InputNumberProps;
+  showEdit?: boolean;
+  queryType: 'user' | 'product';
+  showCurrence?: boolean;
+  onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
-  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
 
-  const ref = useRef<InputRef>(null);
+  const dispatch = useAppDispatch();
 
   // useEffect(() => {
   //   const handleOutSideClick = async (event: any) => {
@@ -54,15 +74,18 @@ export default memo(function TextAreaCustom({
   //     window.removeEventListener('mousedown', handleOutSideClick);
   //   };
   // }, [editAble]);
-  const fetchUpdate = async () => {
-    await fetchUpdateUser(
-      'user/update_me',
+  const handleOk = async () => {
+    setLoading(true);
+    await fetchUpdate(
+      APIurl,
       { [name]: value },
       (res) => {
-        console.log(res);
         setEditAble(false);
         setOpenModalConfirm(false);
-        dispatch(setUser(res.data.data as User));
+        if (queryType == 'user') {
+          dispatch(setUser(res.data.data as User));
+        }
+        onSuccess?.();
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',
@@ -70,17 +93,18 @@ export default memo(function TextAreaCustom({
       },
       (err) => {
         console.log(err);
-        // notification.error({
-        //   message: 'Error',
-        //   description: 'Cập nhật dữ liệu thất bại',
-        // });
-      }
+        notification.error({
+          message: 'Error',
+          description: 'Cập nhật dữ liệu thất bại',
+        });
+      },
+      () => setLoading(false)
     );
   };
 
   const handleBlur = async () => {
     if (value === initialValue) {
-      setEditAble(false);
+      setTimeout(() => setEditAble(false), 300);
     } else {
       setOpenModalConfirm(true);
     }
@@ -102,9 +126,9 @@ export default memo(function TextAreaCustom({
     // }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (e: any) => {
     // onChange?.(e);
-    setValue(e.target.value);
+    setValue(e);
   };
 
   const handleKeyDown = async (e: KeyboardEvent) => {
@@ -120,9 +144,8 @@ export default memo(function TextAreaCustom({
   return (
     <div className={`flex w-fit h-fit item-center ${className}`}>
       {editAble ? (
-        <Input.TextArea
+        <InputNumber
           {...input}
-          ref={ref}
           autoFocus
           onChange={handleChange}
           value={value}
@@ -132,11 +155,10 @@ export default memo(function TextAreaCustom({
           onEnded={() => alert('OK')}
         />
       ) : (
-        <p
-          defaultValue={initialValue}
-          className={`max-w-[100%] text-ellipsis overflow-hidden ${classNameLabel}`}
-        >
-          {value}
+        <p className={classNameLabel}>
+          {`${showCurrence ? currency : ''} ${value
+            .toLocaleString()
+            .replace(/\./g, ',')}`}
         </p>
       )}
       <Modal
@@ -155,10 +177,11 @@ export default memo(function TextAreaCustom({
         // cancelText="Huỷ"
         // okText="OK"
         footer={[
-          <Button onClick={fetchUpdate} key={0}>
+          <Button loading={loading} onClick={handleOk} key={0}>
             Xác nhận
           </Button>,
           <Button
+            disabled={loading}
             onClick={() => {
               setOpenModalConfirm(false), setValue(initialValue);
             }}
@@ -171,10 +194,12 @@ export default memo(function TextAreaCustom({
         Dữ liệu của bạn vừa nhập có sự thay đổi đối với dữ liệu gốc. Xác nhận
         thay đổi!!!!
       </Modal>
-      <EditTwoTone
-        className="px-[10px]"
-        onClick={() => setEditAble(!editAble)}
-      />
+      {showEdit && (
+        <EditTwoTone
+          className="px-[10px]"
+          onClick={() => setEditAble(!editAble)}
+        />
+      )}
     </div>
   );
 });

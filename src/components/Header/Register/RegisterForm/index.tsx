@@ -11,15 +11,19 @@ type FieldType = {
   password?: string;
   remember?: string;
 };
-export default function RegisterForm({ nextStep }: { nextStep: () => void }) {
+export default function RegisterForm({
+  nextStep,
+}: {
+  nextStep: (e?: string) => void;
+}) {
   const [loading, setLoading] = useState(false);
 
-  const onFinish = async (data: any) => {
+  const onFinish = async (data: FieldType) => {
     setLoading(true);
     await instanceAxios
       .post('auth/register', data)
       .then((res) => {
-        nextStep();
+        nextStep(data.email);
       })
       .catch((err) => {
         console.log(err);
