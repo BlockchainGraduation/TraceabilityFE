@@ -1,16 +1,22 @@
 'use client';
 import {
+  Avatar,
   Badge,
   Button,
   Carousel,
+  Col,
+  ConfigProvider,
   Empty,
   Image,
   Input,
+  List,
   Modal,
   Pagination,
+  Row,
   Segmented,
   Select,
   Skeleton,
+  Statistic,
   Typography,
 } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
@@ -20,14 +26,21 @@ import staticVariables from '@/static';
 import TopBanner from '@/components/Contents/Home/TopBanner';
 import {
   AppstoreOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   BarsOutlined,
   CaretDownOutlined,
 } from '@ant-design/icons';
 import Table, { ColumnsType } from 'antd/es/table';
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 // import ProductTodayItem from '@/components/Contents/Home/ProductTodayItem';
 import dynamic from 'next/dynamic';
 import instanceAxios from '@/api/instanceAxios';
 import useSWR, { useSWRConfig } from 'swr';
+import Meta from 'antd/es/card/Meta';
+import LeaderBoard from './components/LeaderBoard';
+import currency from '@/services/currency';
+import Category from './components/Category';
 
 const { Search } = Input;
 const ProductTodayItem = dynamic(
@@ -37,59 +50,111 @@ const ProductTodayItem = dynamic(
     ssr: false,
   }
 );
-interface MarketType {
-  id?: string;
-  order_type?: string;
-  order_id?: string;
-  order_by?: string;
-  hash_data?: string;
-  created_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: string;
-    quantity?: string;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-    };
-  };
-  comments?: {
-    content?: string;
-    marketplace_id?: string;
-    user_id?: string;
-    id?: string;
-    created_at?: string;
-    user?: string;
-    reply_comments?: string;
-  };
-}
+// interface MarketType {
+//   id?: string;
+//   order_type?: string;
+//   order_id?: string;
+//   order_by?: string;
+//   hash_data?: string;
+//   created_at?: string;
+//   product?: {
+//     id?: string;
+//     product_type?: string;
+//     product_status?: string;
+//     name?: string;
+//     description?: string;
+//     price?: string;
+//     quantity?: string;
+//     banner?: string;
+//     created_by?: string;
+//     created_at?: string;
+//     user?: {
+//       id?: string;
+//       avatar?: string;
+//       username?: string;
+//       email?: string;
+//     };
+//   };
+//   comments?: {
+//     content?: string;
+//     marketplace_id?: string;
+//     user_id?: string;
+//     id?: string;
+//     created_at?: string;
+//     user?: string;
+//     reply_comments?: string;
+//   };
+// }
+// interface TopSellingType {
+//   Product?: {
+//     name?: string;
+//     number_of_sales?: number;
+//     banner?: string;
+//     created_by?: string;
+//     description?: string;
+//     created_at?: string;
+//     price?: number;
+//     updated_at?: string;
+//     quantity?: number;
+//     hashed_data?: string;
+//     id?: string;
+//     product_status?: string;
+//     product_type?: string;
+//   };
+//   total_quantity?: number;
+//   total_sales?: number;
+// }
 interface DataType {
-  key: React.Key;
-  index: number;
-  fammer: ReactNode;
-  product: number;
-  transaction: number;
-  sellquantity: number;
+  gender: string;
+  name: {
+    title: string;
+    first: string;
+    last: string;
+  };
+  email: string;
+  picture: {
+    large: string;
+    medium: string;
+    thumbnail: string;
+  };
+  nat: string;
+}
+
+function LeftArrow() {
+  const { isFirstItemVisible, scrollPrev } =
+    React.useContext(VisibilityContext);
+
+  return (
+    <ArrowLeftOutlined
+      disabled={isFirstItemVisible}
+      onClick={() => scrollPrev()}
+    />
+  );
+}
+
+function RightArrow() {
+  const { isLastItemVisible, scrollNext } = React.useContext(VisibilityContext);
+
+  return (
+    <ArrowRightOutlined
+      disabled={isLastItemVisible}
+      onClick={() => scrollNext()}
+    />
+  );
 }
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [orderType, setOrderType] = useState('');
   const [productName, setProductName] = useState('');
-  // const [skip, setSkip] = useState(1);
+  const [dataTopSelling, setDataTopSelling] = useState<TopSellingType[]>([]);
+  const [dataSegmented, setDataSegmented] = useState('FARMER');
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
+  const [data, setData] = useState<DataType[]>([]);
   const [totalMarket, setTotalMarket] = useState(0);
   const { mutate } = useSWRConfig();
+  const [loading, setLoading] = useState(false);
 
   const fetchListMarket = useCallback(async () => {
     await instanceAxios
@@ -107,228 +172,130 @@ export default function HomePage() {
         setListMarket([]);
       });
   }, [currentPage, limit, orderType, productName]);
+  const fetchTopSelling = useCallback(async () => {
+    await instanceAxios
+      .get(`product/top_selling?product_type=SEEDLING_COMPANY`)
+      .then((res) => {
+        console.log(res.data.data);
+        setDataTopSelling(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setDataTopSelling([]);
+      });
+  }, [dataSegmented]);
+  useEffect(() => {
+    fetchTopSelling();
+  }, [fetchTopSelling]);
   useEffect(() => {
     fetchListMarket();
   }, [fetchListMarket]);
 
-  const { error, isLoading } = useSWR('marketplace/list', fetchListMarket);
+  useSWR('marketplace/list', fetchListMarket);
 
   // useEffect(() => {
   //   fetchListMarket();
   // }, [fetchListMarket]);
 
-  const contentStyle: React.CSSProperties = {
-    height: 100,
-    borderRadius: '10px',
-    objectFit: 'cover',
+  const loadMoreData = () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    fetch(
+      'https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo'
+    )
+      .then((res) => res.json())
+      .then((body) => {
+        setData([...data, ...body.results]);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   };
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'Rank',
-      dataIndex: 'index',
-      width: 65,
-    },
-    {
-      title: 'Fammer',
-      dataIndex: 'fammer',
-      width: 250,
-    },
-    {
-      title: 'Product',
-      dataIndex: 'product',
-    },
-    {
-      title: 'Transaction',
-      dataIndex: 'transaction',
-    },
-    {
-      title: 'Sell Quantity',
-      dataIndex: 'sellquantity',
-    },
-  ];
-  const data: DataType[] = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      index: i + 1,
-      fammer: `Edward King ${i}`,
-      product: 32,
-      transaction: i,
-      sellquantity: i,
-    });
-  }
+  useEffect(() => {
+    loadMoreData();
+  }, []);
   return (
-    <div className="w-full ">
-      <div className="relative w-full overflow-x-hidden">
-        <Image
-          width={1700}
-          alt=""
-          preview={false}
-          src={staticVariables.qc5.src}
-        />
-        <div className="w-full absolute flex flex-col items-center top-1/2 left-1/2 translate-y-[-50%] translate-x-[-50%] font-bold text-white">
-          <p
-            data-aos="fade-up"
-            data-aos-duration="1500"
-            className=" text-6xl p-[50px]"
-          >
-            Chuỗi cứng ứng sản phẩm sầu riêng
-          </p>
-          <div
-            data-aos="fade-up"
-            data-aos-duration="2000"
-            className="flex flex-col items-center border-[6px] px-[50px] py-[10px] rounded"
-          >
-            <p className="text-3xl">Ghé thăm sản phẩm</p>
-            <CaretDownOutlined className="text-5xl" />
+    <div className="w-full">
+      {/* Top Item */}
+      <div className="w-full flex-col items-center bg-[#000000]">
+        <div className="w-full flex flex-col">
+          <div className="w-1/3 h-[450px] text-white flex items-center ">
+            <div className="text-[32px] px-[20px]">
+              <p className="font-[600]">Collections. Next Level.</p>
+              <p className="text-[16px] text-[#b3b3b3]">
+                Discover new collection pages with rich storytelling, featured
+                items, and more
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="w-full flex items-center justify-around">
-        {/* <div data-aos="fade-right" className="w-1/2 drop-shadow-lg">
-          <Carousel
-            className=" shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)] rounded-[10px] overflow-hidden h-[400px]"
-            autoplay
+        <div className="w-full m-auto text-white flex">
+          <ScrollMenu
+            wrapperClassName="w-full px-[20px] mb-[30px] "
+            scrollContainerClassName="mx-[20px]"
+            LeftArrow={LeftArrow}
+            RightArrow={RightArrow}
           >
-            <Image
-              className="w-full h-full object-cover"
-              width={'100%'}
-              height={400}
-              alt=""
-              src={staticVariables.qc1.src}
-            />
-
-            <Image
-              width={'100%'}
-              height={400}
-              alt=""
-              src={staticVariables.qc3.src}
-            />
-
-            <Image
-              width={'100%'}
-              height={400}
-              className="w-full h-full object-cover"
-              alt=""
-              src={staticVariables.qc2.src}
-            />
-          </Carousel>
-        </div> */}
-        {/* <div className="flex flex-col gap-y-5">
-          <TopBanner />
-          <TopBanner />
-        </div> */}
+            {[...Array(10)].map((_, index) => (
+              <div key={index} className="relative w-[200px] mx-[20px]">
+                <Image
+                  width={200}
+                  height={200}
+                  preview={false}
+                  className="rounded object-cover"
+                  alt=""
+                  src={staticVariables.qc5.src}
+                />
+                <p className="w-full absolute bottom-0 font-bold p-[20px] text-[14px] bg-gradient-to-t truncate from-[#000000]">
+                  World of woment
+                </p>
+              </div>
+            ))}
+          </ScrollMenu>
+        </div>
       </div>
-      <div className="w-full mt-[50px] justify-around flex">
-        <div className="w-1/2 ">
+      {/* LeaderBoard Item */}
+      <div className="w-full p-[50px]">
+        <ConfigProvider
+          theme={{
+            components: {
+              Segmented: {
+                fontSize: 24,
+              },
+            },
+          }}
+        >
           <Segmented
+            className="font-bold"
             size={'large'}
-            className="m-auto my-[20px]"
             options={[
-              {
-                label: 'Top Fammer',
-                value: '1',
-                icon: <BarsOutlined />,
-              },
-              {
-                label: 'Top Factory',
-                value: '2',
-                icon: <AppstoreOutlined />,
-              },
-              {
-                label: 'Top SeedCompany',
-                value: '3',
-                icon: <AppstoreOutlined />,
-              },
+              { label: 'Trending', value: 'TRENDING' },
+              { label: 'Top', value: 'TOP ' },
             ]}
           />
-          <div className="w-full border-2">
-            <Table
-              columns={columns}
-              dataSource={data}
-              pagination={false}
-              scroll={{ y: 340 }}
+        </ConfigProvider>
+        <div className="w-full flex justify-between gap-x-16">
+          <div className="w-1/2">
+            <LeaderBoard listTopSelling={dataTopSelling} />
+          </div>
+          <div className="w-1/2">
+            <LeaderBoard
+              skip={dataTopSelling.length}
+              listTopSelling={dataTopSelling}
             />
           </div>
         </div>
-        <div className="border-[2px] border-green-500 px-[20px] py-[30px] rounded">
-          <Typography.Title level={3}>Top ban chay hom nay</Typography.Title>
-          <ProductTodayItem
-            productName={'Trung'}
-            productAvatar={staticVariables.qc1.src}
-            ownerName={'Trung'}
-            ownerId="1231"
-            soldQuantity={12313}
-            transactionQuantity={1231}
-          />
-          <ProductTodayItem
-            productName={'Trung'}
-            productAvatar={staticVariables.qc2.src}
-            ownerName={'Trung'}
-            ownerId="1231"
-            soldQuantity={12313}
-            transactionQuantity={1231}
-          />
-        </div>
       </div>
-      {/* <div className="flex">
-        <Search
-          className="m-auto"
-          placeholder="Search product"
-          onSearch={() => {}}
-          style={{ width: 500 }}
-        />
-      </div> */}
-      <div className="w-1/2 flex items-center justify-around mt-[50px]">
-        <Segmented
-          size={'large'}
-          onChange={(e) => setOrderType(e.toString())}
-          options={[
-            { label: 'All', value: '' },
-            { label: 'Fammer', value: 'FARMER' },
-            { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
-            { label: 'Distributer', value: 'DISTRIBUTER' },
-            { label: 'Factory', value: 'FACTORY' },
-          ]}
-        />
-        <Select
-          labelInValue
-          defaultValue={{ value: 'popular', label: 'Popular' }}
-          style={{ width: 120 }}
-          // onChange={handleChange}
-          options={[
-            {
-              value: 'popular',
-              label: 'Popular',
-            },
-            {
-              value: 'lasted',
-              label: 'Lasted',
-            },
-          ]}
-        />
+      {/* Category */}
+      <div>
+        <Category orderType={'FARMER'} title="Farmer" />
+        <Category orderType={'MANUFACTURER'} title="Manufacturer" />
+        <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
       </div>
-      <div className="w-full flex flex-wrap gap-y-24 gap-x-12 m-auto mt-[80px] item-center justify-center">
-        {listMarket.length ? (
-          listMarket.map((item: MarketType, index) => (
-            <Badge.Ribbon text="Hot" color="blue" key={index}>
-              <ProductItem {...item} />
-            </Badge.Ribbon>
-          ))
-        ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_DEFAULT}
-            description={'Không có dữ liệu'}
-          />
-        )}
-      </div>
-      <Pagination
-        className="w-fit m-auto mt-[50px]"
-        current={currentPage}
-        onChange={(e) => setCurrentPage(e)}
-        total={totalMarket}
-      />
     </div>
   );
 }

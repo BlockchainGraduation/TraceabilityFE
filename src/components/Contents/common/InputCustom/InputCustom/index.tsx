@@ -26,6 +26,7 @@ export default memo(function InputCustom({
   queryType,
   showEdit = true,
   onKeyDown,
+  onSuccess,
 }: // onChange = () => {},
 {
   name: string;
@@ -36,7 +37,7 @@ export default memo(function InputCustom({
   input?: InputProps;
   showEdit?: boolean;
   queryType: 'user' | 'product';
-
+  onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
@@ -73,6 +74,7 @@ export default memo(function InputCustom({
         if (queryType == 'user') {
           dispatch(setUser(res.data.data as User));
         }
+        onSuccess?.();
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',

@@ -154,6 +154,25 @@ interface HistoryType {
     };
   };
 }
+interface TopSellingType {
+  Product?: {
+    name?: string;
+    number_of_sales?: number;
+    banner?: string;
+    created_by?: string;
+    description?: string;
+    created_at?: string;
+    price?: number;
+    updated_at?: string;
+    quantity?: number;
+    hashed_data?: string;
+    id?: string;
+    product_status?: string;
+    product_type?: string;
+  };
+  total_quantity?: number;
+  total_sales?: number;
+}
 interface ProductType {
   id?: string;
   name?: string;
@@ -367,7 +386,7 @@ export default function MarketInfo({
           <Image
             className="object-cover rounded drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
             alt=""
-            width={900}
+            width={800}
             height={500}
             src={dataProduct.banner}
           />
@@ -375,12 +394,19 @@ export default function MarketInfo({
             <p className="text-[30px] text-[#222222] font-[Work Sans]">
               {dataProduct.name}
             </p>
-            <div className="flex gap-x-2 text-[#7B7B7B] font-light">
+            <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
               Sản phẩm của
               <p className="text-[#313064] font-bold">
                 {dataProduct.user?.username}
               </p>
             </div>
+            <InputCustom
+              classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
+              name={''}
+              initialValue={` ${dataProduct.price?.toLocaleString()}`}
+              APIurl={''}
+              queryType={'user'}
+            />
             <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
               $ {dataProduct.price?.toLocaleString()}
             </p>
@@ -482,17 +508,9 @@ export default function MarketInfo({
                 APIurl={`product/update/${dataMarket.order_id}`}
                 className="p-[20px]"
                 name={'description'}
-                initialValue={`Nay chị Sốt nên lên bài hơi trễMưa quá nên ăn utng hộ c hết sớm
-              nghĩ sớm nhaaa Có quá nhiều đơn trong 1 lúc mà chị chỉ có 2 tay
-              + trời mưa to đường trơn mà nhà c cũng không gần KTX lắm nên
-              việc Sót đơn hoặc để các em chờ hơi lâu là một thiết sót lớn với
-              chịCác em bao dung sự bất tiện này nhé LÊN ĐƠN KÈM SỐ PHÒNG DÙM
-              CHỊ BÉ NHÓShip chừ tới #12h đêm giờ nào cũng có các em yên tâm
-              nhaaaChị bé ship cả ngoài kí túc xá nên cứ mạnh dạn lên đơn Đồ
-              ăn chị có : -SET KIMPAD ĐÙI GÀ #30k -ĐUI GÀ CHIÊN XÙ #20k
-              -KIMPAD TRUYỀN THỐNG #15_20k -GỎI CUỐN TÔM THỊT KÈM MẮM #5k
-              -CHÂN GÀ NHỎ-LỚN #20-35k -CÁ VIÊN CHIÊN CHẤM TƯƠNG ỚT #15_20k
-              -CÁ VIÊN CHIÊN MẮM #20k`}
+                initialValue={`ANOMALY A.I. is a contemporary art collection comprising 888 distinct pieces of AI and machine learning-generated art by the artist Star Im. Each artwork seamlessly melds elements from significant works in the realm of Web 3.0, designs from generative code art, AI art, and digital art. The intention behind this collection is to offer a unified visual art experience, showcasing variations or derivative versions that radiate uniqueness and originality, affectionately referred to as "anomalies" within the studio.
+                The creation of ANOMALY A.I. involved harnessing a diverse array of exceptional tools, including RunwayML, Stable Diffusion, Stability AI, Dalle, Midjourney, Pika, as well as Adobe software (Firefly, Illustrator, and Photoshop), along with various 3D programs. Each individual work in this collection is assigned a unique number and comes in 10 editions, ranging from #1 to #10, culminating in a total of 8,880 editions. The artist's signature is on the bottom right corner of every piece within this collection.
+                This endeavor represents the initial stage of a multifaceted art journey on the web. It is worth noting that participation in this exploration of machine learning, along with its accompanying artist's journey, is entirely cost-free.`}
               />
             </div>
             {/* Giới thiệu chủ sử hữu */}

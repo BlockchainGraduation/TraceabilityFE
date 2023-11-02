@@ -6,25 +6,12 @@ import { increment } from '@/reducers/counterSlice';
 import { useTranslations } from 'next-intl';
 
 export default function Index() {
-  const t = useTranslations('Index');
-  const count = useAppSelector((state) => state.counter.value);
-  const dispatch = useAppDispatch();
   return (
     <div className={`mainpage text-white px-[20px] pt-[100px]`}>
-      <h1>{t('title')}</h1>
-      <div>{count}</div>
-      <button onClick={() => dispatch(increment())}>Incre</button>
-      <div className={`flex-col	items-center w-fit ml-[150px]`}>
-        <div
-          className={`w-[300px] m-auto py-[10px] text-2xl rounded-sm text-center border-x-[1px] border-t-[1px]`}
-        >
-          Hệ thống chuỗi cung ứng
-        </div>
-        <div
-          className={`w-[350px] text-xl py-[5px] rounded-sm text-center text-gray-900	 bg-gray-200`}
-        >
-          Design by
-        </div>
+      <div
+        className={`w-[600px] text-[70px] py-[10px] ml-[70px] font-black	text-2xl]`}
+      >
+        Hệ thống chuỗi cung ứng sầu riêng
       </div>
       <div
         data-aos="fade-up"
@@ -39,6 +26,10 @@ export default function Index() {
           người tiêu dùng cuối cùng
         </p>
       </div>
+      <p className="m-auto mt-[300px] text-center text-[35px] font-extrabold	">
+        Condimentum Mattis
+        <br /> Pellentesque Dnibus Tortyga
+      </p>
       <div
         data-aos="fade-up"
         className={`w-full mt-[200px] relative justify-around flex before:content-[''] before:absolute before:block before:top-1/2 before:w-full before:h-[1px] before:bg-white`}

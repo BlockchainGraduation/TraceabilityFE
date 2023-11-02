@@ -340,7 +340,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-white ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit shadow-[0px_12px_10px_-8px_rgb(134,167,137,0.8)]
+      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -349,7 +349,7 @@ export default memo(function Header() {
           height={40}
           preview={false}
           className={`object-cover`}
-          src={staticVariables.logoRaiden.src}
+          src={staticVariables.qc3.src}
           alt=""
         />
       </Link>
@@ -357,7 +357,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-white	 hover:-translate-y-1 hover:scale-110 duration-300 hover:border-b-[1px]`}
+            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-white	 hover:-translate-y-1 hover:scale-110 duration-300`}
             href={`/${key}`}
           >
             {listIcon[index]}

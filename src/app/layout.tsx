@@ -2,6 +2,7 @@
 import './globals.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
 type Props = {
   children: React.ReactNode;
 };
