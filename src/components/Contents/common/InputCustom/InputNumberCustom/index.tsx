@@ -1,8 +1,19 @@
 import { useAppDispatch } from '@/hooks';
 import { User, setUser } from '@/reducers/userSlice';
+import currency from '@/services/currency';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
-import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
+import {
+  Button,
+  Input,
+  InputNumber,
+  InputNumberProps,
+  InputProps,
+  InputRef,
+  Modal,
+  notification,
+} from 'antd';
+import { valueType } from 'antd/es/statistic/utils';
 import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
@@ -16,7 +27,7 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
-export default memo(function InputCustom({
+export default memo(function InputNumberCustom({
   name,
   initialValue,
   className,
@@ -25,18 +36,20 @@ export default memo(function InputCustom({
   APIurl,
   queryType,
   showEdit = true,
+  showCurrence = false,
   onKeyDown,
   onSuccess,
 }: // onChange = () => {},
 {
   name: string;
-  initialValue: string;
+  initialValue: number;
   className?: string;
   classNameLabel?: string;
   APIurl: string;
-  input?: InputProps;
+  input?: InputNumberProps;
   showEdit?: boolean;
   queryType: 'user' | 'product';
+  showCurrence?: boolean;
   onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -47,8 +60,6 @@ export default memo(function InputCustom({
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  const ref = useRef<InputRef>(null);
 
   // useEffect(() => {
   //   const handleOutSideClick = async (event: any) => {
@@ -115,9 +126,9 @@ export default memo(function InputCustom({
     // }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     // onChange?.(e);
-    setValue(e.target.value);
+    setValue(e);
   };
 
   const handleKeyDown = async (e: KeyboardEvent) => {
@@ -133,9 +144,8 @@ export default memo(function InputCustom({
   return (
     <div className={`flex w-fit h-fit item-center ${className}`}>
       {editAble ? (
-        <Input
+        <InputNumber
           {...input}
-          ref={ref}
           autoFocus
           onChange={handleChange}
           value={value}
@@ -145,8 +155,10 @@ export default memo(function InputCustom({
           onEnded={() => alert('OK')}
         />
       ) : (
-        <p defaultValue={value} className={classNameLabel}>
-          {value}
+        <p className={classNameLabel}>
+          {`${showCurrence ? currency : ''} ${value
+            .toLocaleString()
+            .replace(/\./g, ',')}`}
         </p>
       )}
       <Modal

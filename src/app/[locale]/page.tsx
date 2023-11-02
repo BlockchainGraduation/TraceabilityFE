@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 
 export default function Index() {
   return (
-    <div className={`mainpage text-white px-[20px] pt-[100px]`}>
+    <div className={`mainpage text-white pt-[100px]`}>
       <div
         className={`w-[600px] text-[70px] py-[10px] ml-[70px] font-black	text-2xl]`}
       >
@@ -26,34 +26,39 @@ export default function Index() {
           người tiêu dùng cuối cùng
         </p>
       </div>
-      <p className="m-auto mt-[300px] text-center text-[35px] font-extrabold	">
-        Condimentum Mattis
-        <br /> Pellentesque Dnibus Tortyga
-      </p>
-      <div
-        data-aos="fade-up"
-        className={`w-full mt-[200px] relative justify-around flex before:content-[''] before:absolute before:block before:top-1/2 before:w-full before:h-[1px] before:bg-white`}
-      >
-        <div
-          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+      <div className="bg-[#000000E2] pt-[300px] mt-[300px] ">
+        <p
+          data-aos="fade-up"
+          className="m-auto text-center text-[35px] font-extrabold	"
         >
-          Minh bạch
-        </div>
+          Condimentum Mattis
+          <br /> Pellentesque Dnibus Tortyga
+        </p>
         <div
-          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+          data-aos="fade-up"
+          className={`w-full mt-[200px] relative justify-around flex before:content-[''] before:absolute before:block before:top-1/2 before:w-full before:h-[1px] before:bg-white`}
         >
-          Uy tín
+          <div
+            className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+          >
+            Minh bạch
+          </div>
+          <div
+            className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+          >
+            Uy tín
+          </div>
+          <div
+            className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
+          >
+            Minh bạch
+          </div>
         </div>
-        <div
-          className={`w-[200px] text-3xl backdrop-blur-xl rounded-sm border-[0.5px] py-[10px] text-center`}
-        >
-          Minh bạch
+        <div className="w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]">
+          <HomeDescription alignRight={false} />
+          <HomeDescription alignRight={true} />
+          <HomeDescription alignRight={false} />
         </div>
-      </div>
-      <div className="w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]">
-        <HomeDescription alignRight={false} />
-        <HomeDescription alignRight={true} />
-        <HomeDescription alignRight={false} />
       </div>
     </div>
   );

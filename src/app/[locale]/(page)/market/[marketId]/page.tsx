@@ -68,6 +68,7 @@ import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescr
 import { UploadChangeParam } from 'antd/es/upload';
 import useSWR from 'swr';
 import SeedOrigin from './components/PoductOrigin';
+import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
 
 interface DataType {
   key: React.Key;
@@ -391,25 +392,30 @@ export default function MarketInfo({
             src={dataProduct.banner}
           />
           <div className="w-1/2 top-4/12 left-[98%] rounded">
-            <p className="text-[30px] text-[#222222] font-[Work Sans]">
-              {dataProduct.name}
-            </p>
+            <InputCustom
+              classNameLabel="text-[30px] text-[#222222] font-[Work Sans]"
+              initialValue={dataProduct.name || ''}
+              name={'price'}
+              APIurl={''}
+              queryType={'user'}
+            />
             <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
               Sản phẩm của
               <p className="text-[#313064] font-bold">
                 {dataProduct.user?.username}
               </p>
             </div>
-            <InputCustom
+            <InputNumberCustom
+              showCurrence={true}
               classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
-              name={''}
-              initialValue={` ${dataProduct.price?.toLocaleString()}`}
+              name={'price'}
+              initialValue={4000000}
               APIurl={''}
               queryType={'user'}
             />
-            <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
+            {/* <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
               $ {dataProduct.price?.toLocaleString()}
-            </p>
+            </p> */}
             <div className="text-[16px] leading-10 font-[Nunito] text-[#707070] text-justify">
               Ivy gourd protects the nervous system, provides more energy and a
               healthy metabolism! Ivy gourd is rich in beta-carotene that

@@ -30,6 +30,7 @@ export default function LeaderBoard(props: Props) {
             <div className="flex items-center gap-x-5">
               <div className="w-fit">
                 <Image
+                  preview={false}
                   className="object-cover rounded-xl border-[1px]"
                   alt=""
                   width={70}

@@ -12,7 +12,7 @@ export default function HomeDescription({ alignRight }: Props) {
       data-aos="fade-up"
       className={`flex w-full ${
         alignRight ? 'flex-row-reverse' : ''
-      } justify-around px-[100px]`}
+      } justify-around items-center px-[100px]`}
     >
       <div className={`w-1/2`}>
         <p className={`text-5xl py-[20px]`}>Giám sát kĩ càng</p>
