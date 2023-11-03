@@ -37,6 +37,16 @@ import {
   Upload,
   UploadFile,
 } from 'antd';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import React, {
   ReactNode,
   useCallback,
@@ -69,6 +79,8 @@ import { UploadChangeParam } from 'antd/es/upload';
 import useSWR from 'swr';
 import SeedOrigin from './components/PoductOrigin';
 import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
+import { Chart } from '@/components/CMS/Statistical/Chart';
+import { Line } from 'react-chartjs-2';
 
 export default function MarketInfo({
   params,
@@ -83,6 +95,7 @@ export default function MarketInfo({
   const [dataOwner, setDataOwner] = useState({});
   const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [dataHistory, setDataHistory] = useState<HistoryType>({});
+  const [dataChart, setDataChart] = useState({});
   const [dataGrowUp, setDataGrowUp] = useState<GrowUpType[]>([]);
   const [dataListTransaction, setDataListTransaction] = useState<GrowUpType[]>(
     []
@@ -92,6 +105,60 @@ export default function MarketInfo({
   const [commentList, setCommentList] = useState([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
+
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Thống kê hoạt động của sản phẩm vừa qua',
+      },
+    },
+    scales: {
+      y: {
+        min: 0,
+      },
+    },
+  };
+
+  const labels = Object.keys(dataChart).map(
+    (item: any, index) => `Tháng ${item}`
+  );
+
+  const dataChartProps = {
+    labels,
+    datasets: [
+      {
+        label: 'Số lượng giao dịch',
+        data: Object.values(dataChart).map(
+          (item: any, index) => item.count_number_of_sale
+        ),
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: 'Số lượng sản phẩm bán ra',
+        data: Object.values(dataChart).map(
+          (item: any, index) => item.total_quantity
+        ),
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
+    ],
+  };
 
   const fethMarket = async () => {
     await instanceAxios
@@ -114,6 +181,17 @@ export default function MarketInfo({
           .get(`product/${res.data.data.order_id}/history`)
           .then((res) => {
             setDataHistory(res.data.data);
+          })
+          .catch((err) => console.log('asdadasd'));
+        await instanceAxios
+          .get(`product/${res.data.data.order_id}/chart`)
+          .then((res) => {
+            console.log(
+              Object.values(res.data.data).map(
+                (item: any, index) => item.count_number_of_sale
+              )
+            );
+            setDataChart(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
         fetchDataComment();
@@ -473,6 +551,12 @@ export default function MarketInfo({
                   />
                 )}
               </div>
+              <Line
+                className="mt-[100px]"
+                options={options}
+                data={dataChartProps}
+              />
+              ;
             </div>
           </div>
         </div>

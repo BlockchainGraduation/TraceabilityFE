@@ -1,4 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
+import { ExclamationCircleTwoTone } from '@ant-design/icons';
 import {
   faCircleXmark,
   faEnvelope,
@@ -13,10 +14,12 @@ import {
   Col,
   Collapse,
   ConfigProvider,
+  Dropdown,
   Popconfirm,
   Popover,
   Row,
   Segmented,
+  Space,
   Table,
   Tag,
 } from 'antd';
@@ -61,6 +64,7 @@ export default memo(function ManageUser() {
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [totalUser, setTotalUser] = useState(0);
   const [userList, setUserList] = useState<DataType[]>([]);
   const { mutate } = useSWRConfig();
 
@@ -111,6 +115,7 @@ export default memo(function ManageUser() {
     {
       title: 'Trạng thái',
       dataIndex: '',
+
       render: (value, record, index) =>
         record.is_active ? (
           <Tag color={'success'}>Kích hoạt</Tag>
@@ -121,7 +126,7 @@ export default memo(function ManageUser() {
 
     {
       title: 'Hành động',
-      dataIndex: 'total',
+      width: 140,
       render: (value, record, index) => (
         <ConfigProvider
           theme={{
@@ -129,109 +134,133 @@ export default memo(function ManageUser() {
               Button: {
                 primaryColor: '#e62929',
               },
-              Popover: {},
+              Popover: {
+                zIndexPopup: 1051,
+              },
             },
             token: {
               colorBgContainer: '#7f84d4',
             },
           }}
         >
-          <Row className="flex gap-x-2">
-            {currentTable === 'waiting' ? (
-              <div className="flex items-center">
-                <Tag color={'error'}>Reject</Tag>
-                <Tag color={'success'}>Accept</Tag>
-              </div>
-            ) : (
-              <>
-                <Col span={3}>
-                  <Link href={`/product/${record.key}`}>
-                    <Popover title="Kiểm tra người dùng">
-                      <FontAwesomeIcon
-                        icon={faEye}
-                        style={{ color: '#2657ab' }}
-                      />
-                    </Popover>
-                  </Link>
-                </Col>
-                <Col span={3}>
-                  {record.system_role === 'PUBLISH' ? (
-                    <Popconfirm
-                      title="Sure to block this user ?"
-                      // onConfirm={() => fetchCreateMarket(record.id)}
-                    >
-                      <Popover title="Nhắn tin cho người dùng">
+          {currentTable === 'waiting' ? (
+            <div className="flex items-center">
+              <Tag color={'error'}>Reject</Tag>
+              <Tag color={'success'}>Accept</Tag>
+            </div>
+          ) : (
+            <Dropdown
+              placement={'bottomLeft'}
+              trigger={['click']}
+              menu={{
+                items: [
+                  {
+                    key: 1,
+                    label: (
+                      <Link href={`/product/${record.id}`}>
+                        {/* <Popover placement={'left'} title="Xem người dùng"> */}
+                        <Space>
+                          <FontAwesomeIcon
+                            icon={faEye}
+                            style={{ color: '#2657ab' }}
+                          />
+                          <p>Xem người dùng</p>
+                        </Space>
+                        {/* </Popover> */}
+                      </Link>
+                    ),
+                  },
+                  {
+                    key: 2,
+                    label: (
+                      <Popconfirm
+                        title={`${
+                          record.system_role === 'PUBLISH'
+                            ? 'Sure to block this user ?'
+                            : 'Sure to open this user ?'
+                        }`}
+                        // onConfirm={() => fetchCreateMarket(record.id)}
+                      >
+                        {/* <Popover
+                          placement={'left'}
+                          title={
+                            record.system_role === 'PUBLISH'
+                              ? 'Block tài khoản này'
+                              : 'Mở khóa tài khoản này'
+                          }
+                        > */}
+                        <Space>
+                          {record.system_role === 'PUBLISH' ? (
+                            <FontAwesomeIcon
+                              //   onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
+                              icon={faLockOpen}
+                              style={{ color: '#27913c' }}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              //   onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
+                              icon={faLock}
+                              style={{ color: '#a87171' }}
+                            />
+                          )}
+                          <p>
+                            {record.system_role === 'PUBLISH'
+                              ? 'Block this account'
+                              : 'Open this account'}
+                          </p>
+                        </Space>
+                        {/* </Popover> */}
+                      </Popconfirm>
+                    ),
+                  },
+                  {
+                    key: 3,
+                    label: (
+                      // <Popover
+                      //   placement={'left'}
+                      //   title="Nhắn tin cho người dùng"
+                      // >
+                      <Space>
                         <FontAwesomeIcon
-                          //   onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                          icon={faLockOpen}
-                          style={{ color: '#27913c' }}
+                          icon={faEnvelope}
+                          style={{ color: '#65dd55' }}
                         />
-                      </Popover>
-                    </Popconfirm>
-                  ) : (
-                    <Popconfirm
-                      title="Sure to open this user ?"
-                      // onConfirm={() => fetchCreateMarket(record.id)}
-                    >
-                      <Popover title="Nhắn tin cho người dùng">
-                        <FontAwesomeIcon
-                          //   onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                          icon={faLock}
-                          style={{ color: '#a87171' }}
-                        />
-                      </Popover>
-                    </Popconfirm>
-                  )}
-                </Col>
-                <Col span={3}>
-                  <Popconfirm
-                    title="Send mail to this user ?"
-                    // onConfirm={() => fetchCreateMarket(record.id)}
-                  >
-                    <Popover title="Nhắn tin cho người dùng">
-                      <FontAwesomeIcon
-                        icon={faEnvelope}
-                        style={{ color: '#65dd55' }}
-                      />
-                    </Popover>
-                  </Popconfirm>
-                </Col>
-                <Col span={3}>
-                  <Popconfirm
-                    title="Sure to delete?"
-                    // onConfirm={() => fetchDeleteProduct(record.id)}
-                  >
-                    <Popover title="Xóa người dùng">
-                      <FontAwesomeIcon
-                        icon={faCircleXmark}
-                        style={{ color: '#c01616' }}
-                      />
-                    </Popover>
-                  </Popconfirm>
-                </Col>
-              </>
-            )}
-          </Row>
+                        <p>Nhắn tin cho người dùng</p>
+                      </Space>
+                      // </Popover>
+                    ),
+                  },
+                  {
+                    key: 4,
+                    label: (
+                      <Popconfirm
+                        title="Sure to delete?"
+                        // onConfirm={() => fetchDeleteProduct(record.id)}
+                      >
+                        {/* <Popover placement={'left'} title="Xóa người dùng"> */}
+                        <Space>
+                          <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            style={{ color: '#c01616' }}
+                          />
+                          <p>Xóa người dùng</p>
+                        </Space>
+                        {/* </Popover> */}
+                      </Popconfirm>
+                    ),
+                  },
+                ],
+              }}
+            >
+              <ExclamationCircleTwoTone className="ml-[30px]" />
+            </Dropdown>
+          )}
         </ConfigProvider>
       ),
     },
   ];
-  // const data: DataType[] = [];
-  // for (let i = 0; i < 10; i++) {
-  //   data.push({
-  //     key: i,
-  //     index: i + 1,
-  //     userId: 'ReactNode',
-  //     userName: 'string',
-  //     phone: '12',
-  //     mail: 2312,
-  //     joinDate: '131',
-  //     role: 'string',
-  //     requestRole: 'string',
-  //     status: 'string',
-  //   });
-  // }
   const fetchUser = useCallback(async () => {
+    console.log('asas');
     setLoading(true);
     await instanceAxios
       .get(
@@ -248,6 +277,7 @@ export default memo(function ManageUser() {
           })
         );
         setUserList(newList);
+        setTotalUser(res.data.data.total_users);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -260,6 +290,7 @@ export default memo(function ManageUser() {
   // useSWR('user/list_users_request', fetchUserRequest);
   // useSWR('user/list', fetchAllUser);
   const handleChangeTable = async (e: any) => {
+    setSkip(0);
     setCurrentTable(e.toString());
   };
 
@@ -284,7 +315,12 @@ export default memo(function ManageUser() {
           loading={loading}
           columns={columns}
           dataSource={userList}
-          pagination={{ pageSize: 10, total: 30, position: ['bottomCenter'] }}
+          pagination={{
+            pageSize: limit,
+            onChange: (e) => setSkip(e - 1),
+            total: totalUser,
+            position: ['bottomCenter'],
+          }}
           scroll={{ y: 400 }}
         />
       </div>
