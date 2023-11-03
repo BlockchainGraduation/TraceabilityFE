@@ -22,11 +22,11 @@ export default function SearchItem({
   return (
     <Link
       href={'/product/1'}
-      className="flex justify-between w-[500px] items-center gap-x-5 py-[10px] pr-[30px] border-t-[1px]"
+      className="flex justify-between w-[500px] rounded px-[10px] items-center gap-x-5 py-[10px] pr-[30px] border-t-[1px] bg-[#1212120A] hover:bg-[#ececec] hover:text-inherit"
     >
       <div
         {...parent}
-        className={`flex gap-x-5 items-center ${parent.className}`}
+        className={`flex gap-x-5 items-center ${parent.className} `}
       >
         <Avatar size={50} src={productImage} />
         <div>

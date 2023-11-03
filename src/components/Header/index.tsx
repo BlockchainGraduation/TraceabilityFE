@@ -404,7 +404,7 @@ export default memo(function Header() {
           <input
             // tabIndex={1}
             maxLength={50}
-            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900 "
+            className="border-0 bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
             placeholder="Search Product...(Max 50 char)"
             onChange={(e) => {
               if (e.target.value.trim()) {
