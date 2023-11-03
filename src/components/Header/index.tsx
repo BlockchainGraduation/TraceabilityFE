@@ -234,7 +234,7 @@ export default memo(function Header() {
   const items: MenuProps['items'] = [
     {
       label: (
-        <Link href={'/user/1'}>
+        <Link href={`/user/${currentUser.id}`}>
           <Row gutter={[16, 0]} wrap={false} justify={'start'}>
             <Col className="justify-center" span={6}>
               <FontAwesomeIcon icon={faUser} />

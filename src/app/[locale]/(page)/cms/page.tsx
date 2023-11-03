@@ -17,6 +17,7 @@ import { useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import ManageUser from '@/components/CMS/Admin/ManageUser';
 import ManageProduct from '@/components/CMS/Admin/ManageProduct';
+import Statistical from '@/components/CMS/Statistical';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -71,7 +72,7 @@ export default function CMSPage() {
     getItem('Files', '8', <FileOutlined />),
   ];
   const contents = [
-    <div key={1}>Content1</div>,
+    <Statistical key={1} />,
     <GeneralInformation key={2} />,
     <ChangPassword className="w-2/5 m-auto" key={3} />,
     <></>,
@@ -114,7 +115,6 @@ export default function CMSPage() {
             }}
           >
             {contents[Number(currentPage)]}
-            Bill is a cat.
           </div>
         </Content>
         {/* <Footer style={{ textAlign: 'center' }}>

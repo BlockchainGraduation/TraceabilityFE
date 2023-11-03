@@ -3,7 +3,7 @@ import CreateProductForm from '@/components/Contents/common/CreateProductForm';
 import { useAppSelector } from '@/hooks';
 import fetchUpdate from '@/services/fetchUpdate';
 import useLogin from '@/services/requireLogin';
-import { PlusOutlined } from '@ant-design/icons';
+import { ExclamationCircleTwoTone, PlusOutlined } from '@ant-design/icons';
 import {
   faCircleXmark,
   faLock,
@@ -17,13 +17,16 @@ import {
   Button,
   Col,
   ConfigProvider,
+  Dropdown,
   Form,
   Input,
   InputNumber,
+  MenuProps,
   Modal,
   Popconfirm,
   Row,
   Select,
+  Space,
   Tag,
   Typography,
   UploadFile,
@@ -236,6 +239,7 @@ export default memo(function ProductCMS() {
       key: 6,
       title: 'Action',
       dataIndex: '',
+      width: 100,
       render: (value, record, index) => (
         <ConfigProvider
           theme={{
@@ -251,7 +255,93 @@ export default memo(function ProductCMS() {
             },
           }}
         >
-          <Row className="flex gap-x-2">
+          <Dropdown
+            trigger={['click']}
+            menu={{
+              items: [
+                {
+                  key: 1,
+                  label: (
+                    <Link href={`/product/${record.id}`}>
+                      <Space>
+                        <FontAwesomeIcon
+                          icon={faPenToSquare}
+                          style={{ color: '#2657ab' }}
+                        />
+                        <p>Chỉnh sửa</p>
+                      </Space>
+                    </Link>
+                  ),
+                },
+                {
+                  key: 2,
+                  label: (
+                    <Space
+                      onClick={() =>
+                        record.product_status === 'PUBLISH'
+                          ? fetchUpdateProductStatus(record.id, 'PRIVATE')
+                          : fetchUpdateProductStatus(record.id, 'PUBLISH')
+                      }
+                    >
+                      {record.product_status === 'PUBLISH' ? (
+                        <FontAwesomeIcon
+                          icon={faLockOpen}
+                          style={{ color: '#27913c' }}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faLock}
+                          style={{ color: '#a87171' }}
+                        />
+                      )}
+                      <p>
+                        {record.product_status === 'PUBLISH'
+                          ? `Publish`
+                          : 'Private'}
+                      </p>
+                    </Space>
+                  ),
+                },
+                {
+                  key: 3,
+                  label: (
+                    <Popconfirm
+                      title="Sure to open market ?"
+                      onConfirm={() => fetchCreateMarket(record.id)}
+                    >
+                      <Space>
+                        <FontAwesomeIcon
+                          icon={faStore}
+                          style={{ color: '#65dd55' }}
+                        />
+                        <p>Đăng lên market</p>
+                      </Space>
+                    </Popconfirm>
+                  ),
+                },
+                {
+                  key: 4,
+                  label: (
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => fetchDeleteProduct(record.id)}
+                    >
+                      <Space>
+                        <FontAwesomeIcon
+                          icon={faCircleXmark}
+                          style={{ color: '#c01616' }}
+                        />
+                        <p>Xóa</p>
+                      </Space>
+                    </Popconfirm>
+                  ),
+                },
+              ],
+            }}
+          >
+            <ExclamationCircleTwoTone />
+          </Dropdown>
+          {/* <Row className="flex gap-x-2">
             <Col span={3}>
               <Link href={`/product/${record.id}`}>
                 <FontAwesomeIcon
@@ -294,7 +384,7 @@ export default memo(function ProductCMS() {
                 />
               </Popconfirm>
             </Col>
-          </Row>
+          </Row> */}
         </ConfigProvider>
       ),
     },

@@ -47,7 +47,7 @@ interface Props {
   title?: string;
 }
 
-function LeftArrow() {
+export function LeftArrow() {
   const { isFirstItemVisible, scrollPrev, visibleElements, initComplete } =
     React.useContext(VisibilityContext);
 
@@ -71,7 +71,7 @@ function LeftArrow() {
   );
 }
 
-function RightArrow() {
+export function RightArrow() {
   const { isLastItemVisible, scrollNext, visibleElements } =
     React.useContext(VisibilityContext);
 

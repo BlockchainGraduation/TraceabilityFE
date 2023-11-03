@@ -40,7 +40,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import Meta from 'antd/es/card/Meta';
 import LeaderBoard from './components/LeaderBoard';
 import currency from '@/services/currency';
-import Category from './components/Category';
+import Category, { LeftArrow, RightArrow } from './components/Category';
 
 const { Search } = Input;
 const ProductTodayItem = dynamic(
@@ -120,28 +120,28 @@ interface DataType {
   nat: string;
 }
 
-function LeftArrow() {
-  const { isFirstItemVisible, scrollPrev } =
-    React.useContext(VisibilityContext);
+// function LeftArrow() {
+//   const { isFirstItemVisible, scrollPrev } =
+//     React.useContext(VisibilityContext);
 
-  return (
-    <ArrowLeftOutlined
-      disabled={isFirstItemVisible}
-      onClick={() => scrollPrev()}
-    />
-  );
-}
+//   return (
+//     <ArrowLeftOutlined
+//       disabled={isFirstItemVisible}
+//       onClick={() => scrollPrev()}
+//     />
+//   );
+// }
 
-function RightArrow() {
-  const { isLastItemVisible, scrollNext } = React.useContext(VisibilityContext);
+// function RightArrow() {
+//   const { isLastItemVisible, scrollNext } = React.useContext(VisibilityContext);
 
-  return (
-    <ArrowRightOutlined
-      disabled={isLastItemVisible}
-      onClick={() => scrollNext()}
-    />
-  );
-}
+//   return (
+//     <ArrowRightOutlined
+//       disabled={isLastItemVisible}
+//       onClick={() => scrollNext()}
+//     />
+//   );
+// }
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -273,8 +273,9 @@ export default function HomePage() {
             className="font-bold"
             size={'large'}
             options={[
-              { label: 'Trending', value: 'TRENDING' },
-              { label: 'Top', value: 'TOP ' },
+              { label: 'Farmer', value: 'FARMER' },
+              { label: 'Manufacturer', value: 'MANUFACTURER' },
+              { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
             ]}
           />
         </ConfigProvider>

@@ -3,6 +3,10 @@ import HomeDescription from '@/components/Contents/Main/HomeDescription';
 import Header from '@/components/Header';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { increment } from '@/reducers/counterSlice';
+import staticVariables from '@/static';
+import { faCubes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Avatar, Image } from 'antd';
 import { useTranslations } from 'next-intl';
 
 export default function Index() {
@@ -53,6 +57,36 @@ export default function Index() {
           >
             Minh bạch
           </div>
+        </div>
+        <div className="flex items-center px-[50px] justify-center flex-wrap gap-x-10">
+          {[...Array(5)].map((_, index) => (
+            <div
+              data-aos="fade-up"
+              data-aos-offset="200"
+              data-aos-delay="50"
+              data-aos-duration="1500"
+              data-aos-easing="ease-in-out"
+              key={index}
+              className="w-[400px] flex flex-col items-center text-center"
+            >
+              <Avatar
+                shape={'square'}
+                size={200}
+                icon={
+                  <FontAwesomeIcon
+                    icon={faCubes}
+                    style={{ color: '#2d5ba9' }}
+                  />
+                }
+              />
+              <strong className="text-[24px]">Smart and Intuiteve</strong>
+              <p className="w-full text-[16px] text-[#6c737d]">
+                Malesuada fames ac turpis egestas sed tempus urna et pharetra.
+                Urna duis convallis convallis tellus id interdum velit laoreet
+                id elementum tellus.
+              </p>
+            </div>
+          ))}
         </div>
         <div className="w-full flex flex-col gap-y-[100px] text-black mt-[100px] py-[50px] rounded-sm bg-[#F5F5F5ED]">
           <HomeDescription alignRight={false} />
