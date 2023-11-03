@@ -344,10 +344,8 @@ export default memo(function Header() {
       ${inter.className} `}
     >
       <Link href={'/'}>
-        <Image
-          width={40}
-          height={40}
-          preview={false}
+        <Avatar
+          size={50}
           className={`object-cover`}
           src={staticVariables.qc3.src}
           alt=""
@@ -431,15 +429,15 @@ export default memo(function Header() {
         <ConfigProvider
           theme={{
             token: {
-              colorText: `${isHomePage && 'white'}`,
+              // colorText: `${isHomePage && 'white'}`,
               // colorBgElevated: `${isHomePage && '#363636FF'}`,
             },
             components: {
-              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
+              // Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
             },
           }}
         >
-          <Space className="w-fit bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded mr-[20px]">
+          <Space className="w-fit bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg mr-[20px]">
             <FontAwesomeIcon
               size="1x"
               icon={faEarthAsia}
@@ -450,8 +448,8 @@ export default memo(function Header() {
               style={{ width: 100 }}
               onChange={handleChangeLanguage}
               bordered={false}
-              dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
-              className={`text-inherit  `}
+              // dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
+              className={`text-inherit `}
               size={'small'}
               options={[
                 { value: 'vi', label: 'Tiếng Việt' },
