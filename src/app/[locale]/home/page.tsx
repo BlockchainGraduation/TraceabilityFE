@@ -241,7 +241,10 @@ export default function HomePage() {
             RightArrow={RightArrow}
           >
             {[...Array(10)].map((_, index) => (
-              <div key={index} className="relative w-[200px] mx-[20px]">
+              <div
+                key={index}
+                className="relative w-[200px] mx-[20px] transition ease-in-out  hover:-translate-y-1 hover:scale-105 duration-300"
+              >
                 <Image
                   width={200}
                   height={200}

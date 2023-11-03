@@ -20,7 +20,7 @@ export default function LeaderBoard(props: Props) {
       {props.listTopSelling.map((item, index) => (
         <Row
           key={index}
-          className="py-[20px] text-[16px] text-[#121212] font-semibold"
+          className="py-[20px] text-[16px] text-[#121212] font-semibold transition ease-in-out  hover:-translate-y-1 hover:scale-105 duration-300 "
           align={'middle'}
         >
           <Col span={2}>

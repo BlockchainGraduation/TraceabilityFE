@@ -338,9 +338,9 @@ export default memo(function Header() {
     <div
       data-aos="fade-down"
       data-aos-duration="1500"
-      className={`w-full	text-white ${
+      className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -357,7 +357,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-white	 hover:-translate-y-1 hover:scale-110 duration-300`}
+            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110 duration-300`}
             href={`/${key}`}
           >
             {listIcon[index]}
@@ -427,7 +427,7 @@ export default memo(function Header() {
           />
         </Popover>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center ">
         <ConfigProvider
           theme={{
             token: {
@@ -439,24 +439,26 @@ export default memo(function Header() {
             },
           }}
         >
-          <FontAwesomeIcon
-            size="1x"
-            icon={faEarthAsia}
-            style={{ color: '#3748c8' }}
-          />
-          <Select
-            defaultValue={locale}
-            style={{ width: 100 }}
-            onChange={handleChangeLanguage}
-            bordered={false}
-            dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
-            className={`text-inherit mr-[20px]`}
-            size={'small'}
-            options={[
-              { value: 'vi', label: 'Tiếng Việt' },
-              { value: 'en', label: 'English' },
-            ]}
-          />
+          <Space className="w-fit bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded mr-[20px]">
+            <FontAwesomeIcon
+              size="1x"
+              icon={faEarthAsia}
+              style={{ color: '#3748c8' }}
+            />
+            <Select
+              defaultValue={locale}
+              style={{ width: 100 }}
+              onChange={handleChangeLanguage}
+              bordered={false}
+              dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
+              className={`text-inherit  `}
+              size={'small'}
+              options={[
+                { value: 'vi', label: 'Tiếng Việt' },
+                { value: 'en', label: 'English' },
+              ]}
+            />
+          </Space>
         </ConfigProvider>
         {logged ? (
           <Dropdown menu={{ items }}>

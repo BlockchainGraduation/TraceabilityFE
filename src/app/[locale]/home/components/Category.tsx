@@ -127,7 +127,7 @@ export default function Category(props: Props) {
         >
           {listMarket.map((item, index) => (
             <Link key={index} href={`/market/${item.id}`}>
-              <div className="relative w-[230px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative w-[230px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-2xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110  duration-300 ">
                 <Image
                   width={230}
                   height={150}

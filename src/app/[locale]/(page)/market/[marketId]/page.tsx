@@ -186,11 +186,6 @@ export default function MarketInfo({
         await instanceAxios
           .get(`product/${res.data.data.order_id}/chart`)
           .then((res) => {
-            console.log(
-              Object.values(res.data.data).map(
-                (item: any, index) => item.count_number_of_sale
-              )
-            );
             setDataChart(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
