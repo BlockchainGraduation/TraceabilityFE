@@ -6,6 +6,20 @@ interface DataType {
   time: string;
   status: ReactNode;
 }
+interface UserType {
+  id?: string;
+  username?: string;
+  email?: string;
+  avatar?: string;
+  full_name?: string;
+  birthday?: string;
+  phone?: string;
+  address_wallet?: string;
+  address_real?: string;
+  is_active?: boolean;
+  system_role?: string;
+  account_balance?: number;
+}
 interface HistoryType {
   id?: string;
   product_id?: string;

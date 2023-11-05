@@ -54,7 +54,7 @@ import {
   faUser,
   faUserGear,
 } from '@fortawesome/free-solid-svg-icons';
-import { User, logOut, setLogin } from '@/reducers/userSlice';
+import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';

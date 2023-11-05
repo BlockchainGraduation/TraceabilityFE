@@ -374,7 +374,7 @@ export default function MarketInfo({
               showCurrence={true}
               classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
               name={'price'}
-              initialValue={4000000}
+              initialValue={dataProduct.price || 0}
               APIurl={''}
               queryType={'user'}
             />

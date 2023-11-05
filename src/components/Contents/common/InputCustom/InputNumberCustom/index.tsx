@@ -1,5 +1,5 @@
 import { useAppDispatch } from '@/hooks';
-import { User, setUser } from '@/reducers/userSlice';
+import { setUser } from '@/reducers/userSlice';
 import currency from '@/services/currency';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
@@ -27,6 +27,7 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
+import { useEffectOnce } from 'usehooks-ts';
 export default memo(function InputNumberCustom({
   name,
   initialValue,
@@ -55,25 +56,15 @@ export default memo(function InputNumberCustom({
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(0);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const handleOutSideClick = async (event: any) => {
-  //     if (!ref.current?.input?.contains?.(event.target)) {
-  //       setEditAble(false);
-  //     }
-  //   };
-
-  //   window.addEventListener('mousedown', handleOutSideClick);
-
-  //   return () => {
-  //     window.removeEventListener('mousedown', handleOutSideClick);
-  //   };
-  // }, [editAble]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
   const handleOk = async () => {
     setLoading(true);
     await fetchUpdate(
@@ -83,7 +74,7 @@ export default memo(function InputNumberCustom({
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
-          dispatch(setUser(res.data.data as User));
+          dispatch(setUser(res.data.data as UserType));
         }
         onSuccess?.();
         notification.success({

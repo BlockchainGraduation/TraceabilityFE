@@ -2,22 +2,10 @@ import { Action, PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Auth {
   logged: boolean;
-  user: User;
+  user: UserType;
 }
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string;
-  full_name: string;
-  birthday: string;
-  phone: string;
-  address_wallet: string;
-  address_real: string;
-  is_active: boolean;
-  system_role: string;
-}
-export const initialUser: User = {
+
+export const initialUser: UserType = {
   id: '',
   username: '',
   email: '',
@@ -29,6 +17,7 @@ export const initialUser: User = {
   address_real: '',
   is_active: false,
   system_role: '',
+  account_balance: 0,
 };
 const initialAuth: Auth = {
   logged: false,

@@ -43,6 +43,7 @@ import {
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import MarketItem from '@/app/[locale]/home/components/MarketItem';
+import { useEffectOnce } from 'usehooks-ts';
 
 export default function UserInfo({ params }: { params: { id: string } }) {
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
@@ -51,6 +52,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
   const [nameProduct, setNameProduct] = useState('');
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
+  const [dataUser, setDataUser] = useState<UserType>({});
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
 
   const fetchListProductByID = useCallback(async () => {
@@ -65,7 +67,17 @@ export default function UserInfo({ params }: { params: { id: string } }) {
       })
       .catch((err) => console.log(err));
   }, [limit, nameProduct, params.id, skip]);
-
+  const fetchUserByID = useCallback(async () => {
+    await instanceAxios
+      .get(`user/${params.id}/get_user`)
+      .then((res) => {
+        setDataUser(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  }, [params.id]);
+  useEffectOnce(() => {
+    fetchUserByID();
+  });
   useEffect(() => {
     fetchListProductByID();
   }, [fetchListProductByID]);
@@ -137,7 +149,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
     },
   ];
   return (
-    <div className="w-full">
+    <div className="w-full pb-[50px]">
       {/* <UserInfoCard showButton={false} /> */}
       <div className="w-full h-fit relative">
         <Image
@@ -146,7 +158,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
           height={'600px'}
           preview={false}
           alt=""
-          src={staticVariables.logo.src}
+          src={dataUser.avatar}
         />
 
         <div className="absolute w-full gap-x-10 px-[100px] flex items-center py-[30px] justify-end bottom-0 bg-gradient-to-t from-black">
@@ -170,14 +182,14 @@ export default function UserInfo({ params }: { params: { id: string } }) {
         </div>
         <div className="absolute flex flex-col items-center translate-y-[-60%] translate-x-[50%] bot-0 ">
           <Image
-            className="object-cover rounded  drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)] border-2"
+            className="object-cover rounded-2xl  drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)] border-2"
             width={200}
             height={200}
             alt=""
-            src={staticVariables.logo.src}
+            src={dataUser.avatar}
           />
           <Typography.Title level={3} className="mt-[20px]">
-            {currentUser.full_name}
+            {dataUser.full_name}
           </Typography.Title>
         </div>
       </div>
@@ -315,7 +327,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
           </Modal> */}
           <div className="flex items-center justify-center flex-wrap gap-10	">
             {listProduct.length ? (
-              listProduct.map((item, index) => (
+              listProduct.map((item: ProductType, index) => (
                 <MarketItem key={index} {...item} />
               ))
             ) : (

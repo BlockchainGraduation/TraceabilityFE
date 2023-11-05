@@ -6,10 +6,10 @@ import React from 'react';
 export default function MarketItem(props: ProductType) {
   return (
     <div className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 ">
-      <Link href={`/market/${props.id} hover:text-inherit`}>
-        <div className="relative w-[230px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-2xl">
+      <Link className="hover:text-inherit" href={`/market/${props.id}`}>
+        <div className="relative w-[250px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-2xl">
           <Image
-            width={230}
+            width={250}
             height={150}
             preview={false}
             className="rounded object-cover"

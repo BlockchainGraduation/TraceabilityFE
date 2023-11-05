@@ -151,7 +151,7 @@ export default function HomePage() {
   const [dataSegmented, setDataSegmented] = useState('FARMER');
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
-  const [data, setData] = useState<DataType[]>([]);
+  // const [data, setData] = useState<DataType[]>([]);
   const [totalMarket, setTotalMarket] = useState(0);
   const { mutate } = useSWRConfig();
   const [loading, setLoading] = useState(false);
@@ -183,7 +183,7 @@ export default function HomePage() {
         console.log(err);
         setDataTopSelling([]);
       });
-  }, [dataSegmented]);
+  }, []);
   useEffect(() => {
     fetchTopSelling();
   }, [fetchTopSelling]);
@@ -197,27 +197,27 @@ export default function HomePage() {
   //   fetchListMarket();
   // }, [fetchListMarket]);
 
-  const loadMoreData = () => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
-    fetch(
-      'https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo'
-    )
-      .then((res) => res.json())
-      .then((body) => {
-        setData([...data, ...body.results]);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  };
+  // const loadMoreData = () => {
+  //   if (loading) {
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   fetch(
+  //     'https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo'
+  //   )
+  //     .then((res) => res.json())
+  //     .then((body) => {
+  //       setData([...data, ...body.results]);
+  //       setLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
-  useEffect(() => {
-    loadMoreData();
-  }, []);
+  // useEffect(() => {
+  //   loadMoreData();
+  // }, []);
   return (
     <div className="w-full">
       {/* Top Item */}
@@ -243,13 +243,13 @@ export default function HomePage() {
             {[...Array(10)].map((_, index) => (
               <div
                 key={index}
-                className="relative w-[200px] mx-[20px] transition ease-in-out  hover:-translate-y-1 hover:scale-105 duration-300"
+                className="relative w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
               >
                 <Image
-                  width={200}
-                  height={200}
+                  width={230}
+                  height={230}
                   preview={false}
-                  className="rounded object-cover"
+                  className="rounded-2xl object-cover"
                   alt=""
                   src={staticVariables.qc5.src}
                 />

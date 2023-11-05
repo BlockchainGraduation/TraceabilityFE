@@ -1,5 +1,5 @@
 import { useAppDispatch } from '@/hooks';
-import { User, setUser } from '@/reducers/userSlice';
+import { setUser } from '@/reducers/userSlice';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
@@ -59,7 +59,7 @@ export default memo(function InputCustom({
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
-          dispatch(setUser(res.data.data as User));
+          dispatch(setUser(res.data.data as UserType));
         }
         onSuccess?.();
         notification.success({
