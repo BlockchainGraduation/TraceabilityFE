@@ -37,7 +37,7 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   FieldTimeOutlined,
   GroupOutlined,
@@ -97,6 +97,7 @@ export default memo(function Header() {
   const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
   const [totalNotifications, setTotalNotifications] = useState(0);
   const debouncedValue = useDebounce<string>(valueSearch, 500);
+  const { mutate } = useSWRConfig();
 
   const router = useRouter();
   const t = useTranslations('header');
@@ -192,6 +193,7 @@ export default memo(function Header() {
     setCurrentForm('LOGIN');
   };
   const handleShowModal = () => {
+    mutate('notifications/list');
     setShowModal(false);
   };
   const handleLogout = async () => {
@@ -365,7 +367,7 @@ export default memo(function Header() {
           </Link>
         ))}
       </div>
-      <div className="relative w-1/3">
+      <div className="relative w-1/4">
         <Popover
           title={
             <p className=" w-full truncate">

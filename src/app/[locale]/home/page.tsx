@@ -284,14 +284,28 @@ export default function HomePage() {
         </ConfigProvider>
         <div className="w-full flex justify-between gap-x-16">
           <div className="w-1/2">
-            <LeaderBoard listTopSelling={dataTopSelling} />
+            {dataTopSelling.length > 1 ? (
+              <LeaderBoard
+                listTopSelling={dataTopSelling.slice(
+                  0,
+                  (dataTopSelling.length - 1) / 2
+                )}
+              />
+            ) : (
+              <LeaderBoard listTopSelling={dataTopSelling} />
+            )}
           </div>
-          <div className="w-1/2">
-            <LeaderBoard
-              skip={dataTopSelling.length}
-              listTopSelling={dataTopSelling}
-            />
-          </div>
+          {dataTopSelling.length > 1 && (
+            <div className="w-1/2">
+              <LeaderBoard
+                skip={dataTopSelling.length / 2}
+                listTopSelling={dataTopSelling.slice(
+                  dataTopSelling.length / 2,
+                  dataTopSelling.length - 1
+                )}
+              />
+            </div>
+          )}
         </div>
       </div>
       {/* Category */}

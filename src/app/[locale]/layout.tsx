@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
 // import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+// import Footer from '@/components/Footer';
 import 'moment/locale/pt-br';
 import { Roboto } from 'next/font/google';
 import { App, ConfigProvider, Skeleton, Spin, message } from 'antd';
@@ -13,6 +13,10 @@ import dynamic from 'next/dynamic';
 // import { Suspense } from 'react';
 
 const Header = dynamic(() => import('@/components/Header'), {
+  ssr: false,
+  loading: () => <Skeleton active />,
+});
+const Footer = dynamic(() => import('@/components/Footer'), {
   ssr: false,
   loading: () => <Skeleton active />,
 });

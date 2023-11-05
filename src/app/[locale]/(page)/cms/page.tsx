@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import ManageUser from '@/components/CMS/Admin/ManageUser';
 import ManageProduct from '@/components/CMS/Admin/ManageProduct';
 import Statistical from '@/components/CMS/Statistical';
+import { useEffectOnce } from 'usehooks-ts';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -37,19 +38,22 @@ function getItem(
   } as MenuItem;
 }
 
-export default function CMSPage() {
+export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState('0');
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
-  // const route = useRouter();
+  const route = useRouter();
+  useEffectOnce(() => {
+    if (!currentUser.logged) {
+      route.push('/home');
+    }
+  });
   // useEffect(() => {
-  //   if (!currentUser.logged) {
-  //     route.push('/home');
-  //   }
-  // }, [currentUser.logged, route]);
+
+  // }, [currentUser.logged]);
 
   ////Render taskbar
   const items: MenuItem[] = [
@@ -85,42 +89,46 @@ export default function CMSPage() {
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="demo-logo-vertical" />
-        <Menu
-          theme={'light'}
-          defaultSelectedKeys={[currentPage]}
-          mode="inline"
-          items={items}
-          onSelect={(e) => setCurrentPage(e.key.toString())}
-        />
-      </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '0 16px' }}>
-          {/* <Breadcrumb style={{ margin: '16px 0' }}>
+    currentUser.logged && (
+      <div className="w-full">
+        <Layout className="w-full">
+          <Sider
+            collapsible
+            collapsed={collapsed}
+            onCollapse={(value) => setCollapsed(value)}
+          >
+            <div className="demo-logo-vertical" />
+            <Menu
+              theme={'light'}
+              defaultSelectedKeys={[currentPage]}
+              mode="inline"
+              items={items}
+              onSelect={(e) => setCurrentPage(e.key.toString())}
+            />
+          </Sider>
+          <Layout>
+            <Header style={{ padding: 0, background: colorBgContainer }} />
+            <Content style={{ margin: '0 16px' }}>
+              {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
           </Breadcrumb> */}
-          <div
-            style={{
-              padding: 24,
-              minHeight: 500,
-              background: colorBgContainer,
-            }}
-          >
-            {contents[Number(currentPage)]}
-          </div>
-        </Content>
-        {/* <Footer style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  padding: 24,
+                  minHeight: 500,
+                  background: colorBgContainer,
+                }}
+              >
+                {contents[Number(currentPage)]}
+              </div>
+            </Content>
+            {/* <Footer style={{ textAlign: 'center' }}>
           Ant Design ©2023 Created by Ant UED
         </Footer> */}
-      </Layout>
-    </Layout>
+          </Layout>
+        </Layout>
+      </div>
+    )
   );
-}
+});

@@ -113,7 +113,14 @@ export default function Category(props: Props) {
     fetchListMarket();
   }, [fetchListMarket]);
   return (
-    <div className="px-[50px]">
+    <div
+      data-aos="fade-up"
+      data-aos-offset="200"
+      data-aos-delay="50"
+      data-aos-duration="1500"
+      data-aos-easing="ease-in-out"
+      className="px-[50px]"
+    >
       <p className="text-[24px] font-semibold text-[#121212]">{props.title}</p>
       {listMarket.length ? (
         <ScrollMenu

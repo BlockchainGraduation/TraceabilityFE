@@ -35,7 +35,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
   const { mutate } = useSWRConfig();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.id, (data: NotificationType) => {
+    channel.bind(currentUser.id || '', (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
       if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
         mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);

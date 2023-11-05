@@ -1,6 +1,6 @@
 import currency from '@/services/currency';
 import staticVariables from '@/static';
-import { Avatar, Col, Image, Row } from 'antd';
+import { Avatar, Col, Image, Row, Tooltip } from 'antd';
 import React from 'react';
 interface Props {
   listTopSelling: TopSellingType[];
@@ -8,13 +8,13 @@ interface Props {
 }
 export default function LeaderBoard(props: Props) {
   return (
-    <div className="w-full">
+    <div data-aos="fade-up" data-aos-duration="1500" className="w-full">
       <Row className="text-[14px] border-b-2 py-[20px]">
         <Col span={2}>Rank</Col>
         <Col span={14}>Sản phẩm</Col>
         <Col span={4}>Transaction</Col>
         <Col span={4}>
-          <p className="float-right">Doanh thu</p>
+          <p className="float-right">Số lượng bán</p>
         </Col>
       </Row>
       {props.listTopSelling.map((item, index) => (
@@ -44,12 +44,22 @@ export default function LeaderBoard(props: Props) {
             </div>
           </Col>
           <Col span={4}>
-            <p className="text-[16px] text-[#121212] truncate">
-              {`${item.total_quantity} GD`}
-            </p>
+            <Tooltip
+              placement={'bottomLeft'}
+              title={`${item.total_sales} giao dịch thành công`}
+            >
+              <p className="text-[16px] text-[#121212] truncate">
+                {`${item.total_quantity} GD`}
+              </p>
+            </Tooltip>
           </Col>
           <Col span={4}>
-            <p className="text-[16px] text-right pl-[20px] truncate">{`${item.total_sales} ${currency}`}</p>
+            <Tooltip
+              placement={'bottomRight'}
+              title={`${item.total_sales} sản phẩm bán ra`}
+            >
+              <p className="text-[16px] text-right pl-[20px] truncate">{`${item.total_sales} SP`}</p>
+            </Tooltip>
           </Col>
         </Row>
       ))}
