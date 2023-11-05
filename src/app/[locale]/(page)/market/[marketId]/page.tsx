@@ -28,6 +28,7 @@ import {
   Modal,
   Popconfirm,
   Popover,
+  QRCode,
   Row,
   Segmented,
   Table,
@@ -81,6 +82,7 @@ import SeedOrigin from './components/PoductOrigin';
 import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
 import { Chart } from '@/components/CMS/Statistical/Chart';
 import { Line } from 'react-chartjs-2';
+import Link from 'next/link';
 
 export default function MarketInfo({
   params,
@@ -358,6 +360,7 @@ export default function MarketInfo({
           />
           <div className="w-1/2 top-4/12 left-[98%] rounded">
             <InputCustom
+              showEdit={dataProduct.created_by === currentUser.id}
               classNameLabel="text-[30px] text-[#222222] font-[Work Sans]"
               initialValue={dataProduct.name || ''}
               name={'name'}
@@ -366,11 +369,14 @@ export default function MarketInfo({
             />
             <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
               Sản phẩm của
-              <p className="text-[#313064] font-bold">
-                {dataProduct.user?.username}
-              </p>
+              <Link href={`/user/${dataProduct.user?.id}`}>
+                <p className="text-[#313064] font-bold">
+                  {dataProduct.user?.username}
+                </p>
+              </Link>
             </div>
             <InputNumberCustom
+              showEdit={dataProduct.created_by === currentUser.id}
               showCurrence={true}
               classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
               name={'price'}
@@ -475,6 +481,7 @@ export default function MarketInfo({
                 Giới thiệu về sản phẩm
               </div>
               <TextAreaCustom
+                showEdit={dataProduct.created_by === currentUser.id}
                 queryType="product"
                 APIurl={`product/update/${dataMarket.order_id}`}
                 className="p-[20px]"
@@ -519,6 +526,11 @@ export default function MarketInfo({
             </div>
           </div>
           <div className="w-3/5 pl-[20px] rounded overflow-hidden">
+            <QRCode
+              className="m-auto"
+              type="canvas"
+              value="https://www.facebook.com/"
+            />
             <Line
               className="mt-[100px]"
               options={options}

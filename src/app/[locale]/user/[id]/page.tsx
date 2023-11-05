@@ -35,6 +35,7 @@ import {
   Image,
   Modal,
   Popover,
+  QRCode,
   Row,
   Space,
   Statistic,
@@ -241,6 +242,11 @@ export default function UserInfo({ params }: { params: { id: string } }) {
                 </Typography.Text>
               </Space>
             </div>
+            <QRCode
+              className="m-auto"
+              type="canvas"
+              value="https://www.facebook.com/"
+            />
             <div className="mt-[50px]">
               <Collapse
                 items={[

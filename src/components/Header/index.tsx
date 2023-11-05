@@ -247,35 +247,35 @@ export default memo(function Header() {
       ),
       key: '0',
     },
-    {
-      label: (
-        <Popover
-          title="Thông báo của bạn"
-          placement={'left'}
-          content={contentNotifications}
-        >
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
-            </Col>
-            <Col span={24}>
-              {listUnreadNotifications ? (
-                <Badge
-                  count={listUnreadNotifications}
-                  offset={[5, 8]}
-                  color="blue"
-                >
-                  <p className="pr-[10px]">Thông báo</p>
-                </Badge>
-              ) : (
-                <p className="pr-[10px]">Thông báo</p>
-              )}
-            </Col>
-          </Row>
-        </Popover>
-      ),
-      key: '1',
-    },
+    // {
+    //   label: (
+    //     <Popover
+    //       title="Thông báo của bạn"
+    //       placement={'left'}
+    //       content={contentNotifications}
+    //     >
+    //       <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+    //         <Col className="justify-center" span={6}>
+    //           <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
+    //         </Col>
+    //         <Col span={24}>
+    //           {listUnreadNotifications ? (
+    //             <Badge
+    //               count={listUnreadNotifications}
+    //               offset={[5, 8]}
+    //               color="blue"
+    //             >
+    //               <p className="pr-[10px]">Thông báo</p>
+    //             </Badge>
+    //           ) : (
+    //             <p className="pr-[10px]">Thông báo</p>
+    //           )}
+    //         </Col>
+    //       </Row>
+    //     </Popover>
+    //   ),
+    //   key: '1',
+    // },
     {
       label: (
         <Row gutter={[16, 0]} wrap={false} justify={'start'}>
@@ -357,7 +357,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110 duration-300`}
+            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110`}
             href={`/${key}`}
           >
             {listIcon[index]}
@@ -460,20 +460,48 @@ export default memo(function Header() {
             />
           </Space>
         </ConfigProvider>
+
         {logged ? (
-          <Dropdown menu={{ items }}>
-            {listUnreadNotifications ? (
-              <Badge
-                count={listUnreadNotifications}
-                offset={[5, 10]}
-                color="blue"
-              >
-                <Avatar src={currentUser.avatar} size="large" />
-              </Badge>
-            ) : (
+          <div className="flex items-center space-x-5">
+            <Popover
+              title="Thông báo của bạn"
+              placement={'bottomLeft'}
+              trigger={['click']}
+              content={contentNotifications}
+            >
+              <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
+                {listUnreadNotifications ? (
+                  <Badge
+                    count={listUnreadNotifications}
+                    offset={[0, 2]}
+                    color="blue"
+                  >
+                    <FontAwesomeIcon
+                      size={'1x'}
+                      className=""
+                      icon={faBell}
+                      style={{ color: '#20249d' }}
+                    />
+                  </Badge>
+                ) : (
+                  <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
+                )}
+              </div>
+            </Popover>
+            <Dropdown menu={{ items }}>
+              {/* {listUnreadNotifications ? (
+                <Badge
+                  count={listUnreadNotifications}
+                  offset={[5, 10]}
+                  color="blue"
+                >
+                  <Avatar src={currentUser.avatar} size="large" />
+                </Badge>
+              ) : ( */}
               <Avatar src={currentUser.avatar} size="large" />
-            )}
-          </Dropdown>
+              {/* )} */}
+            </Dropdown>
+          </div>
         ) : (
           <div
             className={`text-inherit'} cursor-pointer`}

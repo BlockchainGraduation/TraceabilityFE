@@ -396,7 +396,7 @@ export default memo(function ProductCMS() {
         <p className="text-3xl font-medium	">Danh sách sản phẩm</p>
         <div
           onClick={() => setOpenModalCreate(true)}
-          className="flex items-center rounded-3xl p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
+          className="flex items-center p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
         >
           <FontAwesomeIcon
             className="mr-[10px]"
@@ -445,7 +445,7 @@ export default memo(function ProductCMS() {
                     buyDay={item.created_at || ''}
                   />
                 ))}
-                {currentUser.system_role !== 'SEEDLING_COMPANY' && (
+                {currentUser.system_role === 'SEEDLING_COMPANY' && (
                   <Button onClick={() => setCurrentModalPage('CREATE_PRODUCT')}>
                     Bỏ qua
                   </Button>
