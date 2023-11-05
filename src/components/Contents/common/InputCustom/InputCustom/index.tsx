@@ -42,27 +42,14 @@ export default memo(function InputCustom({
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState('');
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  const ref = useRef<InputRef>(null);
-
-  // useEffect(() => {
-  //   const handleOutSideClick = async (event: any) => {
-  //     if (!ref.current?.input?.contains?.(event.target)) {
-  //       setEditAble(false);
-  //     }
-  //   };
-
-  //   window.addEventListener('mousedown', handleOutSideClick);
-
-  //   return () => {
-  //     window.removeEventListener('mousedown', handleOutSideClick);
-  //   };
-  // }, [editAble]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
   const handleOk = async () => {
     setLoading(true);
     await fetchUpdate(
@@ -135,7 +122,6 @@ export default memo(function InputCustom({
       {editAble ? (
         <Input
           {...input}
-          ref={ref}
           autoFocus
           onChange={handleChange}
           value={value}

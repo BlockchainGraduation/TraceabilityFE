@@ -102,6 +102,7 @@ export default function MarketInfo({
   );
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState(0);
   const [commentList, setCommentList] = useState([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
@@ -159,6 +160,39 @@ export default function MarketInfo({
       },
     ],
   };
+
+  const listAvatarDescription = [
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+    {
+      title: 'ABC',
+      description: 'asdasdasd',
+      img: 'asdasdas',
+    },
+  ];
 
   const fethMarket = async () => {
     await instanceAxios
@@ -312,7 +346,7 @@ export default function MarketInfo({
   };
 
   return (
-    <div className="w-full m-auto">
+    <div className="w-full m-auto pb-[50px]">
       <div className="px-[50px]">
         <div className="relative flex justify-between gap-x-10">
           <Image
@@ -326,7 +360,7 @@ export default function MarketInfo({
             <InputCustom
               classNameLabel="text-[30px] text-[#222222] font-[Work Sans]"
               initialValue={dataProduct.name || ''}
-              name={'price'}
+              name={'name'}
               APIurl={''}
               queryType={'user'}
             />
@@ -485,6 +519,11 @@ export default function MarketInfo({
             </div>
           </div>
           <div className="w-3/5 pl-[20px] rounded overflow-hidden">
+            <Line
+              className="mt-[100px]"
+              options={options}
+              data={dataChartProps}
+            />
             <Carousel
               className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
               waitForAnimate={true}
@@ -546,12 +585,6 @@ export default function MarketInfo({
                   />
                 )}
               </div>
-              <Line
-                className="mt-[100px]"
-                options={options}
-                data={dataChartProps}
-              />
-              ;
             </div>
           </div>
         </div>
@@ -617,9 +650,9 @@ export default function MarketInfo({
           </div>
         )}
       </div>
-      <div className="max-h-[800px] text-white pt-[50px] bg-[#42bb67]">
-        <div className="text-5xl mb-[50px] pl-[100px]">
-          Giới thiệu chi tiết về sản phẩm
+      <div className="max-h-[800px] text-white pt-[50px] ">
+        <div className=" flex items-center  py-[30px] text-2xl mb-[50px] pl-[100px] bg-[#42bb67]">
+          <p> Giới thiệu chi tiết về sản phẩm</p>
           {dataProduct.created_by === currentUser.id && (
             <Popover title="Tạo thêm mô tả về sản phẩm">
               <PlusCircleTwoTone
@@ -637,8 +670,54 @@ export default function MarketInfo({
             <CreateDescriptionForm productId={'123'} />
           </Modal>
         </div>
-        <div className="max-h-[600px] snap-y bg-white rounded text-[#373737] px-[50px] w-fit flex flex-col gap-y-10 overflow-auto pt-[50px]">
-          {[...Array(5)].map((_, index) => (
+        <div className="flex h-[600px] w-full snap-y bg-white rounded text-[#373737] px-[50px] gap-y-10 overflow-auto pt-[50px]">
+          <div className="w-1/4 max-h-full overflow-y-auto flex flex-col gap-y-5 items-end px-[30px]">
+            {listAvatarDescription.map((item, index) => (
+              <Image
+                key={index}
+                className={`border-2 rounded-full p-[3px] object-cover ${
+                  index === selectedDescription
+                    ? 'border-green-500'
+                    : 'border-gray-200'
+                }`}
+                onClick={() => setSelectedDescription(index)}
+                width={150}
+                height={150}
+                preview={false}
+                alt=""
+                src={staticVariables.qc5.src}
+              />
+            ))}
+          </div>
+          <div className="w-3/4 flex border-2 border-green-500 rounded">
+            <div className="w-1/2 p-[50px] flex flex-col">
+              <p className="text-[20px] py-[20px] font-semibold">
+                MAPLE OAT MUFFIN
+              </p>
+              <p>
+                Pellentesque habitant morbi tristique senectus et netus et
+                malesuada fames ac turpis egestas. Vestibulum tortor quam,
+                feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu
+                libero sit amet quam egestas semper. Aenean ultricies mi vitae
+                est. Mauris placerat eleifend leo. Pellentesque habitant morbi
+                tristique senectus et netus et malesuada fames ac turpis
+                egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget,
+                tempor sit amet, ante. Donec eu libero sit amet quam egestas
+                semper. Aenean ultricies mi vitae est. Mauris placerat eleifend
+                leo.
+              </p>
+            </div>
+            <div className="w-1/2 p-[10px]">
+              <Image
+                className="object-cover rounded"
+                width="100%"
+                height="100%"
+                src={staticVariables.qc5.src}
+                alt=""
+              />
+            </div>
+          </div>
+          {/* {[...Array(5)].map((_, index) => (
             <div
               key={index}
               className={`relative flex ${
@@ -716,7 +795,7 @@ export default function MarketInfo({
                 />
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>
