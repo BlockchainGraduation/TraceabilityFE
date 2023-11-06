@@ -12,6 +12,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import instanceAxios from '@/api/instanceAxios';
 import CardProductItem from './components/CardProductItem';
+import Link from 'next/link';
 
 export default function MarketPage() {
   const [valueRadio, setValueRadio] = useState('FARMER');
@@ -63,15 +64,21 @@ export default function MarketPage() {
     console.log(key);
   };
   return (
-    <div className="flex w-4/5  m-auto">
+    <div className="flex w-4/5 m-auto">
       <div className="w-1/5">
-        <Image
-          className="object-cover rounded-2xl"
-          width={'100%'}
-          height={150}
-          src={staticVariables.qc5.src}
-          alt=""
-        />
+        <div className="w-full relative">
+          <Image
+            className="object-cover rounded-2xl"
+            width={'100%'}
+            height={150}
+            preview={false}
+            src={staticVariables.qc5.src}
+            alt=""
+          />
+          <p className="absolute tracking-widest p-[10px] rounded-xl border-2 text-white font-bold text-[20px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            SimpRaidenEi
+          </p>
+        </div>
         <div
           style={{ boxShadow: `0 2px 8px rgba(0,0,0,.15)` }}
           className="w-full shadow-lg rounded-xl overflow-hidden mt-5"

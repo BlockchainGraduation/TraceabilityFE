@@ -48,5 +48,5 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       pusher.unsubscribe('general-channel');
     };
   }, [currentUser, mutate]);
-  return <div className="pt-[100px]">{children}</div>;
+  return <div className="py-[100px]">{children}</div>;
 }

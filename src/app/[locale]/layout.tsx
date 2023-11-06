@@ -71,10 +71,12 @@ export default async function LocaleLayout({
           >
             {/* <Providers> */}
             <NextIntlClientProvider locale={locale} messages={messages}>
-              <Header />
-              {/* <Suspense fallback={<Skeleton active />}>{children}</Suspense> */}
-              <div>{children}</div>
-              <Footer />
+              <div className="w-full overflow-x-hidden">
+                <Header />
+                {/* <Suspense fallback={<Skeleton active />}>{children}</Suspense> */}
+                <div>{children}</div>
+                <Footer />
+              </div>
             </NextIntlClientProvider>
             {/* </Providers> */}
           </ConfigProvider>

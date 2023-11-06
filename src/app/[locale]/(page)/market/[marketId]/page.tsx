@@ -83,6 +83,7 @@ import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNum
 import { Chart } from '@/components/CMS/Statistical/Chart';
 import { Line } from 'react-chartjs-2';
 import Link from 'next/link';
+import Owner from './components/Owner';
 
 export default function MarketInfo({
   params,
@@ -94,7 +95,7 @@ export default function MarketInfo({
     useState(false);
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataMarket, setDataMarket] = useState<any>({});
-  const [dataOwner, setDataOwner] = useState({});
+  const [dataOwner, setDataOwner] = useState<UserType>({});
   const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [dataHistory, setDataHistory] = useState<HistoryType>({});
   const [dataChart, setDataChart] = useState({});
@@ -105,7 +106,7 @@ export default function MarketInfo({
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState(0);
-  const [commentList, setCommentList] = useState([]);
+  const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
@@ -123,7 +124,7 @@ export default function MarketInfo({
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'bottom' as const,
       },
       title: {
         display: true,
@@ -226,10 +227,10 @@ export default function MarketInfo({
           })
           .catch((err) => console.log('asdadasd'));
         fetchDataComment();
-        // await instanceAxios
-        //   .get(`user/${res.data.data.order_by}`)
-        //   .then((res) => setDataOwner(res.data.data))
-        //   .catch((err) => console.log('asdadasd'));
+        await instanceAxios
+          .get(`user/${res.data.data.order_by}/get_user`)
+          .then((res) => setDataOwner(res.data.data))
+          .catch((err) => console.log('asdadasd'));
       })
       .catch((err) => console.log(err));
   };
@@ -352,16 +353,17 @@ export default function MarketInfo({
       <div className="px-[50px]">
         <div className="relative flex justify-between gap-x-10">
           <Image
-            className="object-cover rounded drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
+            className="object-cover rounded-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
             alt=""
             width={800}
+            preview={false}
             height={500}
             src={dataProduct.banner}
           />
           <div className="w-1/2 top-4/12 left-[98%] rounded">
             <InputCustom
               showEdit={dataProduct.created_by === currentUser.id}
-              classNameLabel="text-[30px] text-[#222222] font-[Work Sans]"
+              classNameLabel="text-[30px] text-[#222222] font-semibold font-[Work Sans]"
               initialValue={dataProduct.name || ''}
               name={'name'}
               APIurl={''}
@@ -379,6 +381,7 @@ export default function MarketInfo({
               showEdit={dataProduct.created_by === currentUser.id}
               showCurrence={true}
               classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
+              input={{ min: 0 }}
               name={'price'}
               initialValue={dataProduct.price || 0}
               APIurl={''}
@@ -461,7 +464,7 @@ export default function MarketInfo({
         </div>
         <div className="w-full flex mt-[50px]">
           <div className="w-2/5 ">
-            <p className="py-[10px] border-2 text-white bg-[#42bb67] rounded text-center ">
+            <p className="py-[10px] border-2 text-white bg-[#42bb67] rounded-xl text-center ">
               Thông tin về sản phẩm
             </p>
             <div className="flex flex-col w-2/3 m-auto px-[20px] py-[15px] border-[1px] border-[#42bb67] rounded">
@@ -476,7 +479,7 @@ export default function MarketInfo({
               ))}
             </div>
             {/* Giới thiệu sản  phẩm */}
-            <div className="mt-[50px] rounded border-[1px] border-current-color">
+            <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
               <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
                 Giới thiệu về sản phẩm
               </div>
@@ -492,25 +495,25 @@ export default function MarketInfo({
               />
             </div>
             {/* Giới thiệu chủ sử hữu */}
-            <div className="mt-[50px] rounded border-[1px] border-current-color">
+            <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
               <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
                 Chủ sở hữu
               </div>
-              <div className="p-[20px] flex justify-around">
-                <div className="flex items-center flex-col">
-                  <Avatar size={100} src={dataProduct.user?.avatar} />
-                  <p className="text-2xl font-bold text-[#222222]">
-                    {dataProduct.user?.username}
-                  </p>
-                </div>
-                <div className="flex w-1/2 h-fit flex-col rounded ">
-                  <p className="text-center text-white bg-current-color p-[5px] rounded-tl rounded-tr">
+              <div className="p-[20px] flex flex-col space-y-10 items-center">
+                <Owner {...dataOwner} />
+                {/* <Link href={`/user/${dataProduct.created_by}`}>
+                  <div className="flex items-center p-[20px] rounded-xl flex-col bg-[#1212120A] hover:bg-[#ececec]">
+                    <Avatar size={100} src={dataProduct.user?.avatar} />
+                    <p className="text-2xl font-bold text-[#222222]">
+                      {dataProduct.user?.username}
+                    </p>
+                  </div>
+                </Link> */}
+                <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
+                  <p className="text-center text-white bg-current-color p-[5px]">
                     Liên hệ
                   </p>
-                  <Paragraph
-                    className=" border-current-color border-[1px] border-t-0 p-[5px]"
-                    copyable
-                  >
+                  <Paragraph className=" border-t-0 p-[5px]" copyable>
                     {dataProduct.user?.email}
                   </Paragraph>
                   {dataProduct.user?.phone && (
@@ -525,7 +528,7 @@ export default function MarketInfo({
               </div>
             </div>
           </div>
-          <div className="w-3/5 pl-[20px] rounded overflow-hidden">
+          <div className="w-3/5 pl-[50px] rounded overflow-hidden">
             <QRCode
               className="m-auto"
               type="canvas"
@@ -536,25 +539,27 @@ export default function MarketInfo({
               options={options}
               data={dataChartProps}
             />
-            <Carousel
-              className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
-              waitForAnimate={true}
-              effect="fade"
-              autoplay
-            >
-              <div>
-                <h3 style={contentStyle}>1</h3>
-              </div>
-              <div>
-                <h3 style={contentStyle}>2</h3>
-              </div>
-              <div>
-                <h3 style={contentStyle}>3</h3>
-              </div>
-              <div>
-                <h3 style={contentStyle}>4</h3>
-              </div>
-            </Carousel>
+            <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
+              <Carousel
+                className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
+                waitForAnimate={true}
+                effect="fade"
+                autoplay
+              >
+                <div>
+                  <h3 style={contentStyle}>1</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>2</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>3</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>4</h3>
+                </div>
+              </Carousel>
+            </div>
             <div className="w-full mt-[50px] pl-[50px]">
               <Segmented
                 size={'large'}
@@ -566,15 +571,13 @@ export default function MarketInfo({
               />
               <div className="w-full mt-[20px]">
                 {changePageRight === 'COMMENT' && (
-                  <div className="p-[20px] border-[1px] border-current-color rounded">
+                  <div className="p-[20px] my-5 border-[1px] border-current-color rounded-xl shadow-lg">
                     <div className="max-h-[500px] overflow-auto">
                       {commentList.length ? (
-                        commentList.map((item: any, index) => (
+                        commentList.map((item, index) => (
                           <CommentItem
-                            userRole={item.user.email}
-                            userName={item.user.username}
-                            userAvatar={item.user.avatar}
-                            content={item.content}
+                            isOwner={dataProduct.created_by === item.user_id}
+                            {...item}
                             key={index}
                           />
                         ))
@@ -701,7 +704,7 @@ export default function MarketInfo({
               />
             ))}
           </div>
-          <div className="w-3/4 flex border-2 border-green-500 rounded">
+          <div className="w-3/4 flex border-2 border-green-500 rounded-2xl">
             <div className="w-1/2 p-[50px] flex flex-col">
               <p className="text-[20px] py-[20px] font-semibold">
                 MAPLE OAT MUFFIN
@@ -721,7 +724,7 @@ export default function MarketInfo({
             </div>
             <div className="w-1/2 p-[10px]">
               <Image
-                className="object-cover rounded"
+                className="object-cover rounded-2xl"
                 width="100%"
                 height="100%"
                 src={staticVariables.qc5.src}

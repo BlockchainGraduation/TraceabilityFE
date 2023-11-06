@@ -171,6 +171,21 @@ interface GrowUpType {
     };
   };
 }
+interface CommentItemType {
+  content?: string;
+  marketplace_id?: string;
+  user_id?: string;
+  id?: string;
+  created_at?: string;
+  user?: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+  };
+  reply_comments?: [];
+}
 interface MarketType {
   id?: string;
   order_type?: string;

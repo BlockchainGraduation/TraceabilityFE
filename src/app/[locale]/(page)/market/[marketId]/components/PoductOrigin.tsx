@@ -59,7 +59,7 @@ interface Props {
 export default function ProductOrigin(props: Props) {
   const route = useRouter();
   return (
-    <div className="w-full mt-[30px] border-[1px] border-current-color">
+    <div className="w-full mt-[30px] rounded-xl overflow-hidden border-[1px] border-current-color">
       <p className="text-center p-[20px] bg-current-color text-3xl text-white">
         {props.originType === 'seed'
           ? ' Nguồn gốc hạt giống'
@@ -69,21 +69,25 @@ export default function ProductOrigin(props: Props) {
         <div className="relative w-1/2">
           <Image
             className="object-cover"
-            // width={400}
-            // height={500}
+            width={'100%'}
+            height={'100%'}
             preview={false}
             alt=""
             src={props.product?.banner}
           />
-          <p className="absolute top-0 translate-x-[-50%] left-1/2 w-fit bg-current-color text-xl text-white py-[10px] px-[30px] rounded-b">
+          <p className="absolute -top-[30px] border-[1px] shadow-[0px_4px_50px_30px_rgba(45,180,87,0.50)] translate-x-[-50%] left-1/2 w-fit bg-current-color text-xl text-white py-[10px] px-[30px] rounded-xl">
             {props.originType === 'seed' ? ' Con giống' : 'Sản phẩm'}
           </p>
         </div>
-        <div className="w-1/2 flex flex-col items-center">
-          <p className="bg-current-color text-xl text-white py-[10px] px-[30px] rounded-b">
+        <div className="w-1/2 relative flex flex-col items-center">
+          <p className="absolute -top-[30px] border-[1px] shadow-[0px_4px_50px_10px_rgba(45,180,87,0.50)] translate-x-[-50%] left-1/2 bg-current-color text-xl text-white py-[10px] px-[30px] rounded-xl">
             Nguồn cung cấp
           </p>
-          <Avatar size={200} src={props.transactions?.product?.user?.avatar} />
+          <Avatar
+            className="mt-[50px]"
+            size={150}
+            src={props.transactions?.product?.user?.avatar}
+          />
           <p className="text-xl text-[#262626] p-[10px]">
             {props.transactions?.product?.user?.username}
           </p>

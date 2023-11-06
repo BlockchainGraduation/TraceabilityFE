@@ -342,7 +342,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed z-10 flex  items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -361,7 +361,7 @@ export default memo(function Header() {
             href={`/${key}`}
           >
             {listIcon[index]}
-            <p className={`text-inherit font-bold font-mono`}>
+            <p className={`text-inherit font-bold font-sans`}>
               {t(`route.${key}`)}
             </p>
           </Link>
@@ -473,7 +473,7 @@ export default memo(function Header() {
                 {listUnreadNotifications ? (
                   <Badge
                     count={listUnreadNotifications}
-                    offset={[0, 2]}
+                    offset={[16, -8]}
                     color="blue"
                   >
                     <FontAwesomeIcon
