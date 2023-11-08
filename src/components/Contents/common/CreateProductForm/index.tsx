@@ -53,7 +53,6 @@ export default function CreateProductForm({
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [fileAvartar, setFileAvartar] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
-  console.log(transactionId);
 
   useEffect(() => {
     const fetchListTransaction = async () => {

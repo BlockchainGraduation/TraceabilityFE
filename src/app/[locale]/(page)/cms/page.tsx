@@ -45,15 +45,6 @@ export default memo(function CMSPage() {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
-  const route = useRouter();
-  useEffectOnce(() => {
-    if (!currentUser.logged) {
-      route.push('/home');
-    }
-  });
-  // useEffect(() => {
-
-  // }, [currentUser.logged]);
 
   ////Render taskbar
   const items: MenuItem[] = [

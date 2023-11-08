@@ -142,7 +142,7 @@ export default memo(function ProductCMS() {
 
   useEffect(() => {
     fetchProductMe();
-  }, [fetchProductMe, limit, name, skip, hasChange]);
+  }, [fetchProductMe]);
   // const { error, isLoading } = useSWR('product/me', fetchProductMe);
 
   // const handleCancel = () => setPreviewOpen(false);

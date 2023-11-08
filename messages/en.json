@@ -12,9 +12,10 @@
     },
     "action":{
       "deleted":"deleted by",
-      "updated":"updated by"
+      "updated":"updated by",
+      "created":"created by"
     },
     "notification":{
-      "PRODUCT_NOTIFICATION":"the product"
+      "PRODUCT_NOTIFICATION":"product"
     }
 }

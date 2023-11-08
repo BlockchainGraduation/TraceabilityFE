@@ -11,8 +11,9 @@
     }
   },
   "action": {
-    "deleted": "xóa bởi",
-    "updated": "sửa bởi"
+    "deleted": "xóa",
+    "updated": "sửa",
+    "created": "tạo"
   },
   "notification": {
     "PRODUCT_NOTIFICATION": "sản phẩm được",

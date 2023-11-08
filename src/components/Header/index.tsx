@@ -67,20 +67,6 @@ import 'moment/locale/vi';
 
 const inter = Inter({ subsets: ['latin'] });
 
-interface NotificationItemType {
-  avatar?: string;
-  message?: string;
-  params?: {
-    product_id?: string;
-    product_name?: string;
-    notification_type?: string;
-  };
-  data?: {
-    created_at?: number;
-    unread?: boolean;
-    notification_id?: string;
-  };
-}
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -214,16 +200,7 @@ export default memo(function Header() {
     <div className="max-h-[500px] overflow-auto">
       {listNotifications.length ? (
         listNotifications.map((item, index) => (
-          <NotificationItem
-            key={index}
-            created_at={item.data?.created_at}
-            content={item.message}
-            unread={item.data?.unread}
-            product_id={item.params?.product_id}
-            product_name={item.params?.product_name}
-            notification_type={item.params?.notification_type}
-            notification_id={item.data?.notification_id}
-          />
+          <NotificationItem key={index} {...item} />
         ))
       ) : (
         <Empty

@@ -3,6 +3,7 @@ import staticVariables from '@/static';
 import {
   Collapse,
   CollapseProps,
+  Empty,
   Image,
   List,
   Pagination,
@@ -64,7 +65,7 @@ export default function MarketPage() {
     console.log(key);
   };
   return (
-    <div className="flex w-4/5 pt-[100px] m-auto">
+    <div className="flex w-4/5 py-[100px] m-auto">
       <div className="w-1/5">
         <div className="w-full relative">
           <Image
@@ -101,9 +102,16 @@ export default function MarketPage() {
           <strong>{totalMarket}</strong> sản phẩm phù hợp với tìm kiếm của bạn
         </p>
         <div className="flex flex-col gap-y-5">
-          {listMarket.map((item, index) => (
-            <CardProductItem key={index} {...item} />
-          ))}
+          {listMarket.length ? (
+            listMarket.map((item, index) => (
+              <CardProductItem key={index} {...item} />
+            ))
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_DEFAULT}
+              description="Không tìm thấy kết quả"
+            />
+          )}
         </div>
         <Pagination
           className="mx-auto block w-fit mt-5"

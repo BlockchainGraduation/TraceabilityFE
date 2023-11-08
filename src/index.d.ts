@@ -221,3 +221,17 @@ interface MarketType {
     reply_comments?: string;
   };
 }
+interface NotificationItemType {
+  message?: string;
+  params?: {
+    product_id?: string;
+    product_name?: string;
+    notification_type?: string;
+    action?: string;
+  };
+  data?: {
+    created_at?: number;
+    unread?: boolean;
+    notification_id?: string;
+  };
+}
