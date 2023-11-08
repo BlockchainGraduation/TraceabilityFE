@@ -71,6 +71,7 @@ export default function MarketPage() {
             className="object-cover rounded-2xl"
             width={'100%'}
             height={150}
+            style={{ boxShadow: `0 8px 10px rgba(0,0,0,.25)` }}
             preview={false}
             src={staticVariables.qc5.src}
             alt=""
@@ -83,9 +84,13 @@ export default function MarketPage() {
           style={{ boxShadow: `0 2px 8px rgba(0,0,0,.15)` }}
           className="w-full shadow-lg rounded-xl overflow-hidden mt-5"
         >
+          <p className="w-full p-[20px] border-b-[1px] text-center font-bold text-[20px]">
+            Lọc kết quả
+          </p>
           <Collapse
             bordered={false}
             items={items}
+            className="text-[15px] font-['Open_Sans']"
             defaultActiveKey={['1']}
             onChange={onChange}
           />

@@ -206,14 +206,12 @@ export default function MarketInfo({
           .get(`product/${res.data.data.order_id}`)
           .then((res) => {
             setDataProduct(res.data.data);
+            if (res.data.data.product_type === 'FARMER') {
+              fetchListGrowUp(res.data.data.order_id);
+            }
           })
           .catch((err) => console.log('asdadasd'));
-        await instanceAxios
-          .get(`product/${res.data.data.order_id}/grow_up?skip=0&limit=100`)
-          .then((res) => {
-            setDataGrowUp(res.data.data.list_grow_up);
-          })
-          .catch((err) => console.log('asdadasd'));
+
         await instanceAxios
           .get(`product/${res.data.data.order_id}/history`)
           .then((res) => {
@@ -226,11 +224,11 @@ export default function MarketInfo({
             setDataChart(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
-        fetchDataComment();
         await instanceAxios
           .get(`user/${res.data.data.order_by}/get_user`)
           .then((res) => setDataOwner(res.data.data))
           .catch((err) => console.log('asdadasd'));
+        fetchDataComment();
       })
       .catch((err) => console.log(err));
   };
@@ -251,6 +249,14 @@ export default function MarketInfo({
         setCommentList([]);
         console.log(err);
       });
+  };
+  const fetchListGrowUp = async (productId: string) => {
+    await instanceAxios
+      .get(`product/${productId}/grow_up?skip=0&limit=100`)
+      .then((res) => {
+        setDataGrowUp(res.data.data.list_grow_up);
+      })
+      .catch((err) => console.log('asdadasd'));
   };
   const fetchDataTransaction = async () => {
     await instanceAxios
@@ -513,17 +519,19 @@ export default function MarketInfo({
                   <p className="text-center text-white bg-current-color p-[5px]">
                     Liên hệ
                   </p>
-                  <Paragraph className=" border-t-0 p-[5px]" copyable>
-                    {dataProduct.user?.email}
-                  </Paragraph>
-                  {dataProduct.user?.phone && (
-                    <Paragraph
-                      className="border-current-color border-[1px] border-t-0 p-[5px]"
-                      copyable
-                    >
-                      {dataProduct.user?.phone}
+                  <div className="w-full px-[10px]">
+                    <Paragraph className=" border-t-0 p-[5px]" copyable>
+                      {dataProduct.user?.email}
                     </Paragraph>
-                  )}
+                    {dataProduct.user?.phone && (
+                      <Paragraph
+                        className="border-current-color border-[1px] border-t-0 p-[5px]"
+                        copyable
+                      >
+                        {dataProduct.user?.phone}
+                      </Paragraph>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

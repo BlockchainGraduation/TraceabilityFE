@@ -150,7 +150,7 @@ export default function Category(props: Props) {
                 <p className="w-full text-center font-bold truncate px-[15px] p-[10px] text-[16px]">
                   {item.product?.name}
                 </p>
-                <div className="w-full flex justify-between px-[40px] pb-[10px]">
+                <div className="w-full flex justify-between px-[30px] pb-[10px]">
                   <ConfigProvider
                     theme={{
                       components: {
