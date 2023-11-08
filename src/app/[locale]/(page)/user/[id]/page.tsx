@@ -186,6 +186,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
             className="object-cover rounded-2xl  drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)] border-2"
             width={200}
             height={200}
+            preview={false}
             alt=""
             src={dataUser.avatar}
           />

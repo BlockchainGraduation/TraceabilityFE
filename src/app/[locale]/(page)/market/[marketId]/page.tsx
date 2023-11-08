@@ -355,7 +355,7 @@ export default function MarketInfo({
   };
 
   return (
-    <div className="w-full m-auto pb-[50px]">
+    <div className="w-full m-auto pt-[100px] pb-[50px]">
       <div className="px-[50px]">
         <div className="relative flex justify-between gap-x-10">
           <Image
@@ -735,6 +735,7 @@ export default function MarketInfo({
                 className="object-cover rounded-2xl"
                 width="100%"
                 height="100%"
+                preview={false}
                 src={staticVariables.qc5.src}
                 alt=""
               />

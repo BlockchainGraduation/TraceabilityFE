@@ -64,7 +64,7 @@ export default function MarketPage() {
     console.log(key);
   };
   return (
-    <div className="flex w-4/5 m-auto">
+    <div className="flex w-4/5 pt-[100px] m-auto">
       <div className="w-1/5">
         <div className="w-full relative">
           <Image

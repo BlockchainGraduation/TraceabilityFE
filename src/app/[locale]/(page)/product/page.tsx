@@ -27,7 +27,7 @@ export default function ProductPage() {
         setTotalProduct(res.data.data.total_product);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [valueRadio]);
   useEffect(() => {
     fethListProduct();
   }, [fethListProduct]);

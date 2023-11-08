@@ -90,7 +90,7 @@ export default memo(function CMSPage() {
 
   return (
     currentUser.logged && (
-      <div className="w-full">
+      <div className="w-full pt-[100px]">
         <Layout className="w-full">
           <Sider
             collapsible

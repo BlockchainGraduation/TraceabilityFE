@@ -1,6 +1,9 @@
 import staticVariables from '@/static';
-import { Avatar, Tag, Typography } from 'antd';
+import { faClock, faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Avatar, Popover, Space, Tag, Typography } from 'antd';
 import moment from 'moment';
+import Link from 'next/link';
 import React from 'react';
 
 interface Props {
@@ -10,15 +13,58 @@ interface Props {
 export default function CommentItem(props: CommentItemType & Props) {
   return (
     <div className="mb-[10px]">
-      <div className="flex ">
-        <Avatar src={props.user?.avatar} />
+      <div className="flex">
+        <Popover
+          content={
+            <div className="flex flex-col space-y-5">
+              <div className="flex space-x-5">
+                <Avatar size={100} src={props.user?.avatar} />
+                <div className="flex flex-col space-y-1">
+                  <p className="text-[20px] font-bold">
+                    {props.user?.username}
+                  </p>
+                  <Space>
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      style={{ color: '#4b7dd2' }}
+                    />
+                    <p>{props.user?.email}</p>
+                  </Space>
+                  {/* <Space>
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      style={{ color: '#4978ca' }}
+                    />
+                    <p>{moment(props.user.).format('DD/MM/YYYY')}</p>
+                  </Space> */}
+                  <Tag color={'green-inverse'}>{props.user?.username}</Tag>
+                </div>
+              </div>
+              <Space className="px-[20px] space-x-1 ">
+                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                  Nhắn tin
+                </p>
+                <Link href={`/user/${props.user?.id}`}>
+                  <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                    Xem thông tin
+                  </p>
+                </Link>
+                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                  Báo cáo
+                </p>
+              </Space>
+            </div>
+          }
+        >
+          <Avatar src={props.user?.avatar} />
+        </Popover>
         <div className="flex ml-[10px] flex-col  ">
-          <div className="flex items-center space-x-3 text-[15px]">
+          <Space className="text-[15px]">
             <p className="font-bold">{props.user?.username}</p>
             {props.isOwner && (
               <p className="text-[12px] text-blue-600">Owner</p>
             )}
-          </div>
+          </Space>
           <Tag
             color={props.user?.username === 'FARMER' ? 'green' : 'blue-inverse'}
             className="w-fit font-light"

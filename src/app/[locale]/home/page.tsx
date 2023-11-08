@@ -41,6 +41,8 @@ import Meta from 'antd/es/card/Meta';
 import LeaderBoard from './components/LeaderBoard';
 import currency from '@/services/currency';
 import Category, { LeftArrow, RightArrow } from './components/Category';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const { Search } = Input;
 const ProductTodayItem = dynamic(
@@ -220,7 +222,7 @@ export default function HomePage() {
   // }, []);
   return (
     <div className="w-full">
-      {/* Top Item */}
+      <Header />
       <div className="w-full flex-col items-center bg-[#000000]">
         <div className="w-full flex flex-col">
           <div className="w-1/3 h-[450px] text-white flex items-center ">
@@ -314,6 +316,7 @@ export default function HomePage() {
         <Category orderType={'MANUFACTURER'} title="Manufacturer" />
         <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
       </div>
+      <Footer />
     </div>
   );
 }

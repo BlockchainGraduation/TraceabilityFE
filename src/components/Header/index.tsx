@@ -357,7 +357,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110`}
+            className={`py-[15px] px-8 flex hover:bg-[#ececec] text-xl items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110`}
             href={`/${key}`}
           >
             {listIcon[index]}
