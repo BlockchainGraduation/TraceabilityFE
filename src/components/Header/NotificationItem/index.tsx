@@ -19,7 +19,7 @@ export default function NotificationItem(props: NotificationItemType) {
     await instanceAxios
       .delete(`notifications/${props.data?.data?.notification_id}`)
       .then((res) => {
-        message.success('Bạn đã xóa thông báo');
+        // message.success('Bạn đã xóa thông báo');
         mutate('notifications/list');
       })
       .catch((err) => message.error('Xóa thông báo thất bại'));

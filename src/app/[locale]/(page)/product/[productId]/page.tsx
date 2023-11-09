@@ -331,7 +331,7 @@ export default function ProductInfoPahe({
                 <Image
                   className="object-cover rounded-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
                   alt=""
-                  width={800}
+                  width={'50%'}
                   preview={false}
                   height={500}
                   src={dataProduct.banner}
