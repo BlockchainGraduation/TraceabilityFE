@@ -222,16 +222,27 @@ interface MarketType {
   };
 }
 interface NotificationItemType {
-  message?: string;
-  params?: {
-    product_id?: string;
-    product_name?: string;
-    notification_type?: string;
-    action?: string;
-  };
   data?: {
-    created_at?: number;
-    unread?: boolean;
-    notification_id?: string;
+    message?: string;
+    params?: {
+      product_id?: string;
+      product_name?: string;
+      notification_type?: string;
+      marketplace_id?: string;
+      action?: string;
+    };
+    data?: {
+      created_at?: number;
+      unread?: boolean;
+      notification_id?: string;
+    };
+  };
+  user?: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    system_role?: string;
   };
 }

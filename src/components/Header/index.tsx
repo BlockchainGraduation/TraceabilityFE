@@ -144,7 +144,7 @@ export default memo(function Header() {
     await instanceAxios
       .get(`notifications/list`)
       .then((res) => {
-        setListNotifications(res.data.data.data);
+        setListNotifications(res.data.data);
         setListUnreadNotifications(res.data.data.meta.unread_total);
         setTotalNotifications(res.data.data.meta.total);
       })
@@ -187,7 +187,7 @@ export default memo(function Header() {
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
-    router.push('/');
+    // router.push('/');
     setShowModal(true);
     setCurrentForm('LOGIN');
   };
@@ -214,12 +214,10 @@ export default memo(function Header() {
     {
       label: (
         <Link href={`/user/${currentUser.id}`}>
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faUser} />
-            </Col>
-            <Col span={24}>Thong tin</Col>
-          </Row>
+          <Space wrap={false}>
+            <FontAwesomeIcon icon={faUser} style={{ color: '#3c64aa' }} />
+            <p>Thông tin</p>
+          </Space>
         </Link>
       ),
       key: '0',
@@ -253,26 +251,24 @@ export default memo(function Header() {
     //   ),
     //   key: '1',
     // },
-    {
-      label: (
-        <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-          <Col className="justify-center" span={6}>
-            <FontAwesomeIcon icon={faCartShopping} />
-          </Col>
-          <Col span={24}>Gio hang</Col>
-        </Row>
-      ),
-      key: '2',
-    },
+    // {
+    //   label: (
+    //     <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+    //       <Col className="justify-center" span={6}>
+    //         <FontAwesomeIcon icon={faCartShopping} />
+    //       </Col>
+    //       <Col span={24}>Gio hang</Col>
+    //     </Row>
+    //   ),
+    //   key: '2',
+    // },
     {
       label: (
         <Link href={'/cms'}>
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
-            </Col>
-            <Col>Quản lí</Col>
-          </Row>
+          <Space wrap={false}>
+            <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
+            <p>Quản lí</p>
+          </Space>
         </Link>
       ),
       key: '3',
@@ -281,12 +277,10 @@ export default memo(function Header() {
       label:
         currentUser.system_role === 'MEMBER' ? (
           <Link href={'/register-rule'}>
-            <Row wrap={false} justify={'start'}>
-              <Col className="justify-center" span={6}>
-                <FontAwesomeIcon icon={faUser} />
-              </Col>
-              <Col span={24}>Đăng kí thành viên</Col>
-            </Row>
+            <Space wrap={false}>
+              <FontAwesomeIcon icon={faUser} />
+              <p>Đăng kí thành viên</p>
+            </Space>
           </Link>
         ) : (
           ''
@@ -325,8 +319,8 @@ export default memo(function Header() {
       <Link href={'/'}>
         <Avatar
           size={50}
-          className={`object-cover`}
-          src={staticVariables.qc3.src}
+          className={`object-cover scale-[1.8]`}
+          src={staticVariables.logoDurian.src}
           alt=""
         />
       </Link>
@@ -334,7 +328,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex hover:bg-[#ececec] text-xl items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out	 hover:-translate-y-1 hover:scale-110`}
+            className={`py-[15px] px-6 flex hover:bg-[#ececec] text-[16px] items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110`}
             href={`/${key}`}
           >
             {listIcon[index]}
@@ -447,9 +441,9 @@ export default memo(function Header() {
               content={contentNotifications}
             >
               <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
-                {listUnreadNotifications ? (
+                {listNotifications.length ? (
                   <Badge
-                    count={listUnreadNotifications}
+                    count={listNotifications.length}
                     offset={[16, -8]}
                     color="blue"
                   >

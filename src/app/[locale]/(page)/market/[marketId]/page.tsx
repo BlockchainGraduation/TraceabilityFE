@@ -34,6 +34,7 @@ import {
   Table,
   Tag,
   Timeline,
+  Tooltip as TooltipAntd,
   Typography,
   Upload,
   UploadFile,
@@ -78,12 +79,13 @@ import { useTranslations } from 'next-intl';
 import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
 import { UploadChangeParam } from 'antd/es/upload';
 import useSWR from 'swr';
-import SeedOrigin from './components/PoductOrigin';
 import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
 import { Chart } from '@/components/CMS/Statistical/Chart';
 import { Line } from 'react-chartjs-2';
 import Link from 'next/link';
 import Owner from './components/Owner';
+import ProductOrigin from './components/PoductOrigin';
+import currency from '@/services/currency';
 
 export default function MarketInfo({
   params,
@@ -367,14 +369,9 @@ export default function MarketInfo({
             src={dataProduct.banner}
           />
           <div className="w-1/2 top-4/12 left-[98%] rounded">
-            <InputCustom
-              showEdit={dataProduct.created_by === currentUser.id}
-              classNameLabel="text-[30px] text-[#222222] font-semibold font-[Work Sans]"
-              initialValue={dataProduct.name || ''}
-              name={'name'}
-              APIurl={''}
-              queryType={'user'}
-            />
+            <p className="text-[30px] text-[#222222] font-semibold font-[Work Sans]">
+              {dataProduct.name}
+            </p>
             <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
               Sản phẩm của
               <Link href={`/user/${dataProduct.user?.id}`}>
@@ -383,16 +380,9 @@ export default function MarketInfo({
                 </p>
               </Link>
             </div>
-            <InputNumberCustom
-              showEdit={dataProduct.created_by === currentUser.id}
-              showCurrence={true}
-              classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
-              input={{ min: 0 }}
-              name={'price'}
-              initialValue={dataProduct.price || 0}
-              APIurl={''}
-              queryType={'user'}
-            />
+            <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
+              {`${dataProduct.price} ${currency}`}
+            </p>
             {/* <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
               $ {dataProduct.price?.toLocaleString()}
             </p> */}
@@ -489,16 +479,29 @@ export default function MarketInfo({
               <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
                 Giới thiệu về sản phẩm
               </div>
-              <TextAreaCustom
-                showEdit={dataProduct.created_by === currentUser.id}
-                queryType="product"
-                APIurl={`product/update/${dataMarket.order_id}`}
-                className="p-[20px]"
-                name={'description'}
-                initialValue={`ANOMALY A.I. is a contemporary art collection comprising 888 distinct pieces of AI and machine learning-generated art by the artist Star Im. Each artwork seamlessly melds elements from significant works in the realm of Web 3.0, designs from generative code art, AI art, and digital art. The intention behind this collection is to offer a unified visual art experience, showcasing variations or derivative versions that radiate uniqueness and originality, affectionately referred to as "anomalies" within the studio.
-                The creation of ANOMALY A.I. involved harnessing a diverse array of exceptional tools, including RunwayML, Stable Diffusion, Stability AI, Dalle, Midjourney, Pika, as well as Adobe software (Firefly, Illustrator, and Photoshop), along with various 3D programs. Each individual work in this collection is assigned a unique number and comes in 10 editions, ranging from #1 to #10, culminating in a total of 8,880 editions. The artist's signature is on the bottom right corner of every piece within this collection.
-                This endeavor represents the initial stage of a multifaceted art journey on the web. It is worth noting that participation in this exploration of machine learning, along with its accompanying artist's journey, is entirely cost-free.`}
-              />
+              <p className="py-[20px] px-[30px]">
+                {`ANOMALY A.I. is a contemporary art collection comprising 888
+                distinct pieces of AI and machine learning-generated art by the
+                artist Star Im. Each artwork seamlessly melds elements from
+                significant works in the realm of Web 3.0, designs from
+                generative code art, AI art, and digital art. The intention
+                behind this collection is to offer a unified visual art
+                experience, showcasing variations or derivative versions that
+                radiate uniqueness and originality, affectionately referred to
+                as "anomalies" within the studio. The creation of ANOMALY A.I.
+                involved harnessing a diverse array of exceptional tools,
+                including RunwayML, Stable Diffusion, Stability AI, Dalle,
+                Midjourney, Pika, as well as Adobe software (Firefly,
+                Illustrator, and Photoshop), along with various 3D programs.
+                Each individual work in this collection is assigned a unique
+                number and comes in 10 editions, ranging from #1 to #10,
+                culminating in a total of 8,880 editions. The artist's signature
+                is on the bottom right corner of every piece within this
+                collection. This endeavor represents the initial stage of a
+                multifaceted art journey on the web. It is worth noting that
+                participation in this exploration of machine learning, along
+                with its accompanying artist's journey, is entirely cost-free.`}
+              </p>
             </div>
             {/* Giới thiệu chủ sử hữu */}
             <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
@@ -614,7 +617,7 @@ export default function MarketInfo({
         {((dataMarket.order_type !== 'SEEDLING_COMPANY' &&
           dataHistory.transactions_sf) ||
           dataHistory.transactions_fm) && (
-          <SeedOrigin
+          <ProductOrigin
             originType={'seed'}
             transactions={
               dataHistory.transactions_sf || dataHistory.transactions_fm
@@ -634,12 +637,6 @@ export default function MarketInfo({
                 style={{ color: '#29c214' }}
               />
               <p className="pl-[20px]">Quá trình phát triển </p>
-              {dataProduct.created_by === currentUser.id && (
-                <PlusCircleTwoTone
-                  onClick={() => setOpenGrowUpModal(true)}
-                  className="text-2xl absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
-                />
-              )}
             </div>
             <div className="ml-[-111px]  max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
               {dataGrowUp.length ? (
@@ -653,45 +650,12 @@ export default function MarketInfo({
                 />
               )}
             </div>
-            <Modal
-              open={openGrowUpModal}
-              onCancel={() => setOpenGrowUpModal(false)}
-              footer={[]}
-            >
-              <Typography.Title level={3}>
-                Thêm qua trinh phat trien
-              </Typography.Title>
-              <p className="text-rose-600">
-                * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng tải
-                quá trình phát triển
-              </p>
-              <GrowUpForm
-                onSuccess={() => setOpenGrowUpModal(false)}
-                productId={dataMarket.order_id}
-              />
-            </Modal>
           </div>
         )}
       </div>
       <div className="max-h-[800px] text-white pt-[50px] ">
         <div className=" flex items-center  py-[30px] text-2xl mb-[50px] pl-[100px] bg-[#42bb67]">
           <p> Giới thiệu chi tiết về sản phẩm</p>
-          {dataProduct.created_by === currentUser.id && (
-            <Popover title="Tạo thêm mô tả về sản phẩm">
-              <PlusCircleTwoTone
-                onClick={() => setOpenCreateDescriptionModal(true)}
-                className="ml-[50px] text-2xl"
-              />
-            </Popover>
-          )}
-          <Modal
-            centered
-            open={openCreateDescriptionModal}
-            onCancel={() => setOpenCreateDescriptionModal(false)}
-            footer={[]}
-          >
-            <CreateDescriptionForm productId={'123'} />
-          </Modal>
         </div>
         <div className="flex h-[600px] w-full snap-y bg-white rounded text-[#373737] px-[50px] gap-y-10 overflow-auto pt-[50px]">
           <div className="w-1/4 max-h-full overflow-y-auto flex flex-col gap-y-5 items-end px-[30px]">

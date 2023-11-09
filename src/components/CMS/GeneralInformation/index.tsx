@@ -152,7 +152,7 @@ export default function GeneralInformation() {
                 queryType={'user'}
                 name="full_name"
                 classNameLabel="text-2xl font-bold"
-                initialValue={currentUser.full_name}
+                initialValue={currentUser.full_name || ''}
               />
               <Tag className="w-fit" color="success">
                 Fammer
@@ -191,7 +191,7 @@ export default function GeneralInformation() {
                     type: 'date',
                   }}
                   name="birthday"
-                  initialValue={currentUser.birthday}
+                  initialValue={currentUser.birthday || ''}
                   APIurl={'user/update_me'}
                   queryType={'user'}
                 />

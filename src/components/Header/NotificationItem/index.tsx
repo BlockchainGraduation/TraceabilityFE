@@ -5,6 +5,7 @@ import { Avatar, ConfigProvider, Popconfirm, message } from 'antd';
 import moment from 'moment';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { ReactNode, useState } from 'react';
 import { useSWRConfig } from 'swr';
 
@@ -13,9 +14,10 @@ export default function NotificationItem(props: NotificationItemType) {
   const { mutate } = useSWRConfig();
   const tNotifications = useTranslations('notification');
   const tAction = useTranslations('action');
+  const route = useRouter();
   const fetchDeleteNotification = async () => {
     await instanceAxios
-      .delete(`notifications/${props.data?.notification_id}`)
+      .delete(`notifications/${props.data?.data?.notification_id}`)
       .then((res) => {
         message.success('Bạn đã xóa thông báo');
         mutate('notifications/list');
@@ -25,7 +27,7 @@ export default function NotificationItem(props: NotificationItemType) {
   return (
     <div
       className={`relative flex items-center p-[10px] hover:bg-sky-200 ${
-        props.data?.unread && `bg-sky-50`
+        props.data?.data?.unread && `bg-sky-50`
       } rounded max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
@@ -55,33 +57,42 @@ export default function NotificationItem(props: NotificationItemType) {
           {/* </Popconfirm> */}
         </ConfigProvider>
       )}
-      {/* <Avatar
-        size={'large'}
-        src={props/ || staticVariables.logoRaiden.src}
-      /> */}
+      <Avatar size={'large'} src={props.user?.avatar} />
       <div className="w-9/12">
-        <Link
+        <div
+          onClick={async () => {
+            await fetchDeleteNotification();
+            route.push(
+              `/${
+                props.data?.params?.notification_type === 'PRODUCT_NOTIFICATION'
+                  ? 'product'
+                  : 'market'
+              }/${
+                props.data?.params?.notification_type === 'PRODUCT_NOTIFICATION'
+                  ? props.data?.params.product_id
+                  : props.data?.params?.marketplace_id
+              }`
+            );
+          }}
           className="hover:text-black"
-          href={`/market/${props.params?.product_id}`}
         >
-          {props.params?.action ? (
+          {/* {props.params?.action ? (
             <div>
-              {`${props.params.product_name} ${tNotifications(
-                props.params.notification_type
-              )} ${tAction(props.params.action)}`}
+              {`The ${props.params.product_name} ${tAction(
+                props.params.action
+              )}  ${tNotifications(props.params.notification_type)}`}
             </div>
-          ) : (
-            <div
-              className=" w-full line-clamp-2 text-justify"
-              dangerouslySetInnerHTML={{
-                __html: props.message?.toString() || '',
-              }}
-            ></div>
-          )}
+          ) : ( */}
+          <div
+            className=" w-full line-clamp-2 text-justify"
+            dangerouslySetInnerHTML={{
+              __html: props.data?.message?.toString() || '',
+            }}
+          ></div>
           <p className="text-gray-500">
-            {moment(props.data?.created_at).startOf('day').fromNow()}
+            {moment(props.data?.data?.created_at).fromNow()}
           </p>
-        </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch } from '@/hooks';
 import { setUser } from '@/reducers/userSlice';
 import fetchUpdate from '@/services/fetchUpdate';
@@ -16,6 +17,7 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
+import { useSWRConfig } from 'swr';
 export default memo(function InputCustom({
   name,
   initialValue,
@@ -25,6 +27,8 @@ export default memo(function InputCustom({
   APIurl,
   queryType,
   showEdit = true,
+  passType = 'body',
+  mutateAPI,
   onKeyDown,
   onSuccess,
 }: // onChange = () => {},
@@ -37,6 +41,8 @@ export default memo(function InputCustom({
   input?: InputProps;
   showEdit?: boolean;
   queryType: 'user' | 'product';
+  passType?: 'body' | 'params';
+  mutateAPI?: string;
   onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -45,6 +51,7 @@ export default memo(function InputCustom({
   const [value, setValue] = useState('');
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { mutate } = useSWRConfig();
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -52,30 +59,32 @@ export default memo(function InputCustom({
   }, [initialValue]);
   const handleOk = async () => {
     setLoading(true);
-    await fetchUpdate(
-      APIurl,
-      { [name]: value },
-      (res) => {
+    await instanceAxios
+      .put(
+        passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
+        passType === 'body' && { [name]: value }
+      )
+      .then((res) => {
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
           dispatch(setUser(res.data.data as UserType));
         }
+        mutateAPI && mutate(mutateAPI);
         onSuccess?.();
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',
         });
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.log(err);
         notification.error({
           message: 'Error',
           description: 'Cập nhật dữ liệu thất bại',
         });
-      },
-      () => setLoading(false)
-    );
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleBlur = async () => {

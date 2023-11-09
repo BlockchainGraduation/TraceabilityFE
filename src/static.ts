@@ -1,5 +1,6 @@
 import logo from '../public/Durian.jpg';
 import logoRaiden from '../public/logo.webp';
+import logoDurian from '../public/logoDurian.png';
 import qc1 from '../public/qc1.jpg';
 import qc2 from '../public/qc2.jpg';
 import qc3 from '../public/qc3.jpg';
@@ -16,5 +17,6 @@ const staticVariables = {
   qc4,
   qc5,
   qc6,
+  logoDurian,
 };
 export default staticVariables;

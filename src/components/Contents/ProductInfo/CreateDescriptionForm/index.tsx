@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 type FormType = {
   file?: UploadFile;
   description?: string;
-  date?: DatePickerType;
+  title?: string;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -31,8 +31,10 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 export default function CreateDescriptionForm({
   productId,
+  className,
   onSuccess,
 }: {
+  className?: string;
   productId: string;
   onSuccess?: () => void;
 }) {
@@ -101,16 +103,17 @@ export default function CreateDescriptionForm({
     </div>
   );
   return (
-    <div>
+    <div className={className}>
       <Form
+        layout={'vertical'}
         name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        // labelCol={{ span: 8 }}
+        // wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
       >
         <Form.Item<FormType>
-          label="Upload"
+          label="Chọn hình ảnh"
           valuePropName="fileList"
           name={'file'}
           getValueFromEvent={normFile}
@@ -134,7 +137,19 @@ export default function CreateDescriptionForm({
           </Upload>
         </Form.Item>
         <Form.Item<FormType>
-          label={'Mota'}
+          label={'Tiêu đề'}
+          name={'title'}
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng thêm tiêu đề',
+            },
+          ]}
+        >
+          <Input.TextArea autoSize />
+        </Form.Item>
+        <Form.Item<FormType>
+          label={'Mô tả'}
           name={'description'}
           rules={[
             {

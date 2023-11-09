@@ -40,6 +40,7 @@ export default function CommentInput({
       </div>
       <Input.TextArea
         autoSize
+        placeholder="Bình luận..."
         className="max-h-[300px]"
         value={commentValue}
         onChange={(e) => setCommentValue(e.target.value)}
