@@ -446,12 +446,11 @@ export default function ProductInfoPahe({
                     <TextAreaCustom
                       showEdit={dataProduct.created_by === currentUser.id}
                       queryType="product"
-                      APIurl={`product/update/${dataMarket.order_id}`}
+                      APIurl={`product/update/${dataProduct.id}`}
                       className="p-[20px]"
                       name={'description'}
-                      initialValue={`ANOMALY A.I. is a contemporary art collection comprising 888 distinct pieces of AI and machine learning-generated art by the artist Star Im. Each artwork seamlessly melds elements from significant works in the realm of Web 3.0, designs from generative code art, AI art, and digital art. The intention behind this collection is to offer a unified visual art experience, showcasing variations or derivative versions that radiate uniqueness and originality, affectionately referred to as "anomalies" within the studio.
-                The creation of ANOMALY A.I. involved harnessing a diverse array of exceptional tools, including RunwayML, Stable Diffusion, Stability AI, Dalle, Midjourney, Pika, as well as Adobe software (Firefly, Illustrator, and Photoshop), along with various 3D programs. Each individual work in this collection is assigned a unique number and comes in 10 editions, ranging from #1 to #10, culminating in a total of 8,880 editions. The artist's signature is on the bottom right corner of every piece within this collection.
-                This endeavor represents the initial stage of a multifaceted art journey on the web. It is worth noting that participation in this exploration of machine learning, along with its accompanying artist's journey, is entirely cost-free.`}
+                      initialValue={dataProduct.description || ''}
+                      passType={'params'}
                     />
                   </div>
                   {/* Giới thiệu chủ sử hữu */}
@@ -537,7 +536,7 @@ export default function ProductInfoPahe({
                   </div>
                 </div>
               </div>
-              {((dataMarket.order_type !== 'SEEDLING_COMPANY' &&
+              {((dataProduct.product_type !== 'SEEDLING_COMPANY' &&
                 dataHistory.transactions_sf) ||
                 dataHistory.transactions_fm) && (
                 <ProductOrigin
@@ -548,7 +547,7 @@ export default function ProductInfoPahe({
                   {...dataHistory}
                 />
               )}
-              {dataMarket.order_type === 'FARMER' && (
+              {dataProduct.product_type === 'FARMER' && (
                 <div
                   //  relative before:content-[''] before:left-[15px] before:absolute before:w-[1px] before:h-full before:bg-black
                   className={`border-l-2 border-[#42bb67] block w-2/3 m-auto mt-[150px]`}
@@ -593,7 +592,7 @@ export default function ProductInfoPahe({
                     </p>
                     <GrowUpForm
                       onSuccess={() => setOpenGrowUpModal(false)}
-                      productId={dataMarket.order_id}
+                      productId={dataProduct.id || ''}
                     />
                   </Modal>
                 </div>

@@ -1,5 +1,6 @@
+import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch } from '@/hooks';
-import { User, setUser } from '@/reducers/userSlice';
+import { setUser } from '@/reducers/userSlice';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
 import {
@@ -25,6 +26,7 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
+import { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
 export default memo(function TextAreaCustom({
   name,
@@ -32,8 +34,11 @@ export default memo(function TextAreaCustom({
   className,
   input,
   classNameLabel,
+  passType = 'body',
+  mutateAPI,
   APIurl,
   queryType,
+  onSuccess,
   onKeyDown,
   showEdit = true,
 }: // onChange = () => {},
@@ -45,7 +50,10 @@ export default memo(function TextAreaCustom({
   APIurl: string;
   queryType: 'user' | 'product';
   showEdit?: boolean;
+  passType?: 'body' | 'params';
+  mutateAPI?: string;
   input?: TextAreaProps;
+  onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
@@ -54,6 +62,7 @@ export default memo(function TextAreaCustom({
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const { mutate } = useSWRConfig();
   const ref = useRef<InputRef>(null);
   // useEffect(() => {
   //   const handleOutSideClick = async (event: any) => {
@@ -70,29 +79,32 @@ export default memo(function TextAreaCustom({
   // }, [editAble]);
   const handleOk = async () => {
     setLoading(true);
-    await fetchUpdate(
-      APIurl,
-      { [name]: value },
-      (res) => {
+    await instanceAxios
+      .put(
+        passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
+        passType === 'body' && { [name]: value }
+      )
+      .then((res) => {
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
-          dispatch(setUser(res.data.data as User));
+          dispatch(setUser(res.data.data as UserType));
         }
+        mutateAPI && mutate(mutateAPI);
+        onSuccess?.();
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',
         });
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.log(err);
         notification.error({
           message: 'Error',
           description: 'Cập nhật dữ liệu thất bại',
         });
-      },
-      () => setLoading(false)
-    );
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleBlur = async () => {
@@ -110,13 +122,13 @@ export default memo(function TextAreaCustom({
 
   const handleKeyDown = async (e: KeyboardEvent) => {
     onKeyDown?.(e);
-    if (e.key === 'Enter') {
-      if (value === initialValue) {
-        setEditAble(false);
-      } else {
-        setOpenModalConfirm(true);
-      }
-    }
+    // if (e.key === 'Enter') {
+    //   if (value === initialValue) {
+    //     setEditAble(false);
+    //   } else {
+    //     setOpenModalConfirm(true);
+    //   }
+    // }
   };
   return (
     <div className={`flex h-fit item-center ${className}`}>
