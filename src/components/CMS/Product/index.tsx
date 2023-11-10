@@ -143,7 +143,7 @@ export default memo(function ProductCMS() {
   useEffect(() => {
     fetchProductMe();
   }, [fetchProductMe]);
-  // const { error, isLoading } = useSWR('product/me', fetchProductMe);
+  useSWR('product/me', fetchProductMe);
 
   // const handleCancel = () => setPreviewOpen(false);
 
@@ -306,6 +306,7 @@ export default memo(function ProductCMS() {
                   key: 3,
                   label: (
                     <Popconfirm
+                      placement={'left'}
                       title="Sure to open market ?"
                       onConfirm={() => fetchCreateMarket(record.id)}
                     >
@@ -456,7 +457,10 @@ export default memo(function ProductCMS() {
 
           {currentModalPage === 'CREATE_PRODUCT' && (
             <CreateProductForm
-              onSuccess={() => setOpenModalCreate(false)}
+              onSuccess={() => {
+                setOpenModalCreate(false);
+                mutate('product/me');
+              }}
               transactionId={transactionId}
             />
           )}

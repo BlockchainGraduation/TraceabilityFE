@@ -144,26 +144,6 @@ export default function CreateProductForm({
         wrapperCol={{ span: 14 }}
         onFinish={onFinish}
       >
-        {/* <Form.Item<FormType>
-          label="Chon giao dịch"
-          name="transaction_id"
-          rules={[
-            {
-              required: !(currentUser.system_role === 'SEEDLING_COMPANY'),
-              message: 'Please input your username!',
-            },
-          ]}
-        >
-          <Select
-            options={[
-              { label: 'Option1', value: 1 },
-              { label: 'Option2', value: 2 },
-              currentUser.system_role === 'SEEDLING_COMPANY'
-                ? { label: 'None', value: 0 }
-                : {},
-            ]}
-          />
-        </Form.Item> */}
         <Form.Item<FormType>
           label="Tên sản phẩm"
           name="name"

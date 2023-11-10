@@ -30,6 +30,7 @@ import {
   Popover,
   QRCode,
   Result,
+  Tooltip as TooltipAntd,
   Row,
   Segmented,
   Table,
@@ -38,6 +39,7 @@ import {
   Typography,
   Upload,
   UploadFile,
+  message,
 } from 'antd';
 import {
   Chart as ChartJS,
@@ -84,8 +86,9 @@ import Owner from '../../market/[marketId]/components/Owner';
 import ProductOrigin from '../../market/[marketId]/components/PoductOrigin';
 import { useRouter } from 'next/navigation';
 import Description from '@/components/Contents/ProductInfo/Description';
+import useSWR, { useSWRConfig } from 'swr';
 
-export default function ProductInfoPahe({
+export default function ProductInfoPage({
   params,
 }: {
   params: { productId: string };
@@ -109,6 +112,8 @@ export default function ProductInfoPahe({
   const [selectedDescription, setSelectedDescription] = useState(0);
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [showModalPay, setShowModalPay] = useState(false);
+  const { mutate } = useSWRConfig();
+  const [loadingImage, setLoadingImage] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
   ChartJS.register(
@@ -198,6 +203,25 @@ export default function ProductInfoPahe({
     },
   ];
 
+  // const handleChangeProductAvatar = async (
+  //   info: UploadChangeParam<UploadFile>
+  // ) => {
+  //   setLoadingImage(true);
+  //   info.file.status = 'done';
+  //   let formData = new FormData();
+  //   formData.append('banner', info.file.originFileObj as Blob, info.file.name);
+  //   await instanceAxios
+  //     .put(`product/update/${params.productId}`, formData)
+  //     .then((res) => {
+  //       mutate(`product/${params.productId}`);
+  //       message.success('Cập nhật thành công');
+  //     })
+  //     .catch((err) => {
+  //       message.error('Cập nhật thất bại');
+  //     })
+  //     .finally(() => setLoadingImage(false));
+  // };
+
   const fethProduct = async () => {
     setLoading(true);
     await instanceAxios
@@ -232,6 +256,7 @@ export default function ProductInfoPahe({
   useEffectOnce(() => {
     fethProduct();
   });
+  useSWR(`product/${params.productId}`, fethProduct);
 
   const fetchListGrowUp = async (productId: string) => {
     await instanceAxios
@@ -328,14 +353,36 @@ export default function ProductInfoPahe({
           <>
             <div className="px-[50px]">
               <div className="relative flex justify-between gap-x-10">
-                <Image
-                  className="object-cover rounded-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
-                  alt=""
-                  width={'50%'}
-                  preview={false}
-                  height={500}
-                  src={dataProduct.banner}
-                />
+                <div className="relative w-1/2 pr-5">
+                  <Image
+                    className="object-cover rounded-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
+                    alt=""
+                    width={'100%'}
+                    preview={false}
+                    height={500}
+                    src={dataProduct.banner}
+                  />
+                  <Upload
+                    accept="image/png, image/jpeg, image/jpg"
+                    showUploadList={false}
+                    method="PUT"
+                    maxCount={1}
+                    action={`${process.env.NEXT_PUBLIC_API_ORIGIN}product/update/${params.productId}`}
+                    // onChange={handleChangeProductAvatar}
+                    onChange={(info) => {
+                      // if (info.file.status !== 'uploading') {
+                      //   console.log(info.file, info.fileList);
+                      // }
+                      if (info.file.status === 'done') {
+                        message.success(`Upload thành công`);
+                      } else if (info.file.status === 'error') {
+                        message.error(`Upload thất bại`);
+                      }
+                    }}
+                  >
+                    <EditTwoTone className="absolute top-1/2 right-0" />
+                  </Upload>
+                </div>
                 <div className="w-1/2 top-4/12 left-[98%] rounded">
                   <InputCustom
                     showEdit={dataProduct.created_by === currentUser.id}
@@ -584,7 +631,7 @@ export default function ProductInfoPahe({
                     footer={[]}
                   >
                     <Typography.Title level={3}>
-                      Thêm qua trinh phat trien
+                      Thêm quá trình phát triển
                     </Typography.Title>
                     <p className="text-rose-600">
                       * Lưu ý: Bạn không thể chỉnh sửa được nội dung khi đã đăng
@@ -602,12 +649,12 @@ export default function ProductInfoPahe({
               <div className=" flex items-center  py-[30px] text-2xl mb-[50px] pl-[100px] bg-[#42bb67]">
                 <p> Giới thiệu chi tiết về sản phẩm</p>
                 {dataProduct.created_by === currentUser.id && (
-                  <Popover title="Tạo thêm mô tả về sản phẩm">
+                  <TooltipAntd title="Tạo thêm mô tả về sản phẩm">
                     <PlusCircleTwoTone
                       onClick={() => setOpenCreateDescriptionModal(true)}
                       className="ml-[50px] text-2xl"
                     />
-                  </Popover>
+                  </TooltipAntd>
                 )}
                 <Modal
                   centered

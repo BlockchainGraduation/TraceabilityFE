@@ -7,9 +7,13 @@ import { increment } from '@/reducers/counterSlice';
 import staticVariables from '@/static';
 import { faCubes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Image } from 'antd';
+import { Avatar, Image, Skeleton } from 'antd';
 import { useTranslations } from 'next-intl';
-
+import dynamic from 'next/dynamic';
+// const Header = dynamic(() => import('@/components/Header'), {
+//   loading: () => <Skeleton.Avatar />,
+// });
+// const Footer = dynamic(() => import('@/components/Footer'));
 export default function Index() {
   return (
     <>

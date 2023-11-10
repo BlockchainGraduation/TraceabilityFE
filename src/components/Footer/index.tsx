@@ -9,9 +9,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Drawer, FloatButton, Input, Tag } from 'antd';
 import Meta from 'antd/es/card/Meta';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 
-export default function Footer() {
+export default memo(function Footer() {
   const [openDrawer, setOpenDrawer] = useState(false);
   return (
     <div
@@ -137,4 +137,4 @@ export default function Footer() {
       </Drawer>
     </div>
   );
-}
+});

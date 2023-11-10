@@ -7,13 +7,16 @@ import Header from '@/components/Header';
 import { ReactNode, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAppSelector } from '@/hooks';
-import { message } from 'antd';
+import { Skeleton, message } from 'antd';
 import { useSWRConfig } from 'swr';
 import Footer from '@/components/Footer';
 import { getCookie } from 'cookies-next';
+import dynamic from 'next/dynamic';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
+// const Header = dynamic(() => import('@/components/Header'),{loading:()=><Skeleton/>});
+// const Footer = dynamic(() => import('@/components/Footer'));
 
 interface NotificationType {
   message: string;
@@ -65,7 +68,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       {!loading && (
         <div>
           <Header />
-          {children}
+          <div className="min-h-[800px]">{children}</div>
           <Footer />
         </div>
       )}

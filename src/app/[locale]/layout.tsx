@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 // import Pusher from 'pusher-js';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
-// import Header from '@/components/Header';
-// import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import 'moment/locale/pt-br';
 import { Roboto } from 'next/font/google';
 import { App, ConfigProvider, Skeleton, Spin, message } from 'antd';
@@ -12,14 +12,14 @@ import theme from '@/theme/themeConfig';
 import dynamic from 'next/dynamic';
 // import { Suspense } from 'react';
 
-const Header = dynamic(() => import('@/components/Header'), {
-  ssr: false,
-  loading: () => <Skeleton active />,
-});
-const Footer = dynamic(() => import('@/components/Footer'), {
-  ssr: false,
-  loading: () => <Skeleton active />,
-});
+// const Header = dynamic(() => import('@/components/Header'), {
+//   ssr: false,
+//   loading: () => <Skeleton active />,
+// });
+// const Footer = dynamic(() => import('@/components/Footer'), {
+//   ssr: false,
+//   loading: () => <Skeleton active />,
+// });
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
@@ -71,7 +71,7 @@ export default async function LocaleLayout({
           >
             {/* <Providers> */}
             <NextIntlClientProvider locale={locale} messages={messages}>
-              <div className="w-full overflow-x-hidden">{children}</div>
+              <div className="w-full  overflow-x-hidden">{children}</div>
             </NextIntlClientProvider>
             {/* </Providers> */}
           </ConfigProvider>
