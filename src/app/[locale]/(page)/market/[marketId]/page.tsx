@@ -204,13 +204,14 @@ export default function MarketInfo({
       .get(`marketplace/${params.marketId}`)
       .then(async (res) => {
         setDataMarket(res.data.data);
+        console.log('marketplace', res.data.data);
+        if (res.data.data.order_type === 'FARMER') {
+          fetchListGrowUp(res.data.data.order_id);
+        }
         await instanceAxios
           .get(`product/${res.data.data.order_id}`)
           .then((res) => {
             setDataProduct(res.data.data);
-            if (res.data.data.product_type === 'FARMER') {
-              fetchListGrowUp(res.data.data.order_id);
-            }
           })
           .catch((err) => console.log('asdadasd'));
 
@@ -253,9 +254,11 @@ export default function MarketInfo({
       });
   };
   const fetchListGrowUp = async (productId: string) => {
+    console.log('fetchListGrowUp');
     await instanceAxios
       .get(`product/${productId}/grow_up?skip=0&limit=100`)
       .then((res) => {
+        console.log(res.data.data.list_grow_up);
         setDataGrowUp(res.data.data.list_grow_up);
       })
       .catch((err) => console.log('asdadasd'));
@@ -422,14 +425,25 @@ export default function MarketInfo({
                 </p>
               </div> */}
               <div className="flex items-center mt-[10px]">
-                <Button
+                {/* <Button
                   disabled={dataProduct.created_by === currentUser.id}
                   onClick={() => setShowModalPay(true)}
                   className="w-full  shadow-[0px_12px_10px_-8px_rgba(72,184,159,0.8784313725)]"
                 >
-                  <p className="text-4xl text-[#1f5145]">Buy now</p>
-                </Button>
+                  <p className="text-4xl text-[#1f5145]">Buy aanow</p>
+                </Button> */}
                 <Button
+                  onClick={() => setShowModalPay(true)}
+                  className="border m-auto hover:scale-95 duration-300 relative group cursor-pointer text-sky-50  overflow-hidden h-16 w-64 rounded-md bg-green-200 p-2 flex justify-center items-center font-extrabold"
+                >
+                  <div className="absolute right-32 -top-4  group-hover:top-1 group-hover:right-2  w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-green-700"></div>
+                  <div className="absolute right-2 -top-4  group-hover:top-1 group-hover:right-2  w-32 h-32 rounded-full group-hover:scale-150  duration-500 bg-green-600"></div>
+                  <div className="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2  w-24 h-24 rounded-full group-hover:scale-150  duration-500 bg-green-500"></div>
+                  <div className="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2  w-16 h-16 rounded-full group-hover:scale-150  duration-500 border-current-color"></div>
+                  <p className="z-10 text-[20px]">Buy now</p>
+                </Button>
+
+                {/* <Button
                   disabled={
                     dataProduct.created_by === currentUser.id ||
                     dataProduct.quantity === 0
@@ -441,7 +455,7 @@ export default function MarketInfo({
                   className="flex items-center"
                 >
                   <ShoppingCartOutlined />
-                </Button>
+                </Button> */}
               </div>
               <Modal
                 onCancel={() => setShowModalPay(false)}
@@ -459,28 +473,104 @@ export default function MarketInfo({
           </div>
         </div>
         <div className="w-full flex mt-[50px]">
-          <div className="w-2/5 ">
-            <p className="py-[10px] border-2 text-white bg-[#42bb67] rounded-xl text-center ">
-              Thông tin về sản phẩm
-            </p>
-            <div className="flex flex-col w-2/3 m-auto px-[20px] py-[15px] border-[1px] border-[#42bb67] rounded">
-              {listInformation.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-full flex justify-between items-center py-[5px]"
-                >
-                  <p>{item.label}</p>
-                  <Paragraph copyable>{item.value}</Paragraph>
+          <div className="w-3/5 pt-[10px]">
+            <div className="w-full flex space-x-10">
+              {/* Giới thiệu chủ sử hữu */}
+              <div className=" w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
+                <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+                  Chủ sở hữu
                 </div>
-              ))}
-            </div>
-            {/* Giới thiệu sản  phẩm */}
-            <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
-              <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                Giới thiệu về sản phẩm
+                <div className="p-[20px] flex flex-col space-y-10 items-center">
+                  <Owner {...dataOwner} />
+                  {/* <Link href={`/user/${dataProduct.created_by}`}>
+                  <div className="flex items-center p-[20px] rounded-xl flex-col bg-[#1212120A] hover:bg-[#ececec]">
+                    <Avatar size={100} src={dataProduct.user?.avatar} />
+                    <p className="text-2xl font-bold text-[#222222]">
+                      {dataProduct.user?.username}
+                    </p>
+                  </div>
+                </Link> */}
+                  <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
+                    <p className="text-center text-white bg-current-color p-[5px]">
+                      Liên hệ
+                    </p>
+                    <div className="w-full px-[10px]">
+                      <Paragraph className=" border-t-0 p-[5px]" copyable>
+                        {dataProduct.user?.email}
+                      </Paragraph>
+                      {dataProduct.user?.phone && (
+                        <Paragraph
+                          className="border-current-color border-[1px] border-t-0 p-[5px]"
+                          copyable
+                        >
+                          {dataProduct.user?.phone}
+                        </Paragraph>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="py-[20px] px-[30px]">
-                {`ANOMALY A.I. is a contemporary art collection comprising 888
+              {/* Thông tin sản phẩm */}
+              <div className="flex-col w-1/2 rounded-xl h-fit border-[1px] border-current-color overflow-hidden">
+                <div className="py-[20px] text-center text-white font-bold border-b-[1px]  border-current-color bg-current-color">
+                  Thông tin sản phẩm
+                </div>
+                <div className="flex flex-col w-full px-[20px] py-[15px]">
+                  {listInformation.map((item, index) => (
+                    <div
+                      key={index}
+                      className="w-full flex justify-between items-center py-[5px]"
+                    >
+                      <p>{item.label}</p>
+                      <Paragraph copyable>{item.value}</Paragraph>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-2/5 pl-[50px] rounded overflow-hidden">
+            {/* <QRCode
+              className="m-auto"
+              type="canvas"
+              value="https://www.facebook.com/"
+            /> */}
+            <Line
+              className="mt-[100px]"
+              options={options}
+              data={dataChartProps}
+            />
+            {/* <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
+              <Carousel
+                className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
+                waitForAnimate={true}
+                effect="fade"
+                autoplay
+              >
+                <div>
+                  <h3 style={contentStyle}>1</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>2</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>3</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>4</h3>
+                </div>
+              </Carousel>
+            </div> */}
+          </div>
+        </div>
+        <div className="w-full flex">
+          {/* Giới thiệu sản  phẩm */}
+          <div className="mt-[50px] w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
+            <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+              Giới thiệu về sản phẩm
+            </div>
+            <p className="py-[20px] px-[30px]">
+              {`ANOMALY A.I. is a contemporary art collection comprising 888
                 distinct pieces of AI and machine learning-generated art by the
                 artist Star Im. Each artwork seamlessly melds elements from
                 significant works in the realm of Web 3.0, designs from
@@ -501,116 +591,47 @@ export default function MarketInfo({
                 multifaceted art journey on the web. It is worth noting that
                 participation in this exploration of machine learning, along
                 with its accompanying artist's journey, is entirely cost-free.`}
-              </p>
-            </div>
-            {/* Giới thiệu chủ sử hữu */}
-            <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
-              <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                Chủ sở hữu
-              </div>
-              <div className="p-[20px] flex flex-col space-y-10 items-center">
-                <Owner {...dataOwner} />
-                {/* <Link href={`/user/${dataProduct.created_by}`}>
-                  <div className="flex items-center p-[20px] rounded-xl flex-col bg-[#1212120A] hover:bg-[#ececec]">
-                    <Avatar size={100} src={dataProduct.user?.avatar} />
-                    <p className="text-2xl font-bold text-[#222222]">
-                      {dataProduct.user?.username}
-                    </p>
-                  </div>
-                </Link> */}
-                <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
-                  <p className="text-center text-white bg-current-color p-[5px]">
-                    Liên hệ
-                  </p>
-                  <div className="w-full px-[10px]">
-                    <Paragraph className=" border-t-0 p-[5px]" copyable>
-                      {dataProduct.user?.email}
-                    </Paragraph>
-                    {dataProduct.user?.phone && (
-                      <Paragraph
-                        className="border-current-color border-[1px] border-t-0 p-[5px]"
-                        copyable
-                      >
-                        {dataProduct.user?.phone}
-                      </Paragraph>
+            </p>
+          </div>
+          <div className="w-1/2 mt-[50px] pl-[50px]">
+            <Segmented
+              size={'large'}
+              options={[
+                { label: 'Bình luận', value: 'COMMENT' },
+                { label: 'Lịch sử giao dịch', value: 'HISTORY' },
+              ]}
+              onChange={(e) => setChangePageRight(e as string)}
+            />
+            <div className="w-full mt-[20px]">
+              {changePageRight === 'COMMENT' && (
+                <div className="p-[20px] my-5 border-[1px] border-current-color rounded-xl shadow-lg">
+                  <div className="max-h-[500px] overflow-auto">
+                    {commentList.length ? (
+                      commentList.map((item, index) => (
+                        <CommentItem
+                          isOwner={dataProduct.created_by === item.user_id}
+                          {...item}
+                          key={index}
+                        />
+                      ))
+                    ) : (
+                      <Empty
+                        image={Empty.PRESENTED_IMAGE_DEFAULT}
+                        description={'Chưa có bình luận nào'}
+                      />
                     )}
                   </div>
+                  <CommentInput marketId={params.marketId} />
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="w-3/5 pl-[50px] rounded overflow-hidden">
-            <QRCode
-              className="m-auto"
-              type="canvas"
-              value="https://www.facebook.com/"
-            />
-            <Line
-              className="mt-[100px]"
-              options={options}
-              data={dataChartProps}
-            />
-            <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
-              <Carousel
-                className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
-                waitForAnimate={true}
-                effect="fade"
-                autoplay
-              >
-                <div>
-                  <h3 style={contentStyle}>1</h3>
-                </div>
-                <div>
-                  <h3 style={contentStyle}>2</h3>
-                </div>
-                <div>
-                  <h3 style={contentStyle}>3</h3>
-                </div>
-                <div>
-                  <h3 style={contentStyle}>4</h3>
-                </div>
-              </Carousel>
-            </div>
-            <div className="w-full mt-[50px] pl-[50px]">
-              <Segmented
-                size={'large'}
-                options={[
-                  { label: 'Bình luận', value: 'COMMENT' },
-                  { label: 'Lịch sử giao dịch', value: 'HISTORY' },
-                ]}
-                onChange={(e) => setChangePageRight(e as string)}
-              />
-              <div className="w-full mt-[20px]">
-                {changePageRight === 'COMMENT' && (
-                  <div className="p-[20px] my-5 border-[1px] border-current-color rounded-xl shadow-lg">
-                    <div className="max-h-[500px] overflow-auto">
-                      {commentList.length ? (
-                        commentList.map((item, index) => (
-                          <CommentItem
-                            isOwner={dataProduct.created_by === item.user_id}
-                            {...item}
-                            key={index}
-                          />
-                        ))
-                      ) : (
-                        <Empty
-                          image={Empty.PRESENTED_IMAGE_DEFAULT}
-                          description={'Chưa có bình luận nào'}
-                        />
-                      )}
-                    </div>
-                    <CommentInput marketId={params.marketId} />
-                  </div>
-                )}
-                {changePageRight === 'HISTORY' && (
-                  <Table
-                    columns={columns}
-                    dataSource={data}
-                    pagination={false}
-                    scroll={{ y: 340 }}
-                  />
-                )}
-              </div>
+              )}
+              {changePageRight === 'HISTORY' && (
+                <Table
+                  columns={columns}
+                  dataSource={data}
+                  pagination={false}
+                  scroll={{ y: 340 }}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -638,7 +659,7 @@ export default function MarketInfo({
               />
               <p className="pl-[20px]">Quá trình phát triển </p>
             </div>
-            <div className="ml-[-111px]  max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
+            <div className="ml-[-111px] max-h-[700px] border-b-[1px] overflow-auto mb-[200px] pl-[100px]">
               {dataGrowUp.length ? (
                 dataGrowUp.map((item, index) => (
                   <GrowUpItem {...item} key={index} />

@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  Button,
   Col,
   Collapse,
   ConfigProvider,
@@ -22,6 +23,7 @@ import {
   Space,
   Table,
   Tag,
+  notification,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
@@ -35,7 +37,7 @@ import React, {
 } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
-interface DataType {
+interface UserRequest {
   key: React.Key;
   index: number;
   full_name?: string;
@@ -53,7 +55,9 @@ interface DataType {
   confirm_status?: string;
   username?: string;
   private_key?: string;
-  survey_data?: {};
+  survey_data?: {
+    system_role?: string;
+  };
   id: string;
   address_real?: string;
   created_at?: string;
@@ -65,10 +69,26 @@ export default memo(function ManageUser() {
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
   const [totalUser, setTotalUser] = useState(0);
-  const [userList, setUserList] = useState<DataType[]>([]);
+  const [userList, setUserList] = useState<UserRequest[]>([]);
   const { mutate } = useSWRConfig();
-
-  const columnsWaiting: ColumnsType<DataType> =
+  const fetchAction = async (record: UserRequest, action: string) => {
+    await instanceAxios
+      .put(`user/${record.id}/confirm_user?confirm=${action}`)
+      .then((res) => {
+        notification.success({
+          message: 'Thành công',
+          description: `Đã ${action} yêu cầu của ${record.username}`,
+        });
+        mutate('user/list');
+      })
+      .catch((err) => {
+        notification.error({
+          message: 'Lỗi',
+          description: `Đã có lỗi xảy ra`,
+        });
+      });
+  };
+  const columnsWaiting: ColumnsType<UserRequest> =
     currentTable === 'waiting'
       ? [
           {
@@ -77,7 +97,7 @@ export default memo(function ManageUser() {
           },
           {
             title: 'Role yêu cầu',
-            dataIndex: 'requestRole',
+            dataIndex: 'survey_data',
           },
         ]
       : [
@@ -86,7 +106,7 @@ export default memo(function ManageUser() {
             dataIndex: 'system_role',
           },
         ];
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<UserRequest> = [
     {
       title: 'Stt',
       dataIndex: 'key',
@@ -145,8 +165,18 @@ export default memo(function ManageUser() {
         >
           {currentTable === 'waiting' ? (
             <div className="flex items-center">
-              <Tag color={'error'}>Reject</Tag>
-              <Tag color={'success'}>Accept</Tag>
+              <Button
+                onClick={() => fetchAction(record, 'REJECT')}
+                className="text-[10px] py-[6px] px-[10px]"
+              >
+                Reject
+              </Button>
+              <Button
+                onClick={() => fetchAction(record, 'ACCEPT')}
+                className="text-[10px] py-[6px] px-[10px]"
+              >
+                Accept
+              </Button>
             </div>
           ) : (
             <Dropdown
@@ -260,7 +290,6 @@ export default memo(function ManageUser() {
     },
   ];
   const fetchUser = useCallback(async () => {
-    console.log('asas');
     setLoading(true);
     await instanceAxios
       .get(
@@ -270,7 +299,7 @@ export default memo(function ManageUser() {
       )
       .then((res) => {
         // console.log(res.data.data);
-        const newList: DataType[] = [...res.data.data.list_users].map(
+        const newList: UserRequest[] = [...res.data.data.list_users].map(
           (item, index) => ({
             key: skip * limit + index + 1,
             ...item,
@@ -282,6 +311,7 @@ export default memo(function ManageUser() {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, [currentTable, limit, skip]);
+  useSWR(`user/list`, fetchUser);
 
   useEffect(() => {
     fetchUser();

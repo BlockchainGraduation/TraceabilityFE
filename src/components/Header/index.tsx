@@ -80,8 +80,8 @@ export default memo(function Header() {
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
-  const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
-  const [totalNotifications, setTotalNotifications] = useState(0);
+  // const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
+  // const [totalNotifications, setTotalNotifications] = useState(0);
   const debouncedValue = useDebounce<string>(valueSearch, 500);
   const { mutate } = useSWRConfig();
 
@@ -145,8 +145,8 @@ export default memo(function Header() {
       .get(`notifications/list`)
       .then((res) => {
         setListNotifications(res.data.data);
-        setListUnreadNotifications(res.data.data.meta.unread_total);
-        setTotalNotifications(res.data.data.meta.total);
+        // setListUnreadNotifications(res.data.data.meta.unread_total);
+        // setTotalNotifications(res.data.data.meta.total);
       })
       .catch((err) => console.log(err));
   };
@@ -313,7 +313,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed z-10 flex  items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed z-50 flex  items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>

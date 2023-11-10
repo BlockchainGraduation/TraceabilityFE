@@ -15,11 +15,11 @@ export default memo(function Footer() {
   const [openDrawer, setOpenDrawer] = useState(false);
   return (
     <div
-      data-aos="fade-left"
-      data-aos-offset="200"
-      data-aos-delay="50"
-      data-aos-duration="1500"
-      data-aos-easing="ease-in-out"
+      // data-aos="fade-left"
+      // data-aos-offset="200"
+      // data-aos-delay="50"
+      // data-aos-duration="1500"
+      // data-aos-easing="ease-in-out"
       className="w-full overflow-x-hidden p-[100px] bg-stone-900"
     >
       <div className="w-full flex text-[16px] text-[#6C737D] ">
