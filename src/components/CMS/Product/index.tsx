@@ -446,11 +446,15 @@ export default memo(function ProductCMS() {
                     buyDay={item.created_at || ''}
                   />
                 ))}
-                {currentUser.system_role === 'SEEDLING_COMPANY' && (
-                  <Button onClick={() => setCurrentModalPage('CREATE_PRODUCT')}>
-                    Bỏ qua
-                  </Button>
-                )}
+                {currentUser.system_role === 'SEEDLING_COMPANY' ||
+                  ('ADMIN' && (
+                    <Button
+                      className="m-auto block"
+                      onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
+                    >
+                      Bỏ qua
+                    </Button>
+                  ))}
               </div>
             </div>
           )}

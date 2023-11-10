@@ -76,7 +76,7 @@ export default memo(function Header() {
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
-  const [resultSearch, setResultSearch] = useState([]);
+  const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -349,15 +349,11 @@ export default memo(function Header() {
           content={
             <div ref={ref} className="w-full max-h-[400px] overflow-y-auto">
               {resultSearch.length ? (
-                resultSearch.map((item: any, index) => (
+                resultSearch.map((item, index) => (
                   <SearchItem
                     parent={{ onClick: () => setShowSearchItems(false) }}
                     key={index}
-                    productImage={item.product.banner}
-                    productName={item.product.name}
-                    owner={item.product.user.username}
-                    quantity={item.product.quantity}
-                    price={item.product.price}
+                    data={item}
                   />
                 ))
               ) : (

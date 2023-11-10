@@ -138,7 +138,7 @@ export default function Category(props: Props) {
               key={index}
               href={`/market/${item.id}`}
             >
-              <div className="relative w-[280px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-2xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110  duration-300 ">
+              <div className="relative w-[280px] flex flex-col mx-[20px] rounded-2xl overflow-hidden shadow-lg transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110  duration-300 ">
                 <Image
                   width={280}
                   height={190}

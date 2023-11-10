@@ -151,6 +151,7 @@ export default function HomePage() {
   const [productName, setProductName] = useState('');
   const [dataTopSelling, setDataTopSelling] = useState<TopSellingType[]>([]);
   const [dataSegmented, setDataSegmented] = useState('FARMER');
+  const [orderTypeTopSelling, setOrderTypeTopSelling] = useState('FARMER');
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
   // const [data, setData] = useState<DataType[]>([]);
@@ -176,7 +177,7 @@ export default function HomePage() {
   }, [currentPage, limit, orderType, productName]);
   const fetchTopSelling = useCallback(async () => {
     await instanceAxios
-      .get(`product/top_selling?product_type=SEEDLING_COMPANY`)
+      .get(`product/top_selling?product_type=${orderTypeTopSelling}`)
       .then((res) => {
         console.log(res.data.data);
         setDataTopSelling(res.data.data);
@@ -185,7 +186,7 @@ export default function HomePage() {
         console.log(err);
         setDataTopSelling([]);
       });
-  }, []);
+  }, [orderTypeTopSelling]);
   useEffect(() => {
     fetchTopSelling();
   }, [fetchTopSelling]);
@@ -277,6 +278,7 @@ export default function HomePage() {
           <Segmented
             className="font-bold"
             size={'large'}
+            onChange={(e) => setOrderTypeTopSelling(e.toString())}
             options={[
               { label: 'Farmer', value: 'FARMER' },
               { label: 'Manufacturer', value: 'MANUFACTURER' },
@@ -285,28 +287,38 @@ export default function HomePage() {
           />
         </ConfigProvider>
         <div className="w-full flex justify-between gap-x-16">
-          <div className="w-1/2">
-            {dataTopSelling.length > 1 ? (
-              <LeaderBoard
-                listTopSelling={dataTopSelling.slice(
-                  0,
-                  (dataTopSelling.length - 1) / 2
+          {dataTopSelling.length ? (
+            <>
+              <div className="w-1/2">
+                {dataTopSelling.length > 1 ? (
+                  <LeaderBoard
+                    listTopSelling={dataTopSelling.slice(
+                      0,
+                      (dataTopSelling.length - 1) / 2
+                    )}
+                  />
+                ) : (
+                  <LeaderBoard listTopSelling={dataTopSelling} />
                 )}
-              />
-            ) : (
-              <LeaderBoard listTopSelling={dataTopSelling} />
-            )}
-          </div>
-          {dataTopSelling.length > 1 && (
-            <div className="w-1/2">
-              <LeaderBoard
-                skip={dataTopSelling.length / 2}
-                listTopSelling={dataTopSelling.slice(
-                  dataTopSelling.length / 2,
-                  dataTopSelling.length - 1
-                )}
-              />
-            </div>
+              </div>
+              {dataTopSelling.length > 1 && (
+                <div className="w-1/2">
+                  <LeaderBoard
+                    skip={dataTopSelling.length / 2}
+                    listTopSelling={dataTopSelling.slice(
+                      dataTopSelling.length / 2,
+                      dataTopSelling.length - 1
+                    )}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <Empty
+              className="m-auto"
+              image={Empty.PRESENTED_IMAGE_DEFAULT}
+              description={'Không tìm thấy dữ liệu'}
+            />
           )}
         </div>
       </div>
