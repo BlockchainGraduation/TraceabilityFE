@@ -270,7 +270,7 @@ export default function ProductInfoPage({
   };
   const handleDeleteDescriptionItem = async (descriptionId: string) => {
     await instanceAxios
-      .get(`detail_description/${descriptionId}/delete`)
+      .delete(`detail_description/${descriptionId}/delete`)
       .then((res) => {
         mutate(`product/${params.productId}`);
         notification.success({
