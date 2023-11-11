@@ -392,9 +392,9 @@ export default memo(function ProductCMS() {
   ];
 
   return (
-    <div>
+    <div className="transition duration-150 ease-out">
       <div className="flex items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium	">Danh sách sản phẩm</p>
+        <p className="text-3xl font-medium">Danh sách sản phẩm</p>
         <div
           onClick={() => setOpenModalCreate(true)}
           className="flex items-center p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
@@ -446,15 +446,14 @@ export default memo(function ProductCMS() {
                     buyDay={item.created_at || ''}
                   />
                 ))}
-                {currentUser.system_role === 'SEEDLING_COMPANY' ||
-                  ('ADMIN' && (
-                    <Button
-                      className="m-auto block"
-                      onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
-                    >
-                      Bỏ qua
-                    </Button>
-                  ))}
+                {currentUser.system_role === 'SEEDLING_COMPANY' && (
+                  <Button
+                    className="m-auto block"
+                    onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
+                  >
+                    Bỏ qua
+                  </Button>
+                )}
               </div>
             </div>
           )}

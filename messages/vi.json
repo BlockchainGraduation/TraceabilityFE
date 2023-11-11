@@ -5,7 +5,7 @@
   "header": {
     "route": {
       "home": "Trang chủ",
-      "market":"Market",
+      "market":"Marketplace",
       "history": "Lịch sử",
       "support": "Hỗ trợ"
     }

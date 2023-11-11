@@ -83,6 +83,32 @@ export default function RoleSelect({
         },
       ],
     },
+    {
+      rules: 'Nhà chế biến',
+      value: 'MANUFACTURER',
+      image: staticVariables.qc5.src,
+      decription: 'asdasdasd',
+      detail: [
+        {
+          label: 'Xem mô tả',
+          content: `Nông dân là những người lao động cư trú ở nông thôn, tham gia sản xuất
+      nông nghiệp. Nông dân sống chủ yếu bằng ruộng vườn, sau đó đến các
+      ngành nghề mà tư liệu sản xuất chính là đất đai. Tùy từng quốc gia,
+      từng thời kì lịch sử, người nông dân có quyền sở hữu khác nhau về
+      ruộng đất. Họ hình thành nên giai cấp nông dân, có vị trí, vai trò
+      nhất định trong xã hội.`,
+        },
+        {
+          label: 'Quyền lợi',
+          content: `Nông dân là những người lao động cư trú ở nông thôn, tham gia sản xuất
+      nông nghiệp. Nông dân sống chủ yếu bằng ruộng vườn, sau đó đến các
+      ngành nghề mà tư liệu sản xuất chính là đất đai. Tùy từng quốc gia,
+      từng thời kì lịch sử, người nông dân có quyền sở hữu khác nhau về
+      ruộng đất. Họ hình thành nên giai cấp nông dân, có vị trí, vai trò
+      nhất định trong xã hội.`,
+        },
+      ],
+    },
   ];
   return (
     <div className="w-full flex">

@@ -5,7 +5,7 @@
     "header": {
       "route":{
         "home":"Home",
-        "market":"Market",
+        "market":"Marketplace",
         "history":"History",
         "support":"Support"
       }

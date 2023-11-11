@@ -98,7 +98,7 @@ export default memo(function CMSPage() {
             />
           </Sider>
           <Layout>
-            <Header style={{ padding: 0, background: colorBgContainer }} />
+            {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
             <Content style={{ margin: '0 16px' }}>
               {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>

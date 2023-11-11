@@ -199,8 +199,8 @@ interface MarketType {
     product_status?: string;
     name?: string;
     description?: string;
-    price?: string;
-    quantity?: string;
+    price?: number;
+    quantity?: number;
     banner?: string;
     created_by?: string;
     created_at?: string;

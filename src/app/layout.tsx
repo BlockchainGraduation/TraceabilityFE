@@ -53,7 +53,8 @@ export default function RootLayout({ children }: Props) {
     >
       <Providers>
         {/* <App> */}
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        {/* <StyledComponentsRegistry>{children}</StyledComponentsRegistry> */}
+        {children}
         {/* </App> */}
       </Providers>
     </SWRConfig>

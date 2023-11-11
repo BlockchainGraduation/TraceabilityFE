@@ -10,6 +10,8 @@ import { Roboto } from 'next/font/google';
 import { App, ConfigProvider, Skeleton, Spin, message } from 'antd';
 import theme from '@/theme/themeConfig';
 import dynamic from 'next/dynamic';
+import { StyleProviderX } from '@/components/RootStyleRegistry';
+import { StyleProvider } from '@ant-design/cssinjs';
 // import { Suspense } from 'react';
 
 // const Header = dynamic(() => import('@/components/Header'), {
@@ -48,34 +50,39 @@ export default async function LocaleLayout({
     <html lang={locale} suppressHydrationWarning className={''}>
       <head></head>
       <body>
-        <App>
-          <ConfigProvider
-            locale={locale}
-            theme={{
-              ...theme,
-              token: {
-                colorBgLayout: '#d9eee1',
-              },
-              components: {
-                Segmented: {
-                  itemSelectedBg: '#42bb67',
-                  itemSelectedColor: '#ffffff',
-                  // itemHoverBg: '#D7E4FDFF',
+        <StyleProviderX>
+          <App>
+            <ConfigProvider
+              locale={locale}
+              theme={{
+                ...theme,
+                token: {
+                  colorBgLayout: '#d9eee1',
                 },
-                Button: {
-                  colorPrimaryHover: '#ffffff',
-                  colorPrimaryBgHover: '#42bb67',
+                components: {
+                  Segmented: {
+                    itemSelectedBg: '#42bb67',
+                    itemSelectedColor: '#ffffff',
+                    // itemHoverBg: '#D7E4FDFF',
+                  },
+                  Button: {
+                    colorPrimaryHover: '#ffffff',
+                    colorPrimaryBgHover: '#42bb67',
+                  },
                 },
-              },
-            }}
-          >
-            {/* <Providers> */}
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <div className="w-full  overflow-x-hidden">{children}</div>
-            </NextIntlClientProvider>
-            {/* </Providers> */}
-          </ConfigProvider>
-        </App>
+              }}
+            >
+              {/* <Providers> */}
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                <div className="w-full  overflow-x-hidden">
+                  {/* {children} */}
+                  {children}
+                </div>
+              </NextIntlClientProvider>
+              {/* </Providers> */}
+            </ConfigProvider>
+          </App>
+        </StyleProviderX>
       </body>
     </html>
   );

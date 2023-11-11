@@ -7,41 +7,41 @@ import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 
-interface MarketType {
-  id?: string;
-  order_type?: string;
-  order_id?: string;
-  order_by?: string;
-  hash_data?: string;
-  created_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: string;
-    quantity?: string;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-    };
-  };
-  comments?: {
-    content?: string;
-    marketplace_id?: string;
-    user_id?: string;
-    id?: string;
-    created_at?: string;
-    user?: string;
-    reply_comments?: string;
-  };
-}
+// interface MarketType {
+//   id?: string;
+//   order_type?: string;
+//   order_id?: string;
+//   order_by?: string;
+//   hash_data?: string;
+//   created_at?: string;
+//   product?: {
+//     id?: string;
+//     product_type?: string;
+//     product_status?: string;
+//     name?: string;
+//     description?: string;
+//     price?: number;
+//     quantity?: number;
+//     banner?: string;
+//     created_by?: string;
+//     created_at?: string;
+//     user?: {
+//       id?: string;
+//       avatar?: string;
+//       username?: string;
+//       email?: string;
+//     };
+//   };
+//   comments?: {
+//     content?: string;
+//     marketplace_id?: string;
+//     user_id?: string;
+//     id?: string;
+//     created_at?: string;
+//     user?: string;
+//     reply_comments?: string;
+//   };
+// }
 interface Props {
   orderType: 'FARMER' | 'SEEDLING_COMPANY' | 'MANUFACTURER';
   title?: string;
@@ -119,14 +119,16 @@ export default function Category(props: Props) {
       data-aos-delay="50"
       data-aos-duration="1500"
       data-aos-easing="ease-in-out"
-      className="px-[50px]"
+      // className="px-[50px]"
     >
-      <p className="text-[24px] font-semibold text-[#121212]">{props.title}</p>
+      <p className="text-[24px] pl-[50px] font-semibold text-[#121212]">
+        {props.title}
+      </p>
       {listMarket.length ? (
         <ScrollMenu
           Footer={[]}
           noPolyfill
-          wrapperClassName="max-w-full w-fit px-[20px]  mb-[30px] "
+          wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
           scrollContainerClassName="mx-[20px]"
           itemClassName="my-[20px]"
           LeftArrow={LeftArrow}
@@ -147,10 +149,10 @@ export default function Category(props: Props) {
                   alt=""
                   src={item.product?.banner}
                 />
-                <p className="w-full text-center font-bold truncate px-[15px] p-[10px] text-[16px]">
+                <p className="w-full text-center font-medium truncate px-[15px] p-[10px] text-[16px]">
                   {item.product?.name}
                 </p>
-                <div className="w-full flex justify-between px-[30px] pb-[10px]">
+                <div className="w-full flex justify-start space-x-2 px-[30px] pb-[10px]">
                   <ConfigProvider
                     theme={{
                       components: {
@@ -161,17 +163,31 @@ export default function Category(props: Props) {
                       },
                     }}
                   >
-                    <Statistic
-                      className="font-semibold"
-                      title="Số lượng"
-                      value={item.product?.quantity}
-                    />
-                    <Statistic
-                      className="font-semibold"
+                    <div className="w-1/2 flex space-y-2 flex-col">
+                      <p className="text-[14px] text-[#6f6f6f] font-normal	">
+                        Số lượng
+                      </p>
+                      <p className="font-bold tetx-[16px]">
+                        {item.product?.quantity || 0}
+                      </p>
+                    </div>
+                    <div className="w-1/2 flex space-y-2 flex-col">
+                      <p className="text-[14px] text-[#6f6f6f] font-normal	">
+                        Giá
+                      </p>
+                      <p className="font-bold tetx-[16px] truncate">
+                        {`${
+                          item.product?.price?.toLocaleString() || 0
+                        } ${currency}`}
+                      </p>
+                    </div>
+
+                    {/* <Statistic
+                      className="font-semibold w-1/2"
                       title="Giá"
                       value={item.product?.price}
                       suffix={currency}
-                    />
+                    /> */}
                   </ConfigProvider>
                 </div>
               </div>

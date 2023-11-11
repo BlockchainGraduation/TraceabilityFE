@@ -30,17 +30,16 @@ export default function MarketItem(props: ProductType) {
                 },
               }}
             >
-              <Statistic
-                className="font-semibold"
-                title="Số lượng"
-                value={props.quantity}
-              />
-              <Statistic
-                className="font-semibold"
-                title="Giá"
-                value={props.price}
-                suffix={currency}
-              />
+              <div className="w-1/2 flex space-y-2 flex-col">
+                <p className="text-[14px]">Số lượng</p>
+                <p className="font-bold tetx-[16px]">{props.quantity || 0}</p>
+              </div>
+              <div className="w-1/2 flex space-y-2 flex-col">
+                <p className="text-[14px]">Giá</p>
+                <p className="font-bold tetx-[16px] truncate">
+                  {`${props.price?.toLocaleString() || 0} ${currency}`}
+                </p>
+              </div>
             </ConfigProvider>
           </div>
         </div>

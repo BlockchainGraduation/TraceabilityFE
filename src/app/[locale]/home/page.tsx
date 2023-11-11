@@ -179,7 +179,6 @@ export default function HomePage() {
     await instanceAxios
       .get(`product/top_selling?product_type=${orderTypeTopSelling}`)
       .then((res) => {
-        console.log(res.data.data);
         setDataTopSelling(res.data.data);
       })
       .catch((err) => {
@@ -294,7 +293,7 @@ export default function HomePage() {
                   <LeaderBoard
                     listTopSelling={dataTopSelling.slice(
                       0,
-                      (dataTopSelling.length - 1) / 2
+                      dataTopSelling.length / 2
                     )}
                   />
                 ) : (
@@ -307,7 +306,7 @@ export default function HomePage() {
                     skip={dataTopSelling.length / 2}
                     listTopSelling={dataTopSelling.slice(
                       dataTopSelling.length / 2,
-                      dataTopSelling.length - 1
+                      dataTopSelling.length
                     )}
                   />
                 </div>

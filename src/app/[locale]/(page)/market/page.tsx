@@ -9,6 +9,7 @@ import {
   Pagination,
   Radio,
   RadioChangeEvent,
+  Skeleton,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import instanceAxios from '@/api/instanceAxios';
@@ -34,7 +35,8 @@ export default function MarketPage() {
         setListMarket(res.data.data.list_marketplace);
         setTotalMarket(res.data.data.total_marketplace);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }, [currentPage, limit, valueRadio]);
   useEffect(() => {
     fethListProduct();
@@ -98,27 +100,34 @@ export default function MarketPage() {
         </div>
       </div>
       <div className="w-4/5 px-[50px]">
-        <p className="text-[18px] pb-[20px]">
-          <strong>{totalMarket}</strong> sản phẩm phù hợp với tìm kiếm của bạn
-        </p>
-        <div className="flex flex-col gap-y-5">
-          {listMarket.length ? (
-            listMarket.map((item, index) => (
-              <CardProductItem key={index} {...item} />
-            ))
-          ) : (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_DEFAULT}
-              description="Không tìm thấy kết quả"
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <>
+            <p className="text-[18px] pb-[20px]">
+              <strong>{totalMarket}</strong> sản phẩm phù hợp với tìm kiếm của
+              bạn
+            </p>
+            <div className="flex flex-col gap-y-5">
+              {listMarket.length ? (
+                listMarket.map((item, index) => (
+                  <CardProductItem key={index} {...item} />
+                ))
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description="Không tìm thấy kết quả"
+                />
+              )}
+            </div>
+            <Pagination
+              className="mx-auto block w-fit mt-5"
+              current={currentPage}
+              total={totalMarket}
+              onChange={(e) => setCurrentPage(e)}
             />
-          )}
-        </div>
-        <Pagination
-          className="mx-auto block w-fit mt-5"
-          current={currentPage}
-          total={totalMarket}
-          onChange={(e) => setCurrentPage(e)}
-        />
+          </>
+        )}
       </div>
     </div>
   );

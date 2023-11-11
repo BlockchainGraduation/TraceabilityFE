@@ -511,7 +511,7 @@ export default function MarketInfo({
                 </div>
               </div>
               {/* Thông tin sản phẩm */}
-              <div className="flex-col w-1/2 rounded-xl h-fit border-[1px] border-current-color overflow-hidden">
+              <div className="flex-col w-1/2 rounded-xl border-[1px] border-current-color overflow-auto">
                 <div className="py-[20px] text-center text-white font-bold border-b-[1px]  border-current-color bg-current-color">
                   Thông tin sản phẩm
                 </div>

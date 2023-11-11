@@ -313,7 +313,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed z-50 flex  items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -331,8 +331,8 @@ export default memo(function Header() {
             className={`py-[15px] px-6 flex hover:bg-[#ececec] text-[16px] items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110`}
             href={`/${key}`}
           >
-            {listIcon[index]}
-            <p className={`text-inherit font-bold font-sans`}>
+            {/* {listIcon[index]} */}
+            <p className={`text-inherit font-medium font-sans`}>
               {t(`route.${key}`)}
             </p>
           </Link>
@@ -364,7 +364,7 @@ export default memo(function Header() {
               )}
             </div>
           }
-          open={showSearchItems}
+          open={!!debouncedValue}
           // trigger={'focus'}
           placement={'bottom'}
         >
@@ -373,15 +373,9 @@ export default memo(function Header() {
             maxLength={50}
             className="border-0 bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
             placeholder="Search Product...(Max 50 char)"
+            value={valueSearch}
             onChange={(e) => {
-              if (e.target.value.trim()) {
-                setValueSearch(e.target.value);
-                setShowSearchItems(true);
-              } else {
-                setResultSearch([]);
-                setShowSearchItems(false);
-                return;
-              }
+              setValueSearch(e.target.value);
             }}
             onFocus={(e) => {
               if (!e.target.value.trim()) {

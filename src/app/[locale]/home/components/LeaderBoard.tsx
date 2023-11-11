@@ -35,7 +35,7 @@ export default function LeaderBoard(props: Props) {
                   alt=""
                   width={70}
                   height={70}
-                  src={staticVariables.qc4.src}
+                  src={item.Product?.banner}
                 />
               </div>
               <p className="text-[16px] leading-6 pr-[50px] truncate">
