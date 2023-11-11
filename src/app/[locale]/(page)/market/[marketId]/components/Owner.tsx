@@ -1,6 +1,6 @@
 import React from 'react';
 // import './index.module.css';
-import { Image } from 'antd';
+import { Button, Image } from 'antd';
 import staticVariables from '@/static';
 import Link from 'next/link';
 
@@ -19,12 +19,16 @@ export default function Owner(props: UserType) {
         <p className="text-2xl mt-[20px] font-semibold">{props.full_name}</p>
         <p>{props.email}</p>
       </div>
-      <Link
-        className="bg-blue-700 px-4 py-1 text-slate-50 rounded-md z-10 hover:scale-125 transition-all duration-500 hover:bg-blue-500"
-        href={`/user/${props.id}`}
-      >
-        Xem
-      </Link>
+
+      <div className=" z-10 flex space-x-5 ">
+        {/* <Button>Liên hệ</Button> */}
+        <Link
+          className="bg-blue-700 hover:bg-blue-500 px-4 py-1 text-slate-50 rounded-md hover:scale-125 transition-all duration-500 "
+          href={`/user/${props.id}`}
+        >
+          Xem
+        </Link>
+      </div>
     </div>
   );
 }

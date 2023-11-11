@@ -130,6 +130,16 @@ interface ProductType {
   hashed_data?: string;
   product_status?: string;
   product_type?: string;
+  detail_description?: [
+    {
+      id?: string;
+      title?: string;
+      description?: string;
+      image?: string;
+      product_id?: string;
+    }
+  ];
+
   user?: {
     id?: string;
     avatar?: string;

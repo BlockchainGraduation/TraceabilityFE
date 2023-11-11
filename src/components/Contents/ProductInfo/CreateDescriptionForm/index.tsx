@@ -72,12 +72,12 @@ export default function CreateDescriptionForm({
 
   const onFinish = async (e: FormType) => {
     setLoading(true);
-    console.log(fileList[0].originFileObj);
+
     let formData = new FormData();
-    formData.append('image', fileList[0].originFileObj as Blob);
+    formData.append('img', fileList[0].originFileObj as Blob);
     await instanceAxios
       .post(
-        `product/grow_up?product_id=${productId}&description=${e.description}`,
+        `detail_description/create?title=${e.title}&description=${e.description}&product_id=${productId}`,
         formData
       )
       .then((res) => {
@@ -90,7 +90,7 @@ export default function CreateDescriptionForm({
       .catch((err) =>
         notification.error({
           message: 'Lỗi',
-          description: 'Upload quá trình phát triển không  thành công',
+          description: 'Upload mô tả không  thành công',
         })
       )
       .finally(() => setLoading(false));
@@ -127,7 +127,8 @@ export default function CreateDescriptionForm({
           <Upload
             // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
             listType="picture-card"
-            multiple
+            maxCount={1}
+            multiple={false}
             // fileList={fileList}
             onPreview={handlePreview}
             onChange={handleChange}

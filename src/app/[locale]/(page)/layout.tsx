@@ -37,7 +37,7 @@ export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
 
 export default function LocaleLayout({ children }: { children: ReactNode }) {
   const currentUser = useAppSelector((state) => state.user);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { mutate } = useSWRConfig();
   const cookie = getCookie('access_token');
   const route = useRouter();
@@ -57,7 +57,6 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
     };
   }, [currentUser, mutate]);
   useEffect(() => {
-    setLoading(true);
     if (!cookie) {
       route.push('/');
     }

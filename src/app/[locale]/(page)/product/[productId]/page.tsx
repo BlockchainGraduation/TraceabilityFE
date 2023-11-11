@@ -40,6 +40,7 @@ import {
   Upload,
   UploadFile,
   message,
+  notification,
 } from 'antd';
 import {
   Chart as ChartJS,
@@ -87,6 +88,7 @@ import ProductOrigin from '../../market/[marketId]/components/PoductOrigin';
 import { useRouter } from 'next/navigation';
 import Description from '@/components/Contents/ProductInfo/Description';
 import useSWR, { useSWRConfig } from 'swr';
+import { getCookie } from 'cookies-next';
 
 export default function ProductInfoPage({
   params,
@@ -266,6 +268,21 @@ export default function ProductInfoPage({
       })
       .catch((err) => console.log('asdadasd'));
   };
+  const handleDeleteDescriptionItem = async (descriptionId: string) => {
+    await instanceAxios
+      .get(`detail_description/${descriptionId}/delete`)
+      .then((res) => {
+        mutate(`product/${params.productId}`);
+        notification.success({
+          message: 'Thành công',
+          description: 'Đã xóa mô tả',
+        });
+      })
+      .catch((err) => {
+        notification.error({ message: 'Lỗi', description: 'Đã có lỗi xảy ra' });
+        console.log('asdadasd');
+      });
+  };
 
   const listInformation = [
     {
@@ -366,14 +383,19 @@ export default function ProductInfoPage({
                     accept="image/png, image/jpeg, image/jpg"
                     showUploadList={false}
                     method="PUT"
+                    name="banner"
                     maxCount={1}
-                    action={`${process.env.NEXT_PUBLIC_API_ORIGIN}product/update/${params.productId}`}
+                    action={`${process.env.NEXT_PUBLIC_API_ORIGIN}product/${params.productId}/banner`}
+                    headers={{
+                      authorization: `Bearer ${getCookie('access_token')}`,
+                    }}
                     // onChange={handleChangeProductAvatar}
                     onChange={(info) => {
                       // if (info.file.status !== 'uploading') {
                       //   console.log(info.file, info.fileList);
                       // }
                       if (info.file.status === 'done') {
+                        mutate(`product/${params.productId}`);
                         message.success(`Upload thành công`);
                       } else if (info.file.status === 'error') {
                         message.error(`Upload thất bại`);
@@ -393,6 +415,7 @@ export default function ProductInfoPage({
                     queryType={'product'}
                     passType={'params'}
                   />
+
                   <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
                     Sản phẩm của
                     <Link href={`/user/${dataProduct.user?.id}`}>
@@ -410,8 +433,21 @@ export default function ProductInfoPage({
                     initialValue={dataProduct.price || 0}
                     APIurl={`product/update/${dataProduct.id}`}
                     queryType={'product'}
-                    passType={'params'}
+                    passType={'body'}
                   />
+                  <div className="flex items-center space-x-2 font-medium text-gray-600">
+                    <p>{`Sản phẩm hiện còn:`}</p>
+                    <InputNumberCustom
+                      showEdit={dataProduct.created_by === currentUser.id}
+                      classNameLabel="font-medium font-bold text-[#2db457] text-[20px]"
+                      input={{ min: 0 }}
+                      name={'price'}
+                      initialValue={dataProduct.quantity || 0}
+                      APIurl={`product/update/${dataProduct.id}`}
+                      queryType={'product'}
+                      passType={'body'}
+                    />
+                  </div>
 
                   <div className="text-[16px] leading-10 font-[Nunito] text-[#707070] text-justify">
                     Ivy gourd protects the nervous system, provides more energy
@@ -431,7 +467,7 @@ export default function ProductInfoPage({
                       </div>
                     ))}
                   </div>
-                  <div className="rounded p-[20px]">
+                  {/* <div className="rounded p-[20px]">
                     <div className="flex items-center mt-[10px]">
                       <Button
                         disabled={dataProduct.created_by === currentUser.id}
@@ -466,48 +502,20 @@ export default function ProductInfoPage({
                         onSuccess={() => setShowModalPay(false)}
                       />
                     </Modal>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="w-full flex mt-[50px]">
-                <div className="w-2/5 ">
-                  <p className="py-[10px] border-2 text-white bg-[#42bb67] rounded-xl text-center ">
-                    Thông tin về sản phẩm
-                  </p>
-                  <div className="flex flex-col w-2/3 m-auto px-[20px] py-[15px] border-[1px] border-[#42bb67] rounded">
-                    {listInformation.map((item, index) => (
-                      <div
-                        key={index}
-                        className="w-full flex justify-between items-center py-[5px]"
-                      >
-                        <p>{item.label}</p>
-                        <Paragraph copyable>{item.value}</Paragraph>
+                <div className="w-1/2 pt-[10px]">
+                  <div className="w-full flex space-x-10">
+                    {/* Giới thiệu chủ sử hữu */}
+                    <div className=" w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
+                      <div className="py-[15px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+                        Chủ sở hữu
                       </div>
-                    ))}
-                  </div>
-                  {/* Giới thiệu sản  phẩm */}
-                  <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
-                    <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                      Giới thiệu về sản phẩm
-                    </div>
-                    <TextAreaCustom
-                      showEdit={dataProduct.created_by === currentUser.id}
-                      queryType="product"
-                      APIurl={`product/update/${dataProduct.id}`}
-                      className="p-[20px]"
-                      name={'description'}
-                      initialValue={dataProduct.description || ''}
-                      passType={'params'}
-                    />
-                  </div>
-                  {/* Giới thiệu chủ sử hữu */}
-                  <div className="mt-[50px] rounded-xl overflow-hidden border-[1px] border-current-color">
-                    <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                      Chủ sở hữu
-                    </div>
-                    <div className="p-[20px] flex flex-col space-y-10 items-center">
-                      <Owner {...dataOwner} />
-                      {/* <Link href={`/user/${dataProduct.created_by}`}>
+                      <div className="p-[20px] flex flex-col space-y-10 items-center">
+                        <Owner {...dataOwner} />
+                        {/* <Link href={`/user/${dataProduct.created_by}`}>
                   <div className="flex items-center p-[20px] rounded-xl flex-col bg-[#1212120A] hover:bg-[#ececec]">
                     <Avatar size={100} src={dataProduct.user?.avatar} />
                     <p className="text-2xl font-bold text-[#222222]">
@@ -515,71 +523,107 @@ export default function ProductInfoPage({
                     </p>
                   </div>
                 </Link> */}
-                      <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
-                        <p className="text-center text-white bg-current-color p-[5px]">
-                          Liên hệ
-                        </p>
-                        <div className="w-full px-[10px]">
-                          <Paragraph className=" border-t-0 p-[5px]" copyable>
-                            {dataProduct.user?.email}
-                          </Paragraph>
-                          {dataProduct.user?.phone && (
-                            <Paragraph
-                              className="border-current-color border-[1px] border-t-0 p-[5px]"
-                              copyable
-                            >
-                              {dataProduct.user?.phone}
+                        {/* <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
+                          <p className="text-center text-white bg-current-color p-[5px]">
+                            Liên hệ
+                          </p>
+                          <div className="w-full px-[10px]">
+                            <Paragraph className=" border-t-0 p-[5px]" copyable>
+                              {dataProduct.user?.email}
                             </Paragraph>
-                          )}
-                        </div>
+                            {dataProduct.user?.phone && (
+                              <Paragraph
+                                className="border-current-color border-[1px] border-t-0 p-[5px]"
+                                copyable
+                              >
+                                {dataProduct.user?.phone}
+                              </Paragraph>
+                            )}
+                          </div>
+                        </div> */}
+                      </div>
+                    </div>
+                    {/* Thông tin sản phẩm */}
+                    <div className="flex-col w-1/2 rounded-xl border-[1px] border-current-color overflow-auto">
+                      <div className="py-[15px] text-center text-white font-bold border-b-[1px]  border-current-color bg-current-color">
+                        Thông tin sản phẩm
+                      </div>
+                      <div className="flex flex-col w-full px-[20px] py-[15px]">
+                        {listInformation.map((item, index) => (
+                          <div
+                            key={index}
+                            className="w-full flex justify-between items-center py-[5px]"
+                          >
+                            <p>{item.label}</p>
+                            <Paragraph copyable>{item.value}</Paragraph>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="w-3/5 pl-[50px] rounded overflow-hidden">
-                  <QRCode
-                    className="m-auto"
-                    type="canvas"
-                    value="https://www.facebook.com/"
-                  />
+                <div className="w-1/2 pl-[50px] rounded overflow-hidden">
+                  {/* <QRCode
+              className="m-auto"
+              type="canvas"
+              value="https://www.facebook.com/"
+            /> */}
                   <Line
                     className="mt-[100px]"
                     options={options}
                     data={dataChartProps}
                   />
-                  <div className="mx-auto relative rounded-2xl my-[50px] w-2/3">
-                    <div className="rounded-2xl overflow-hidden w-full">
-                      <Carousel
-                        className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
-                        waitForAnimate={true}
-                        effect="fade"
-                        autoplay
-                      >
-                        <div>
-                          <h3 style={contentStyle}>1</h3>
-                        </div>
-                        <div>
-                          <h3 style={contentStyle}>2</h3>
-                        </div>
-                        <div>
-                          <h3 style={contentStyle}>3</h3>
-                        </div>
-                        <div>
-                          <h3 style={contentStyle}>4</h3>
-                        </div>
-                      </Carousel>
-                    </div>
-                    <EditTwoTone className="absolute px-[10px] top-1/2 -right-10" />
+                  {/* <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
+              <Carousel
+                className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
+                waitForAnimate={true}
+                effect="fade"
+                autoplay
+              >
+                <div>
+                  <h3 style={contentStyle}>1</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>2</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>3</h3>
+                </div>
+                <div>
+                  <h3 style={contentStyle}>4</h3>
+                </div>
+              </Carousel>
+            </div> */}
+                </div>
+              </div>
+              <div className="w-full flex">
+                {/* Giới thiệu sản  phẩm */}
+                <div className="mt-[50px] w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
+                  <div className="py-[15px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
+                    Giới thiệu về sản phẩm
                   </div>
-                  <div className="w-full mt-[50px] pl-[50px]">
-                    <div className="w-full mt-[20px]">
+                  <TextAreaCustom
+                    className="py-[20px] px-[30px]"
+                    name={'description'}
+                    showEdit={dataProduct.created_by === currentUser.id}
+                    // classNameLabel="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]"
+                    APIurl={`product/update/${params.productId}`}
+                    queryType={'product'}
+                    passType={'body'}
+                    input={{ maxLength: 255 }}
+                    initialValue={dataProduct.description || ''}
+                  />
+                </div>
+                <div className="w-1/2 mt-[50px] pl-[50px]">
+                  <div className="w-full mt-[20px]">
+                    {changePageRight === 'HISTORY' && (
                       <Table
                         columns={columns}
                         dataSource={data}
                         pagination={false}
                         scroll={{ y: 340 }}
                       />
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -667,37 +711,59 @@ export default function ProductInfoPage({
                   </Typography.Title>
                   <CreateDescriptionForm
                     className="mt-[50px] px-[50px]"
-                    productId={'123'}
+                    productId={dataProduct.id || ''}
+                    onSuccess={() => {
+                      mutate(`product/${params.productId}`);
+                      setOpenCreateDescriptionModal(false);
+                    }}
                   />
                 </Modal>
               </div>
               <div className="flex h-[600px] w-full snap-y bg-white rounded text-[#373737] px-[50px] gap-y-10 overflow-auto pt-[50px]">
-                <div className="w-1/4 max-h-full overflow-y-auto flex flex-col gap-y-5 items-end px-[30px]">
-                  {listAvatarDescription.map((item, index) => (
-                    <Popover
-                      content={<DeleteTwoTone />}
-                      placement={'left'}
-                      key={index}
-                    >
-                      <Image
-                        className={`border-2 rounded-full p-[3px] object-cover ${
-                          index === selectedDescription
-                            ? 'border-green-500'
-                            : 'border-gray-200'
-                        }`}
-                        onClick={() => setSelectedDescription(index)}
-                        width={150}
-                        height={150}
-                        preview={false}
-                        alt=""
-                        src={staticVariables.qc5.src}
+                {dataProduct.detail_description?.length ? (
+                  <>
+                    <div className="w-1/4 max-h-full overflow-y-auto flex flex-col gap-y-5 items-end px-[30px]">
+                      {dataProduct.detail_description?.map((item, index) => (
+                        <Popover
+                          content={
+                            <DeleteTwoTone
+                              onClick={() =>
+                                handleDeleteDescriptionItem(item.id || '')
+                              }
+                            />
+                          }
+                          placement={'right'}
+                          key={index}
+                        >
+                          <Image
+                            className={`border-4 rounded-full p-[3px] object-cover ${
+                              index === selectedDescription
+                                ? 'border-green-500'
+                                : 'border-gray-200'
+                            }`}
+                            onClick={() => setSelectedDescription(index)}
+                            width={150}
+                            height={150}
+                            preview={false}
+                            alt=""
+                            src={item.image}
+                          />
+                        </Popover>
+                      ))}
+                    </div>
+                    <div className="w-3/4 h-full">
+                      <Description
+                        showEdit={true}
+                        {...dataProduct.detail_description[selectedDescription]}
                       />
-                    </Popover>
-                  ))}
-                </div>
-                <div className="w-3/4 h-full">
-                  <Description />
-                </div>
+                    </div>
+                  </>
+                ) : (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_DEFAULT}
+                    description="Không có dữ liệu"
+                  />
+                )}
                 {/* <div className="w-3/4 flex border-2 border-green-500 rounded-2xl">
                   <div className="w-1/2 p-[50px] flex flex-col">
                     <InputCustom

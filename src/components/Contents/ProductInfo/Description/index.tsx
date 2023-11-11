@@ -7,15 +7,20 @@ import { EditTwoTone } from '@ant-design/icons';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import instanceAxios from '@/api/instanceAxios';
 import { useSWRConfig } from 'swr';
+import { getCookie } from 'cookies-next';
 
 interface Props {
   showEdit?: boolean;
+  id?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  product_id?: string;
 }
 
 export default function Description(props: Props) {
   const [loadingImage, setLoadingImage] = useState(false);
   const { mutate } = useSWRConfig();
-
   const handleChangeAvatar = useCallback(
     async (info: UploadChangeParam<UploadFile>) => {
       setLoadingImage(true);
@@ -46,18 +51,18 @@ export default function Description(props: Props) {
           className="text-[20px] py-[20px] font-semibold"
           showEdit={props.showEdit}
           queryType="product"
-          APIurl={`product/update/`}
-          classNameLabel=""
-          name={'description'}
-          initialValue={`MAPLE OAT MUFFIN`}
+          APIurl={`detail_description/${props.id}/update`}
+          passType="body"
+          name={'title'}
+          initialValue={props.title || ''}
         />
         <TextAreaCustom
           showEdit={props.showEdit}
           queryType="product"
-          APIurl={`product/update/${props.showEdit}`}
-          classNameLabel=""
+          APIurl={`detail_description/${props.id}/update`}
+          passType="body"
           name={'description'}
-          initialValue={`Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.`}
+          initialValue={props.description || ''}
         />
       </div>
       <div className="w-1/2 relative p-[10px]">
@@ -66,20 +71,30 @@ export default function Description(props: Props) {
           width="100%"
           height="100%"
           preview={false}
-          src={staticVariables.qc5.src}
+          src={props.image || ''}
           alt=""
         />
-
-        {loadingImage ? (
-          <Spin
-            className="absolute -left-6 top-1/2 px-[10px]"
-            spinning={loadingImage}
-          />
-        ) : (
+        {props.showEdit && (
           <Upload
             accept="image/png, image/jpeg, image/jpg"
             showUploadList={false}
-            onChange={handleChangeAvatar}
+            action={`${process.env.NEXT_PUBLIC_API_ORIGIN}detail_description/${props.id}/img`}
+            method="PUT"
+            headers={{
+              authorization: `Bearer ${getCookie('access_token')}`,
+            }}
+            name="image"
+            onChange={(info) => {
+              // if (info.file.status !== 'uploading') {
+              //   console.log(info.file, info.fileList);
+              // }
+              if (info.file.status === 'done') {
+                mutate(`product/${props.product_id}`);
+                message.success(`Upload thành công`);
+              } else if (info.file.status === 'error') {
+                message.error(`Upload thất bại`);
+              }
+            }}
           >
             <EditTwoTone className="absolute -left-6 top-1/2 px-[10px]" />
           </Upload>

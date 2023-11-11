@@ -157,24 +157,24 @@ export default function HomePage() {
   // const [data, setData] = useState<DataType[]>([]);
   const [totalMarket, setTotalMarket] = useState(0);
   const { mutate } = useSWRConfig();
-  const [loading, setLoading] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(true);
 
-  const fetchListMarket = useCallback(async () => {
-    await instanceAxios
-      .get(
-        `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
-          productName ? `&name_product=${productName}` : ''
-        }&skip=${currentPage - 1}&limit=${limit}`
-      )
-      .then((res) => {
-        setListMarket(res.data.data.list_marketplace);
-        setTotalMarket(res.data.data.total_marketplace);
-      })
-      .catch((err) => {
-        console.log(err);
-        setListMarket([]);
-      });
-  }, [currentPage, limit, orderType, productName]);
+  // const fetchListMarket = useCallback(async () => {
+  //   await instanceAxios
+  //     .get(
+  //       `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
+  //         productName ? `&name_product=${productName}` : ''
+  //       }&skip=${currentPage - 1}&limit=${limit}`
+  //     )
+  //     .then((res) => {
+  //       setListMarket(res.data.data.list_marketplace);
+  //       setTotalMarket(res.data.data.total_marketplace);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setListMarket([]);
+  //     });
+  // }, [currentPage, limit, orderType, productName]);
   const fetchTopSelling = useCallback(async () => {
     await instanceAxios
       .get(`product/top_selling?product_type=${orderTypeTopSelling}`)
@@ -184,16 +184,17 @@ export default function HomePage() {
       .catch((err) => {
         console.log(err);
         setDataTopSelling([]);
-      });
+      })
+      .finally(() => setLoadingPage(false));
   }, [orderTypeTopSelling]);
   useEffect(() => {
     fetchTopSelling();
   }, [fetchTopSelling]);
-  useEffect(() => {
-    fetchListMarket();
-  }, [fetchListMarket]);
+  // useEffect(() => {
+  //   fetchListMarket();
+  // }, [fetchListMarket]);
 
-  useSWR('marketplace/list', fetchListMarket);
+  // useSWR('marketplace/list', fetchListMarket);
 
   // useEffect(() => {
   //   fetchListMarket();
@@ -222,112 +223,118 @@ export default function HomePage() {
   // }, []);
   return (
     <div className="w-full">
-      <Header />
-      <div className="w-full flex-col items-center bg-[#000000]">
-        <div className="w-full flex flex-col">
-          <div className="w-1/3 h-[450px] text-white flex items-center ">
-            <div className="text-[32px] px-[20px]">
-              <p className="font-[600]">Collections. Next Level.</p>
-              <p className="text-[16px] text-[#b3b3b3]">
-                Discover new collection pages with rich storytelling, featured
-                items, and more
-              </p>
+      {loadingPage ? (
+        <></>
+      ) : (
+        <>
+          <Header />
+          <div className="w-full flex-col items-center bg-[#000000]">
+            <div className="w-full flex flex-col">
+              <div className="w-1/3 h-[450px] text-white flex items-center ">
+                <div className="text-[32px] px-[20px]">
+                  <p className="font-[600]">Collections. Next Level.</p>
+                  <p className="text-[16px] text-[#b3b3b3]">
+                    Discover new collection pages with rich storytelling,
+                    featured items, and more
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="w-full m-auto text-white flex">
+              <ScrollMenu
+                wrapperClassName="w-full px-[20px] mb-[30px] "
+                scrollContainerClassName="mx-[20px]"
+                LeftArrow={LeftArrow}
+                RightArrow={RightArrow}
+              >
+                {[...Array(10)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="relative w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
+                  >
+                    <Image
+                      width={230}
+                      height={230}
+                      preview={false}
+                      className="rounded-2xl object-cover"
+                      alt=""
+                      src={staticVariables.qc5.src}
+                    />
+                    <p className="w-full absolute bottom-0 font-bold p-[20px] text-[14px] bg-gradient-to-t truncate from-[#000000]">
+                      World of woment
+                    </p>
+                  </div>
+                ))}
+              </ScrollMenu>
             </div>
           </div>
-        </div>
-        <div className="w-full m-auto text-white flex">
-          <ScrollMenu
-            wrapperClassName="w-full px-[20px] mb-[30px] "
-            scrollContainerClassName="mx-[20px]"
-            LeftArrow={LeftArrow}
-            RightArrow={RightArrow}
-          >
-            {[...Array(10)].map((_, index) => (
-              <div
-                key={index}
-                className="relative w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
-              >
-                <Image
-                  width={230}
-                  height={230}
-                  preview={false}
-                  className="rounded-2xl object-cover"
-                  alt=""
-                  src={staticVariables.qc5.src}
+          {/* LeaderBoard Item */}
+          <div className="w-full p-[50px]">
+            <ConfigProvider
+              theme={{
+                components: {
+                  Segmented: {
+                    fontSize: 24,
+                  },
+                },
+              }}
+            >
+              <Segmented
+                className="font-bold"
+                size={'large'}
+                onChange={(e) => setOrderTypeTopSelling(e.toString())}
+                options={[
+                  { label: 'Farmer', value: 'FARMER' },
+                  { label: 'Manufacturer', value: 'MANUFACTURER' },
+                  { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
+                ]}
+              />
+            </ConfigProvider>
+            <div className="w-full flex justify-between gap-x-16">
+              {dataTopSelling.length ? (
+                <>
+                  <div className="w-1/2">
+                    {dataTopSelling.length > 1 ? (
+                      <LeaderBoard
+                        listTopSelling={dataTopSelling.slice(
+                          0,
+                          dataTopSelling.length / 2
+                        )}
+                      />
+                    ) : (
+                      <LeaderBoard listTopSelling={dataTopSelling} />
+                    )}
+                  </div>
+                  {dataTopSelling.length > 1 && (
+                    <div className="w-1/2">
+                      <LeaderBoard
+                        skip={dataTopSelling.length / 2}
+                        listTopSelling={dataTopSelling.slice(
+                          dataTopSelling.length / 2,
+                          dataTopSelling.length
+                        )}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Empty
+                  className="m-auto"
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description={'Không tìm thấy dữ liệu'}
                 />
-                <p className="w-full absolute bottom-0 font-bold p-[20px] text-[14px] bg-gradient-to-t truncate from-[#000000]">
-                  World of woment
-                </p>
-              </div>
-            ))}
-          </ScrollMenu>
-        </div>
-      </div>
-      {/* LeaderBoard Item */}
-      <div className="w-full p-[50px]">
-        <ConfigProvider
-          theme={{
-            components: {
-              Segmented: {
-                fontSize: 24,
-              },
-            },
-          }}
-        >
-          <Segmented
-            className="font-bold"
-            size={'large'}
-            onChange={(e) => setOrderTypeTopSelling(e.toString())}
-            options={[
-              { label: 'Farmer', value: 'FARMER' },
-              { label: 'Manufacturer', value: 'MANUFACTURER' },
-              { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
-            ]}
-          />
-        </ConfigProvider>
-        <div className="w-full flex justify-between gap-x-16">
-          {dataTopSelling.length ? (
-            <>
-              <div className="w-1/2">
-                {dataTopSelling.length > 1 ? (
-                  <LeaderBoard
-                    listTopSelling={dataTopSelling.slice(
-                      0,
-                      dataTopSelling.length / 2
-                    )}
-                  />
-                ) : (
-                  <LeaderBoard listTopSelling={dataTopSelling} />
-                )}
-              </div>
-              {dataTopSelling.length > 1 && (
-                <div className="w-1/2">
-                  <LeaderBoard
-                    skip={dataTopSelling.length / 2}
-                    listTopSelling={dataTopSelling.slice(
-                      dataTopSelling.length / 2,
-                      dataTopSelling.length
-                    )}
-                  />
-                </div>
               )}
-            </>
-          ) : (
-            <Empty
-              className="m-auto"
-              image={Empty.PRESENTED_IMAGE_DEFAULT}
-              description={'Không tìm thấy dữ liệu'}
-            />
-          )}
-        </div>
-      </div>
-      {/* Category */}
-      <div>
-        <Category orderType={'FARMER'} title="Farmer" />
-        <Category orderType={'MANUFACTURER'} title="Manufacturer" />
-        <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
-      </div>
-      <Footer />
+            </div>
+          </div>
+          {/* Category */}
+          <div>
+            <Category orderType={'FARMER'} title="Farmer" />
+            <Category orderType={'MANUFACTURER'} title="Manufacturer" />
+            <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
+          </div>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

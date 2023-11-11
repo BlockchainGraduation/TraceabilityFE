@@ -18,7 +18,7 @@ import Link from 'next/link';
 
 export default function MarketPage() {
   const [valueRadio, setValueRadio] = useState('FARMER');
-  const [loading, setLoading] = useState(true);
+  const [loadingPage, setLoadingPage] = useState(true);
   const [totalMarket, setTotalMarket] = useState(0);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
   const [limit, setLimit] = useState(10);
@@ -36,7 +36,7 @@ export default function MarketPage() {
         setTotalMarket(res.data.data.total_marketplace);
       })
       .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingPage(false));
   }, [currentPage, limit, valueRadio]);
   useEffect(() => {
     fethListProduct();
@@ -68,42 +68,42 @@ export default function MarketPage() {
   };
   return (
     <div className="flex w-4/5 py-[100px] m-auto">
-      <div className="w-1/5">
-        <div className="w-full relative">
-          <Image
-            className="object-cover rounded-2xl"
-            width={'100%'}
-            height={150}
-            style={{ boxShadow: `0 8px 10px rgba(0,0,0,.25)` }}
-            preview={false}
-            src={staticVariables.qc5.src}
-            alt=""
-          />
-          <p className="absolute tracking-widest p-[10px] rounded-xl border-2 text-white font-bold text-[20px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            SimpRaidenEi
-          </p>
-        </div>
-        <div
-          style={{ boxShadow: `0 2px 8px rgba(0,0,0,.15)` }}
-          className="w-full shadow-lg rounded-xl overflow-hidden mt-5"
-        >
-          <p className="w-full p-[20px] border-b-[1px] text-center font-bold text-[20px]">
-            Lọc kết quả
-          </p>
-          <Collapse
-            bordered={false}
-            items={items}
-            className="text-[15px] font-['Open_Sans']"
-            defaultActiveKey={['1']}
-            onChange={onChange}
-          />
-        </div>
-      </div>
-      <div className="w-4/5 px-[50px]">
-        {loading ? (
-          <Skeleton />
-        ) : (
-          <>
+      {loadingPage ? (
+        <Skeleton />
+      ) : (
+        <>
+          <div className="w-1/5">
+            <div className="w-full relative">
+              <Image
+                className="object-cover rounded-2xl"
+                width={'100%'}
+                height={150}
+                style={{ boxShadow: `0 8px 10px rgba(0,0,0,.25)` }}
+                preview={false}
+                src={staticVariables.qc5.src}
+                alt=""
+              />
+              <p className="absolute tracking-widest p-[10px] rounded-xl border-2 text-white font-bold text-[20px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                SimpRaidenEi
+              </p>
+            </div>
+            <div
+              style={{ boxShadow: `0 2px 8px rgba(0,0,0,.15)` }}
+              className="w-full shadow-lg rounded-xl overflow-hidden mt-5"
+            >
+              <p className="w-full p-[20px] border-b-[1px] text-center font-bold text-[20px]">
+                Lọc kết quả
+              </p>
+              <Collapse
+                bordered={false}
+                items={items}
+                className="text-[15px] font-['Open_Sans']"
+                defaultActiveKey={['1']}
+                onChange={onChange}
+              />
+            </div>
+          </div>
+          <div className="w-4/5 px-[50px]">
             <p className="text-[18px] pb-[20px]">
               <strong>{totalMarket}</strong> sản phẩm phù hợp với tìm kiếm của
               bạn
@@ -126,9 +126,9 @@ export default function MarketPage() {
               total={totalMarket}
               onChange={(e) => setCurrentPage(e)}
             />
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
