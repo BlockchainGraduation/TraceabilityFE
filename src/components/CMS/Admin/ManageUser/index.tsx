@@ -55,9 +55,7 @@ interface UserRequest {
   confirm_status?: string;
   username?: string;
   private_key?: string;
-  survey_data?: {
-    user_role?: string;
-  };
+  survey_data?: any;
   id: string;
   address_real?: string;
   created_at?: string;

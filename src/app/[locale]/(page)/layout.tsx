@@ -67,7 +67,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       {!loading && (
         <div>
           <Header />
-          <div className="min-h-[800px]">{children}</div>
+          <div className="min-h-[600px]">{children}</div>
           <Footer />
         </div>
       )}

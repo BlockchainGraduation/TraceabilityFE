@@ -112,7 +112,7 @@ export default function RoleSelect({
   ];
   return (
     <div className="w-full flex">
-      <div className="w-1/2 overflow-x-auto">
+      <div className="w-full overflow-x-auto">
         <ConfigProvider
           theme={{
             components: {
@@ -131,98 +131,29 @@ export default function RoleSelect({
             onChange={(e: SegmentedValue) => {
               setValue(e.toString());
             }}
-            options={
-              listRuleDescription.map((item, index) => ({
-                label: (
-                  <div
-                    onClick={() => setCurrentDescriptionPage(index)}
-                    style={{ padding: 20 }}
-                  >
-                    <Image
-                      alt=""
-                      className="rounded object-cover"
-                      preview={false}
-                      height={100}
-                      width={100}
-                      src={item.image}
-                    />
-                    <div>{item.rules}</div>
-                  </div>
-                ),
-                value: item.value,
-              }))
-              //   [
-              //   {
-              //     label: (
-              //       <div style={{ padding: 20 }}>
-              //         <Image
-              //           alt=""
-              //           className="rounded object-cover"
-              //           preview={false}
-              //           height={100}
-              //           width={100}
-              //           src={staticVariables.logo.src}
-              //         />
-              //         <div>Nông dân</div>
-              //       </div>
-              //     ),
-              //     value: 'FAMMER',
-              //     title: 'asdsd',
-              //   },
-              //   {
-              //     label: (
-              //       <div style={{ padding: 20 }}>
-              //         <Image
-              //           alt=""
-              //           className="rounded object-cover"
-              //           height={100}
-              //           width={100}
-              //           preview={false}
-              //           src={staticVariables.logo.src}
-              //         />
-              //         <div>Nhà máy</div>
-              //       </div>
-              //     ),
-              //     value: 'FACTORY',
-              //   },
-              //   {
-              //     label: (
-              //       <div style={{ padding: 20 }}>
-              //         <Image
-              //           alt=""
-              //           className="rounded object-cover"
-              //           height={100}
-              //           width={100}
-              //           preview={false}
-              //           src={staticVariables.logo.src}
-              //         />
-              //         <div>Nhà vận chuyển</div>
-              //       </div>
-              //     ),
-              //     value: 'DISTRIBUTER',
-              //   },
-              //   {
-              //     label: (
-              //       <div style={{ padding: 20 }}>
-              //         <Image
-              //           alt=""
-              //           className="rounded object-cover"
-              //           preview={false}
-              //           height={100}
-              //           width={100}
-              //           src={staticVariables.logo.src}
-              //         />
-              //         <div>Đại lí</div>
-              //       </div>
-              //     ),
-              //     value: 'SEEDCOMPANY',
-              //   },
-              // ]
-            }
+            options={listRuleDescription.map((item, index) => ({
+              label: (
+                <div
+                  onClick={() => setCurrentDescriptionPage(index)}
+                  style={{ padding: 20 }}
+                >
+                  <Image
+                    alt=""
+                    className="rounded object-cover"
+                    preview={false}
+                    height={100}
+                    width={100}
+                    src={item.image}
+                  />
+                  <div>{item.rules}</div>
+                </div>
+              ),
+              value: item.value,
+            }))}
           />
         </ConfigProvider>
       </div>
-      <div className="w-1/2 p-[30px]">
+      {/* <div className="w-1/2 p-[30px]">
         <p className="text-3xl font-semibold p-[20px]">
           {listRuleDescription[currentDescriptionPage].rules}
         </p>
@@ -230,54 +161,17 @@ export default function RoleSelect({
           {listRuleDescription[currentDescriptionPage].decription}
         </p>
         <Collapse
-          items={
-            listRuleDescription[currentDescriptionPage].detail.map(
-              (item, index) => ({
-                key: index,
-                label: item.label,
-                children: (
-                  <div className="pr-[50px] text-justify">{item.content}</div>
-                ),
-              })
-            )
-
-            //   [
-            //   {
-            //     key: '0',
-            //     label: 'Xem mô tả',
-            //     children: (
-            //       <div className="pr-[50px] text-justify">
-            //         {`This limited series of Midnight Society Access Passes grants the
-            //     holder studio-specific perks including but not limited to: a
-            //     one-of-a-kind "Variant" 🤣😂😊😊 PFP \n
-            //     (profile pic) with unique VisorCortex,
-            //     Call Sign, and other attributes of various rarity. Founders are
-            //     entitled to voting rights on game features, exclusive access to
-            //     studio events, first dibs on merchandise, early access to the
-            //     latest dev build, and more.`}
-            //       </div>
-            //     ),
-            //   },
-            //   {
-            //     key: '3',
-            //     label: 'Xem mô tả',
-            //     children: (
-            //       <div className="pr-[50px] text-justify">
-            //         {`This limited series of Midnight Society Access Passes grants the
-            //     holder studio-specific perks including but not limited to: a
-            //     one-of-a-kind "Variant" 🤣😂😊😊 PFP \n
-            //     (profile pic) with unique VisorCortex,
-            //     Call Sign, and other attributes of various rarity. Founders are
-            //     entitled to voting rights on game features, exclusive access to
-            //     studio events, first dibs on merchandise, early access to the
-            //     latest dev build, and more.`}
-            //       </div>
-            //     ),
-            //   },
-            // ]
-          }
+          items={listRuleDescription[currentDescriptionPage].detail.map(
+            (item, index) => ({
+              key: index,
+              label: item.label,
+              children: (
+                <div className="pr-[50px] text-justify">{item.content}</div>
+              ),
+            })
+          )}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
