@@ -226,7 +226,7 @@ export default function RoleSelect({
         <p className="text-3xl font-semibold p-[20px]">
           {listRuleDescription[currentDescriptionPage].rules}
         </p>
-        <p className="py-[20px]">
+        <p className="py-[20px] font-thin">
           {listRuleDescription[currentDescriptionPage].decription}
         </p>
         <Collapse

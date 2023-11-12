@@ -26,7 +26,7 @@ import { StyleProvider } from '@ant-design/cssinjs';
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
 const inter = Inter_Tight({
-  weight: '600',
+  weight: '400',
   subsets: ['latin'],
 });
 
