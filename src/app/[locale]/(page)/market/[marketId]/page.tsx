@@ -584,28 +584,13 @@ export default function MarketInfo({
                 <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
                   Giới thiệu về sản phẩm
                 </div>
-                <p className="py-[20px] px-[30px]">
-                  {`ANOMALY A.I. is a contemporary art collection comprising 888
-                distinct pieces of AI and machine learning-generated art by the
-                artist Star Im. Each artwork seamlessly melds elements from
-                significant works in the realm of Web 3.0, designs from
-                generative code art, AI art, and digital art. The intention
-                behind this collection is to offer a unified visual art
-                experience, showcasing variations or derivative versions that
-                radiate uniqueness and originality, affectionately referred to
-                as "anomalies" within the studio. The creation of ANOMALY A.I.
-                involved harnessing a diverse array of exceptional tools,
-                including RunwayML, Stable Diffusion, Stability AI, Dalle,
-                Midjourney, Pika, as well as Adobe software (Firefly,
-                Illustrator, and Photoshop), along with various 3D programs.
-                Each individual work in this collection is assigned a unique
-                number and comes in 10 editions, ranging from #1 to #10,
-                culminating in a total of 8,880 editions. The artist's signature
-                is on the bottom right corner of every piece within this
-                collection. This endeavor represents the initial stage of a
-                multifaceted art journey on the web. It is worth noting that
-                participation in this exploration of machine learning, along
-                with its accompanying artist's journey, is entirely cost-free.`}
+                <p
+                  className={`py-[20px] px-[30px] ${
+                    !dataProduct.description && 'text-gray-500'
+                  }`}
+                >
+                  {dataProduct.description ||
+                    'Chủ sản phẩm chưa thêm thông tin!!!'}
                 </p>
               </div>
               <div className="w-1/2 mt-[50px] pl-[50px]">

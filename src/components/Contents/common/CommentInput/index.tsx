@@ -23,15 +23,16 @@ export default function CommentInput({
   const fetchSubmitComment = async () => {
     if (!commentValue.trim()) {
       message.warning('Vui lòng nhập nội dung');
+    } else {
+      await instanceAxios
+        .post(`comments/`, { marketplace_id: marketId, content: commentValue })
+        .then((res) => {
+          message.success('Đã bình luận');
+          mutate(`comments/list?marketplace_id=${marketId}`);
+          setCommentValue('');
+        })
+        .catch((err) => console.log(err));
     }
-    await instanceAxios
-      .post(`comments/`, { marketplace_id: marketId, content: commentValue })
-      .then((res) => {
-        message.success('Đã bình luận');
-        mutate(`comments/list?marketplace_id=${marketId}`);
-        setCommentValue('');
-      })
-      .catch((err) => console.log(err));
   };
   return (
     <div className={`flex items-center mt-[20px] ${className}`}>

@@ -20,6 +20,7 @@ import {
   Select,
   Space,
   message,
+  notification,
 } from 'antd';
 import Link from 'next/link';
 import { deleteCookie, getCookie } from 'cookies-next';
@@ -76,9 +77,10 @@ const inter = Inter({ subsets: ['latin'] });
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [valueRadioCart, setValueRadioCart] = useState('');
+  const [valueRadioCart, setValueRadioCart] = useState(0);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
+  const [loadingBuy, setLoadingBuy] = useState(false);
 
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
@@ -86,6 +88,7 @@ export default memo(function Header() {
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
   const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
+  const [listCart, setListCart] = useState<CartItemType[]>([]);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -133,12 +136,6 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
-  useEffect(() => {
-    if (showFormLogin) {
-      setCurrentForm('LOGIN');
-      setShowModal(true);
-    }
-  }, [showFormLogin]);
 
   const fethGetUser = useCallback(async () => {
     await instanceAxios
@@ -152,7 +149,6 @@ export default memo(function Header() {
   // useEffectOnce(() => {
   //   fethGetUser();
   // });
-  useSWR('user/me', fethGetUser);
 
   const fetchNotifications = async () => {
     await instanceAxios
@@ -164,12 +160,6 @@ export default memo(function Header() {
       })
       .catch((err) => console.log(err));
   };
-  useSWR('notifications/list', fetchNotifications);
-
-  useEffectOnce(() => {
-    fetchNotifications();
-  });
-
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
       .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
@@ -180,11 +170,59 @@ export default memo(function Header() {
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
+  const fethListCart = async () => {
+    await instanceAxios
+      .get(`cart/list?skip=0&limit=1000`)
+      .then((res) => {
+        setListCart(res.data.data.list_cart);
+        // console.log(res);
+        // dispatch(setLogin({ logged: true, user: res.data.data }));
+      })
+      .catch((err) => console.log(err));
+  };
+  const fetchBuyCartItem = async () => {
+    setLoadingBuy(true);
+    await instanceAxios
+      .put(
+        `product/${listCart[valueRadioCart].product_id}/purchase?price=${listCart[valueRadioCart].price}&quantity=${listCart[valueRadioCart].quantity}`
+      )
+      .then((res) => {
+        notification.success({
+          message: 'Mua hàng thành công',
+          description: 'Bạn có thể xem lại đơn hàng ở trang thông tin',
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: 'Mua hàng thất bại',
+          description: 'Bạn có thể vui lòng xem lại thông tin',
+        });
+      })
+      .finally(() => setLoadingBuy(false));
+  };
+
+  useEffect(() => {
+    if (showFormLogin) {
+      setCurrentForm('LOGIN');
+      setShowModal(true);
+    }
+  }, [showFormLogin]);
+
   useEffect(() => {
     if (debouncedValue) {
       fethMarketSearch();
     }
   }, [debouncedValue, fethMarketSearch]);
+  // useEffectOnce(() => {
+  //   fethListCart();
+  // });
+  useEffectOnce(() => {
+    fetchNotifications();
+  });
+
+  useSWR('cart/list', fethListCart);
+  useSWR('user/me', fethGetUser);
+  useSWR('notifications/list', fetchNotifications);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -502,12 +540,14 @@ export default memo(function Header() {
                 </div>
                 <div className="max-h-[360px] overflow-y-auto w-full flex flex-col">
                   <Radio.Group onChange={onChange} className="flex flex-col">
-                    {[...Array(4)].map((_, index) => (
-                      <Radio key={index} value={index.toString()}>
+                    {listCart.map((item, index) => (
+                      <Radio key={index} value={index}>
                         <div className="w-[410px]">
                           <CartItem
-                            active={valueRadioCart === index.toString()}
+                            onDeleteSuccess={() => mutate('cart/list')}
+                            active={valueRadioCart === index}
                             key={index}
+                            data={item}
                           />
                         </div>
                       </Radio>
@@ -523,7 +563,11 @@ export default memo(function Header() {
                     </div>
                   </div>
                   <div className="w-full">
-                    <button className="relative block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0">
+                    <button
+                      // disabled
+                      onClick={fetchBuyCartItem}
+                      className="relative disabled:bg-gray-100 disabled:text-gray-300 block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0"
+                    >
                       Buy now
                     </button>
                   </div>
