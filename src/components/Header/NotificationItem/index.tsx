@@ -1,6 +1,8 @@
 import instanceAxios from '@/api/instanceAxios';
 import staticVariables from '@/static';
 import { DeleteTwoTone } from '@ant-design/icons';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, ConfigProvider, Popconfirm, message } from 'antd';
 import moment from 'moment';
 import { useTranslations } from 'next-intl';
@@ -15,23 +17,46 @@ export default function NotificationItem(props: NotificationItemType) {
   const tNotifications = useTranslations('notification');
   const tAction = useTranslations('action');
   const route = useRouter();
+  const fetchGetDetail = async () => {
+    await instanceAxios
+      .get(`notifications/${props.data?.data?.notification_id}/detail`)
+      .then((res) => {
+        mutate('notifications/list');
+      })
+      .catch((err) =>
+        console.log(
+          'Error',
+          `notifications/${props.data?.data?.notification_id}/detail`
+        )
+      );
+  };
   const fetchDeleteNotification = async () => {
     await instanceAxios
       .delete(`notifications/${props.data?.data?.notification_id}`)
       .then((res) => {
-        // message.success('Bạn đã xóa thông báo');
+        message.success('Bạn đã xóa thông báo');
         mutate('notifications/list');
       })
       .catch((err) => message.error('Xóa thông báo thất bại'));
   };
   return (
     <div
-      className={`relative flex items-center p-[10px] hover:bg-sky-200 ${
-        props.data?.data?.unread && `bg-sky-50`
+      className={`relative flex items-center p-[10px] ${
+        props.data?.data?.unread ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
+      } ${
+        props.data?.data?.unread ? `bg-sky-50` : ''
       } rounded max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
+      {props.data?.data?.unread && !showDeleteIcon && (
+        <FontAwesomeIcon
+          className="absolute top-1/2 right-[10px]"
+          icon={faCircle}
+          size={'1x'}
+          style={{ color: '#0866ff' }}
+        />
+      )}
       {showDeleteIcon && (
         <ConfigProvider
           theme={{
@@ -61,7 +86,7 @@ export default function NotificationItem(props: NotificationItemType) {
       <div className="w-9/12">
         <div
           onClick={async () => {
-            await fetchDeleteNotification();
+            await fetchGetDetail();
             route.push(
               `/${
                 props.data?.params?.notification_type === 'PRODUCT_NOTIFICATION'
@@ -89,7 +114,11 @@ export default function NotificationItem(props: NotificationItemType) {
               __html: props.data?.message?.toString() || '',
             }}
           ></div>
-          <p className="text-gray-500">
+          <p
+            className={
+              props.data?.data?.unread ? 'text-[#0866ff]' : 'text-gray-500'
+            }
+          >
             {moment(props.data?.data?.created_at).fromNow()}
           </p>
         </div>

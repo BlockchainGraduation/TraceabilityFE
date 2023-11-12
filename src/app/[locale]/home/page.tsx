@@ -150,7 +150,7 @@ export default function HomePage() {
   const [orderType, setOrderType] = useState('');
   const [productName, setProductName] = useState('');
   const [dataTopSelling, setDataTopSelling] = useState<TopSellingType[]>([]);
-  const [dataSegmented, setDataSegmented] = useState('FARMER');
+  const [dataSegmented, setDataSegmented] = useState('SEEDLING_COMPANY');
   const [orderTypeTopSelling, setOrderTypeTopSelling] = useState('FARMER');
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
@@ -280,13 +280,25 @@ export default function HomePage() {
               }}
             >
               <Segmented
-                className="font-bold"
+                className="font-bold p-[5px] rounded-xl"
                 size={'large'}
                 onChange={(e) => setOrderTypeTopSelling(e.toString())}
                 options={[
-                  { label: 'Farmer', value: 'FARMER' },
-                  { label: 'Manufacturer', value: 'MANUFACTURER' },
-                  { label: 'Seed Company', value: 'SEEDLING_COMPANY' },
+                  {
+                    label: 'Seed Company',
+                    value: 'SEEDLING_COMPANY',
+                    className: 'p-[5px] rounded-xl',
+                  },
+                  {
+                    label: 'Farmer',
+                    value: 'FARMER',
+                    className: 'p-[5px] rounded-xl',
+                  },
+                  {
+                    label: 'Manufacturer',
+                    value: 'MANUFACTURER',
+                    className: 'p-[5px] rounded-xl',
+                  },
                 ]}
               />
             </ConfigProvider>
@@ -327,10 +339,10 @@ export default function HomePage() {
             </div>
           </div>
           {/* Category */}
-          <div>
+          <div className="pb-[100px]">
+            <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
             <Category orderType={'FARMER'} title="Farmer" />
             <Category orderType={'MANUFACTURER'} title="Manufacturer" />
-            <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
           </div>
           <Footer />
         </>

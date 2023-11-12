@@ -240,8 +240,9 @@ export default memo(function Header() {
     dispatch(logOut());
     deleteCookie('access_token');
     // router.push('/');
-    setShowModal(true);
+    // setShowModal(true);
     setCurrentForm('LOGIN');
+    mutate('user/me');
   };
   // useEffect(() => {
   //   setUser(logged);
@@ -314,12 +315,21 @@ export default memo(function Header() {
     },
     {
       label: (
-        <Space wrap={false} onClick={() => setShowCartModal(true)}>
-          <Badge count={9} offset={[-30, 8]} color="blue">
-            <FontAwesomeIcon icon={faCartShopping} />
-          </Badge>
-          <p>Gio hang</p>
-        </Space>
+        <ConfigProvider
+          theme={{
+            token: {
+              lineWidth: 3,
+              paddingXS: 10,
+            },
+          }}
+        >
+          <Space wrap={false} onClick={() => setShowCartModal(true)}>
+            <Badge count={listCart.length} offset={[-30, 8]} color="blue">
+              <FontAwesomeIcon icon={faCartShopping} />
+            </Badge>
+            <p>Giỏ hàng</p>
+          </Space>
+        </ConfigProvider>
       ),
       key: '2',
     },
@@ -389,7 +399,7 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-6 flex hover:bg-[#ececec] text-[16px] items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110`}
+            className={`py-[15px] px-6 flex hover:bg-[#ececec] text-[16px] items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out hover:-translate-y-1`}
             href={`/${key}`}
           >
             {/* {listIcon[index]} */}

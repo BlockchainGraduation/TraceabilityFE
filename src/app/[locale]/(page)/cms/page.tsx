@@ -40,7 +40,9 @@ function getItem(
 
 export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState('0');
+  const [currentPage, setCurrentPage] = useState(
+    Number(localStorage.getItem('page'))
+  );
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -48,23 +50,28 @@ export default memo(function CMSPage() {
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem('Thống kê', '0', <PieChartOutlined />),
+    getItem(<p>Thống kê</p>, '1', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem('Thông tin chung', '1'),
-      getItem('Đổi mật khẩu', '2'),
-      getItem('Liên kết', '3'),
+      getItem(<p>Thông tin chung</p>, '2'),
+      getItem(<p>Đổi mật khẩu</p>, '3'),
+      getItem(<p>Liên kết</p>, '4'),
     ]),
-    getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-      getItem('Quản lí sản phâm', '4'),
-      getItem('Lịch sử giao dịch', '5'),
-    ]),
-    currentUser.user.system_role === 'ADMIN'
-      ? getItem('Admin', 'sub3', <TeamOutlined />, [
-          getItem('Quản lí user', '6'),
-          getItem('Quản lí sản phẩm', '7'),
+    currentUser.user.system_role !== 'ADMIN'
+      ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
+          getItem(<p>Quản lí sản phâm</p>, '5'),
+          getItem(<p>Lịch sử giao dịch</p>, '6'),
         ])
       : null,
-    getItem('Files', '8', <FileOutlined />),
+    // getItem('Files'
+
+    currentUser.user.system_role === 'ADMIN'
+      ? getItem('Admin', 'sub3', <TeamOutlined />, [
+          // getItem('Thống kê hệ thống', '6'),
+          getItem(<p>Quản lí user</p>, '7'),
+          // getItem('Quản lí sản phẩm', '8'),
+        ])
+      : null,
+    // getItem('Files', '8', <FileOutlined />),
   ];
   const contents = [
     <Statistical key={1} />,
@@ -75,7 +82,11 @@ export default memo(function CMSPage() {
     <TransactionCMS key={5} />,
 
     currentUser.user.system_role === 'ADMIN'
-      ? [<ManageUser key={6} />, <ManageProduct key={7} />]
+      ? [
+          // <div key={6}>asa</div>,
+          <ManageUser key={6} />,
+          // <ManageProduct key={8} />,
+        ]
       : null,
   ];
 
@@ -91,10 +102,13 @@ export default memo(function CMSPage() {
             <div className="demo-logo-vertical" />
             <Menu
               theme={'light'}
-              defaultSelectedKeys={[currentPage]}
+              defaultSelectedKeys={[currentPage.toString()]}
               mode="inline"
               items={items}
-              onSelect={(e) => setCurrentPage(e.key.toString())}
+              onSelect={(e) => {
+                setCurrentPage(Number(e.key));
+                localStorage.setItem('page', e.key);
+              }}
             />
           </Sider>
           <Layout>
@@ -111,7 +125,7 @@ export default memo(function CMSPage() {
                   background: colorBgContainer,
                 }}
               >
-                {contents[Number(currentPage)]}
+                {contents[currentPage - 1]}
               </div>
             </Content>
             {/* <Footer style={{ textAlign: 'center' }}>

@@ -9,10 +9,10 @@ interface Props {
 export default function LeaderBoard(props: Props) {
   return (
     <div data-aos="fade-up" data-aos-duration="1500" className="w-full">
-      <Row className="text-[14px] border-b-2 py-[20px]">
+      <Row className="px-[10px] text-[14px] border-b-2 py-[20px]">
         <Col span={2}>Rank</Col>
         <Col span={14}>Sản phẩm</Col>
-        <Col span={4}>Transaction</Col>
+        <Col span={4}>Giao dịch</Col>
         <Col span={4}>
           <p className="float-right">Số lượng bán</p>
         </Col>
@@ -20,7 +20,7 @@ export default function LeaderBoard(props: Props) {
       {props.listTopSelling.map((item, index) => (
         <Row
           key={index}
-          className="py-[20px] text-[16px] text-[#121212] font-semibold transition ease-in-out  hover:-translate-y-1 hover:scale-105 duration-300 "
+          className="py-[10px] text-[16px] text-[#121212] font-semibold transition ease-in-out  hover:-translate-y-1 hover:bg-[#f6f6f6] rounded-xl px-[10px] duration-300 "
           align={'middle'}
         >
           <Col span={2}>

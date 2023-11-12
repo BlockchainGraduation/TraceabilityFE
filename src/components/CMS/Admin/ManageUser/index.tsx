@@ -56,7 +56,7 @@ interface UserRequest {
   username?: string;
   private_key?: string;
   survey_data?: {
-    system_role?: string;
+    user_role?: string;
   };
   id: string;
   address_real?: string;
@@ -97,7 +97,8 @@ export default memo(function ManageUser() {
           },
           {
             title: 'Role yêu cầu',
-            dataIndex: 'survey_data',
+            // dataIn   dex: '',
+            render: (value, record, index) => record.survey_data?.user_role,
           },
         ]
       : [
@@ -137,8 +138,8 @@ export default memo(function ManageUser() {
       dataIndex: '',
 
       render: (value, record, index) =>
-        record.is_active ? (
-          <Tag color={'success'}>Kích hoạt</Tag>
+        record.confirm_status == 'DONE' ? (
+          <Tag color={'success'}>Đã kích hoạt</Tag>
         ) : (
           <Tag color={'gold'}>Chưa kích hoạt</Tag>
         ),
@@ -327,7 +328,7 @@ export default memo(function ManageUser() {
   return (
     <div>
       <div className="flex  items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium">Danh sách sản phẩm</p>
+        <p className="text-3xl font-medium">Quản lí người dùng</p>
       </div>
       <Segmented
         size={'large'}

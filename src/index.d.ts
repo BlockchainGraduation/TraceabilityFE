@@ -142,6 +142,7 @@ interface ProductType {
   description?: string;
   created_at?: string;
   price?: number;
+  is_sale?: boolean;
   updated_at?: string;
   quantity?: number;
   hashed_data?: string;
@@ -248,6 +249,26 @@ interface MarketType {
     reply_comments?: string;
   };
 }
+
+interface TransactionType {
+  id?: string;
+  product_id?: string;
+  user_id?: string;
+  price?: number;
+  quantity?: number;
+  created_at?: string;
+  updated_at?: string;
+  product?: ProductType;
+  user?: {
+    id?: string;
+    avatar?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    system_role?: string;
+  };
+}
+
 interface NotificationItemType {
   data?: {
     message?: string;

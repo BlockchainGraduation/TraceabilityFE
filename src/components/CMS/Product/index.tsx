@@ -47,16 +47,16 @@ import { useEffectOnce } from 'usehooks-ts';
 import TransactionSelectItem from './TransactionSelectItem';
 import moment from 'moment';
 
-interface DataType {
-  key: React.Key;
-  index: number;
-  id: string;
-  name: string;
-  quantity: number;
-  price: number;
-  created_at: string;
-  product_status: string;
-}
+// interface DataType {
+//   key: React.Key;
+//   index: number;
+//   id: string;
+//   name: string;
+//   quantity: number;
+//   price: number;
+//   created_at: string;
+//   product_status: string;
+// }
 interface TransactionType {
   id?: string;
   product_id?: string;
@@ -88,7 +88,7 @@ interface TransactionType {
 export default memo(function ProductCMS() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const [totalProduct, setTotalProduct] = useState(0);
-  const [listProduct, setListProduct] = useState<DataType[]>([]);
+  const [listProduct, setListProduct] = useState<ProductType[]>([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
@@ -195,7 +195,7 @@ export default memo(function ProductCMS() {
       });
   };
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<ProductType> = [
     {
       key: 0,
       title: 'Stt',
@@ -279,8 +279,8 @@ export default memo(function ProductCMS() {
                     <Space
                       onClick={() =>
                         record.product_status === 'PUBLISH'
-                          ? fetchUpdateProductStatus(record.id, 'PRIVATE')
-                          : fetchUpdateProductStatus(record.id, 'PUBLISH')
+                          ? fetchUpdateProductStatus(record.id || '', 'PRIVATE')
+                          : fetchUpdateProductStatus(record.id || '', 'PUBLISH')
                       }
                     >
                       {record.product_status === 'PUBLISH' ? (
@@ -302,30 +302,32 @@ export default memo(function ProductCMS() {
                     </Space>
                   ),
                 },
-                {
-                  key: 3,
-                  label: (
-                    <Popconfirm
-                      placement={'left'}
-                      title="Sure to open market ?"
-                      onConfirm={() => fetchCreateMarket(record.id)}
-                    >
-                      <Space>
-                        <FontAwesomeIcon
-                          icon={faStore}
-                          style={{ color: '#65dd55' }}
-                        />
-                        <p>Đăng lên market</p>
-                      </Space>
-                    </Popconfirm>
-                  ),
-                },
+                !record.is_sale
+                  ? {
+                      key: 3,
+                      label: (
+                        <Popconfirm
+                          placement={'left'}
+                          title="Sure to open market ?"
+                          onConfirm={() => fetchCreateMarket(record.id || '')}
+                        >
+                          <Space>
+                            <FontAwesomeIcon
+                              icon={faStore}
+                              style={{ color: '#65dd55' }}
+                            />
+                            <p>Đăng lên market</p>
+                          </Space>
+                        </Popconfirm>
+                      ),
+                    }
+                  : null,
                 {
                   key: 4,
                   label: (
                     <Popconfirm
                       title="Sure to delete?"
-                      onConfirm={() => fetchDeleteProduct(record.id)}
+                      onConfirm={() => fetchDeleteProduct(record.id || '')}
                     >
                       <Space>
                         <FontAwesomeIcon

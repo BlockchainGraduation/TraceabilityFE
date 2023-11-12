@@ -6,7 +6,7 @@ import { Providers } from '@/providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import 'moment/locale/pt-br';
-import { Roboto } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import { App, ConfigProvider, Skeleton, Spin, message } from 'antd';
 import theme from '@/theme/themeConfig';
 import dynamic from 'next/dynamic';
@@ -25,8 +25,8 @@ import { StyleProvider } from '@ant-design/cssinjs';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
-const roboto = Roboto({
-  weight: '500',
+const inter = Inter_Tight({
+  weight: '600',
   subsets: ['latin'],
 });
 
@@ -57,12 +57,12 @@ export default async function LocaleLayout({
               theme={{
                 ...theme,
                 token: {
-                  colorBgLayout: '#d9eee1',
+                  colorBgLayout: '#f6f6f6',
                 },
                 components: {
                   Segmented: {
-                    itemSelectedBg: '#42bb67',
-                    itemSelectedColor: '#ffffff',
+                    itemSelectedBg: '#ffffff',
+                    itemSelectedColor: '#000000',
                     // itemHoverBg: '#D7E4FDFF',
                   },
                   Button: {
@@ -74,7 +74,7 @@ export default async function LocaleLayout({
             >
               {/* <Providers> */}
               <NextIntlClientProvider locale={locale} messages={messages}>
-                <div className="w-full  overflow-x-hidden">
+                <div className={`w-full overflow-x-hidden ${inter.className}`}>
                   {/* {children} */}
                   {children}
                 </div>

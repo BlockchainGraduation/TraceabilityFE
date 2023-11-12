@@ -51,6 +51,7 @@ import {
 } from 'chart.js';
 import React, {
   ReactNode,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -103,9 +104,9 @@ export default function MarketInfo({
   const [dataHistory, setDataHistory] = useState<HistoryType>({});
   const [dataChart, setDataChart] = useState({});
   const [dataGrowUp, setDataGrowUp] = useState<GrowUpType[]>([]);
-  const [dataListTransaction, setDataListTransaction] = useState<GrowUpType[]>(
-    []
-  );
+  const [dataListTransaction, setDataListTransaction] = useState<
+    TransactionType[]
+  >([]);
   const [loadingPage, setLoadingPage] = useState(true);
   const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
@@ -168,48 +169,17 @@ export default function MarketInfo({
     ],
   };
 
-  const listAvatarDescription = [
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-    {
-      title: 'ABC',
-      description: 'asdasdasd',
-      img: 'asdasdas',
-    },
-  ];
-
   const fethMarket = async () => {
     await instanceAxios
       .get(`marketplace/${params.marketId}`)
       .then(async (res) => {
         setDataMarket(res.data.data);
-
         if (res.data.data.order_type === 'FARMER') {
           fetchListGrowUp(res.data.data.order_id);
+          fetchDataTransaction('transaction_fm', res.data.data.order_id);
         }
+        if (res.data.data.order_type === 'SEEDLING_COMPANY')
+          fetchDataTransaction('transaction_sf', res.data.data.order_id);
         await instanceAxios
           .get(`product/${res.data.data.order_id}`)
           .then((res) => {
@@ -267,18 +237,18 @@ export default function MarketInfo({
       })
       .catch((err) => console.log('asdadasd'));
   };
-  const fetchDataTransaction = async () => {
+  const fetchDataTransaction = async (
+    transactionType: 'transaction_sf' | 'transaction_fm',
+    producId: string
+  ) => {
     await instanceAxios
-      .get(
-        `comments/list?marketplace_id=${
-          params.marketId
-        }&skip=${0}&limit=${1000}`
-      )
+      .get(`${transactionType}/${producId}/get`)
       .then((res) => {
-        setCommentList(res.data.data.list_comment);
+        console.log('transaction', res.data.data);
+        setDataListTransaction(res.data.data);
       })
       .catch((err) => {
-        setCommentList([]);
+        setDataListTransaction([]);
         console.log(err);
       });
   };
@@ -291,6 +261,10 @@ export default function MarketInfo({
     {
       label: 'Giá đơn vị',
       value: dataProduct.price,
+    },
+    {
+      label: 'Số lượng còn',
+      value: dataProduct.quantity,
     },
     {
       label: 'Ngày đăng bán',
@@ -324,40 +298,34 @@ export default function MarketInfo({
     borderRadius: '10px',
   };
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<TransactionType> = [
     {
       title: 'Buyer',
       dataIndex: 'buyer',
       width: 200,
+      render: (value, record, index) => record.user?.username,
     },
     {
       title: 'Quantity',
       dataIndex: 'quantity',
+      render: (value, record, index) => record.quantity,
     },
     {
       title: 'Price',
       dataIndex: 'price',
+      render: (value, record, index) => record.price,
     },
     {
       title: 'Time',
       dataIndex: 'time',
+      render: (value, record, index) =>
+        moment(record.created_at).format('DD/MM/YYYY'),
     },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-    },
+    // {
+    //   title: 'Status',
+    //   render: (value, record, index) => moment(record.).format('DD/MM/YYYY'),
+    // },
   ];
-  const data: DataType[] = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      buyer: `Edward King ${i}`,
-      quantity: 32,
-      price: 1231313 + i,
-      time: `2${i}/12/1212`,
-      status: i,
-    });
-  }
 
   const onUpload = (e: UploadChangeParam<UploadFile<any>>) => {
     console.log(e);
@@ -627,7 +595,7 @@ export default function MarketInfo({
                   {changePageRight === 'HISTORY' && (
                     <Table
                       columns={columns}
-                      dataSource={data}
+                      dataSource={dataListTransaction}
                       pagination={false}
                       scroll={{ y: 340 }}
                     />

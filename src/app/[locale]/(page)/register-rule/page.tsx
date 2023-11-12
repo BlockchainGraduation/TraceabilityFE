@@ -7,6 +7,7 @@ import { Button, ConfigProvider, Image, Typography, notification } from 'antd';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useSWRConfig } from 'swr';
+import Questions from './components/Questions';
 
 export default function RegisterRulePage({
   mutateAPI,
@@ -24,7 +25,7 @@ export default function RegisterRulePage({
     setRule(e);
   };
   const handlePrev = () => {
-    if (currentTab <= listTab.length - 1) {
+    if (currentTab == 0) {
       return;
     } else {
       setCurrentTab(currentTab - 1);
@@ -41,6 +42,7 @@ export default function RegisterRulePage({
   };
   const listTab = [
     <RoleSelect onFinishSelectRule={onFinishSelectRule} key={0} />,
+    <Questions key={1} />,
   ];
   const fetchChangeRule = async () => {
     console.log(rule);
@@ -64,38 +66,8 @@ export default function RegisterRulePage({
       });
   };
   return (
-    <div
-      className=" flex flex-col w-full py-[200px] px-[50px]"
-      // style={{
-      //   backgroundImage: `url(${staticVariables.qc5.src})`,
-      //   backgroundRepeat: 'no-repeat',
-      //   backgroundSize: 'cover',
-      //   backgroundOrigin: 'center',
-      // }}
-    >
-      {/* <Image
-        className="w-1/2 h-full object-cover"
-        alt=""
-        width={1000}
-        height={700}
-        preview={false}
-        src={staticVariables.qc4.src}
-      /> */}
-      <ConfigProvider
-        theme={{
-          // components: {
-          //   Button: {
-          //     fontWeight: 700,
-          //     ghostBg: '#C2FFC39B',
-          //   },
-          // },
-          token: {
-            // colorBgContainer: '#C2FFC39B',
-          },
-        }}
-      >
-        <div className="flex h-full w-full">{listTab[currentTab]}</div>
-      </ConfigProvider>
+    <div className=" flex flex-col w-full h-[600px]">
+      <div className="flex h-full w-full">{listTab[currentTab]}</div>
       <div className="flex items-center gap-x-10 mt-10">
         <Button
           loading={loading}
