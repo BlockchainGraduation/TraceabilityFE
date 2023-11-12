@@ -161,7 +161,7 @@ export default function Category(props: Props) {
                       },
                     }}
                   >
-                    <p className="w-full text-[#121212] text-center font-[600] truncate pb-[16px] text-[16px]">
+                    <p className="w-full text-[#121212] text-center font-semibold truncate pb-[16px] text-[16px]">
                       {item.product?.name}
                     </p>
                     <div className="flex">
@@ -177,7 +177,7 @@ export default function Category(props: Props) {
                         <p className="text-[14px] text-[#6f6f6f] font-normal	">
                           Giá
                         </p>
-                        <p className="font-bold text-[16px] truncate">
+                        <p className="font-semibold text-[16px] truncate">
                           {`${
                             item.product?.price?.toLocaleString() || 0
                           } ${currency}`}

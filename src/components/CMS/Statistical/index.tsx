@@ -6,11 +6,11 @@ import { faUsers } from '@fortawesome/free-solid-svg-icons';
 export default function Statistical() {
   return (
     <div className="w-full">
-      <div className="w-full flex flex-wrap space-x-2">
+      <div className="w-full flex flex-wrap gap-5">
         {[...Array(5)].map((_, index) => (
           <div
             key={index}
-            className="flex w-1/4 space-x-5 p-[20px] bg-green-100 rounded-xl"
+            className="flex w-1/4 gap-x-5 p-[20px] bg-green-100 rounded-xl"
           >
             <FontAwesomeIcon
               size={'4x'}
