@@ -315,7 +315,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
               level={3}
               style={{ margin: 0 }}
             >
-              Danh sach san pham
+              Danh sách sản phẩm
               {/* <Tooltip title="Them san pham">
                 <PlusCircleTwoTone
                   onClick={() => setShowCreateProductModal(true)}

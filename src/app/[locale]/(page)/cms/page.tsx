@@ -3,7 +3,9 @@ import React, { memo, useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
+  LeftCircleTwoTone,
   PieChartOutlined,
+  RightCircleTwoTone,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -92,14 +94,14 @@ export default memo(function CMSPage() {
 
   return (
     currentUser.logged && (
-      <div className="w-full pt-[100px]">
+      <div className="w-full pt-[90px]">
         <Layout className="w-full">
           <Sider
-            collapsible
+            className="relative"
+            // collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
           >
-            <div className="demo-logo-vertical" />
             <Menu
               theme={'light'}
               defaultSelectedKeys={[currentPage.toString()]}
@@ -110,10 +112,18 @@ export default memo(function CMSPage() {
                 localStorage.setItem('page', e.key);
               }}
             />
+            <div
+              className="absolute top-0 right-0 translate-x-1/2 py-2 text-[20px]"
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? <RightCircleTwoTone /> : <LeftCircleTwoTone />}
+            </div>
           </Sider>
           <Layout>
             {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
-            <Content style={{ margin: '0 16px' }}>
+            <Content
+            //  style={{ margin: '0 16px' }}
+            >
               {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>

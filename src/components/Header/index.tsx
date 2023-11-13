@@ -94,7 +94,7 @@ export default memo(function Header() {
   >([]);
   // const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
   // const [totalNotifications, setTotalNotifications] = useState(0);
-  const debouncedValue = useDebounce<string>(valueSearch, 500);
+  const debouncedValue = useDebounce<string>(valueSearch, 300);
   const { mutate } = useSWRConfig();
 
   const router = useRouter();
@@ -165,18 +165,15 @@ export default memo(function Header() {
       .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
       .then((res) => {
         setResultSearch(res.data.data.list_marketplace);
-        // console.log(res);
-        // dispatch(setLogin({ logged: true, user: res.data.data }));
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
+
   const fethListCart = async () => {
     await instanceAxios
       .get(`cart/list?skip=0&limit=1000`)
       .then((res) => {
         setListCart(res.data.data.list_cart);
-        // console.log(res);
-        // dispatch(setLogin({ logged: true, user: res.data.data }));
       })
       .catch((err) => console.log(err));
   };
@@ -184,13 +181,14 @@ export default memo(function Header() {
     setLoadingBuy(true);
     await instanceAxios
       .put(
-        `product/${listCart[valueRadioCart].product_id}/purchase?price=${listCart[valueRadioCart].price}&quantity=${listCart[valueRadioCart].quantity}`
+        `product/${listCart[valueRadioCart].product_id}/purchase?price=${listCart[valueRadioCart].price}&quantity=${listCart[valueRadioCart].quantity}&cart_id=${listCart[valueRadioCart].id}`
       )
       .then((res) => {
         notification.success({
           message: 'Mua hàng thành công',
           description: 'Bạn có thể xem lại đơn hàng ở trang thông tin',
         });
+        mutate('cart/list');
       })
       .catch((err) => {
         notification.error({
@@ -213,12 +211,12 @@ export default memo(function Header() {
       fethMarketSearch();
     }
   }, [debouncedValue, fethMarketSearch]);
-  // useEffectOnce(() => {
-  //   fethListCart();
-  // });
-  useEffectOnce(() => {
+  useEffect(() => {
+    fethListCart();
+  }, [logged]);
+  useEffect(() => {
     fetchNotifications();
-  });
+  }, [logged]);
 
   useSWR('cart/list', fethListCart);
   useSWR('user/me', fethGetUser);
@@ -244,9 +242,7 @@ export default memo(function Header() {
     setCurrentForm('LOGIN');
     mutate('user/me');
   };
-  // useEffect(() => {
-  //   setUser(logged);
-  // }, [logged]);
+
   const ref = useRef(null);
   useOnClickOutside(ref, () => setShowSearchItems(false));
   const contentNotifications = (
@@ -435,7 +431,7 @@ export default memo(function Header() {
               )}
             </div>
           }
-          open={!!debouncedValue}
+          open={showSearchItems}
           // trigger={'focus'}
           placement={'bottom'}
         >
@@ -447,6 +443,11 @@ export default memo(function Header() {
             value={valueSearch}
             onChange={(e) => {
               setValueSearch(e.target.value);
+              if (e.target.value.trim()) {
+                setShowSearchItems(true);
+              } else {
+                setShowSearchItems(false);
+              }
             }}
             onFocus={(e) => {
               if (!e.target.value.trim()) {
@@ -545,31 +546,47 @@ export default memo(function Header() {
             >
               <div className="flex flex-col pr-[10px] w-full">
                 <div className="flex justify-between mb-[20px]">
-                  <p className="text-[16px] font-semibold">3 items</p>
-                  <p className="text-[14px] font-semibold">Clear all</p>
+                  <p className="text-[16px] font-semibold">
+                    {listCart.length} items
+                  </p>
+                  {listCart.length && (
+                    <p className="text-[14px] font-semibold">Clear all</p>
+                  )}
                 </div>
                 <div className="max-h-[360px] overflow-y-auto w-full flex flex-col">
-                  <Radio.Group onChange={onChange} className="flex flex-col">
-                    {listCart.map((item, index) => (
-                      <Radio key={index} value={index}>
-                        <div className="w-[410px]">
-                          <CartItem
-                            onDeleteSuccess={() => mutate('cart/list')}
-                            active={valueRadioCart === index}
-                            key={index}
-                            data={item}
-                          />
-                        </div>
-                      </Radio>
-                    ))}
-                  </Radio.Group>
+                  {listCart.length ? (
+                    <Radio.Group onChange={onChange} className="flex flex-col">
+                      {listCart.map((item, index) => (
+                        <Radio key={index} value={index}>
+                          <div className="w-[410px]">
+                            <CartItem
+                              onDeleteSuccess={() => mutate('cart/list')}
+                              active={valueRadioCart === index}
+                              key={index}
+                              data={item}
+                            />
+                          </div>
+                        </Radio>
+                      ))}
+                    </Radio.Group>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description="Không có sản phẩm nào trong giỏ hàng"
+                    />
+                  )}
                 </div>
                 <div className="w-full flex flex-col space-y-5 border-t-[1px] mt-10 pt-5">
                   <div className="flex justify-between ">
                     <p className="text-[16px] font-bold">Total price</p>
                     <div className="flex flex-col">
-                      <p className="text-[16px] font-semibold">5.428 ETH</p>
-                      <p className="text-[14px]">5.428.000</p>
+                      <p className="text-[16px] font-semibold">
+                        {listCart[valueRadioCart]?.product?.price || 0}{' '}
+                        {currency}
+                      </p>
+                      <p className="text-[14px]">
+                        {listCart[valueRadioCart]?.price || 0} {currency}
+                      </p>
                     </div>
                   </div>
                   <div className="w-full">

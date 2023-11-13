@@ -166,6 +166,28 @@ interface ProductType {
     phone?: string;
   };
 }
+interface StatisticalSystemType {
+  statistical_user?: {
+    total_user?: number;
+    member_count?: number;
+    seedling_count?: number;
+    farmer_count?: number;
+    manufacturer_count?: number;
+  };
+  statistical_product?: {
+    total_product?: number;
+    seedling_count?: number;
+    farmer_count?: number;
+    manufacturer_count?: number;
+  };
+  statistical_transaction_sf?: {
+    total_transaction_sf?: number;
+  };
+  statistical_transaction_fm?: {
+    total_transaction_fm?: number;
+  };
+}
+
 interface GrowUpType {
   id?: string;
   product_farmer_id?: string;
