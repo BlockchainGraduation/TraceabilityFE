@@ -1,34 +1,85 @@
 import staticVariables from '@/static';
-import { Avatar, Tag, Typography } from 'antd';
+import { faClock, faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Avatar, Popover, Space, Tag, Typography } from 'antd';
+import moment from 'moment';
+import Link from 'next/link';
 import React from 'react';
 
-export default function CommentItem({
-  userAvatar,
-  userName,
-  userRole,
-  content,
-}: {
-  userAvatar: string;
-  userRole: string;
-  userName: string;
-  content: string;
-}) {
+interface Props {
+  isOwner: boolean;
+}
+
+export default function CommentItem(props: CommentItemType & Props) {
   return (
-    <div className="mb-[20px]">
-      <div className="flex ">
-        <Avatar src={userAvatar} />
-        <div className="flex ml-[10px] flex-col ">
-          <p className="font-medium">{userName}</p>
-          <Tag
-            color={userRole === 'FARMER' ? 'green' : 'blue-inverse'}
-            className="w-fit font-light"
-          >
-            {userRole}
-          </Tag>
+    <div className="mb-[10px]">
+      <div className="flex">
+        <Popover
+          content={
+            <div className="flex flex-col space-y-5">
+              <div className="flex space-x-5">
+                <Avatar size={100} src={props.user?.avatar} />
+                <div className="flex flex-col space-y-1">
+                  <p className="text-[20px] font-bold">
+                    {props.user?.username}
+                  </p>
+                  <Space>
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      style={{ color: '#4b7dd2' }}
+                    />
+                    <p>{props.user?.email}</p>
+                  </Space>
+                  {/* <Space>
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      style={{ color: '#4978ca' }}
+                    />
+                    <p>{moment(props.user.).format('DD/MM/YYYY')}</p>
+                  </Space> */}
+                  <Tag color={'green-inverse'}>{props.user?.username}</Tag>
+                </div>
+              </div>
+              <Space className="px-[20px] space-x-1 ">
+                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                  Nhắn tin
+                </p>
+                <Link href={`/user/${props.user?.id}`}>
+                  <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                    Xem thông tin
+                  </p>
+                </Link>
+                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                  Báo cáo
+                </p>
+              </Space>
+            </div>
+          }
+        >
+          <div className="flex flex-col items-center">
+            <Avatar src={props.user?.avatar} />
+          </div>
+        </Popover>
+        <div className="flex ml-[10px] p-[8px] flex-col rounded-bl-[10px] rounded-r-[10px] bg-[#f0f2f5] ">
+          <Space className="text-[14px]">
+            <p className="font-medium">{props.user?.username}</p>
+            {props.isOwner && (
+              <p className="text-[12px] text-blue-600">Owner</p>
+            )}
+            <p className="w-fit p-[5px]  bg-blue-100 rounded-lg text-blue-500 text-[11px] font-light">
+              {props.user?.username}
+            </p>
+          </Space>
+          <div className="max-w-[500px] min-w-[50px] w-fit text-[13px]  ">
+            {props.content}
+          </div>
         </div>
       </div>
-      <div className="max-w-[400px] w-fit p-[15px] rounded-bl-[10px] rounded-r-[10px] ml-[40px] mt-[5px] bg-gray-200 text-xs drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-        {content}
+      <div className="ml-[40px] mt-[5px]">
+        <div className="flex mt-1 space-x-5 ml-3 text-[12px]  tetx-[#65676b]">
+          <p className="font-semibold">Phản hồi</p>
+          <p>{moment(props.created_at).fromNow()}</p>
+        </div>
       </div>
     </div>
   );

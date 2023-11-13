@@ -105,14 +105,15 @@ export default function TransactionCMS() {
     {
       title: 'Giá đơn vị',
       dataIndex: 'price',
-      render: (value, record, index) => value.toLocaleString() + currency,
+      render: (value, record, index) => `${value.toLocaleString()} ${currency}`,
     },
     {
       title: 'Tổng giá trị',
       dataIndex: 'total',
       render: (value, record, index) =>
-        ((record.price || 0) * (record.quantity || 0)).toLocaleString() +
-        currency,
+        `${(
+          (record.price || 0) * (record.quantity || 0)
+        ).toLocaleString()} ${currency}`,
     },
     {
       title: 'Ngày giao dịch',

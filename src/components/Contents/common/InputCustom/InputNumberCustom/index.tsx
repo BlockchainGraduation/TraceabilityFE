@@ -1,5 +1,6 @@
+import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch } from '@/hooks';
-import { User, setUser } from '@/reducers/userSlice';
+import { setUser } from '@/reducers/userSlice';
 import currency from '@/services/currency';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
@@ -27,6 +28,8 @@ import React, {
   KeyboardEventHandler,
   FocusEventHandler,
 } from 'react';
+import { useSWRConfig } from 'swr';
+import { useEffectOnce } from 'usehooks-ts';
 export default memo(function InputNumberCustom({
   name,
   initialValue,
@@ -34,6 +37,8 @@ export default memo(function InputNumberCustom({
   input,
   classNameLabel,
   APIurl,
+  passType = 'body',
+  mutateAPI,
   queryType,
   showEdit = true,
   showCurrence = false,
@@ -49,57 +54,51 @@ export default memo(function InputNumberCustom({
   input?: InputNumberProps;
   showEdit?: boolean;
   queryType: 'user' | 'product';
+  passType?: 'body' | 'params';
+  mutateAPI?: string;
   showCurrence?: boolean;
   onSuccess?: () => void;
   onKeyDown?: KeyboardEventHandler;
   // onChange?: ChangeEventHandler<HTMLInputElement>;
 }) {
   const [editAble, setEditAble] = useState(false);
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(0);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const { mutate } = useSWRConfig();
   const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const handleOutSideClick = async (event: any) => {
-  //     if (!ref.current?.input?.contains?.(event.target)) {
-  //       setEditAble(false);
-  //     }
-  //   };
-
-  //   window.addEventListener('mousedown', handleOutSideClick);
-
-  //   return () => {
-  //     window.removeEventListener('mousedown', handleOutSideClick);
-  //   };
-  // }, [editAble]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
   const handleOk = async () => {
     setLoading(true);
-    await fetchUpdate(
-      APIurl,
-      { [name]: value },
-      (res) => {
+    await instanceAxios
+      .put(
+        passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
+        passType === 'body' && { [name]: value }
+      )
+      .then((res) => {
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
-          dispatch(setUser(res.data.data as User));
+          dispatch(setUser(res.data.data as UserType));
         }
+        mutateAPI && mutate(mutateAPI);
         onSuccess?.();
         notification.success({
           message: 'Success',
           description: 'Cập nhật dữ liệu thành công',
         });
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.log(err);
         notification.error({
           message: 'Error',
           description: 'Cập nhật dữ liệu thất bại',
         });
-      },
-      () => setLoading(false)
-    );
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleBlur = async () => {

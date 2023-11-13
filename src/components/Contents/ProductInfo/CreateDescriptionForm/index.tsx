@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 type FormType = {
   file?: UploadFile;
   description?: string;
-  date?: DatePickerType;
+  title?: string;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -31,8 +31,10 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 export default function CreateDescriptionForm({
   productId,
+  className,
   onSuccess,
 }: {
+  className?: string;
   productId: string;
   onSuccess?: () => void;
 }) {
@@ -70,12 +72,12 @@ export default function CreateDescriptionForm({
 
   const onFinish = async (e: FormType) => {
     setLoading(true);
-    console.log(fileList[0].originFileObj);
+
     let formData = new FormData();
-    formData.append('image', fileList[0].originFileObj as Blob);
+    formData.append('img', fileList[0].originFileObj as Blob);
     await instanceAxios
       .post(
-        `product/grow_up?product_id=${productId}&description=${e.description}`,
+        `detail_description/create?title=${e.title}&description=${e.description}&product_id=${productId}`,
         formData
       )
       .then((res) => {
@@ -88,7 +90,7 @@ export default function CreateDescriptionForm({
       .catch((err) =>
         notification.error({
           message: 'Lỗi',
-          description: 'Upload quá trình phát triển không  thành công',
+          description: 'Upload mô tả không  thành công',
         })
       )
       .finally(() => setLoading(false));
@@ -101,16 +103,17 @@ export default function CreateDescriptionForm({
     </div>
   );
   return (
-    <div>
+    <div className={className}>
       <Form
+        layout={'vertical'}
         name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        // labelCol={{ span: 8 }}
+        // wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
       >
         <Form.Item<FormType>
-          label="Upload"
+          label="Chọn hình ảnh"
           valuePropName="fileList"
           name={'file'}
           getValueFromEvent={normFile}
@@ -124,7 +127,8 @@ export default function CreateDescriptionForm({
           <Upload
             // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
             listType="picture-card"
-            multiple
+            maxCount={1}
+            multiple={false}
             // fileList={fileList}
             onPreview={handlePreview}
             onChange={handleChange}
@@ -134,7 +138,19 @@ export default function CreateDescriptionForm({
           </Upload>
         </Form.Item>
         <Form.Item<FormType>
-          label={'Mota'}
+          label={'Tiêu đề'}
+          name={'title'}
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng thêm tiêu đề',
+            },
+          ]}
+        >
+          <Input.TextArea autoSize />
+        </Form.Item>
+        <Form.Item<FormType>
+          label={'Mô tả'}
           name={'description'}
           rules={[
             {

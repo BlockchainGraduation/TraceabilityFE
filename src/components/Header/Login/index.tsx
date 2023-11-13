@@ -2,7 +2,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
-import { User, initialUser, setLogin } from '@/reducers/userSlice';
+import { initialUser, setLogin } from '@/reducers/userSlice';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, notification } from 'antd';
 import { setCookie } from 'cookies-next';
@@ -27,7 +27,9 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
     await instanceAxios
       .post('auth/login', data)
       .then((res) => {
-        dispatch(setLogin({ logged: true, user: res.data.data.user as User }));
+        dispatch(
+          setLogin({ logged: true, user: res.data.data.user as UserType })
+        );
         onFinish();
         setCookie('access_token', res.data.data.access_token);
         instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.data.access_token}`;

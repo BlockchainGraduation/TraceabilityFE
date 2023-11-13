@@ -5,14 +5,15 @@
   "header": {
     "route": {
       "home": "Trang chủ",
-      "product": "Sản phảm",
+      "market":"Marketplace",
       "history": "Lịch sử",
       "support": "Hỗ trợ"
     }
   },
   "action": {
-    "deleted": "xóa bởi",
-    "updated": "sửa bởi"
+    "deleted": "xóa",
+    "updated": "sửa",
+    "created": "tạo"
   },
   "notification": {
     "PRODUCT_NOTIFICATION": "sản phẩm được",

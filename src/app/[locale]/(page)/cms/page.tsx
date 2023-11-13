@@ -1,9 +1,11 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
+  LeftCircleTwoTone,
   PieChartOutlined,
+  RightCircleTwoTone,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -17,6 +19,8 @@ import { useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import ManageUser from '@/components/CMS/Admin/ManageUser';
 import ManageProduct from '@/components/CMS/Admin/ManageProduct';
+import Statistical from '@/components/CMS/Statistical';
+import { useEffectOnce } from 'usehooks-ts';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -36,42 +40,43 @@ function getItem(
   } as MenuItem;
 }
 
-export default function CMSPage() {
+export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState('0');
+  const [currentPage, setCurrentPage] = useState(
+    Number(localStorage.getItem('page'))
+  );
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
-  // const route = useRouter();
-  // useEffect(() => {
-  //   if (!currentUser.logged) {
-  //     route.push('/home');
-  //   }
-  // }, [currentUser.logged, route]);
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem('Thống kê', '0', <PieChartOutlined />),
+    getItem(<p>Thống kê</p>, '1', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem('Thông tin chung', '1'),
-      getItem('Đổi mật khẩu', '2'),
-      getItem('Liên kết', '3'),
+      getItem(<p>Thông tin chung</p>, '2'),
+      getItem(<p>Đổi mật khẩu</p>, '3'),
+      getItem(<p>Liên kết</p>, '4'),
     ]),
-    getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-      getItem('Quản lí sản phâm', '4'),
-      getItem('Lịch sử giao dịch', '5'),
-    ]),
-    currentUser.user.system_role === 'ADMIN'
-      ? getItem('Admin', 'sub3', <TeamOutlined />, [
-          getItem('Quản lí user', '6'),
-          getItem('Quản lí sản phẩm', '7'),
+    currentUser.user.system_role !== 'ADMIN'
+      ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
+          getItem(<p>Quản lí sản phâm</p>, '5'),
+          getItem(<p>Lịch sử giao dịch</p>, '6'),
         ])
       : null,
-    getItem('Files', '8', <FileOutlined />),
+    // getItem('Files'
+
+    currentUser.user.system_role === 'ADMIN'
+      ? getItem('Admin', 'sub3', <TeamOutlined />, [
+          // getItem('Thống kê hệ thống', '6'),
+          getItem(<p>Quản lí user</p>, '7'),
+          // getItem('Quản lí sản phẩm', '8'),
+        ])
+      : null,
+    // getItem('Files', '8', <FileOutlined />),
   ];
   const contents = [
-    <div key={1}>Content1</div>,
+    <Statistical key={1} />,
     <GeneralInformation key={2} />,
     <ChangPassword className="w-2/5 m-auto" key={3} />,
     <></>,
@@ -79,48 +84,66 @@ export default function CMSPage() {
     <TransactionCMS key={5} />,
 
     currentUser.user.system_role === 'ADMIN'
-      ? [<ManageUser key={6} />, <ManageProduct key={7} />]
+      ? [
+          // <div key={6}>asa</div>,
+          <ManageUser key={6} />,
+          // <ManageProduct key={8} />,
+        ]
       : null,
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <div className="demo-logo-vertical" />
-        <Menu
-          theme={'light'}
-          defaultSelectedKeys={[currentPage]}
-          mode="inline"
-          items={items}
-          onSelect={(e) => setCurrentPage(e.key.toString())}
-        />
-      </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '0 16px' }}>
-          {/* <Breadcrumb style={{ margin: '16px 0' }}>
+    currentUser.logged && (
+      <div className="w-full pt-[90px]">
+        <Layout className="w-full">
+          <Sider
+            className="relative"
+            // collapsible
+            collapsed={collapsed}
+            onCollapse={(value) => setCollapsed(value)}
+          >
+            <Menu
+              theme={'light'}
+              defaultSelectedKeys={[currentPage.toString()]}
+              mode="inline"
+              items={items}
+              onSelect={(e) => {
+                setCurrentPage(Number(e.key));
+                localStorage.setItem('page', e.key);
+              }}
+            />
+            <div
+              className="absolute top-0 right-0 translate-x-1/2 py-2 text-[20px]"
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? <RightCircleTwoTone /> : <LeftCircleTwoTone />}
+            </div>
+          </Sider>
+          <Layout>
+            {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+            <Content
+            //  style={{ margin: '0 16px' }}
+            >
+              {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
           </Breadcrumb> */}
-          <div
-            style={{
-              padding: 24,
-              minHeight: 500,
-              background: colorBgContainer,
-            }}
-          >
-            {contents[Number(currentPage)]}
-            Bill is a cat.
-          </div>
-        </Content>
-        {/* <Footer style={{ textAlign: 'center' }}>
+              <div
+                style={{
+                  padding: 24,
+                  minHeight: 500,
+                  background: colorBgContainer,
+                }}
+              >
+                {contents[currentPage - 1]}
+              </div>
+            </Content>
+            {/* <Footer style={{ textAlign: 'center' }}>
           Ant Design ©2023 Created by Ant UED
         </Footer> */}
-      </Layout>
-    </Layout>
+          </Layout>
+        </Layout>
+      </div>
+    )
   );
-}
+});

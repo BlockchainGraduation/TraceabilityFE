@@ -5,16 +5,17 @@
     "header": {
       "route":{
         "home":"Home",
-        "product":"Product",
+        "market":"Marketplace",
         "history":"History",
         "support":"Support"
       }
     },
     "action":{
       "deleted":"deleted by",
-      "updated":"updated by"
+      "updated":"updated by",
+      "created":"created by"
     },
     "notification":{
-      "PRODUCT_NOTIFICATION":"the product"
+      "PRODUCT_NOTIFICATION":"The product"
     }
 }

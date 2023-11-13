@@ -31,9 +31,11 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 export default function GrowUpForm({
   productId,
+  className,
   onSuccess,
 }: {
   productId: string;
+  className?: string;
   onSuccess?: () => void;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -101,11 +103,13 @@ export default function GrowUpForm({
     </div>
   );
   return (
-    <div>
+    <div className="w-full">
       <Form
         name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        layout={'vertical'}
+        className={`px-[20px] ${className}`}
+        // labelCol={{ span: 8 }}
+        // wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
       >

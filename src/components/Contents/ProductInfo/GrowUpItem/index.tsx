@@ -44,7 +44,7 @@ export default function GrowUpItem(props: GrowUpType) {
         className={`relative pl-[100px] before:content-[''] before:absolute before:bg-[#1677ff] before:border-[5px] before:rounded-[50%] before:left-[0px] before:top-1/2 before:translate-y-[-50%] before:w-[20px] before:h-[20px] after:content-[''] after:absolute after:z-[-1] after:left-0 after:top-1/2 after:translate-y-[-50%]  after:w-[110%] after:h-[2px] after:bg-[#42bb67] after:bg-[#0505050f]`}
       >
         <p className="absolute top-1/2 left-0 translate-x-[-120%] translate-y-[-50%]">
-          {moment(props.created_at).format('l')}
+          {moment(props.created_at).format('DD/MM/YYYY')}
         </p>
         <div className="relative w-fit">
           <Image
@@ -61,12 +61,13 @@ export default function GrowUpItem(props: GrowUpType) {
           </p>
         </div>
       </div>
-      <div className="p-[50px] ml-[40px] rounded border-[1px] border-[#42bb67] w-2/3 max-h-2/3 ">
+      <div className="p-[30px] ml-[40px] rounded border-[1px] border-[#42bb67] w-2/3 max-h-2/3 ">
         <Typography.Title
           onClick={() => setShowDescriptionModal(true)}
           level={3}
         >
-          Sự thay đổi của sản ohamar ngày 12
+          Thay đổi của sản cây vào ngày{' '}
+          {moment(props.created_at).format('DD/MM/YYYY')}
         </Typography.Title>
         <p className="line-clamp-6 whitespace-pre-wrap bg-inherit text-justify ">
           {props.description}

@@ -29,42 +29,59 @@ import {
   Card,
   Carousel,
   Col,
+  Collapse,
+  ConfigProvider,
   Empty,
   Image,
   Modal,
   Popover,
+  QRCode,
   Row,
+  Space,
   Statistic,
   Tooltip,
   Typography,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import MarketItem from '@/app/[locale]/home/components/MarketItem';
+import { useEffectOnce } from 'usehooks-ts';
 
-export default function UserInfo() {
+export default function UserInfo({ params }: { params: { id: string } }) {
   const [showCreateProductModal, setShowCreateProductModal] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
   const [nameProduct, setNameProduct] = useState('');
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [listProduct, setListProduct] = useState([]);
+  const [dataUser, setDataUser] = useState<UserType>({});
+  const [listProduct, setListProduct] = useState<ProductType[]>([]);
 
-  const fetchListProductMe = useCallback(async () => {
+  const fetchListProductByID = useCallback(async () => {
     await instanceAxios
       .get(
-        `product/me?skip=${skip}&limit=${limit}${
+        `product/list?skip=${skip}&limit=${limit}${
           nameProduct ? `&name=${nameProduct}` : ''
-        }`
+        }&user_id=${params.id}`
       )
       .then((res) => {
-        setListProduct(res.data.data[1]);
+        setListProduct(res.data.data.list_product);
       })
       .catch((err) => console.log(err));
-  }, [limit, nameProduct, skip]);
-
+  }, [limit, nameProduct, params.id, skip]);
+  const fetchUserByID = useCallback(async () => {
+    await instanceAxios
+      .get(`user/${params.id}/get_user`)
+      .then((res) => {
+        setDataUser(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  }, [params.id]);
+  useEffectOnce(() => {
+    fetchUserByID();
+  });
   useEffect(() => {
-    fetchListProductMe();
-  }, [fetchListProductMe]);
+    fetchListProductByID();
+  }, [fetchListProductByID]);
 
   const contentStyle: React.CSSProperties = {
     height: '300px',
@@ -133,59 +150,113 @@ export default function UserInfo() {
     },
   ];
   return (
-    <div className="w-full">
+    <div className="w-full pb-[50px]">
       {/* <UserInfoCard showButton={false} /> */}
       <div className="w-full h-fit relative">
         <Image
           className="object-cover"
           width={'100%'}
-          height={'400px'}
+          height={'600px'}
+          preview={false}
           alt=""
-          src={staticVariables.logo.src}
+          src={dataUser.avatar}
         />
-        <div className="absolute flex flex-col items-center translate-y-[-60%]  translate-x-[50%] bot-0 ">
+
+        <div className="absolute w-full gap-x-10 px-[100px] flex items-center py-[30px] justify-end bottom-0 bg-gradient-to-t from-black">
+          <ConfigProvider
+            theme={{
+              token: {
+                colorText: '#ffffff',
+                colorTextDescription: '#cfcfcf',
+              },
+            }}
+          >
+            {[...Array(5)].map((_, index) => (
+              <Statistic
+                key={index}
+                valueStyle={{ fontWeight: 700 }}
+                title="Active Users"
+                value={112893}
+              />
+            ))}
+          </ConfigProvider>
+        </div>
+        <div className="absolute flex flex-col items-center translate-y-[-60%] translate-x-[50%] bot-0 ">
           <Image
-            className="object-cover rounded  drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)] border-2"
+            className="object-cover rounded-2xl bg-white drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)] border-2"
             width={200}
             height={200}
+            preview={false}
             alt=""
-            src={staticVariables.logo.src}
+            src={dataUser.avatar}
           />
           <Typography.Title level={3} className="mt-[20px]">
-            {currentUser.full_name}
+            {dataUser.full_name}
           </Typography.Title>
         </div>
       </div>
-      <div className="px-[50px] w-full">
+      <div className="px-[50px] w-full pt-[50px]">
         <div className="flex w-full">
-          <div className="w-2/5 flex flex-col mt-[100px]">
-            <Row className="flex">
-              <Col span={2}>
+          <div className="w-1/2 flex flex-col mt-[100px]">
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              <Space
+                size={20}
+                className="justify-between border-[1px] rounded px-[20px] py-[10px]"
+              >
                 <FontAwesomeIcon size={'2x'} icon={faSquarePhone} />
-              </Col>
-              <Col>
-                <p>1313123</p>
-              </Col>
-            </Row>
-            <Row className="flex">
-              <Col span={2}>
+                <Typography.Text copyable>01234567899</Typography.Text>
+              </Space>
+              <Space
+                size={20}
+                className=" justify-between border-[1px] rounded px-[20px] py-[10px]"
+              >
                 <FontAwesomeIcon size={'2x'} icon={faSquareFacebook} />
-              </Col>
-              <Col>
-                <p>asdasdaadd</p>
-              </Col>
-            </Row>
-            <Row className="flex">
-              <Col span={2}>
+                <Typography.Text copyable>
+                  https://www.facebook.com/
+                </Typography.Text>
+              </Space>
+              <Space
+                size={20}
+                className=" justify-between border-[1px] rounded px-[20px] py-[10px]"
+              >
                 <FontAwesomeIcon size={'2x'} icon={faEnvelope} />
-              </Col>
-              <Col>
-                <p>asdasdaadd</p>
-              </Col>
-            </Row>
-
-            <div className="pr-[50px] text-justify">
-              {`This limited series of Midnight Society Access Passes grants the
+                <Typography.Text copyable>
+                  0x8c73197a561Be04BA0234De2D68C20421AF0546e
+                </Typography.Text>
+              </Space>
+              <Space
+                size={20}
+                className=" justify-between border-[1px] rounded px-[20px] py-[10px]"
+              >
+                <FontAwesomeIcon size={'2x'} icon={faEnvelope} />
+                <Typography.Text copyable>
+                  duongtrungqb12@gmail.com
+                </Typography.Text>
+              </Space>
+              <Space
+                size={20}
+                className=" justify-between border-[1px] rounded px-[20px] py-[10px]"
+              >
+                <FontAwesomeIcon size={'2x'} icon={faEnvelope} />
+                <Typography.Text copyable>
+                  14 Doãn Uẩn - Khuê Mỹ - Ngũ Hành Sơn - Đà Nẵng
+                </Typography.Text>
+              </Space>
+            </div>
+            <QRCode
+              className="m-auto"
+              type="canvas"
+              value="https://www.facebook.com/"
+            />
+            <div className="mt-[50px]">
+              <Collapse
+                items={[
+                  {
+                    key: '3',
+                    label: 'Xem mô tả',
+                    children: (
+                      <div className="pr-[50px] text-justify">
+                        {`This limited series of Midnight Society Access Passes grants the
               holder studio-specific perks including but not limited to: a
               one-of-a-kind "Variant" 🤣😂😊😊 PFP \n
               (profile pic) with unique VisorCortex,
@@ -193,6 +264,11 @@ export default function UserInfo() {
               entitled to voting rights on game features, exclusive access to
               studio events, first dibs on merchandise, early access to the
               latest dev build, and more.`}
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </div>
           <div className="flex flex-col w-3/5">
@@ -239,43 +315,30 @@ export default function UserInfo() {
               level={3}
               style={{ margin: 0 }}
             >
-              Danh sach san pham
-              <Tooltip title="Them san pham">
+              Danh sách sản phẩm
+              {/* <Tooltip title="Them san pham">
                 <PlusCircleTwoTone
                   onClick={() => setShowCreateProductModal(true)}
                   className="absolute right-0 top-1/2 translate-y-[-50%] translate-x-[50%]"
                 />
-              </Tooltip>
+              </Tooltip> */}
             </Typography.Title>
           </div>
-          <Modal
+          {/* <Modal
             onCancel={() => setShowCreateProductModal(false)}
             open={showCreateProductModal}
             footer={[]}
           >
             <p className="text-center py-[50px]">Them san pham</p>
             <CreateProductForm />
-          </Modal>
+          </Modal> */}
           <div className="flex items-center justify-center flex-wrap gap-10	">
             {listProduct.length ? (
-              listProduct.map((item: any, index) => (
-                <ProductItem
-                  key={index}
-                  productId={item.id}
-                  productName={item.name}
-                  productImg={item.banner}
-                  // ownerName="SimpRaidenEi"
-                  // ownerImg={staticVariables.logoRaiden.src}
-                  // role="Fammer"
-                  likeQuantity={12}
-                  messageQuantity={12}
-                  buyerQuantity={12}
-                  price={item.price}
-                  quantity={item.quantity}
-                />
+              listProduct.map((item: ProductType, index) => (
+                <MarketItem key={index} {...item} />
               ))
             ) : (
-              <Empty description={'Không có dữ liệu về sản phẩm của bạn'} />
+              <Empty description={'Không có dữ liệu về sản phẩm'} />
             )}
           </div>
         </div>

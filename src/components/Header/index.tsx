@@ -3,6 +3,7 @@ import staticVariables from '@/static';
 import {
   Avatar,
   Badge,
+  Button,
   Col,
   ConfigProvider,
   Dropdown,
@@ -13,10 +14,13 @@ import {
   MenuProps,
   Modal,
   Popover,
+  Radio,
+  RadioChangeEvent,
   Row,
   Select,
   Space,
   message,
+  notification,
 } from 'antd';
 import Link from 'next/link';
 import { deleteCookie, getCookie } from 'cookies-next';
@@ -37,7 +41,7 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   FieldTimeOutlined,
   GroupOutlined,
@@ -53,8 +57,9 @@ import {
   faHouse,
   faUser,
   faUserGear,
+  faWallet,
 } from '@fortawesome/free-solid-svg-icons';
-import { User, logOut, setLogin } from '@/reducers/userSlice';
+import { logOut, setLogin } from '@/reducers/userSlice';
 import SearchItem from './SearchItem';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
@@ -64,39 +69,33 @@ import { faBell } from '@fortawesome/free-regular-svg-icons';
 import NotificationItem from './NotificationItem';
 import moment from 'moment';
 import 'moment/locale/vi';
+import currency from '@/services/currency';
+import CartItem from './CartItem';
 
 const inter = Inter({ subsets: ['latin'] });
 
-interface NotificationItemType {
-  avatar?: string;
-  message?: string;
-  params?: {
-    product_id?: string;
-    product_name?: string;
-    notification_type?: string;
-  };
-  data?: {
-    created_at?: number;
-    unread?: boolean;
-    notification_id?: string;
-  };
-}
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [valueRadioCart, setValueRadioCart] = useState(0);
+  const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
+  const [loadingBuy, setLoadingBuy] = useState(false);
+
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
-  const [resultSearch, setResultSearch] = useState([]);
+  const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
+  const [listCart, setListCart] = useState<CartItemType[]>([]);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
-  const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
-  const [totalNotifications, setTotalNotifications] = useState(0);
-  const debouncedValue = useDebounce<string>(valueSearch, 500);
+  // const [listUnreadNotifications, setListUnreadNotifications] = useState(0);
+  // const [totalNotifications, setTotalNotifications] = useState(0);
+  const debouncedValue = useDebounce<string>(valueSearch, 300);
+  const { mutate } = useSWRConfig();
 
   const router = useRouter();
   const t = useTranslations('header');
@@ -108,6 +107,11 @@ export default memo(function Header() {
   const showFormLogin = useAppSelector((state) => state.showForm.showFormLogin);
   const dispatch = useAppDispatch();
   moment.locale(locale);
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log('radio checked', e.target.value);
+    setValueRadioCart(e.target.value);
+  };
 
   const listIcon = [
     <HomeOutlined key={1} />,
@@ -132,12 +136,6 @@ export default memo(function Header() {
 
     fetchData();
   }, [locale]);
-  useEffect(() => {
-    if (showFormLogin) {
-      setCurrentForm('LOGIN');
-      setShowModal(true);
-    }
-  }, [showFormLogin]);
 
   const fethGetUser = useCallback(async () => {
     await instanceAxios
@@ -151,39 +149,78 @@ export default memo(function Header() {
   // useEffectOnce(() => {
   //   fethGetUser();
   // });
-  useSWR('user/me', fethGetUser);
 
   const fetchNotifications = async () => {
     await instanceAxios
       .get(`notifications/list`)
       .then((res) => {
-        setListNotifications(res.data.data.data);
-        setListUnreadNotifications(res.data.data.meta.unread_total);
-        setTotalNotifications(res.data.data.meta.total);
+        setListNotifications(res.data.data);
+        // setListUnreadNotifications(res.data.data.meta.unread_total);
+        // setTotalNotifications(res.data.data.meta.total);
       })
       .catch((err) => console.log(err));
   };
-  useSWR('notifications/list', fetchNotifications);
-
-  useEffectOnce(() => {
-    fetchNotifications();
-  });
-
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
       .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
       .then((res) => {
         setResultSearch(res.data.data.list_marketplace);
-        // console.log(res);
-        // dispatch(setLogin({ logged: true, user: res.data.data }));
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
+
+  const fethListCart = async () => {
+    await instanceAxios
+      .get(`cart/list?skip=0&limit=1000`)
+      .then((res) => {
+        setListCart(res.data.data.list_cart);
+      })
+      .catch((err) => console.log(err));
+  };
+  const fetchBuyCartItem = async () => {
+    setLoadingBuy(true);
+    await instanceAxios
+      .put(
+        `product/${listCart[valueRadioCart].product_id}/purchase?price=${listCart[valueRadioCart].price}&quantity=${listCart[valueRadioCart].quantity}&cart_id=${listCart[valueRadioCart].id}`
+      )
+      .then((res) => {
+        notification.success({
+          message: 'Mua hàng thành công',
+          description: 'Bạn có thể xem lại đơn hàng ở trang thông tin',
+        });
+        mutate('cart/list');
+      })
+      .catch((err) => {
+        notification.error({
+          message: 'Mua hàng thất bại',
+          description: 'Bạn có thể vui lòng xem lại thông tin',
+        });
+      })
+      .finally(() => setLoadingBuy(false));
+  };
+
+  useEffect(() => {
+    if (showFormLogin) {
+      setCurrentForm('LOGIN');
+      setShowModal(true);
+    }
+  }, [showFormLogin]);
+
   useEffect(() => {
     if (debouncedValue) {
       fethMarketSearch();
     }
   }, [debouncedValue, fethMarketSearch]);
+  useEffect(() => {
+    fethListCart();
+  }, [logged]);
+  useEffect(() => {
+    fetchNotifications();
+  }, [logged]);
+
+  useSWR('cart/list', fethListCart);
+  useSWR('user/me', fethGetUser);
+  useSWR('notifications/list', fetchNotifications);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -192,6 +229,7 @@ export default memo(function Header() {
     setCurrentForm('LOGIN');
   };
   const handleShowModal = () => {
+    mutate('notifications/list');
     setShowModal(false);
   };
   const handleLogout = async () => {
@@ -199,29 +237,19 @@ export default memo(function Header() {
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access_token');
-    router.push('/');
-    setShowModal(true);
+    // router.push('/');
+    // setShowModal(true);
     setCurrentForm('LOGIN');
+    mutate('user/me');
   };
-  // useEffect(() => {
-  //   setUser(logged);
-  // }, [logged]);
+
   const ref = useRef(null);
   useOnClickOutside(ref, () => setShowSearchItems(false));
   const contentNotifications = (
     <div className="max-h-[500px] overflow-auto">
       {listNotifications.length ? (
         listNotifications.map((item, index) => (
-          <NotificationItem
-            key={index}
-            created_at={item.data?.created_at}
-            content={item.message}
-            unread={item.data?.unread}
-            product_id={item.params?.product_id}
-            product_name={item.params?.product_name}
-            notification_type={item.params?.notification_type}
-            notification_id={item.data?.notification_id}
-          />
+          <NotificationItem key={index} {...item} />
         ))
       ) : (
         <Empty
@@ -234,66 +262,80 @@ export default memo(function Header() {
   const items: MenuProps['items'] = [
     {
       label: (
-        <Link href={'/user/1'}>
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faUser} />
-            </Col>
-            <Col span={24}>Thong tin</Col>
-          </Row>
+        <Link href={`/user/${currentUser.id}`}>
+          <Space wrap={false}>
+            <FontAwesomeIcon icon={faUser} style={{ color: '#3c64aa' }} />
+            <p>Thông tin</p>
+          </Space>
         </Link>
       ),
       key: '0',
     },
+    // {
+    //   label: (
+    //     <Popover
+    //       title="Thông báo của bạn"
+    //       placement={'left'}
+    //       content={contentNotifications}
+    //     >
+    //       <Row gutter={[16, 0]} wrap={false} justify={'start'}>
+    //         <Col className="justify-center" span={6}>
+    //           <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
+    //         </Col>
+    //         <Col span={24}>
+    //           {listUnreadNotifications ? (
+    //             <Badge
+    //               count={listUnreadNotifications}
+    //               offset={[5, 8]}
+    //               color="blue"
+    //             >
+    //               <p className="pr-[10px]">Thông báo</p>
+    //             </Badge>
+    //           ) : (
+    //             <p className="pr-[10px]">Thông báo</p>
+    //           )}
+    //         </Col>
+    //       </Row>
+    //     </Popover>
+    //   ),
+    //   key: '1',
+    // },
     {
       label: (
-        <Popover
-          title="Thông báo của bạn"
-          placement={'left'}
-          content={contentNotifications}
-        >
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
-            </Col>
-            <Col span={24}>
-              {listUnreadNotifications ? (
-                <Badge
-                  count={listUnreadNotifications}
-                  offset={[5, 8]}
-                  color="blue"
-                >
-                  <p className="pr-[10px]">Thông báo</p>
-                </Badge>
-              ) : (
-                <p className="pr-[10px]">Thông báo</p>
-              )}
-            </Col>
-          </Row>
-        </Popover>
+        <Space wrap={false}>
+          <FontAwesomeIcon icon={faWallet} />
+          <p>{`${currentUser.account_balance} ${currency}`}</p>
+        </Space>
       ),
       key: '1',
     },
     {
       label: (
-        <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-          <Col className="justify-center" span={6}>
-            <FontAwesomeIcon icon={faCartShopping} />
-          </Col>
-          <Col span={24}>Gio hang</Col>
-        </Row>
+        <ConfigProvider
+          theme={{
+            token: {
+              lineWidth: 3,
+              paddingXS: 10,
+            },
+          }}
+        >
+          <Space wrap={false} onClick={() => setShowCartModal(true)}>
+            <Badge count={listCart.length} offset={[-30, 8]} color="blue">
+              <FontAwesomeIcon icon={faCartShopping} />
+            </Badge>
+            <p>Giỏ hàng</p>
+          </Space>
+        </ConfigProvider>
       ),
       key: '2',
     },
     {
       label: (
         <Link href={'/cms'}>
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col className="justify-center" span={6}>
-              <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
-            </Col>
-            <Col>Quản lí</Col>
-          </Row>
+          <Space wrap={false}>
+            <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
+            <p>Quản lí</p>
+          </Space>
         </Link>
       ),
       key: '3',
@@ -302,12 +344,10 @@ export default memo(function Header() {
       label:
         currentUser.system_role === 'MEMBER' ? (
           <Link href={'/register-rule'}>
-            <Row wrap={false} justify={'start'}>
-              <Col className="justify-center" span={6}>
-                <FontAwesomeIcon icon={faUser} />
-              </Col>
-              <Col span={24}>Đăng kí thành viên</Col>
-            </Row>
+            <Space wrap={false}>
+              <FontAwesomeIcon icon={faUser} />
+              <p>Đăng kí thành viên</p>
+            </Space>
           </Link>
         ) : (
           ''
@@ -338,18 +378,16 @@ export default memo(function Header() {
     <div
       data-aos="fade-down"
       data-aos-duration="1500"
-      className={`w-full	text-white ${
+      className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } fixed z-10 flex items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
-        <Image
-          width={40}
-          height={40}
-          preview={false}
-          className={`object-cover`}
-          src={staticVariables.qc3.src}
+        <Avatar
+          size={50}
+          className={`object-cover scale-[1.8]`}
+          src={staticVariables.logoDurian.src}
           alt=""
         />
       </Link>
@@ -357,17 +395,17 @@ export default memo(function Header() {
         {Object.keys((dataHeader as any).route || {}).map((key, index) => (
           <Link
             key={index}
-            className={`py-[15px] px-8 flex text-xl items-center gap-x-2 rounded hover:text-white	 hover:-translate-y-1 hover:scale-110 duration-300`}
+            className={`py-[15px] px-6 flex hover:bg-[#ececec] text-[16px] items-center gap-x-2 rounded-xl hover:text-black transition duration-300 ease-in-out hover:-translate-y-1`}
             href={`/${key}`}
           >
-            {listIcon[index]}
-            <p className={`text-inherit font-bold font-mono`}>
+            {/* {listIcon[index]} */}
+            <p className={`text-inherit font-medium font-sans`}>
               {t(`route.${key}`)}
             </p>
           </Link>
         ))}
       </div>
-      <div className="relative w-1/3">
+      <div className="relative w-1/4">
         <Popover
           title={
             <p className=" w-full truncate">
@@ -378,15 +416,11 @@ export default memo(function Header() {
           content={
             <div ref={ref} className="w-full max-h-[400px] overflow-y-auto">
               {resultSearch.length ? (
-                resultSearch.map((item: any, index) => (
+                resultSearch.map((item, index) => (
                   <SearchItem
                     parent={{ onClick: () => setShowSearchItems(false) }}
                     key={index}
-                    productImage={item.product.banner}
-                    productName={item.product.name}
-                    owner={item.product.user.username}
-                    quantity={item.product.quantity}
-                    price={item.product.price}
+                    data={item}
                   />
                 ))
               ) : (
@@ -404,16 +438,15 @@ export default memo(function Header() {
           <input
             // tabIndex={1}
             maxLength={50}
-            className="border-[1px] rounded-lg outline-0 px-[10px] py-[5px] text-sm font-light font-sans text-gray-900 "
+            className="border-0 bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
             placeholder="Search Product...(Max 50 char)"
+            value={valueSearch}
             onChange={(e) => {
+              setValueSearch(e.target.value);
               if (e.target.value.trim()) {
-                setValueSearch(e.target.value);
                 setShowSearchItems(true);
               } else {
-                setResultSearch([]);
                 setShowSearchItems(false);
-                return;
               }
             }}
             onFocus={(e) => {
@@ -427,51 +460,148 @@ export default memo(function Header() {
           />
         </Popover>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center ">
         <ConfigProvider
           theme={{
             token: {
-              colorText: `${isHomePage && 'white'}`,
+              // colorText: `${isHomePage && 'white'}`,
               // colorBgElevated: `${isHomePage && '#363636FF'}`,
             },
             components: {
-              Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
+              // Select: { controlItemBgActive: `${isHomePage && '#111126CE'}` },
             },
           }}
         >
-          <FontAwesomeIcon
-            size="1x"
-            icon={faEarthAsia}
-            style={{ color: '#3748c8' }}
-          />
-          <Select
-            defaultValue={locale}
-            style={{ width: 100 }}
-            onChange={handleChangeLanguage}
-            bordered={false}
-            dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
-            className={`text-inherit mr-[20px]`}
-            size={'small'}
-            options={[
-              { value: 'vi', label: 'Tiếng Việt' },
-              { value: 'en', label: 'English' },
-            ]}
-          />
+          <Space className="w-fit bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg mr-[20px]">
+            <FontAwesomeIcon
+              size="1x"
+              icon={faEarthAsia}
+              style={{ color: '#3748c8' }}
+            />
+            <Select
+              defaultValue={locale}
+              style={{ width: 100 }}
+              onChange={handleChangeLanguage}
+              bordered={false}
+              // dropdownStyle={isHomePage ? { background: '#363636FF' } : {}}
+              className={`text-inherit `}
+              size={'small'}
+              options={[
+                { value: 'vi', label: 'Tiếng Việt' },
+                { value: 'en', label: 'English' },
+              ]}
+            />
+          </Space>
         </ConfigProvider>
+
         {logged ? (
-          <Dropdown menu={{ items }}>
-            {listUnreadNotifications ? (
-              <Badge
-                count={listUnreadNotifications}
-                offset={[5, 10]}
-                color="blue"
-              >
-                <Avatar src={currentUser.avatar} size="large" />
-              </Badge>
-            ) : (
+          <div className="flex items-center space-x-5">
+            <Popover
+              title="Thông báo của bạn"
+              placement={'bottomLeft'}
+              trigger={['click']}
+              content={contentNotifications}
+            >
+              <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
+                {listNotifications.length ? (
+                  <Badge
+                    count={listNotifications.length}
+                    offset={[16, -8]}
+                    color="blue"
+                  >
+                    <FontAwesomeIcon
+                      size={'1x'}
+                      className=""
+                      icon={faBell}
+                      style={{ color: '#20249d' }}
+                    />
+                  </Badge>
+                ) : (
+                  <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
+                )}
+              </div>
+            </Popover>
+            <Dropdown menu={{ items }}>
+              {/* {listUnreadNotifications ? (
+                <Badge
+                  count={listUnreadNotifications}
+                  offset={[5, 10]}
+                  color="blue"
+                >
+                  <Avatar src={currentUser.avatar} size="large" />
+                </Badge>
+              ) : ( */}
               <Avatar src={currentUser.avatar} size="large" />
-            )}
-          </Dropdown>
+              {/* )} */}
+            </Dropdown>
+            <Modal
+              style={{ float: 'right', margin: '10px' }}
+              onCancel={() => setShowCartModal(false)}
+              centered
+              title={
+                <p className="text-[20px] py-[10px] font-semibold">Your cart</p>
+              }
+              open={showCartModal}
+              footer={[]}
+            >
+              <div className="flex flex-col pr-[10px] w-full">
+                <div className="flex justify-between mb-[20px]">
+                  <p className="text-[16px] font-semibold">
+                    {listCart.length} items
+                  </p>
+                  {listCart.length && (
+                    <p className="text-[14px] font-semibold">Clear all</p>
+                  )}
+                </div>
+                <div className="max-h-[360px] overflow-y-auto w-full flex flex-col">
+                  {listCart.length ? (
+                    <Radio.Group onChange={onChange} className="flex flex-col">
+                      {listCart.map((item, index) => (
+                        <Radio key={index} value={index}>
+                          <div className="w-[410px]">
+                            <CartItem
+                              onDeleteSuccess={() => mutate('cart/list')}
+                              active={valueRadioCart === index}
+                              key={index}
+                              data={item}
+                            />
+                          </div>
+                        </Radio>
+                      ))}
+                    </Radio.Group>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description="Không có sản phẩm nào trong giỏ hàng"
+                    />
+                  )}
+                </div>
+                <div className="w-full flex flex-col space-y-5 border-t-[1px] mt-10 pt-5">
+                  <div className="flex justify-between ">
+                    <p className="text-[16px] font-bold">Total price</p>
+                    <div className="flex flex-col">
+                      <p className="text-[16px] font-semibold">
+                        {listCart[valueRadioCart]?.product?.price || 0}{' '}
+                        {currency}
+                      </p>
+                      <p className="text-[14px]">
+                        {listCart[valueRadioCart]?.price || 0} {currency}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <button
+                      // disabled
+                      onClick={fetchBuyCartItem}
+                      className="relative disabled:bg-gray-100 disabled:text-gray-300 block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0"
+                    >
+                      Buy now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+          </div>
         ) : (
           <div
             className={`text-inherit'} cursor-pointer`}

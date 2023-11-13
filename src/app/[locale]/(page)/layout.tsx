@@ -1,17 +1,22 @@
 'use client';
 import { NextIntlClientProvider } from 'next-intl';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
 import Header from '@/components/Header';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAppSelector } from '@/hooks';
-import { message } from 'antd';
+import { Skeleton, message } from 'antd';
 import { useSWRConfig } from 'swr';
+import Footer from '@/components/Footer';
+import { getCookie } from 'cookies-next';
+import dynamic from 'next/dynamic';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
+// const Header = dynamic(() => import('@/components/Header'),{loading:()=><Skeleton/>});
+// const Footer = dynamic(() => import('@/components/Footer'));
 
 interface NotificationType {
   message: string;
@@ -31,11 +36,14 @@ export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
 });
 
 export default function LocaleLayout({ children }: { children: ReactNode }) {
-  const currentUser = useAppSelector((state) => state.user.user);
+  const currentUser = useAppSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
   const { mutate } = useSWRConfig();
+  const cookie = getCookie('access_token');
+  const route = useRouter();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.id, (data: NotificationType) => {
+    channel.bind(currentUser.user.id || '', (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
       if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
         mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
@@ -48,5 +56,21 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       pusher.unsubscribe('general-channel');
     };
   }, [currentUser, mutate]);
-  return <div className="pt-[100px]">{children}</div>;
+  useEffect(() => {
+    if (!cookie) {
+      route.push('/');
+    }
+    setLoading(false);
+  }, [cookie, route]);
+  return (
+    <>
+      {!loading && (
+        <div>
+          <Header />
+          <div className="min-h-[600px]">{children}</div>
+          <Footer />
+        </div>
+      )}
+    </>
+  );
 }
