@@ -519,7 +519,7 @@ export default function MarketInfo({
               value="https://www.facebook.com/"
             /> */}
                 <Line
-                  className="mt-[100px]"
+                  // className="mt-[100px]"
                   options={options}
                   data={dataChartProps}
                 />
