@@ -115,7 +115,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
 
         <Form.Item>
           <button
-            onClick={() => {}}
+            // onClick={() => {}}
             // className=""
             // type="primary"
             className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-[#6dd297] text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
