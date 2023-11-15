@@ -179,6 +179,8 @@ interface StatisticalSystemType {
     seedling_count?: number;
     farmer_count?: number;
     manufacturer_count?: number;
+    total_product?: number;
+    total_sales?: number;
   };
   statistical_transaction_sf?: {
     total_transaction_sf?: number;

@@ -1,9 +1,16 @@
 import instanceAxios from '@/api/instanceAxios';
 import currency from '@/services/currency';
+import useLogin from '@/services/requireLogin';
 import staticVariables from '@/static';
-import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CaretLeftOutlined,
+  CaretRightOutlined,
+} from '@ant-design/icons';
 import { ConfigProvider, Empty, Image, Statistic } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 
@@ -64,10 +71,13 @@ export function LeftArrow() {
   return disabled ? (
     <></>
   ) : (
-    <ArrowLeftOutlined
-      disabled={isFirstItemVisible}
+    <div
+      // disabled={disabled}
       onClick={() => scrollPrev()}
-    />
+      className="h-[90%] my-auto flex items-center px-[3px] rounded-md bg-[#e9e9e9] hover:bg-[#9e9e9e]"
+    >
+      <CaretLeftOutlined />
+    </div>
   );
 }
 
@@ -88,7 +98,13 @@ export function RightArrow() {
   return disabled ? (
     <></>
   ) : (
-    <ArrowRightOutlined disabled={disabled} onClick={() => scrollNext()} />
+    <div
+      // disabled={disabled}
+      onClick={() => scrollNext()}
+      className="h-[90%] my-auto flex items-center px-[3px] rounded-md bg-[#e9e9e9] hover:bg-[#9e9e9e]"
+    >
+      <CaretRightOutlined />
+    </div>
   );
 }
 
@@ -96,6 +112,8 @@ export default function Category(props: Props) {
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
   const [totalMarket, setTotalMarket] = useState(0);
+  const { login } = useLogin();
+  const route = useRouter();
 
   const fetchListMarket = useCallback(async () => {
     await instanceAxios
@@ -135,12 +153,15 @@ export default function Category(props: Props) {
           RightArrow={RightArrow}
         >
           {listMarket.map((item, index) => (
-            <Link
-              className="hover:text-inherit"
+            <div
+              // className="hover:text-inherit"
               key={index}
-              href={`/market/${item.id}`}
+              // href={`/market/${item.id}`}
             >
-              <div className="relative w-[278px] flex flex-col mx-[10px] rounded-2xl overflow-hidden hover:shadow-lg shadow transition ease-in-out hover:-translate-y-2 duration-100 ">
+              <div
+                onClick={() => login(() => route.push(`/market/${item.id}`))}
+                className="relative w-[278px] flex flex-col mx-[10px] rounded-2xl overflow-hidden hover:shadow-lg shadow transition ease-in-out hover:-translate-y-2 duration-100 "
+              >
                 <Image
                   width={278}
                   height={185}
@@ -194,7 +215,7 @@ export default function Category(props: Props) {
                   </ConfigProvider>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </ScrollMenu>
       ) : (

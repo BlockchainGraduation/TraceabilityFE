@@ -131,7 +131,8 @@ export default memo(function CMSPage() {
               <div
                 style={{
                   padding: 24,
-                  minHeight: 500,
+                  paddingBottom: 50,
+                  minHeight: 600,
                   background: colorBgContainer,
                 }}
               >

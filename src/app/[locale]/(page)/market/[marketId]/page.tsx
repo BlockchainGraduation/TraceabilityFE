@@ -7,6 +7,7 @@ import {
   FieldTimeOutlined,
   MailOutlined,
   PhoneOutlined,
+  PicLeftOutlined,
   PlusCircleTwoTone,
   PlusOutlined,
   SearchOutlined,
@@ -31,6 +32,7 @@ import {
   QRCode,
   Row,
   Segmented,
+  Space,
   Table,
   Tag,
   Timeline,
@@ -38,6 +40,7 @@ import {
   Typography,
   Upload,
   UploadFile,
+  notification,
 } from 'antd';
 import {
   Chart as ChartJS,
@@ -60,6 +63,8 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowTrendUp,
+  faCartShopping,
+  faCircleCheck,
   faEnvelope,
   faMobileScreenButton,
 } from '@fortawesome/free-solid-svg-icons';
@@ -79,7 +84,7 @@ import moment from 'moment';
 import { useTranslations } from 'next-intl';
 import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
 import { UploadChangeParam } from 'antd/es/upload';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
 import { Chart } from '@/components/CMS/Statistical/Chart';
 import { Line } from 'react-chartjs-2';
@@ -88,6 +93,7 @@ import Owner from './components/Owner';
 import ProductOrigin from './components/PoductOrigin';
 import currency from '@/services/currency';
 import Description from '@/components/Contents/ProductInfo/Description';
+import useLogin from '@/services/requireLogin';
 
 export default function MarketInfo({
   params,
@@ -109,11 +115,14 @@ export default function MarketInfo({
   >([]);
   const [loadingPage, setLoadingPage] = useState(true);
   const [changePageRight, setChangePageRight] = useState('COMMENT');
+  const [generalAndProvider, setGeneralAndProvider] = useState('GENERAL');
   const [isOwner, setIsOwner] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState(0);
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
+  const { mutate } = useSWRConfig();
+  const { login } = useLogin();
 
   ChartJS.register(
     CategoryScale,
@@ -194,12 +203,14 @@ export default function MarketInfo({
             setDataHistory(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
+
         await instanceAxios
           .get(`product/${res.data.data.order_id}/chart`)
           .then((res) => {
             setDataChart(res.data.data);
           })
           .catch((err) => console.log('asdadasd'));
+
         await instanceAxios
           .get(`user/${res.data.data.order_by}/get_user`)
           .then((res) => setDataOwner(res.data.data))
@@ -208,6 +219,28 @@ export default function MarketInfo({
       })
       .catch((err) => console.log(err))
       .finally(() => setLoadingPage(false));
+  };
+  const fetchAddCartItem = async () => {
+    await instanceAxios
+      .post(`cart/create`, {
+        product_id: dataProduct.id,
+        quantity: dataProduct.quantity,
+        price: dataProduct.price,
+      })
+      .then((res) => {
+        mutate('cart/list');
+        notification.success({
+          message: 'Thành công',
+          description: 'Đã thêm vào giỏ hàng',
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: 'Thất bại',
+          description: 'Thêm giỏ hàng thất bại',
+        });
+      });
+    // .finally(() => setLoading(false));
   };
   useEffectOnce(() => {
     fethMarket();
@@ -353,18 +386,26 @@ export default function MarketInfo({
                 </p>
                 <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
                   Sản phẩm của
-                  <Link href={`/user/${dataProduct.user?.id}`}>
+                  <Link
+                    className="flex space-x-2 items-center"
+                    href={`/user/${dataProduct.user?.id}`}
+                  >
                     <p className="text-[#313064] font-bold">
                       {dataProduct.user?.username}
                     </p>
+                    <FontAwesomeIcon
+                      icon={faCircleCheck}
+                      size={'1x'}
+                      style={{ color: '#1677ff' }}
+                    />
                   </Link>
                 </div>
-                <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
+                <p className="text-[27px]  font-[Work Sans] font-[600]">
                   {`${dataProduct.price} ${currency}`}
                 </p>
                 <div className="flex items-center space-x-2 font-medium text-gray-600">
                   <p>{`Sản phẩm hiện còn:`}</p>
-                  <p className="font-bold text-[#2db457] text-[20px]">
+                  <p className="font-bold  text-[20px]">
                     {dataProduct.quantity || 0}
                   </p>
                 </div>
@@ -372,13 +413,9 @@ export default function MarketInfo({
               $ {dataProduct.price?.toLocaleString()}
             </p> */}
                 <div className="text-[16px] leading-10 font-[Nunito] text-[#707070] text-justify">
-                  Ivy gourd protects the nervous system, provides more energy
-                  and a healthy metabolism! Ivy gourd is rich in beta-carotene
-                  that ensures the optimal functioning of the heart and prevents
-                  heart ailments. Ivy gourd can be stored safely in a cool, dry
-                  room.
+                  {dataProduct.description}
                 </div>
-                <div className="flex gap-x-4 my-[20px]">
+                {/* <div className="flex gap-x-4 my-[20px]">
                   {[...Array(4)].map((_, index) => (
                     <div
                       key={index}
@@ -388,57 +425,26 @@ export default function MarketInfo({
                       12313
                     </div>
                   ))}
-                </div>
-                <div className="rounded p-[20px]">
-                  {/* <div className="flex pb-[10px] mb-[10px] border-b-[1px]">
-                <FieldTimeOutlined className="px-[10px] text-2xl" />
-                <p>
-                  Sell day -
-                  {moment(dataProduct.created_at).format('DD/MM/YYYY')}
-                </p>
-              </div>
-              <div>
-                The current price of durian fruit is $
-                {dataProduct.price?.toLocaleString()} per fruit
-              </div>
-              <div className="w-fit flex items-center text-xs m-auto my-[20px]">
-                Price
-                <p className="text-3xl skew-y-3">
-                  {dataProduct.price?.toLocaleString()}$
-                </p>
-              </div> */}
-                  <div className="flex items-center mt-[10px]">
-                    {/* <Button
-                  disabled={dataProduct.created_by === currentUser.id}
-                  onClick={() => setShowModalPay(true)}
-                  className="w-full  shadow-[0px_12px_10px_-8px_rgba(72,184,159,0.8784313725)]"
-                >
-                  <p className="text-4xl text-[#1f5145]">Buy aanow</p>
-                </Button> */}
-                    <Button
-                      onClick={() => setShowModalPay(true)}
-                      className="border m-auto hover:scale-95 duration-300 relative group cursor-pointer text-sky-50  overflow-hidden h-16 w-64 rounded-md bg-green-200 p-2 flex justify-center items-center font-extrabold"
-                    >
-                      <div className="absolute right-32 -top-4  group-hover:top-1 group-hover:right-2  w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-green-700"></div>
-                      <div className="absolute right-2 -top-4  group-hover:top-1 group-hover:right-2  w-32 h-32 rounded-full group-hover:scale-150  duration-500 bg-green-600"></div>
-                      <div className="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2  w-24 h-24 rounded-full group-hover:scale-150  duration-500 bg-green-500"></div>
-                      <div className="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2  w-16 h-16 rounded-full group-hover:scale-150  duration-500 border-current-color"></div>
-                      <p className="z-10 text-[20px]">Buy now</p>
-                    </Button>
-
-                    {/* <Button
-                  disabled={
-                    dataProduct.created_by === currentUser.id ||
-                    dataProduct.quantity === 0
-                  }
-                  onClick={() => {
-                    // setBuyOrCart('CART');
-                    setShowModalPay(true);
-                  }}
-                  className="flex items-center"
-                >
-                  <ShoppingCartOutlined />
-                </Button> */}
+                </div> */}
+                <div className="rounded w-full p-[20px]">
+                  <div className="flex  w-full items-center mt-[10px]">
+                    <div className="w-1/2 text-[16px] flex items-center rounded-xl overflow-hidden space-x-[1px]">
+                      <div
+                        onClick={() => login(() => setShowModalPay(true))}
+                        className="w-4/5 text-center bg-[#2081E1] py-[12px] text-md leading-md font-semibold text-white"
+                      >
+                        Mua ngay
+                      </div>
+                      <div
+                        onClick={() => login(() => fetchAddCartItem())}
+                        className="w-1/5 text-center bg-[#2081E1] py-[12px]"
+                      >
+                        <FontAwesomeIcon
+                          style={{ color: '#ffffff' }}
+                          icon={faCartShopping}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <Modal
                     onCancel={() => setShowModalPay(false)}
@@ -455,17 +461,29 @@ export default function MarketInfo({
                 </div>
               </div>
             </div>
-            <div className="w-full flex mt-[50px]">
-              <div className="w-1/2 pt-[10px]">
-                <div className="w-full flex space-x-10">
-                  {/* Giới thiệu chủ sử hữu */}
-                  <div className=" w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
-                    <div className="py-[15px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                      Chủ sở hữu
-                    </div>
-                    <div className="p-[20px] flex flex-col space-y-10 items-center">
-                      <Owner {...dataOwner} />
-                      {/* <Link href={`/user/${dataProduct.created_by}`}>
+
+            <Segmented
+              size={'large'}
+              className={'mt-[50px]'}
+              options={[
+                { label: 'Thông tin chung', value: 'GENERAL' },
+                { label: 'Nhà cung cấp', value: 'PROVIDER' },
+              ]}
+              onChange={(e) => setGeneralAndProvider(e as string)}
+            />
+            {generalAndProvider === 'GENERAL' ? (
+              <>
+                <div className="w-full flex mt-[20px] ">
+                  <div className="w-1/2 pt-[10px]">
+                    <div className="w-full flex space-x-10">
+                      {/* Giới thiệu chủ sử hữu */}
+                      <div className=" w-1/2 rounded-xl overflow-hidden border-[1px] border-gray-300">
+                        <div className="py-[15px] text-center font-bold border-b-[1px] border-gray-300 ">
+                          Chủ sở hữu
+                        </div>
+                        <div className="p-[20px] flex flex-col space-y-10 items-center">
+                          <Owner {...dataOwner} />
+                          {/* <Link href={`/user/${dataProduct.created_by}`}>
                   <div className="flex items-center p-[20px] rounded-xl flex-col bg-[#1212120A] hover:bg-[#ececec]">
                     <Avatar size={100} src={dataProduct.user?.avatar} />
                     <p className="text-2xl font-bold text-[#222222]">
@@ -473,7 +491,7 @@ export default function MarketInfo({
                     </p>
                   </div>
                 </Link> */}
-                      {/* <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
+                          {/* <div className="flex w-2/3 h-fit flex-col border-[1px] border-current-color rounded-xl overflow-hidden ">
                     <p className="text-center text-white bg-current-color p-[5px]">
                       Liên hệ
                     </p>
@@ -491,39 +509,39 @@ export default function MarketInfo({
                       )}
                     </div>
                   </div> */}
-                    </div>
-                  </div>
-                  {/* Thông tin sản phẩm */}
-                  <div className="flex-col w-1/2 rounded-xl border-[1px] border-current-color overflow-auto">
-                    <div className="py-[15px] text-center text-white font-bold border-b-[1px]  border-current-color bg-current-color">
-                      Thông tin sản phẩm
-                    </div>
-                    <div className="flex flex-col w-full px-[20px] py-[15px]">
-                      {listInformation.map((item, index) => (
-                        <div
-                          key={index}
-                          className="w-full flex justify-between items-center py-[5px]"
-                        >
-                          <p>{item.label}</p>
-                          <Paragraph copyable>{item.value}</Paragraph>
                         </div>
-                      ))}
+                      </div>
+                      {/* Thông tin sản phẩm */}
+                      <div className="flex-col w-1/2 rounded-xl border-[1px] border-gray-300 overflow-auto">
+                        <div className="py-[15px] text-center font-bold border-b-[1px] border-gray-300  ">
+                          Thông tin sản phẩm
+                        </div>
+                        <div className="flex flex-col w-full px-[20px] py-[15px]">
+                          {listInformation.map((item, index) => (
+                            <div
+                              key={index}
+                              className="w-full flex justify-between items-center py-[5px]"
+                            >
+                              <p>{item.label}</p>
+                              <Paragraph copyable>{item.value}</Paragraph>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="w-1/2 pl-[50px] rounded overflow-hidden">
-                {/* <QRCode
+                  <div className="w-1/2 pl-[50px] rounded overflow-hidden">
+                    {/* <QRCode
               className="m-auto"
               type="canvas"
               value="https://www.facebook.com/"
             /> */}
-                <Line
-                  className="mt-[100px]"
-                  options={options}
-                  data={dataChartProps}
-                />
-                {/* <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
+                    <Line
+                      // className="mt-[100px]"
+                      options={options}
+                      data={dataChartProps}
+                    />
+                    {/* <div className="mx-auto rounded-2xl overflow-hidden my-[50px] w-2/3">
               <Carousel
                 className="drop-shadow-[0_20px_20px_rgba(0,0,0,0.25)]"
                 waitForAnimate={true}
@@ -544,75 +562,87 @@ export default function MarketInfo({
                 </div>
               </Carousel>
             </div> */}
-              </div>
-            </div>
-            <div className="w-full flex">
-              {/* Giới thiệu sản  phẩm */}
-              <div className="mt-[50px] h-fit w-1/2 rounded-xl overflow-hidden border-[1px] border-current-color">
-                <div className="py-[20px] text-center text-white font-bold border-b-[1px] border-current-color bg-current-color">
-                  Giới thiệu về sản phẩm
+                  </div>
                 </div>
-                <p
-                  className={`py-[20px] px-[30px] ${
-                    !dataProduct.description && 'text-gray-500'
-                  }`}
-                >
-                  {dataProduct.description ||
-                    'Chủ sản phẩm chưa thêm thông tin!!!'}
-                </p>
-              </div>
-              <div className="w-1/2 mt-[50px] pl-[50px]">
-                <Segmented
-                  size={'large'}
-                  options={[
-                    { label: 'Bình luận', value: 'COMMENT' },
-                    { label: 'Lịch sử giao dịch', value: 'HISTORY' },
-                  ]}
-                  onChange={(e) => setChangePageRight(e as string)}
-                />
-                <div className="w-full mt-[20px]">
-                  {changePageRight === 'COMMENT' && (
-                    <div className="p-[20px] my-5 border-[1px] border-current-color rounded-xl shadow-lg">
-                      <div className="max-h-[500px] overflow-auto">
-                        {commentList.length ? (
-                          commentList.map((item, index) => (
-                            <CommentItem
-                              isOwner={dataProduct.created_by === item.user_id}
-                              {...item}
-                              key={index}
-                            />
-                          ))
-                        ) : (
-                          <Empty
-                            image={Empty.PRESENTED_IMAGE_DEFAULT}
-                            description={'Chưa có bình luận nào'}
-                          />
-                        )}
-                      </div>
-                      <CommentInput marketId={params.marketId} />
+                <div className="w-full  flex">
+                  {/* Giới thiệu sản  phẩm */}
+                  <div className="mt-[50px] mr-[20px] h-fit w-1/2 rounded-xl overflow-hidden border-[1px] border-gray-300 ">
+                    <div className="flex gap-x-5 p-[20px] text-[16px] font-bold border-b-[1px] border-gray-300 ">
+                      <PicLeftOutlined />
+                      Giới thiệu về sản phẩm
                     </div>
-                  )}
-                  {changePageRight === 'HISTORY' && (
-                    <Table
-                      columns={columns}
-                      dataSource={dataListTransaction}
-                      pagination={false}
-                      scroll={{ y: 340 }}
+                    <p
+                      className={`py-[20px] px-[30px] ${
+                        !dataProduct.description && 'text-gray-500'
+                      }`}
+                    >
+                      {dataProduct.description ||
+                        'Chủ sản phẩm chưa thêm thông tin!!!'}
+                    </p>
+                  </div>
+                  <div className="w-1/2 p-[20px]  rounded-xl mt-[50px] pl-[50px] border-[1px] border-gray-300">
+                    <Segmented
+                      size={'large'}
+                      options={[
+                        { label: 'Bình luận', value: 'COMMENT' },
+                        { label: 'Lịch sử giao dịch', value: 'HISTORY' },
+                      ]}
+                      onChange={(e) => setChangePageRight(e as string)}
                     />
-                  )}
+                    <div className="w-full mt-[20px]">
+                      {changePageRight === 'COMMENT' && (
+                        <div className="my-5 p-[20px] rounded-xl shadow-lg">
+                          <div className="max-h-[300px]  overflow-auto">
+                            {commentList.length ? (
+                              commentList.map((item, index) => (
+                                <CommentItem
+                                  isOwner={
+                                    dataProduct.created_by === item.user_id
+                                  }
+                                  {...item}
+                                  key={index}
+                                />
+                              ))
+                            ) : (
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_DEFAULT}
+                                description={'Chưa có bình luận nào'}
+                              />
+                            )}
+                          </div>
+                          <CommentInput marketId={params.marketId} />
+                        </div>
+                      )}
+                      {changePageRight === 'HISTORY' && (
+                        <Table
+                          columns={columns}
+                          dataSource={dataListTransaction}
+                          pagination={false}
+                          scroll={{ y: 340 }}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            {((dataMarket.order_type !== 'SEEDLING_COMPANY' &&
-              dataHistory.transactions_sf) ||
-              dataHistory.transactions_fm) && (
-              <ProductOrigin
-                originType={'seed'}
-                transactions={
-                  dataHistory.transactions_sf || dataHistory.transactions_fm
-                }
-                {...dataHistory}
-              />
+              </>
+            ) : (
+              <>
+                {((dataMarket.order_type !== 'SEEDLING_COMPANY' &&
+                  dataHistory.transactions_sf) ||
+                  dataHistory.transactions_fm) && (
+                  <ProductOrigin
+                    originType={
+                      dataMarket.order_type === 'SEEDLING_COMPANY'
+                        ? 'seed'
+                        : 'provider'
+                    }
+                    transactions={
+                      dataHistory.transactions_sf || dataHistory.transactions_fm
+                    }
+                    {...dataHistory}
+                  />
+                )}
+              </>
             )}
             {dataMarket.order_type === 'FARMER' && (
               <div

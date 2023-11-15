@@ -159,22 +159,22 @@ export default function HomePage() {
   const { mutate } = useSWRConfig();
   const [loadingPage, setLoadingPage] = useState(true);
 
-  // const fetchListMarket = useCallback(async () => {
-  //   await instanceAxios
-  //     .get(
-  //       `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
-  //         productName ? `&name_product=${productName}` : ''
-  //       }&skip=${currentPage - 1}&limit=${limit}`
-  //     )
-  //     .then((res) => {
-  //       setListMarket(res.data.data.list_marketplace);
-  //       setTotalMarket(res.data.data.total_marketplace);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setListMarket([]);
-  //     });
-  // }, [currentPage, limit, orderType, productName]);
+  const fetchListMarket = useCallback(async () => {
+    await instanceAxios
+      .get(
+        `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
+          productName ? `&name_product=${productName}` : ''
+        }&skip=${currentPage - 1}&limit=15`
+      )
+      .then((res) => {
+        setListMarket(res.data.data.list_marketplace);
+        setTotalMarket(res.data.data.total_marketplace);
+      })
+      .catch((err) => {
+        console.log(err);
+        setListMarket([]);
+      });
+  }, [currentPage, orderType, productName]);
   const fetchTopSelling = useCallback(async () => {
     await instanceAxios
       .get(`product/top_selling?product_type=${orderTypeTopSelling}`)
@@ -190,9 +190,9 @@ export default function HomePage() {
   useEffect(() => {
     fetchTopSelling();
   }, [fetchTopSelling]);
-  // useEffect(() => {
-  //   fetchListMarket();
-  // }, [fetchListMarket]);
+  useEffect(() => {
+    fetchListMarket();
+  }, [fetchListMarket]);
 
   // useSWR('marketplace/list', fetchListMarket);
 
@@ -228,7 +228,7 @@ export default function HomePage() {
       ) : (
         <>
           <Header />
-          <div className="w-full flex-col items-center bg-[#000000]">
+          <div className="w-full flex-col items-center  bg-gradient-to-b from-black">
             <div className="w-full flex flex-col">
               <div className="w-1/3 h-[450px] text-white flex items-center ">
                 <div className="text-[32px] px-[20px]">
@@ -247,10 +247,10 @@ export default function HomePage() {
                 LeftArrow={LeftArrow}
                 RightArrow={RightArrow}
               >
-                {[...Array(10)].map((_, index) => (
+                {listMarket.map((item, index) => (
                   <div
                     key={index}
-                    className="relative w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
+                    className="relative rounded-2xl overflow-hidden w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
                   >
                     <Image
                       width={230}
@@ -258,10 +258,10 @@ export default function HomePage() {
                       preview={false}
                       className="rounded-2xl object-cover"
                       alt=""
-                      src={staticVariables.qc5.src}
+                      src={item.product?.banner}
                     />
                     <p className="w-full absolute bottom-0 font-bold p-[20px] text-[14px] bg-gradient-to-t truncate from-[#000000]">
-                      World of woment
+                      {item.product?.name}
                     </p>
                   </div>
                 ))}

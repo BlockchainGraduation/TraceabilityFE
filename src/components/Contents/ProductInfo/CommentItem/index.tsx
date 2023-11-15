@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React from 'react';
 
 interface Props {
-  isOwner: boolean;
+  isOwner?: boolean;
 }
 
 export default function CommentItem(props: CommentItemType & Props) {
@@ -41,17 +41,20 @@ export default function CommentItem(props: CommentItemType & Props) {
                 </div>
               </div>
               <Space className="px-[20px] space-x-1 ">
-                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Nhắn tin
-                </p>
+                </button>
                 <Link href={`/user/${props.user?.id}`}>
-                  <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                  <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                     Xem thông tin
-                  </p>
+                  </button>
+                  {/* <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                    Xem thông tin
+                  </p> */}
                 </Link>
-                <p className="px-[20px] py-[5px] border-[1px] rounded-xl">
+                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Báo cáo
-                </p>
+                </button>
               </Space>
             </div>
           }

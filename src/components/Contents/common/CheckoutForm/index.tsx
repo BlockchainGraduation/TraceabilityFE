@@ -173,7 +173,7 @@ export const CheckoutForm = ({
 
       <Form.Item className="w-full">
         <div className="w-full flex justify-around items-center">
-          <button
+          {/* <button
             type="submit"
             onClick={() => setOrderType('CART')}
             className="rounded-lg transition relative w-36 h-10 overflow-hidden cursor-pointer flex items-center border border-green-500 bg-green-500 group hover:bg-green-500 active:bg-green-500 active:border-green-500"
@@ -198,7 +198,7 @@ export const CheckoutForm = ({
                 <line x1="5" x2="19" y1="12" y2="12"></line>
               </svg>
             </span>
-          </button>
+          </button> */}
           <button
             onClick={() => setOrderType('BUY')}
             className="rounded-lg font-semibold transition relative text-white w-36 h-10 overflow-hidden cursor-pointer text-center border border-green-500 bg-green-500 group hover:bg-green-500 active:bg-green-500 active:border-green-500"

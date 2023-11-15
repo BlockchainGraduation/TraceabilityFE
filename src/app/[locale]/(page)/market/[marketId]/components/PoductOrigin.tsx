@@ -98,9 +98,7 @@ export default function ProductOrigin(props: Props) {
           <div>
             <Button>Xem giao dịch</Button>
             <Button
-              onClick={() =>
-                route.push(`/market/${props.transactions?.product?.id}`)
-              }
+              onClick={() => route.push(`/user/${props.transactions?.user_id}`)}
             >
               Ghé thăm gian hàng
             </Button>

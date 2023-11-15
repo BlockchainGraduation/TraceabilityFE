@@ -1,10 +1,9 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import useLogin from '@/services/requireLogin';
-import staticVariables from '@/static';
 import { SendOutlined } from '@ant-design/icons';
-import { Avatar, Button, Input, message } from 'antd';
-import React, { useState } from 'react';
+import { Avatar, Input, message } from 'antd';
+import { useState } from 'react';
 import { useSWRConfig } from 'swr';
 
 export default function CommentInput({
@@ -27,7 +26,7 @@ export default function CommentInput({
       await instanceAxios
         .post(`comments/`, { marketplace_id: marketId, content: commentValue })
         .then((res) => {
-          message.success('Đã bình luận');
+          // message.success('Đã bình luận');
           mutate(`comments/list?marketplace_id=${marketId}`);
           setCommentValue('');
         })
