@@ -7,6 +7,18 @@ import qc3 from '../public/qc3.jpg';
 import qc4 from '../public/qc4.jpg';
 import qc5 from '../public/qc5.jpg';
 import qc6 from '../public/qc6.png';
+import factory from '../public/cms/factory.png';
+import product from '../public/cms/product.png';
+import product_factory from '../public/cms/product_factory.png';
+import product_farmer from '../public/cms/product_farmer.png';
+import product_seed from '../public/cms/product_seed.png';
+import user_anonymous from '../public/cms/user_anonymous.png';
+import user_factory from '../public/cms/user_factory.png';
+import user_farmer from '../public/cms/user_farmer.png';
+import user_seed from '../public/cms/user_seed.png';
+// import factory from '../public/cms/factory.png';
+// import factory from '../public/cms/factory.png';
+// import factory from '../public/cms/factory.png';
 
 const staticVariables = {
   logo,
@@ -18,5 +30,14 @@ const staticVariables = {
   qc5,
   qc6,
   logoDurian,
+  factory,
+  product,
+  product_factory,
+  product_farmer,
+  product_seed,
+  user_anonymous,
+  user_factory,
+  user_farmer,
+  user_seed,
 };
 export default staticVariables;

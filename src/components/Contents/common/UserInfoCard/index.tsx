@@ -46,6 +46,8 @@ export default function UserInfoCard({
                     setUserName(e.target.value);
                   },
                 }}
+                APIurl={''}
+                queryType={'user'}
               />
             ) : (
               <p>{userName}</p>
@@ -54,7 +56,12 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <PhoneOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput name="name" initialValue={userPhone} />
+              <CustomInput
+                name="name"
+                initialValue={userPhone}
+                APIurl={''}
+                queryType={'user'}
+              />
             ) : (
               <p>{userPhone}</p>
             )}
@@ -62,7 +69,12 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <MailOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput name="name" initialValue={userEmail} />
+              <CustomInput
+                name="name"
+                initialValue={userEmail}
+                APIurl={''}
+                queryType={'user'}
+              />
             ) : (
               <p>{userEmail}</p>
             )}
@@ -70,7 +82,12 @@ export default function UserInfoCard({
           <div className="flex items-center gap-x-3">
             <RiseOutlined style={{ fontSize: 25 }} />
             {isOwner ? (
-              <CustomInput name="name" initialValue={userAddress} />
+              <CustomInput
+                name="name"
+                initialValue={userAddress}
+                APIurl={''}
+                queryType={'user'}
+              />
             ) : (
               <p>{userAddress}</p>
             )}

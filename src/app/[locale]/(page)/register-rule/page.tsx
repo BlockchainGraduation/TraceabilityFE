@@ -18,11 +18,7 @@ import { useSWRConfig } from 'swr';
 import Questions from './components/Questions';
 import RadioCustom from './components/RadioCustom';
 
-export default function RegisterRulePage({
-  mutateAPI,
-}: {
-  mutateAPI?: string;
-}) {
+export default function RegisterRulePage() {
   const [currentTab, setCurrentTab] = useState(0);
   const [rule, setRule] = useState('');
   const [gender, setGender] = useState('');
@@ -258,7 +254,7 @@ export default function RegisterRulePage({
           description: 'Đã yêu cầu xác thực tài khoản',
         });
         // route.replace('/home');
-        mutate(mutateAPI);
+        // mutate(mutateAPI);
       })
       .catch((err) => {
         notification.error({

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React from 'react';
 
 interface Props {
-  isOwner: boolean;
+  isOwner?: boolean;
 }
 
 export default function CommentItem(props: CommentItemType & Props) {

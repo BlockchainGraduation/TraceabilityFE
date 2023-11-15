@@ -30,22 +30,6 @@ import currency from '@/services/currency';
 
 const { Meta } = Card;
 
-interface CommentType {
-  content?: string;
-  marketplace_id?: string;
-  user_id?: string;
-  id?: string;
-  created_at?: string;
-  user: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone: null;
-  };
-  reply_comments: [];
-}
-
 interface Props {
   id?: string;
   order_type?: string;
@@ -85,7 +69,7 @@ interface Props {
 export default function ProductItem(props: Props) {
   const { login } = useLogin();
   const [openComment, setOpenComment] = useState(false);
-  const [commentList, setCommentList] = useState([]);
+  const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [skip, setKkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const fetchDataComment = useCallback(async () => {
@@ -220,14 +204,8 @@ export default function ProductItem(props: Props) {
       >
         <div className="max-h-[500px] overflow-auto">
           {commentList.length ? (
-            commentList.map((item: any, index) => (
-              <CommentItem
-                userRole={item.user.email}
-                userName={item.user.username}
-                userAvatar={item.user.avatar}
-                content={item.content}
-                key={index}
-              />
+            commentList.map((item, index) => (
+              <CommentItem {...item} key={index} />
             ))
           ) : (
             <Empty

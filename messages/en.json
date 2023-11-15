@@ -5,9 +5,8 @@
     "header": {
       "route":{
         "home":"Home",
-        "market":"Marketplace",
         "history":"History",
-        "support":"Support"
+        "about":"About Us"
       }
     },
     "action":{
