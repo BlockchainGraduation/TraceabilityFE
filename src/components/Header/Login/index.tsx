@@ -2,6 +2,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
+import { setshowFormLogin } from '@/reducers/showFormSlice';
 import { initialUser, setLogin } from '@/reducers/userSlice';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, notification } from 'antd';
@@ -27,10 +28,11 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
     await instanceAxios
       .post('auth/login', data)
       .then((res) => {
+        onFinish();
+        dispatch(setshowFormLogin({ showFormLogin: false }));
         dispatch(
           setLogin({ logged: true, user: res.data.data.user as UserType })
         );
-        onFinish();
         setCookie('access_token', res.data.data.access_token);
         instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.data.access_token}`;
         notification.success({
@@ -77,9 +79,9 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
       <Form
         form={form}
         name="normal_login"
-        className="login-form"
+        className="login-form px-[20px]"
         labelCol={{ span: 6 }}
-        wrapperCol={{ span: 16 }}
+        // wrapperCol={{ span: 16 }}
         // style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
         onFinish={fethLogin}
@@ -111,15 +113,25 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-          <Button
+        <Form.Item>
+          <button
             onClick={() => {}}
-            className="mt-[30px] bg-[#1677ff]"
-            type="primary"
-            htmlType="submit"
+            // className=""
+            // type="primary"
+            className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-[#6dd297] text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
+            // htmlType="submit"
+            type="submit"
           >
-            Submit
-          </Button>
+            {/* <button  > */}
+            Đăng nhập
+            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-200 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-bottom"></span>
+            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-300 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-bottom"></span>
+            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-1000 duration-500 origin-bottom"></span>
+            <p className="text-white group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              Get go
+            </p>
+            {/* </button> */}
+          </button>
         </Form.Item>
       </Form>
     </div>

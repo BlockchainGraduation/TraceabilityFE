@@ -117,7 +117,7 @@ export default function RegisterRulePage() {
           itemList={[
             { label: 'Trung cấp', value: 'Trung cấp' },
             { label: 'Cao đẳng', value: 'Cao đẳng' },
-            { label: 'Đại học', value: 'Cao đẳng' },
+            { label: 'Đại học', value: 'Đại học' },
             { label: 'Sau đại học', value: 'Sau đại học' },
           ]}
         />
@@ -251,9 +251,14 @@ export default function RegisterRulePage() {
       .then((res) => {
         notification.success({
           message: 'Thành công',
-          description: 'Đã yêu cầu xác thực tài khoản',
+          description: (
+            <p>
+              Đã yêu cầu xác thực tài khoản!!! <br />
+              Vui lòng chờ 1 khoảng thời gian để hệ thống xác thực!!!
+            </p>
+          ),
         });
-        // route.replace('/home');
+        route.replace('/home');
         // mutate(mutateAPI);
       })
       .catch((err) => {
@@ -265,14 +270,21 @@ export default function RegisterRulePage() {
   };
   return (
     <div className="flex min-h-[750px]">
-      <div className="w-1/2 min-h-[750px]">
-        {/* <Image
-          width={'100%'}
-          height={'100%'}
-          className="object-cover"
+      <div className="w-1/2 pt-[100px] flex flex-col items-center min-h-[750px]">
+        <Image
+          width={'50%'}
+          // height={'70%'}
+          preview={false}
+          className="object-cover m-auto"
           alt=""
-          src={staticVariables.qc5.src}
-        /> */}
+          src={staticVariables.register_rule.src}
+        />
+        <p className="flex items-center gap-1 text-txt-secondary font-bold text-[32px] leading-[44px] mt-[13px] relative text-center ">
+          Wellcome
+        </p>
+        <p className="font-normal text-[18px] leading-7 mt-3">
+          We provide data on extended sourcing methods in the community..
+        </p>
       </div>
       <div className="w-1/2 h-full min-h-[750px] px-[100px] py-[150px] bg-[#f9f9f9]">
         {listTab[currentTab]}

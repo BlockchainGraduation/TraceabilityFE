@@ -55,7 +55,7 @@ import {
   faCartShopping,
   faEarthAsia,
   faHouse,
-  faUser,
+  // faUser,
   faUserGear,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons';
@@ -65,7 +65,7 @@ import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
 import { Inter } from 'next/font/google';
-import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { faBell, faUser } from '@fortawesome/free-regular-svg-icons';
 import NotificationItem from './NotificationItem';
 import moment from 'moment';
 import 'moment/locale/vi';
@@ -263,7 +263,10 @@ export default memo(function Header() {
     {
       label: (
         <Link href={`/user/${currentUser.id}`}>
-          <Space wrap={false}>
+          <Space
+            className="py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl"
+            wrap={false}
+          >
             <FontAwesomeIcon icon={faUser} style={{ color: '#3c64aa' }} />
             <p>Thông tin</p>
           </Space>
@@ -302,37 +305,43 @@ export default memo(function Header() {
     // },
     {
       label: (
-        <Space wrap={false}>
-          <FontAwesomeIcon icon={faWallet} />
+        <Space
+          className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
+          wrap={false}
+        >
+          <FontAwesomeIcon icon={faWallet} style={{ color: '#4096ff' }} />
           <p>{`${currentUser.account_balance} ${currency}`}</p>
         </Space>
       ),
       key: '1',
     },
-    {
-      label: (
-        <ConfigProvider
-          theme={{
-            token: {
-              lineWidth: 3,
-              paddingXS: 10,
-            },
-          }}
-        >
-          <Space wrap={false} onClick={() => setShowCartModal(true)}>
-            <Badge count={listCart.length} offset={[-30, 8]} color="blue">
-              <FontAwesomeIcon icon={faCartShopping} />
-            </Badge>
-            <p>Giỏ hàng</p>
-          </Space>
-        </ConfigProvider>
-      ),
-      key: '2',
-    },
+    // {
+    //   label: (
+    //     <ConfigProvider
+    //       theme={{
+    //         token: {
+    //           lineWidth: 3,
+    //           paddingXS: 10,
+    //         },
+    //       }}
+    //     >
+    //       <Space wrap={false} onClick={() => setShowCartModal(true)}>
+    //         <Badge count={listCart.length} offset={[-30, 8]} color="blue">
+    //           <FontAwesomeIcon icon={faCartShopping} />
+    //         </Badge>
+    //         <p>Giỏ hàng</p>
+    //       </Space>
+    //     </ConfigProvider>
+    //   ),
+    //   key: '2',
+    // },
     {
       label: (
         <Link href={'/cms'}>
-          <Space wrap={false}>
+          <Space
+            className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
+            wrap={false}
+          >
             <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
             <p>Quản lí</p>
           </Space>
@@ -343,8 +352,14 @@ export default memo(function Header() {
     {
       label:
         currentUser.system_role === 'MEMBER' ? (
-          <Link href={'/register-rule'}>
-            <Space wrap={false}>
+          <Link
+            // className="py-[10px] px-[5px] font-medium text-[16px] space-x-3 rounded-xl"
+            href={'/register-rule'}
+          >
+            <Space
+              className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
+              wrap={false}
+            >
               <FontAwesomeIcon icon={faUser} />
               <p>Đăng kí thành viên</p>
             </Space>
@@ -360,15 +375,16 @@ export default memo(function Header() {
     {
       label: (
         <div onClick={handleLogout}>
-          <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-            <Col span={6}>
-              <FontAwesomeIcon
-                className="mr-[10px]"
-                icon={faArrowRightFromBracket}
-              />
-            </Col>
-            <Col span={24}>Logout</Col>
-          </Row>
+          <Space
+            className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
+            wrap={false}
+          >
+            <FontAwesomeIcon
+              // className="mr-[10px]"
+              icon={faArrowRightFromBracket}
+            />
+            <p>Logout</p>
+          </Space>
         </div>
       ),
       key: '5',
@@ -521,7 +537,8 @@ export default memo(function Header() {
                 )}
               </div>
             </Popover>
-            <Dropdown menu={{ items }}>
+
+            <Dropdown menu={{ items }} placement={'bottom'}>
               {/* {listUnreadNotifications ? (
                 <Badge
                   count={listUnreadNotifications}
@@ -531,9 +548,31 @@ export default memo(function Header() {
                   <Avatar src={currentUser.avatar} size="large" />
                 </Badge>
               ) : ( */}
-              <Avatar src={currentUser.avatar} size="large" />
+              <div className="bg-[#1212120A] hover:bg-[#ececec]  px-[20px] py-[10px] rounded-lg">
+                {/* <Avatar src={currentUser.avatar} size={20} /> */}
+                <FontAwesomeIcon icon={faUser} style={{ color: '#000000' }} />
+              </div>
               {/* )} */}
             </Dropdown>
+            <ConfigProvider
+              theme={{
+                token: {
+                  // lineWidth: 3,
+                  // paddingXS: 10,
+                },
+              }}
+            >
+              <Space
+                className="bg-[#1212120A] hover:bg-[#ececec]  px-[20px] py-[10px] rounded-lg"
+                wrap={false}
+                onClick={() => setShowCartModal(true)}
+              >
+                <Badge count={listCart.length} offset={[16, -8]} color="blue">
+                  <FontAwesomeIcon icon={faCartShopping} />
+                </Badge>
+                {/* <p>Giỏ hàng</p> */}
+              </Space>
+            </ConfigProvider>
             <Modal
               style={{ float: 'right', margin: '10px' }}
               onCancel={() => setShowCartModal(false)}
@@ -610,34 +649,45 @@ export default memo(function Header() {
             Đăng nhập
           </div>
         )}
-        <Modal
-          open={showModal}
-          // width={currentForm === 'REGISTER' ? 1000 : 520}
-          centered
-          onCancel={() => {
-            setShowModal(false);
-            dispatch(setshowFormLogin({ showFormLogin: false }));
+        <ConfigProvider
+          theme={{
+            token: {
+              colorBgElevated: 'rgba(255, 255, 255, 0.75)',
+            },
           }}
-          footer={[]}
         >
-          {currentForm === 'LOGIN' && <Login onFinish={handleShowModal} />}
-          {currentForm === 'REGISTER' && (
-            <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
-          )}
-          {currentForm === 'FORGET' && <ForgetForm onFinishOTP={onFinishOTP} />}
-          <div className=" m-auto flex justify-around	max-w-[300px]">
-            <p onClick={() => setCurrentForm('FORGET')}>Forget?</p>
-            <p
-              onClick={() =>
-                currentForm === 'LOGIN'
-                  ? setCurrentForm('REGISTER')
-                  : setCurrentForm('LOGIN')
-              }
-            >
-              {currentForm === 'LOGIN' ? 'Register' : 'Login'}
-            </p>
-          </div>
-        </Modal>
+          <Modal
+            open={showModal}
+            // width={currentForm === 'REGISTER' ? 1000 : 520}
+            className="backdrop-blur-sm	"
+            centered
+            onCancel={() => {
+              setShowModal(false);
+              dispatch(setshowFormLogin({ showFormLogin: false }));
+            }}
+            footer={[]}
+          >
+            {currentForm === 'LOGIN' && <Login onFinish={handleShowModal} />}
+            {currentForm === 'REGISTER' && (
+              <Register onFinishOTP={onFinishOTP} onFinish={handleShowModal} />
+            )}
+            {currentForm === 'FORGET' && (
+              <ForgetForm onFinishOTP={onFinishOTP} />
+            )}
+            <div className=" m-auto flex justify-around	max-w-[300px]">
+              <p onClick={() => setCurrentForm('FORGET')}>Forget?</p>
+              <p
+                onClick={() =>
+                  currentForm === 'LOGIN'
+                    ? setCurrentForm('REGISTER')
+                    : setCurrentForm('LOGIN')
+                }
+              >
+                {currentForm === 'LOGIN' ? 'Register' : 'Login'}
+              </p>
+            </div>
+          </Modal>
+        </ConfigProvider>
       </div>
     </div>
   );

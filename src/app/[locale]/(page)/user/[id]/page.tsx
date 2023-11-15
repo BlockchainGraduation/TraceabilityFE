@@ -162,7 +162,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
           src={dataUser.avatar}
         />
 
-        <div className="absolute w-full gap-x-10 px-[100px] flex items-center py-[30px] justify-end bottom-0 bg-gradient-to-t from-black">
+        <div className="absolute w-full h-full gap-x-10 px-[100px] flex items-end py-[30px] justify-end bottom-0 bg-gradient-to-t from-black">
           <ConfigProvider
             theme={{
               token: {

@@ -19,7 +19,9 @@ function useLogin() {
       message.info('Bạn cần phải đăng nhập!!!!');
       dispatch(
         nextEvent({
-          requireLogin: () => beforeLoginSuccess?.(),
+          requireLogin: () => {
+            beforeLoginSuccess?.();
+          },
         })
       );
       dispatch(setshowFormLogin({ showFormLogin: true }));
