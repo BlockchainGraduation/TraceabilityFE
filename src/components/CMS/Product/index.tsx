@@ -18,6 +18,7 @@ import {
   Col,
   ConfigProvider,
   Dropdown,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -110,9 +111,19 @@ export default memo(function ProductCMS() {
     setTransactionId(e);
   };
   const fetchListTransaction = async () => {
-    await instanceAxios(`transaction_sf/list?skip=0&limit=100`)
+    await instanceAxios(
+      `${
+        currentUser.system_role === 'FARMER'
+          ? 'transaction_sf'
+          : 'transaction_fm'
+      }/list?skip=0&limit=100`
+    )
       .then((res) => {
-        setListTransaction(res.data.data.list_transaction_sf);
+        setListTransaction(
+          currentUser.system_role === 'FARMER'
+            ? res.data.data.list_transaction_sf
+            : res.data.data.list_transaction_fm
+        );
       })
       .catch((err) => console.log(err));
   };
@@ -430,33 +441,44 @@ export default memo(function ProductCMS() {
           </Typography.Title>
           {currentModalPage === 'SELECT_TRANSACTION' && (
             <div>
-              <p className="py-[10px]">
-                * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty hạt
-                giống
-              </p>
-              <div className="max-h-[600px] overflow-auto">
-                {listTransaction.map((item, index) => (
-                  <TransactionSelectItem
-                    transactionId={item.id || ''}
-                    onFinish={changeCurrentModalPageToCreate}
-                    key={index}
-                    image={item.product?.banner || ''}
-                    productName={item.product?.name || ''}
-                    owner={item.product?.user?.username || ''}
-                    priceTotal={item.price || 0}
-                    buyQuantity={item.quantity || 0}
-                    buyDay={item.created_at || ''}
-                  />
-                ))}
-                {currentUser.system_role === 'SEEDLING_COMPANY' && (
-                  <Button
-                    className="m-auto block"
-                    onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
-                  >
-                    Bỏ qua
-                  </Button>
-                )}
-              </div>
+              {listTransaction.length ? (
+                <>
+                  <p className="py-[10px]">
+                    * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty
+                    hạt giống
+                  </p>
+                  <div className="max-h-[600px] overflow-auto">
+                    {listTransaction.map((item, index) => (
+                      <TransactionSelectItem
+                        transactionId={item.id || ''}
+                        onFinish={changeCurrentModalPageToCreate}
+                        key={index}
+                        image={item.product?.banner || ''}
+                        productName={item.product?.name || ''}
+                        owner={item.product?.user?.username || ''}
+                        priceTotal={item.price || 0}
+                        buyQuantity={item.quantity || 0}
+                        buyDay={item.created_at || ''}
+                      />
+                    ))}
+                    {currentUser.system_role === 'SEEDLING_COMPANY' && (
+                      <Button
+                        className="m-auto block"
+                        onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
+                      >
+                        Bỏ qua
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description={
+                    'Bạn không có giao dịch nào! Vui lòng mua sản phẩm phù hợp cho bạn rồi quay lại !!!'
+                  }
+                />
+              )}
             </div>
           )}
 

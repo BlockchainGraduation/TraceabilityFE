@@ -3,6 +3,7 @@ import staticVariables from '@/static';
 import {
   DeleteTwoTone,
   EditTwoTone,
+  EllipsisOutlined,
   EyeOutlined,
   FieldTimeOutlined,
   MailOutlined,
@@ -18,6 +19,7 @@ import {
   PlusSquareOutlined,
   SearchOutlined,
   SendOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import {
@@ -111,7 +113,7 @@ export default function MarketInfo({
   const [openCreateDescriptionModal, setOpenCreateDescriptionModal] =
     useState(false);
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
-  const [dataMarket, setDataMarket] = useState<any>({});
+  const [dataMarket, setDataMarket] = useState<MarketType>({});
   const [dataOwner, setDataOwner] = useState<UserType>({});
   const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [dataHistory, setDataHistory] = useState<HistoryType>({});
@@ -385,16 +387,20 @@ export default function MarketInfo({
               <Image
                 className="object-cover rounded-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.25)]"
                 alt=""
-                width={800}
+                width={700}
                 preview={false}
                 height={500}
                 src={dataProduct.banner}
               />
               <div className="w-1/2 top-4/12 left-[98%] rounded">
-                <p className="text-[30px] text-[#222222] font-semibold font-[Work Sans]">
-                  {dataProduct.name}
-                </p>
-                <div className="flex gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
+                <div className="w-full flex justify-between text-[30px] text-[#222222] font-semibold font-[Work Sans]">
+                  <p>{dataProduct.name}</p>
+                  <div className="text-[20px] mr-[20px] space-x-8">
+                    <ShareAltOutlined />
+                    <EllipsisOutlined />
+                  </div>
+                </div>
+                <div className="flex w-full gap-x-2 tetx-[16px] text-[#7B7B7B] font-light">
                   Sản phẩm của
                   <Link
                     className="flex space-x-2 items-center"
@@ -410,22 +416,15 @@ export default function MarketInfo({
                     />
                   </Link>
                 </div>
-                <p className="text-[27px]  font-[Work Sans] font-[600]">
-                  {`${dataProduct.price || 0} ${currency}`}
-                </p>
-                <div className="flex items-center space-x-2 font-medium text-gray-600">
-                  <p>{`Sản phẩm hiện còn:`}</p>
-                  <p className="font-bold  text-[20px]">
-                    {dataProduct.quantity || 0}
-                  </p>
-                </div>
-                {/* <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
-              $ {dataProduct.price?.toLocaleString()}
-            </p> */}
-                <div className="text-[16px] leading-10 font-[Nunito] text-[#707070] text-justify">
+                <div className="text-[16px] leading-10 text-[#5f5e5e] text-justify">
                   {dataProduct.description &&
                     'Chủ sản phẩm vẫn chưa thêm mô tả gì?????'}
                 </div>
+
+                {/* <p className="text-[27px] text-[#2DB457] font-[Work Sans] font-[600]">
+              $ {dataProduct.price?.toLocaleString()}
+            </p> */}
+
                 {/* <div className="flex gap-x-4 my-[20px]">
                   {[...Array(4)].map((_, index) => (
                     <div
@@ -437,91 +436,114 @@ export default function MarketInfo({
                     </div>
                   ))}
                 </div> */}
-                <div className="rounded select-none	 w-full p-[20px]">
-                  <div className="flex items-center space-x-10">
-                    <Space>
-                      <MinusCircleOutlined
-                        onClick={() =>
-                          setBuyQuantity(buyQuantity <= 0 ? 0 : buyQuantity - 1)
-                        }
-                        className="text-[20px] text-blue-700"
-                      />
-                      {/* <MinusSquareOutlined  /> */}
-                      <InputNumber
-                        className="w-[150px]"
-                        addonBefore={'Số lượng'}
-                        defaultValue={dataProduct.quantity ? buyQuantity : 0}
-                        value={dataProduct.quantity ? buyQuantity : 0}
-                        onChange={(e) => setBuyQuantity(e || 0)}
-                        // addonAfter={<div onClick={(e) => alert('OK')}>Max</div>}
-                        min={0}
-                        max={dataProduct.quantity}
-                      />
-                      <PlusCircleOutlined
-                        onClick={() => {
-                          if (dataProduct.quantity) {
-                            setBuyQuantity(
-                              dataProduct.quantity === buyQuantity
-                                ? dataProduct.quantity
-                                : buyQuantity + 1
-                            );
-                          } else {
-                            notification.error({
-                              message: 'Sản phẩm hiện không còn!!!',
-                            });
-                          }
-                        }}
-                        className="text-[20px] text-blue-700"
-                      />
-                    </Space>
-                    <p>
-                      Tổng phí là: {buyQuantity * (dataProduct.price || 0)}{' '}
-                      {currency}
+                <div className="select-none	rounded-xl w-full mt-[20px] border-[1px] border-gray-300">
+                  <div className="flex items-center space-x-4 border-b-[1px] p-[20px]">
+                    <FieldTimeOutlined className="text-[20px]" />
+                    <p className="text-[16px] tracking-wider">
+                      Ngày đăng bán:{' '}
+                      {moment(dataMarket.created_at).format('LLL')}
                     </p>
                   </div>
-                  <div className="flex w-full items-center mt-[10px]">
-                    <div className="w-1/2 text-[16px] flex items-center rounded-xl overflow-hidden space-x-[1px]">
-                      <div
-                        onClick={() => login(() => setShowModalPay(true))}
-                        className="w-4/5 text-center bg-[#2081E1] py-[12px] text-md leading-md font-semibold text-white"
-                      >
-                        Mua ngay
-                      </div>
-                      <div
-                        onClick={() =>
-                          login(() => {
-                            buyQuantity
-                              ? fetchAddCartItem()
-                              : notification.error({
-                                  message: 'Vui lòng chọn số lượng',
-                                });
-                          })
-                        }
-                        className="w-1/5 text-center bg-[#2081E1] py-[12px]"
-                      >
-                        <FontAwesomeIcon
-                          style={{ color: '#ffffff' }}
-                          icon={faCartShopping}
+                  <div className="p-[20px]">
+                    <div>
+                      <p>Giá sản phẩm</p>
+                      <p className="text-[30px] tracking-widest	  font-[600]">
+                        {`${dataProduct.price || 0} ${currency}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2 py-[10px] font-medium text-gray-600">
+                      <p>{`Sản phẩm hiện còn:`}</p>
+                      <p className="font-bold  text-[20px]">
+                        {dataProduct.quantity || 0}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-10">
+                      <Space>
+                        <MinusCircleOutlined
+                          onClick={() =>
+                            setBuyQuantity(
+                              buyQuantity <= 0 ? 0 : buyQuantity - 1
+                            )
+                          }
+                          className="text-[20px] text-blue-700"
                         />
+                        {/* <MinusSquareOutlined  /> */}
+                        <InputNumber
+                          className="w-[150px]"
+                          addonBefore={'Số lượng'}
+                          defaultValue={dataProduct.quantity ? buyQuantity : 0}
+                          value={dataProduct.quantity ? buyQuantity : 0}
+                          onChange={(e) => setBuyQuantity(e || 0)}
+                          // addonAfter={<div onClick={(e) => alert('OK')}>Max</div>}
+                          min={0}
+                          max={dataProduct.quantity}
+                        />
+                        <PlusCircleOutlined
+                          onClick={() => {
+                            if (dataProduct.quantity) {
+                              setBuyQuantity(
+                                dataProduct.quantity === buyQuantity
+                                  ? dataProduct.quantity
+                                  : buyQuantity + 1
+                              );
+                            } else {
+                              notification.error({
+                                message: 'Sản phẩm hiện không còn!!!',
+                              });
+                            }
+                          }}
+                          className="text-[20px] text-blue-700"
+                        />
+                      </Space>
+                      <p>
+                        Tổng phí là: {buyQuantity * (dataProduct.price || 0)}{' '}
+                        {currency}
+                      </p>
+                    </div>
+                    <div className="flex w-full items-center mt-[10px]">
+                      <div className="w-2/3 text-[16px] flex items-center rounded-xl overflow-hidden space-x-[1px]">
+                        <div
+                          onClick={() => login(() => setShowModalPay(true))}
+                          className="w-4/5 text-center bg-[#2081E1] py-[12px] text-md leading-md font-semibold text-white"
+                        >
+                          Mua ngay
+                        </div>
+                        <div
+                          onClick={() =>
+                            login(() => {
+                              buyQuantity
+                                ? fetchAddCartItem()
+                                : notification.error({
+                                    message: 'Vui lòng chọn số lượng',
+                                  });
+                            })
+                          }
+                          className="w-1/5 text-center bg-[#2081E1] py-[12px]"
+                        >
+                          <FontAwesomeIcon
+                            style={{ color: '#ffffff' }}
+                            icon={faCartShopping}
+                          />
+                        </div>
                       </div>
                     </div>
+                    <Modal
+                      onCancel={() => setShowModalPay(false)}
+                      open={showModalPay}
+                      footer={[]}
+                    >
+                      <CheckoutForm
+                        producId={dataProduct?.id || ''}
+                        price={dataProduct.price || 0}
+                        quantity={dataProduct.quantity || 0}
+                        buyQuantity={buyQuantity}
+                        onSuccess={() => {
+                          setShowModalPay(false);
+                          mutate(`marketplace/id`);
+                        }}
+                      />
+                    </Modal>
                   </div>
-                  <Modal
-                    onCancel={() => setShowModalPay(false)}
-                    open={showModalPay}
-                    footer={[]}
-                  >
-                    <CheckoutForm
-                      producId={dataProduct?.id || ''}
-                      price={dataProduct.price || 0}
-                      quantity={dataProduct.quantity || 0}
-                      buyQuantity={buyQuantity}
-                      onSuccess={() => {
-                        setShowModalPay(false);
-                        mutate(`marketplace/id`);
-                      }}
-                    />
-                  </Modal>
                 </div>
               </div>
             </div>
