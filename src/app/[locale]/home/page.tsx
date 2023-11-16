@@ -151,7 +151,8 @@ export default function HomePage() {
   const [productName, setProductName] = useState('');
   const [dataTopSelling, setDataTopSelling] = useState<TopSellingType[]>([]);
   const [dataSegmented, setDataSegmented] = useState('SEEDLING_COMPANY');
-  const [orderTypeTopSelling, setOrderTypeTopSelling] = useState('FARMER');
+  const [orderTypeTopSelling, setOrderTypeTopSelling] =
+    useState('SEEDLING_COMPANY');
   const [limit, setLimit] = useState(10);
   const [listMarket, setListMarket] = useState<MarketType[]>([]);
   // const [data, setData] = useState<DataType[]>([]);
