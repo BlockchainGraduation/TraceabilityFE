@@ -25,7 +25,7 @@ export const CheckoutForm = ({
   onSuccess,
 }: {
   form?: FormProps;
-  producId: string;
+  producId: number;
   cartId?: string;
   buyQuantity: number;
   price: number;

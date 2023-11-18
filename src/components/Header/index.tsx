@@ -144,7 +144,7 @@ export default memo(function Header() {
       .get('user/me')
       .then((res) => {
         // console.log(res.data.data);
-        dispatch(setLogin({ logged: true, user: { ...res.data.data } }));
+        dispatch(setLogin({ logged: true, user: { ...res.data } }));
       })
       .catch((err) => console.log(err));
   }, [dispatch]);
@@ -312,7 +312,7 @@ export default memo(function Header() {
           wrap={false}
         >
           <FontAwesomeIcon icon={faWallet} style={{ color: '#4096ff' }} />
-          <p>{`${currentUser.account_balance} ${currency}`}</p>
+          <p>{`${currentUser.account_balance || 0} ${currency}`}</p>
         </Space>
       ),
       key: '1',
@@ -353,7 +353,7 @@ export default memo(function Header() {
     },
     {
       label:
-        currentUser.system_role === 'MEMBER' ? (
+        currentUser.role === 'MEMBER' ? (
           <Link
             // className="py-[10px] px-[5px] font-medium text-[16px] space-x-3 rounded-xl"
             href={'/register-rule'}
@@ -647,7 +647,7 @@ export default memo(function Header() {
                     >
                       <CheckoutForm
                         buyQuantity={listCart[valueRadioCart]?.quantity || 0}
-                        producId={listCart[valueRadioCart]?.product?.id || ''}
+                        producId={listCart[valueRadioCart]?.product?.id || 0}
                         price={listCart[valueRadioCart]?.product?.price || 0}
                         quantity={
                           listCart[valueRadioCart]?.product?.quantity || 0

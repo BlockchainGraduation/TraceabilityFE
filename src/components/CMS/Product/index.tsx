@@ -113,14 +113,12 @@ export default memo(function ProductCMS() {
   const fetchListTransaction = async () => {
     await instanceAxios(
       `${
-        currentUser.system_role === 'FARMER'
-          ? 'transaction_sf'
-          : 'transaction_fm'
+        currentUser.role === 'FARMER' ? 'transaction_sf' : 'transaction_fm'
       }/list?skip=0&limit=100`
     )
       .then((res) => {
         setListTransaction(
-          currentUser.system_role === 'FARMER'
+          currentUser.role === 'FARMER'
             ? res.data.data.list_transaction_sf
             : res.data.data.list_transaction_fm
         );
@@ -461,7 +459,7 @@ export default memo(function ProductCMS() {
                         buyDay={item.created_at || ''}
                       />
                     ))}
-                    {currentUser.system_role === 'SEEDLING_COMPANY' && (
+                    {currentUser.role === 'SEEDLING_COMPANY' && (
                       <Button
                         className="m-auto block"
                         onClick={() => setCurrentModalPage('CREATE_PRODUCT')}

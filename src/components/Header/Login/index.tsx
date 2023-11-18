@@ -26,18 +26,16 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
 
   const fethLogin = async (data: object) => {
     await instanceAxios
-      .post('auth/login', data)
+      .post('login', data)
       .then((res) => {
         onFinish();
         dispatch(setshowFormLogin({ showFormLogin: false }));
-        dispatch(
-          setLogin({ logged: true, user: res.data.data.user as UserType })
-        );
-        setCookie('access_token', res.data.data.access_token);
-        instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.data.access_token}`;
+        dispatch(setLogin({ logged: true, user: res.data.user as UserType }));
+        setCookie('access', res.data.access);
+        instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
         notification.success({
           message: 'Thông báo',
-          description: `Xin chào ${res.data.data.user.username}`,
+          description: `Xin chào ${res.data.user.username}`,
         });
         form.resetFields();
         requireLogin();
@@ -90,7 +88,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
       >
         <Form.Item<FieldType>
           label="Username"
-          name="email"
+          name="username"
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
           <Input

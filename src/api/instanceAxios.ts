@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { getCookie, deleteCookie } from 'cookies-next';
 
-const cookie = getCookie('access_token');
+const cookie = getCookie('access');
 const instanceAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_ORIGIN,
   // withCredentials: true,
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-  },
+  // headers: {
+  //   'Access-Control-Allow-Origin': '*',
+  // },
   //   timeout: 1000,
 });
 if (cookie)

@@ -8,17 +8,23 @@ interface DataType {
 }
 interface UserType {
   id?: string;
+  last_login?: string;
+  is_superuser?: boolean;
   username?: string;
   email?: string;
+  is_staff?: boolean;
+  date_joined?: string;
+  fullname?: string;
   avatar?: string;
-  full_name?: string;
-  birthday?: string;
   phone?: string;
-  address_wallet?: string;
-  address_real?: string;
+  account_balance?: string;
+  wallet_address?: string;
+  geographical_address?: string;
+  role?: string;
+  link: {};
+  confirm_status?: string;
+  survey: {};
   is_active?: boolean;
-  system_role?: string;
-  account_balance?: number;
 }
 interface HistoryType {
   id?: string;
@@ -134,37 +140,52 @@ interface CartItemType {
   };
 }
 interface ProductType {
-  id?: string;
-  name?: string;
-  number_of_sales?: number;
-  banner?: string;
-  created_by?: string;
-  description?: string;
-  created_at?: string;
-  price?: number;
-  is_sale?: boolean;
-  updated_at?: string;
-  quantity?: number;
-  hashed_data?: string;
-  product_status?: string;
-  product_type?: string;
-  detail_description?: [
+  id?: int;
+  banner?: [
     {
-      id?: string;
-      title?: string;
-      description?: string;
+      id?: int;
       image?: string;
-      product_id?: string;
+      create_at?: string;
+      product?: int;
     }
   ];
-
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-  };
+  growup?: [
+    {
+      id?: int;
+      growup_images?: [
+        {
+          id?: int;
+          image?: string;
+          create_at?: string;
+          growup_id?: int;
+        }
+      ];
+      title?: string;
+      description?: string;
+      product_id?: int;
+    }
+  ];
+  comments?: [
+    {
+      id?: int;
+      description?: string;
+      create_at?: string;
+      product_id?: int;
+      user_id?: string;
+    }
+  ];
+  create_by?: UserType;
+  name?: string;
+  avatar?: string;
+  description?: string;
+  price?: int;
+  quantity?: int;
+  product_type?: string;
+  product_status?: string;
+  active?: boolean;
+  create_at?: string;
+  updated_at?: string;
+  transaction_id?: int;
 }
 interface StatisticalSystemType {
   statistical_user?: {
