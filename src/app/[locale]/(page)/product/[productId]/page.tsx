@@ -97,6 +97,7 @@ import { LeftArrow, RightArrow } from '@/app/[locale]/home/components/Category';
 import ProductInformation from '@/components/Contents/ProductInfo/ProductInformation';
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import CommentInput from '@/components/Contents/common/CommentInput';
+import ProductItem from '@/components/Contents/Home/ProductItem';
 
 export default function ProductInfoPage({
   params,
@@ -108,6 +109,9 @@ export default function ProductInfoPage({
     useState(false);
   const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataProduct, setDataProduct] = useState<ProductType>({});
+  const [listRelatedProduct, setListRelatedProduct] = useState<ProductType[]>(
+    []
+  );
   const [dataChart, setDataChart] = useState({});
   const [loadingPage, setLoadingPage] = useState(true);
   const [changePageRight, setChangePageRight] = useState('COMMENT');
@@ -128,11 +132,18 @@ export default function ProductInfoPage({
       .get(`product/${params.productId}/`)
       .then(async (res) => {
         setDataProduct(res.data || {});
+        await instanceAxios
+          .get(`filter-product/?create_by=${res.data.create_by.id}`)
+          .then(async (res) => {
+            setListRelatedProduct(res.data.results || []);
+          })
+          .catch((err) => setCommentList([]));
       })
       .catch((err) => console.log('asdadasd'))
       .finally(() => setLoadingPage(false));
     await fethComments();
   };
+
   const fethComments = async () => {
     await instanceAxios
       .get(`comment/filter-comment?product_id=${params.productId}`)
@@ -141,6 +152,7 @@ export default function ProductInfoPage({
       })
       .catch((err) => setCommentList([]));
   };
+
   useEffectOnce(() => {
     fethProduct();
   });
@@ -204,7 +216,7 @@ export default function ProductInfoPage({
             <div className="w-4/5 h-fit flex m-auto">
               <div className="w-1/2 ">
                 <Image
-                  className="object-cover"
+                  className="object-cover rounded-xl"
                   width={'100%'}
                   height={400}
                   preview={false}
@@ -369,7 +381,26 @@ export default function ProductInfoPage({
                   </div>
                 )}
               </div>
-              <div></div>
+            </div>
+            <div className="w-full px-[30px]">
+              <div className="text-center my-[30px] text-[32px] text-[#222222]">
+                Related Products
+              </div>
+              {listRelatedProduct.length && (
+                <ScrollMenu
+                  Footer={[]}
+                  noPolyfill
+                  wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
+                  scrollContainerClassName="mx-[20px]"
+                  itemClassName="my-[20px]"
+                  LeftArrow={LeftArrow}
+                  RightArrow={RightArrow}
+                >
+                  {listRelatedProduct.map((item, index) => (
+                    <ProductItem key={index} style={'detail'} data={item} />
+                  ))}
+                </ScrollMenu>
+              )}
             </div>
           </div>
         ) : (
