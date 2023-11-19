@@ -89,6 +89,9 @@ body {
     rgb(var(--background-start-rgb)); */
     
 }
+button{
+  outline: none;
+}
 button:active{
   transform: scale(0.9);
 }

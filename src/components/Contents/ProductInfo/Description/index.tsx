@@ -11,11 +11,11 @@ import { getCookie } from 'cookies-next';
 
 interface Props {
   showEdit?: boolean;
-  id?: string;
+  id?: number;
   title?: string;
   description?: string;
   image?: string;
-  product_id?: string;
+  product_id?: number;
 }
 
 export default function Description(props: Props) {

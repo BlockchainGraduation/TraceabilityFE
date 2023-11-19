@@ -21,9 +21,9 @@ interface UserType {
   wallet_address?: string;
   geographical_address?: string;
   role?: string;
-  link: {};
+  link?: {};
   confirm_status?: string;
-  survey: {};
+  survey?: {};
   is_active?: boolean;
 }
 interface HistoryType {
@@ -139,6 +139,7 @@ interface CartItemType {
     system_role?: string;
   };
 }
+
 interface ProductType {
   id?: int;
   banner?: [
@@ -174,6 +175,15 @@ interface ProductType {
       user_id?: string;
     }
   ];
+  detail_decriptions?: [
+    {
+      id?: int;
+      title?: string;
+      description?: string;
+      image?: string;
+      product_id?: int;
+    }
+  ];
   create_by?: UserType;
   name?: string;
   avatar?: string;
@@ -185,7 +195,7 @@ interface ProductType {
   active?: boolean;
   create_at?: string;
   updated_at?: string;
-  transaction_id?: int;
+  transaction_id?: {};
 }
 interface StatisticalSystemType {
   statistical_user?: {
@@ -245,19 +255,11 @@ interface GrowUpType {
   };
 }
 interface CommentItemType {
-  content?: string;
-  marketplace_id?: string;
-  user_id?: string;
-  id?: string;
-  created_at?: string;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-  };
-  reply_comments?: [];
+  id?: int;
+  description?: string;
+  create_at?: string;
+  product_id?: int;
+  user_id?: UserType;
 }
 interface MarketType {
   id?: string;

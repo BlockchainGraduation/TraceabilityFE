@@ -39,7 +39,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
   const currentUser = useAppSelector((state) => state.user);
   const [loading, setLoading] = useState(true);
   const { mutate } = useSWRConfig();
-  const cookie = getCookie('access_token');
+  const cookie = getCookie('access');
   const route = useRouter();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');

@@ -143,8 +143,8 @@ export default memo(function Header() {
     await instanceAxios
       .get('user/me')
       .then((res) => {
-        // console.log(res.data.data);
-        dispatch(setLogin({ logged: true, user: { ...res.data } }));
+        // console.log(res.data);
+        dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
       })
       .catch((err) => console.log(err));
   }, [dispatch]);
@@ -515,6 +515,7 @@ export default memo(function Header() {
         {logged ? (
           <div className="flex items-center space-x-5">
             <Popover
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               title="Thông báo của bạn"
               placement={'bottomLeft'}
               trigger={['click']}
@@ -540,7 +541,11 @@ export default memo(function Header() {
               </div>
             </Popover>
 
-            <Dropdown menu={{ items }} placement={'bottom'}>
+            <Dropdown
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+              menu={{ items }}
+              placement={'bottom'}
+            >
               {/* {listUnreadNotifications ? (
                 <Badge
                   count={listUnreadNotifications}

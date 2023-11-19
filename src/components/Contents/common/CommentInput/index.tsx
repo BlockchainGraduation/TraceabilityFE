@@ -7,11 +7,9 @@ import { useState } from 'react';
 import { useSWRConfig } from 'swr';
 
 export default function CommentInput({
-  marketId,
   productId,
   className,
 }: {
-  marketId: string;
   className?: string;
   productId?: string;
 }) {
@@ -24,10 +22,9 @@ export default function CommentInput({
       message.warning('Vui lòng nhập nội dung');
     } else {
       await instanceAxios
-        .post(`comments/`, { marketplace_id: marketId, content: commentValue })
+        .post(`comment/`, { product_id: productId, description: commentValue })
         .then((res) => {
-          // message.success('Đã bình luận');
-          mutate(`comments/list?marketplace_id=${marketId}`);
+          mutate(`fethComments`);
           setCommentValue('');
         })
         .catch((err) => console.log(err));

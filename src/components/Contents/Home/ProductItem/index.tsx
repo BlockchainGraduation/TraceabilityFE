@@ -73,17 +73,19 @@ export default function ProductItem({
         </div>
       </div>
       <div className="w-full">
-        <p className="text-center truncate p-[10px] pb-0">{data.name}</p>
-        <div className="w-full flex items-center p-[10px] ">
-          <div className="w-1/2 flex space-x-1 text-current-color ">
-            <p className="font-semibold text-[10px]">{currency}</p>
-            <p className="truncate">{data.price}/Kg</p>
+        <Link href={`/product/${data.id}`}>
+          <p className="text-center truncate p-[10px] pb-0">{data.name}</p>
+          <div className="w-full flex items-center p-[10px] ">
+            <div className="w-1/2 flex space-x-1 text-current-color ">
+              <p className="font-semibold text-[10px]">{currency}</p>
+              <p className="truncate">{data.price}/Kg</p>
+            </div>
+            <div className="w-1/2 flex space-x-1 text-current-color ">
+              <p className="font-semibold text-[10px]">Kg</p>
+              <p className="truncate">{data.quantity}</p>
+            </div>
           </div>
-          <div className="w-1/2 flex space-x-1 text-current-color ">
-            <p className="font-semibold text-[10px]">Kg</p>
-            <p className="truncate">{data.quantity}</p>
-          </div>
-        </div>
+        </Link>
         <div className="flex items-center space-x-3 ">
           <div>
             <Avatar src={data.create_by?.avatar} />

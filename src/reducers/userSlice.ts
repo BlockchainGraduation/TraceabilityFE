@@ -5,20 +5,7 @@ interface Auth {
   user: UserType;
 }
 
-export const initialUser: UserType = {
-  id: '',
-  username: '',
-  email: '',
-  avatar: '',
-  full_name: '',
-  birthday: '',
-  phone: '',
-  address_wallet: '',
-  address_real: '',
-  is_active: false,
-  system_role: '',
-  account_balance: 0,
-};
+export const initialUser: UserType = {};
 const initialAuth: Auth = {
   logged: false,
   user: initialUser,
