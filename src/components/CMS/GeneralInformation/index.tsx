@@ -9,6 +9,7 @@ import { MailFilled, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 import {
   faEnvelope,
+  faL,
   faLocationDot,
   faPenToSquare,
   faSquarePhone,
@@ -50,6 +51,7 @@ export default function GeneralInformation() {
   const [showModalUpload, setShowModalUpload] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
+  const [loadingBanner, setLoadingBanner] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -82,29 +84,46 @@ export default function GeneralInformation() {
     info.file.status = 'done';
     setFileList(info.fileList);
   };
+  const handleSubmitChangeBanner = async () => {
+    setLoadingBanner(true);
+    let formData = new FormData();
+    fileList.map((item) =>
+      formData.append('uploaded_images', item.originFileObj as Blob)
+    );
+    await instanceAxios
+      .patch('user/update', formData)
+      .then((res) => {
+        mutate('user/me');
+        message.success('Thay đổi thành công');
+        setFileList([]);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoadingBanner(false));
+  };
+
   // const fetchUpdateAvatar = () => {};
-  const handleChangeAvatar = useCallback(
-    async (info: UploadChangeParam<UploadFile>) => {
-      setLoadingImage(true);
-      info.file.status = 'done';
-      let formData = new FormData();
-      let data = info.file;
-      formData.append(
-        'avatar',
-        info.file.originFileObj as Blob,
-        info.file.name
-      );
-      await instanceAxios
-        .put('user/avatar', formData)
-        .then((res) => {
-          console.log(res.data);
-          mutate('user/me');
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoadingImage(false));
-    },
-    [mutate]
-  );
+  // const handleChangeAvatar = useCallback(
+  //   async (info: UploadChangeParam<UploadFile>) => {
+  //     setLoadingImage(true);
+  //     info.file.status = 'done';
+  //     let formData = new FormData();
+  //     let data = info.file;
+  //     formData.append(
+  //       'avatar',
+  //       info.file.originFileObj as Blob,
+  //       info.file.name
+  //     );
+  //     await instanceAxios
+  //       .put('user/avatar', formData)
+  //       .then((res) => {
+  //         console.log(res.data);
+  //         mutate('user/me');
+  //       })
+  //       .catch((err) => console.log(err))
+  //       .finally(() => setLoadingImage(false));
+  //   },
+  //   [mutate]
+  // );
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -269,13 +288,19 @@ export default function GeneralInformation() {
               listType="picture-card"
               multiple
               maxCount={8}
-              // fileList={fileList}
-              // onPreview={handlePreview}
-              // onChange={handleChange}
+              fileList={fileList}
+              onPreview={handlePreview}
+              onChange={handleChange}
             >
               {fileList.length >= 8 ? null : uploadButton}
             </Upload>
-            <Button className="block m-auto">Done</Button>
+            <Button
+              loading={loadingBanner}
+              onClick={handleSubmitChangeBanner}
+              className="block m-auto"
+            >
+              Done
+            </Button>
             <Modal
               open={previewOpen}
               title={previewTitle}
@@ -293,18 +318,20 @@ export default function GeneralInformation() {
             style={{ borderRadius: '10px', overflow: 'hidden' }}
             autoplay
           >
-            <div>
-              <h3 style={contentStyle}>1</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>2</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>3</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>4</h3>
-            </div>
+            {currentUser.user_banner?.map((item, index) => (
+              <div key={index} className="w-full h-[300px]">
+                <div className="w-full h-full">
+                  <Image
+                    width={'100%'}
+                    height={'100%'}
+                    className="object-cover"
+                    preview={false}
+                    alt=""
+                    src={item.image}
+                  />
+                </div>
+              </div>
+            ))}
           </Carousel>
         </div>
         <div className="w-2/5 bg-[#f6f6f6] p-[20px] rounded-xl">

@@ -56,6 +56,7 @@ import {
 } from 'chart.js';
 import React, {
   ReactNode,
+  use,
   useCallback,
   useEffect,
   useMemo,
@@ -114,17 +115,16 @@ export default function ProductInfoPage({
   );
   const [dataChart, setDataChart] = useState({});
   const [loadingPage, setLoadingPage] = useState(true);
-  const [changePageRight, setChangePageRight] = useState('COMMENT');
   const [isOwner, setIsOwner] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState(0);
-  const [commentPage, setCommentPage] = useState(0);
+  const [buyQuantity, setBuyQuantity] = useState(0);
   const [currentTab, setCurrentTab] = useState<
     'DESCRIPTION' | 'INFORMATION' | 'COMMENT'
   >('DESCRIPTION');
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const { mutate } = useSWRConfig();
-  const [loadingImage, setLoadingImage] = useState(false);
+  const [loadingBuy, setLoadingBuy] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
   const fethProduct = async () => {
@@ -158,6 +158,36 @@ export default function ProductInfoPage({
   });
   useSWR(`product/${params.productId}`, fethProduct);
   useSWR(`fethComments`, fethComments);
+
+  const fetchBuyProduct = async () => {
+    if (buyQuantity === 0) {
+      notification.error({
+        message: 'Thông báo',
+        description: 'Vui lòng chọn số lượng',
+      });
+    } else {
+      setLoadingBuy(true);
+      await instanceAxios
+        .post('transaction', {
+          quantity: buyQuantity,
+          price: buyQuantity * dataProduct.price,
+          product_id: params.productId,
+        })
+        .then((res) =>
+          notification.success({
+            message: 'Thông báo',
+            description: 'Mua hàng thành công',
+          })
+        )
+        .catch((err) =>
+          notification.error({
+            message: 'Thông báo',
+            description: 'Mua hàng thất bại',
+          })
+        )
+        .finally(() => setLoadingBuy(false));
+    }
+  };
 
   // setOwner();
   const contentStyle: React.CSSProperties = {
@@ -211,187 +241,195 @@ export default function ProductInfoPage({
   return (
     !loadingPage && (
       <div className="w-full h-fit m-auto pt-[100px] pb-[50px]">
-        {dataProduct.create_by?.id === currentUser.id ? (
-          <div className="w-full h-fit flex flex-col">
-            <div className="w-4/5 h-fit flex m-auto">
-              <div className="w-1/2 ">
-                <Image
-                  className="object-cover rounded-xl"
-                  width={'100%'}
-                  height={400}
-                  preview={false}
-                  src={dataProduct.avatar}
-                  alt=""
+        {/* {dataProduct.create_by?.id === currentUser.id ? ( */}
+        <div className="w-full h-fit flex flex-col">
+          <div className="w-4/5 h-fit flex m-auto">
+            <div className="w-1/2 ">
+              <Image
+                className="object-cover rounded-xl"
+                width={'100%'}
+                height={400}
+                preview={false}
+                src={dataProduct.avatar}
+                alt=""
+              />
+              <div className="w-full">
+                {dataProduct.banner?.length && (
+                  <ScrollMenu
+                    Footer={[]}
+                    noPolyfill
+                    wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
+                    scrollContainerClassName="mx-[20px]"
+                    // itemClassName="my-[20px]"
+                    LeftArrow={LeftArrow}
+                    RightArrow={RightArrow}
+                  >
+                    {dataProduct.banner?.map((item, index) => (
+                      <Image
+                        className="object-cover rounded-xl"
+                        key={index}
+                        width={100}
+                        height={100}
+                        preview={false}
+                        src={item.image}
+                        alt=""
+                      />
+                    ))}
+                  </ScrollMenu>
+                )}
+              </div>
+            </div>
+            <div className="w-1/2 flex flex-col px-[30px] font-sans">
+              <p className="text-[22px] font-normal">{dataProduct.name}</p>
+              <Space>
+                Create by:
+                <Link href={`/user/${dataProduct.create_by?.id}`}>
+                  <p className="text-current-color">
+                    {dataProduct.create_by?.fullname}
+                  </p>
+                </Link>
+              </Space>
+              <Space className="text-current-color font-semibold my-[10px]">
+                <p className="text-[#2d2d2d]">Price:</p>
+                <p className="text-[12px]">{currency} </p>
+                <p className="text-[23px]">{dataProduct.price} </p>
+              </Space>
+              <p className="text-[14px] tracking-wide  text-[#343434]">
+                {dataProduct.description}
+              </p>
+              <Space className="my-[10px]">
+                <p>Category:</p>
+                <Tag color={'green'}>{dataProduct.product_type}</Tag>
+              </Space>
+              <Tag></Tag>
+              <Space className="text-current-color font-semibold my-[20px]">
+                <p className="text-[#2d2d2d]">Avaialble:</p>
+                <p className="text-[12px]">Kg </p>
+                <p className="text-[23px]">{dataProduct.quantity} </p>
+              </Space>
+              <div className="flex items-center gap-x-4 my-[10px]">
+                <p>Quantity</p>
+                <InputNumber
+                  onChange={(e) => setBuyQuantity(e)}
+                  defaultValue={0}
+                  min={0}
+                  max={dataProduct.quantity}
                 />
-                <div className="w-full">
-                  {dataProduct.banner?.length && (
-                    <ScrollMenu
-                      Footer={[]}
-                      noPolyfill
-                      wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
-                      scrollContainerClassName="mx-[20px]"
-                      // itemClassName="my-[20px]"
-                      LeftArrow={LeftArrow}
-                      RightArrow={RightArrow}
-                    >
-                      {dataProduct.banner?.map((item, index) => (
-                        <Image
-                          className="object-cover rounded-xl"
-                          key={index}
-                          width={100}
-                          height={100}
-                          preview={false}
-                          src={item.image}
-                          alt=""
+                <button className="bg-current-color text-white font-semibold px-[20px] py-[10px] rounded-xl">
+                  Add to cart
+                </button>
+              </div>
+              <div className="w-1/2 mx-auto my-[30px] ">
+                <Button
+                  onClick={fetchBuyProduct}
+                  loading={loadingBuy}
+                  disabled={currentUser.id === dataProduct.create_by?.id}
+                  className="w-full h-fit rounded-xl font-semibold text-white text-[30px] bg-current-color"
+                >
+                  Buy now
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="w-4/5 m-auto border-[1px] bg-[#f7f7f7] rounded-xl overflow-hidden">
+            <div className="flex w-full text-[20px] text-[#555555] border-b-[1px]">
+              <p
+                onClick={() => setCurrentTab('DESCRIPTION')}
+                className="px-[50px] py-[20px]"
+              >
+                Description
+              </p>
+              <p
+                onClick={() => setCurrentTab('INFORMATION')}
+                className="px-[50px] py-[20px] "
+              >
+                Infomation
+              </p>
+              <p
+                onClick={() => setCurrentTab('COMMENT')}
+                className="px-[50px] py-[20px] "
+              >{`Reviews (1)`}</p>
+            </div>
+            <div className="w-full flex my-[20px]">
+              {currentTab === 'DESCRIPTION' && (
+                <div className="w-full px-[100px]">
+                  {dataProduct.detail_decriptions?.length && (
+                    <Carousel>
+                      <div>
+                        <Description
+                          showEdit={false}
+                          id={
+                            dataProduct.detail_decriptions[selectedDescription]
+                              ?.id
+                          }
+                          title={
+                            dataProduct.detail_decriptions[selectedDescription]
+                              ?.title
+                          }
+                          description={
+                            dataProduct.detail_decriptions[selectedDescription]
+                              ?.description
+                          }
+                          image={
+                            dataProduct.detail_decriptions[selectedDescription]
+                              ?.image
+                          }
+                          product_id={
+                            dataProduct.detail_decriptions[selectedDescription]
+                              ?.product_id
+                          }
                         />
-                      ))}
-                    </ScrollMenu>
+                      </div>
+                    </Carousel>
                   )}
                 </div>
-              </div>
-              <div className="w-1/2 flex flex-col px-[30px] font-sans">
-                <p className="text-[22px] font-normal">{dataProduct.name}</p>
-                <Space>
-                  Create by:
-                  <Link href={`/user/${dataProduct.create_by?.id}`}>
-                    <p className="text-current-color">
-                      {dataProduct.create_by?.fullname}
-                    </p>
-                  </Link>
-                </Space>
-                <Space className="text-current-color font-semibold my-[10px]">
-                  <p className="text-[#2d2d2d]">Price:</p>
-                  <p className="text-[12px]">{currency} </p>
-                  <p className="text-[23px]">{dataProduct.price} </p>
-                </Space>
-                <p className="text-[14px] tracking-wide  text-[#343434]">
-                  {dataProduct.description}
-                </p>
-                <Space className="my-[10px]">
-                  <p>Category:</p>
-                  <Tag color={'green'}>{dataProduct.product_type}</Tag>
-                </Space>
-                <Tag></Tag>
-                <Space className="text-current-color font-semibold my-[20px]">
-                  <p className="text-[#2d2d2d]">Avaialble:</p>
-                  <p className="text-[12px]">Kg </p>
-                  <p className="text-[23px]">{dataProduct.quantity} </p>
-                </Space>
-                <div className="flex items-center gap-x-4 my-[10px]">
-                  <p>Quantity</p>
-                  <InputNumber min={0} max={dataProduct.quantity} />
-                  <button className="bg-current-color text-white font-semibold px-[20px] py-[10px] rounded-xl">
-                    Add to cart
-                  </button>
+              )}
+              {currentTab === 'INFORMATION' && (
+                <div className="m-auto px-[100px]">
+                  <ProductInformation data={dataProduct} />
                 </div>
-              </div>
-            </div>
-            <div className="w-4/5 m-auto border-[1px] bg-[#f7f7f7] rounded-xl overflow-hidden">
-              <div className="flex w-full text-[20px] text-[#555555] border-b-[1px]">
-                <p
-                  onClick={() => setCurrentTab('DESCRIPTION')}
-                  className="px-[50px] py-[20px]"
-                >
-                  Description
-                </p>
-                <p
-                  onClick={() => setCurrentTab('INFORMATION')}
-                  className="px-[50px] py-[20px] "
-                >
-                  Infomation
-                </p>
-                <p
-                  onClick={() => setCurrentTab('COMMENT')}
-                  className="px-[50px] py-[20px] "
-                >{`Reviews (1)`}</p>
-              </div>
-              <div className="w-full flex my-[20px]">
-                {currentTab === 'DESCRIPTION' && (
-                  <div className="w-full px-[100px]">
-                    {dataProduct.detail_decriptions?.length && (
-                      <Carousel>
-                        <div>
-                          <Description
-                            showEdit={false}
-                            id={
-                              dataProduct.detail_decriptions[
-                                selectedDescription
-                              ]?.id
-                            }
-                            title={
-                              dataProduct.detail_decriptions[
-                                selectedDescription
-                              ]?.title
-                            }
-                            description={
-                              dataProduct.detail_decriptions[
-                                selectedDescription
-                              ]?.description
-                            }
-                            image={
-                              dataProduct.detail_decriptions[
-                                selectedDescription
-                              ]?.image
-                            }
-                            product_id={
-                              dataProduct.detail_decriptions[
-                                selectedDescription
-                              ]?.product_id
-                            }
-                          />
-                        </div>
-                      </Carousel>
-                    )}
+              )}
+              {currentTab === 'COMMENT' && (
+                <div className="w-2/3 m-auto">
+                  <p className="mt-[20px] mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
+                    {commentList.length} comments for {dataProduct.name}
+                  </p>
+                  <div>
+                    {commentList.map((item, index) => (
+                      <CommentItem
+                        key={index}
+                        isOwner={item.user_id?.id === dataProduct.create_by?.id}
+                        {...item}
+                      />
+                    ))}
                   </div>
-                )}
-                {currentTab === 'INFORMATION' && (
-                  <div className="m-auto px-[100px]">
-                    <ProductInformation data={dataProduct} />
-                  </div>
-                )}
-                {currentTab === 'COMMENT' && (
-                  <div className="w-2/3 m-auto">
-                    <p className="mt-[20px] mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
-                      {commentList.length} comments for {dataProduct.name}
-                    </p>
-                    <div>
-                      {commentList.map((item, index) => (
-                        <CommentItem
-                          key={index}
-                          isOwner={
-                            item.user_id?.id === dataProduct.create_by?.id
-                          }
-                          {...item}
-                        />
-                      ))}
-                    </div>
-                    <CommentInput productId={params.productId} />
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="w-full px-[30px]">
-              <div className="text-center my-[30px] text-[32px] text-[#222222]">
-                Related Products
-              </div>
-              {listRelatedProduct.length && (
-                <ScrollMenu
-                  Footer={[]}
-                  noPolyfill
-                  wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
-                  scrollContainerClassName="mx-[20px]"
-                  itemClassName="my-[20px]"
-                  LeftArrow={LeftArrow}
-                  RightArrow={RightArrow}
-                >
-                  {listRelatedProduct.map((item, index) => (
-                    <ProductItem key={index} style={'detail'} data={item} />
-                  ))}
-                </ScrollMenu>
+                  <CommentInput productId={params.productId} />
+                </div>
               )}
             </div>
           </div>
-        ) : (
+          <div className="w-full px-[30px]">
+            <div className="text-center my-[30px] text-[32px] text-[#222222]">
+              Related Products
+            </div>
+            {listRelatedProduct.length && (
+              <ScrollMenu
+                Footer={[]}
+                noPolyfill
+                wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
+                scrollContainerClassName="mx-[20px]"
+                itemClassName="my-[20px]"
+                LeftArrow={LeftArrow}
+                RightArrow={RightArrow}
+              >
+                {listRelatedProduct.map((item, index) => (
+                  <ProductItem key={index} style={'detail'} data={item} />
+                ))}
+              </ScrollMenu>
+            )}
+          </div>
+        </div>
+        {/* ) : (
           <Result
             status="403"
             title="403"
@@ -402,7 +440,7 @@ export default function ProductInfoPage({
               </Button>
             }
           />
-        )}
+        )} */}
       </div>
     )
   );

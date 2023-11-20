@@ -71,7 +71,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
   // };
   return (
     <div>
-      <p className="my-[30px] text-3xl font-normal block text-center">
+      <p className="my-[30px] text-[#222222] text-3xl font-bold block text-center">
         Đăng nhập
       </p>
       <Form
@@ -95,7 +95,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
             // style={{
             //   boxShadow: `rgba(133, 189, 215, 0.8784313725) 0px 12px 10px -8px`,
             // }}
-            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
+            className="py-[10px] px-[15px] rounded-bl-3xl rounded-tr-3xl shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
             prefix={<UserOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
@@ -106,7 +106,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password
-            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
+            className="py-[10px] px-[15px] rounded-tr-3xl rounded-bl-3xl shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
             prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>

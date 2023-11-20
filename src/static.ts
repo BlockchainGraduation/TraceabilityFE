@@ -21,6 +21,7 @@ import shrimp1 from '../public/shrimp1.png';
 import shrimp2 from '../public/shrimp2.png';
 import shrimp3 from '../public/shrimp3.png';
 import shrimp4 from '../public/shrimp4.png';
+import shrimpBg from '../public/shrimpBg.jpg';
 
 // import factory from '../public/cms/factory.png';
 // import factory from '../public/cms/factory.png';
@@ -49,5 +50,6 @@ const staticVariables = {
   shrimp2,
   shrimp3,
   shrimp4,
+  shrimpBg,
 };
 export default staticVariables;

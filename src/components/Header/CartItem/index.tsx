@@ -1,4 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
+import { useAppSelector } from '@/hooks';
 import currency from '@/services/currency';
 import staticVariables from '@/static';
 import { DeleteTwoTone } from '@ant-design/icons';
@@ -42,7 +43,7 @@ export default function CartItem({
           preview={false}
           className="rounded-xl  object-cover"
           alt=""
-          src={data.product?.banner}
+          src={data.product?.avatar}
         />
       </div>
       <div className="w-5/6 relative flex items-center justify-between">
@@ -51,7 +52,7 @@ export default function CartItem({
             {data.product?.name}
           </p>
           <p className="w-full font-normal text-[13px] truncate">
-            {`Chủ sở hữu ${data.product?.user?.username}`}
+            {`Chủ sở hữu ${data.product?.create_by?.fullname}`}
           </p>
           <p className="text-[10px] text-gray-600">
             {`Đã thêm vào ${moment(data.created_at).format('lll')}`}

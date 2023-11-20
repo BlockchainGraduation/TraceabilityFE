@@ -81,7 +81,7 @@ export default function Description(props: Props) {
             action={`${process.env.NEXT_PUBLIC_API_ORIGIN}detail_description/${props.id}/img`}
             method="PUT"
             headers={{
-              authorization: `Bearer ${getCookie('access_token')}`,
+              authorization: `Bearer ${getCookie('access')}`,
             }}
             name="image"
             onChange={(info) => {

@@ -32,6 +32,7 @@ import useSWR from 'swr';
 import currency from '@/services/currency';
 import staticVariables from '@/static';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/hooks';
 
 const { Meta } = Card;
 
@@ -47,6 +48,8 @@ export default function ProductItem({
   className?: string;
 }) {
   const route = useRouter();
+  const currentUser = useAppSelector((state) => state.user.user);
+
   return (
     <div
       data-aos="flip-right"
@@ -66,7 +69,7 @@ export default function ProductItem({
             <p className="text-center text-white">{data.product_type}</p>
           </div>
         )}
-        {!isOwner && (
+        {currentUser.id !== data.create_by?.id && (
           <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
             <Tooltip title={'Add cart'}>
               <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />

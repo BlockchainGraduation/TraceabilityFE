@@ -1,20 +1,27 @@
 'use client';
 import React, { memo, useEffect, useState } from 'react';
 import {
+  BookOutlined,
   DesktopOutlined,
   FileOutlined,
+  HistoryOutlined,
+  HomeOutlined,
   LeftCircleTwoTone,
+  LinkOutlined,
+  LockOutlined,
+  LoginOutlined,
   PieChartOutlined,
   RightCircleTwoTone,
   TeamOutlined,
   UserOutlined,
+  WalletOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import ChangPassword from '@/components/CMS/ChangePassword';
 import ProductCMS from '@/components/CMS/Product';
 import TransactionCMS from '@/components/CMS/Transaction';
-import { useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import ManageUser from '@/components/CMS/Admin/ManageUser';
 import ManageProduct from '@/components/CMS/Admin/ManageProduct';
@@ -23,6 +30,9 @@ import { useEffectOnce } from 'usehooks-ts';
 import { Footer as FooterAntd } from 'antd/es/layout/layout';
 import Footer from '@/components/Footer';
 import GeneralInformation from '@/components/CMS/GeneralInformation';
+import instanceAxios from '@/api/instanceAxios';
+import { logOut } from '@/reducers/userSlice';
+import { deleteCookie } from 'cookies-next';
 
 const { Header, Content, Sider } = Layout;
 
@@ -44,48 +54,65 @@ function getItem(
 export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const route = useRouter();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
 
   useEffectOnce(() => {
     setCurrentPage(Number(localStorage.getItem('page')));
   });
+  const handleLogout = async () => {
+    delete instanceAxios.defaults.headers.common.Authorization;
+    dispatch(logOut());
+    deleteCookie('access');
+    deleteCookie('refresh');
+    // router.push('/');
+    // setShowModal(true);
+    // mutate('user/me');
+  };
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem(<p>Thống kê</p>, '1', <PieChartOutlined />),
+    getItem(
+      <p onClick={() => route.push('/home')}>Home</p>,
+      '1',
+      <HomeOutlined />
+    ),
+    getItem(<p>Thống kê</p>, '2', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem(<p>Thông tin chung</p>, '2'),
-      getItem(<p>Đổi mật khẩu</p>, '3'),
-      getItem(<p>Liên kết</p>, '4'),
+      getItem(<p>Thông tin chung</p>, '3', <WalletOutlined />),
+      getItem(<p>Đổi mật khẩu</p>, '4', <LockOutlined />),
+      getItem(<p>Liên kết</p>, '5', <LinkOutlined />),
     ]),
-    currentUser.user.is_superuser
+    !currentUser.user.is_superuser
       ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-          getItem(<p>Quản lí sản phâm</p>, '5'),
-          getItem(<p>Lịch sử giao dịch</p>, '6'),
+          getItem(<p>Quản lí sản phâm</p>, '6', <BookOutlined />),
+          getItem(<p>Lịch sử giao dịch</p>, '7', <HistoryOutlined />),
         ])
       : null,
+
     // getItem('Files'
 
     currentUser.user.is_superuser
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           // getItem('Thống kê hệ thống', '6'),
-          getItem(<p>Quản lí user</p>, '7'),
+          getItem(<p>Quản lí user</p>, '8'),
           // getItem('Quản lí sản phẩm', '8'),
         ])
       : null,
-    // getItem('Files', '8', <FileOutlined />),
+    getItem(<p onClick={handleLogout}>Đăng xuất</p>, '9', <LoginOutlined />),
   ];
   const contents = [
+    <></>,
     <Statistical key={1} />,
     <GeneralInformation key={2} />,
     <ChangPassword className="w-2/5 m-auto" key={3} />,
     <></>,
     <ProductCMS key={4} />,
     <TransactionCMS key={5} />,
-
     currentUser.user.is_superuser
       ? [
           // <div key={6}>asa</div>,
@@ -93,6 +120,7 @@ export default memo(function CMSPage() {
           // <ManageProduct key={8} />,
         ]
       : null,
+    <></>,
   ];
 
   return (

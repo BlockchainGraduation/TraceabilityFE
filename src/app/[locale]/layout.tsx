@@ -72,7 +72,7 @@ export default async function LocaleLayout({
                   Input: {
                     activeBorderColor: '#36b75e',
                     activeShadow: '#36b75e',
-                    hoverBorderColor: '#ffffff',
+                    hoverBorderColor: '#36b75e',
                     colorBgContainerDisabled: '#36b75e',
                     addonBg: '#36b75e',
                     // controlItemBgActive: '#ffffff',

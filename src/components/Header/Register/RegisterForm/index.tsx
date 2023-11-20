@@ -21,7 +21,7 @@ export default function RegisterForm({
   const onFinish = async (data: FieldType) => {
     setLoading(true);
     await instanceAxios
-      .post('auth/register', data)
+      .post('register', data)
       .then((res) => {
         nextStep(data.email);
       })
@@ -29,7 +29,6 @@ export default function RegisterForm({
         console.log(err);
         notification.error({
           message: 'Xác thực không thành công',
-          // description: err.data,
         });
       })
       .finally(() => setLoading(false));
@@ -55,52 +54,14 @@ export default function RegisterForm({
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
-          label="username"
+          label="Username"
           name="username"
           rules={[{ required: false }]}
         >
           <Input />
         </Form.Item>
-        {/* <Form.Item<FieldType>
-          label="Số điện thoại"
-          name="phone"
-          rules={[{ required: true, message: 'Please input your phone!' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item<FieldType>
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: 'Please input your username!' }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          label="Email"
-          name="email"
-          rules={[{ required: true, message: 'Please input your email!' }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item<FieldType>
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password />
-        </Form.Item> */}
 
         <Form.Item>
-          {/* <Button
-            loading={loading}
-            className="mt-[30px] bg-[#1677ff]"
-            type="primary"
-            htmlType="submit"
-          >
-            Submit
-          </Button> */}
           <button
             disabled={loading}
             className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-green-500 text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"

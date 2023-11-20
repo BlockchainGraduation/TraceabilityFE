@@ -15,6 +15,8 @@
       "created":"created by"
     },
     "notification":{
-      "PRODUCT_NOTIFICATION":"The product"
+      "PRODUCT_NOTIFICATION":"The product",
+      "REQUIRED_OTP":""
     }
+    
 }

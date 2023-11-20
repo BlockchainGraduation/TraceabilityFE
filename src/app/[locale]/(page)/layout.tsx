@@ -64,6 +64,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
     await instanceAxios
       .get('user/me')
       .then((res) => {
+        // console.log(re)
         dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
       })
       .catch((err) => console.log(err));
