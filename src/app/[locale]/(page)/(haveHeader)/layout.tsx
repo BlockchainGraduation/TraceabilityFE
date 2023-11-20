@@ -38,45 +38,25 @@ export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
 });
 
-export default function LocaleLayout({ children }: { children: ReactNode }) {
-  const currentUser = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
+export default function HaveHeaderLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [loading, setLoading] = useState(true);
-  const { mutate } = useSWRConfig();
-  const cookie = getCookie('access');
-  const route = useRouter();
-  useEffect(() => {
-    const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.user.id || '', (data: NotificationType) => {
-      message.info('Bạn vừa có thông báo mới');
-      if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
-        mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
-      }
-      mutate('notifications/list');
-      console.log(data);
-    });
 
-    return () => {
-      pusher.unsubscribe('general-channel');
-    };
-  }, [currentUser, mutate]);
-  const fethGetUser = async () => {
-    await instanceAxios
-      .get('user/me')
-      .then((res) => {
-        dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
-      })
-      .catch((err) => console.log(err));
-  };
-  useEffectOnce(() => {
-    fethGetUser();
-  });
-  useSWR('user/me', fethGetUser);
   useEffect(() => {
-    if (!cookie) {
-      route.push('/');
-    }
     setLoading(false);
-  }, [cookie, route]);
-  return <>{!loading && <div className="min-h-[600px]">{children}</div>}</>;
+  }, []);
+  return (
+    <>
+      {!loading && (
+        <div>
+          <Header />
+          <div className="min-h-[600px]">{children}</div>
+          <Footer />
+        </div>
+      )}
+    </>
+  );
 }
