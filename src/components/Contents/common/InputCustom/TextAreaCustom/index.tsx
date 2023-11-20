@@ -80,7 +80,7 @@ export default memo(function TextAreaCustom({
   const handleOk = async () => {
     setLoading(true);
     await instanceAxios
-      .put(
+      .patch(
         passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
         passType === 'body' && { [name]: value }
       )

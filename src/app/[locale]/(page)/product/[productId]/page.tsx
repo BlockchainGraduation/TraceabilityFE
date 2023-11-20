@@ -286,8 +286,8 @@ export default function ProductInfoPage({
                 </div>
               </div>
             </div>
-            <div className="w-4/5 m-auto border-[1px]  text-[#555555] rounded-xl overflow-hidden">
-              <div className="flex w-full text-[20px] border-b-[1px]">
+            <div className="w-4/5 m-auto border-[1px] bg-[#f7f7f7] rounded-xl overflow-hidden">
+              <div className="flex w-full text-[20px] text-[#555555] border-b-[1px]">
                 <p
                   onClick={() => setCurrentTab('DESCRIPTION')}
                   className="px-[50px] py-[20px]"
@@ -307,54 +307,42 @@ export default function ProductInfoPage({
               </div>
               <div className="w-full flex my-[20px]">
                 {currentTab === 'DESCRIPTION' && (
-                  <>
-                    <div className="w-1/5 flex flex-col py-[20px] items-center">
-                      {dataProduct.detail_decriptions?.map((item, index) => (
-                        <div
-                          className={`${
-                            selectedDescription === index &&
-                            'p-[10px] border-2  rounded-full bg-current-color'
-                          }`}
-                          key={index}
-                        >
-                          <Avatar
-                            onClick={() => setSelectedDescription(index)}
-                            size={100}
-                            shape={'circle'}
-                            key={index}
-                            src={item.image}
+                  <div className="w-full px-[100px]">
+                    {dataProduct.detail_decriptions?.length && (
+                      <Carousel>
+                        <div>
+                          <Description
+                            showEdit={false}
+                            id={
+                              dataProduct.detail_decriptions[
+                                selectedDescription
+                              ]?.id
+                            }
+                            title={
+                              dataProduct.detail_decriptions[
+                                selectedDescription
+                              ]?.title
+                            }
+                            description={
+                              dataProduct.detail_decriptions[
+                                selectedDescription
+                              ]?.description
+                            }
+                            image={
+                              dataProduct.detail_decriptions[
+                                selectedDescription
+                              ]?.image
+                            }
+                            product_id={
+                              dataProduct.detail_decriptions[
+                                selectedDescription
+                              ]?.product_id
+                            }
                           />
                         </div>
-                      ))}
-                    </div>
-                    <div className="w-4/5">
-                      {dataProduct.detail_decriptions?.length && (
-                        <Description
-                          showEdit={false}
-                          id={
-                            dataProduct.detail_decriptions[selectedDescription]
-                              ?.id
-                          }
-                          title={
-                            dataProduct.detail_decriptions[selectedDescription]
-                              ?.title
-                          }
-                          description={
-                            dataProduct.detail_decriptions[selectedDescription]
-                              ?.description
-                          }
-                          image={
-                            dataProduct.detail_decriptions[selectedDescription]
-                              ?.image
-                          }
-                          product_id={
-                            dataProduct.detail_decriptions[selectedDescription]
-                              ?.product_id
-                          }
-                        />
-                      )}
-                    </div>
-                  </>
+                      </Carousel>
+                    )}
+                  </div>
                 )}
                 {currentTab === 'INFORMATION' && (
                   <div className="m-auto px-[100px]">

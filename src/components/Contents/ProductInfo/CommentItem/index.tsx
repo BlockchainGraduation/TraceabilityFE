@@ -18,9 +18,9 @@ export default function CommentItem(props: CommentItemType & Props) {
           content={
             <div className="flex flex-col space-y-5">
               <div className="flex space-x-5">
-                <Avatar size={100} src={props.user_id?.id} />
+                <Avatar size={100} src={props.user_id?.avatar} />
                 <div className="flex flex-col space-y-1">
-                  <p className="text-[20px] font-bold">
+                  <p className="text-[20px] pb-[10px] font-semibold">
                     {props.user_id?.fullname}
                   </p>
                   <Space>
@@ -28,7 +28,9 @@ export default function CommentItem(props: CommentItemType & Props) {
                       icon={faEnvelope}
                       style={{ color: '#4b7dd2' }}
                     />
-                    <p>{props.user_id?.email}</p>
+                    <Typography.Text copyable>
+                      {props.user_id?.email}
+                    </Typography.Text>
                   </Space>
                   {/* <Space>
                     <FontAwesomeIcon
@@ -37,13 +39,15 @@ export default function CommentItem(props: CommentItemType & Props) {
                     />
                     <p>{moment(props.user.).format('DD/MM/YYYY')}</p>
                   </Space> */}
-                  <Tag color={'green-inverse'}>{props.user_id?.role}</Tag>
+                  <p className="w-fit text-green-500 py-[10px]">
+                    {props.user_id?.role}
+                  </p>
                 </div>
               </div>
               <Space className="px-[20px] space-x-1 ">
-                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
+                {/* <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Nhắn tin
-                </button>
+                </button> */}
                 <Link href={`/user/${props.user_id?.id}`}>
                   <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                     Xem thông tin
@@ -52,9 +56,9 @@ export default function CommentItem(props: CommentItemType & Props) {
                     Xem thông tin
                   </p> */}
                 </Link>
-                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
+                {/* <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Báo cáo
-                </button>
+                </button> */}
               </Space>
             </div>
           }
@@ -65,11 +69,11 @@ export default function CommentItem(props: CommentItemType & Props) {
         </Popover>
         <div className="flex ml-[10px] p-[10px] flex-col rounded-bl-[10px] rounded-r-[10px] bg-[#f0f2f5] ">
           <Space className="text-[14px]">
-            <p className="font-medium">{props.user_id?.fullname}</p>
             {props.isOwner && (
-              <p className="text-[12px] text-blue-600">Owner</p>
+              <p className="text-[12px] text-current-color">Owner</p>
             )}
-            <p className="w-fit p-[5px]  bg-blue-100 rounded-lg text-green-500 border-[1px] border-current-color text-[11px] font-light">
+            <p className="font-medium">{props.user_id?.fullname}</p>
+            <p className="w-fit p-[5px] rounded-lg text-current-color border-[1px] text-[11px] font-light">
               {props.user_id?.role}
             </p>
           </Space>

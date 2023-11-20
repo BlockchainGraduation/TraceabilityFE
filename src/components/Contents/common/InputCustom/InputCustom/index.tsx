@@ -3,7 +3,15 @@ import { useAppDispatch } from '@/hooks';
 import { setUser } from '@/reducers/userSlice';
 import fetchUpdate from '@/services/fetchUpdate';
 import { EditTwoTone, WarningTwoTone } from '@ant-design/icons';
-import { Button, Input, InputProps, InputRef, Modal, notification } from 'antd';
+import {
+  Button,
+  Input,
+  InputProps,
+  InputRef,
+  Modal,
+  Tooltip,
+  notification,
+} from 'antd';
 import { FocusEvent, memo } from 'react';
 import React, {
   ReactNode,
@@ -60,7 +68,7 @@ export default memo(function InputCustom({
   const handleOk = async () => {
     setLoading(true);
     await instanceAxios
-      .put(
+      .patch(
         passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
         passType === 'body' && { [name]: value }
       )
@@ -68,7 +76,7 @@ export default memo(function InputCustom({
         setEditAble(false);
         setOpenModalConfirm(false);
         if (queryType == 'user') {
-          dispatch(setUser(res.data.data as UserType));
+          dispatch(setUser(res.data as UserType));
         }
         mutateAPI && mutate(mutateAPI);
         onSuccess?.();
@@ -127,7 +135,7 @@ export default memo(function InputCustom({
     }
   };
   return (
-    <div className={`flex w-fit h-fit item-center ${className}`}>
+    <div className={`flex item-center ${className}`}>
       {editAble ? (
         <Input
           {...input}
@@ -140,9 +148,11 @@ export default memo(function InputCustom({
           onEnded={() => alert('OK')}
         />
       ) : (
-        <p defaultValue={value} className={classNameLabel}>
-          {value}
-        </p>
+        <Tooltip title={value || 'Không có dữ liệu'}>
+          <p defaultValue={value} className={`truncate ${classNameLabel}`}>
+            {value}
+          </p>
+        </Tooltip>
       )}
       <Modal
         title={

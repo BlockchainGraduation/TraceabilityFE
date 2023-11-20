@@ -11,7 +11,6 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import GeneralInformation from '@/components/CMS/GeneralInformation';
 import ChangPassword from '@/components/CMS/ChangePassword';
 import ProductCMS from '@/components/CMS/Product';
 import TransactionCMS from '@/components/CMS/Transaction';
@@ -21,11 +20,13 @@ import ManageUser from '@/components/CMS/Admin/ManageUser';
 import ManageProduct from '@/components/CMS/Admin/ManageProduct';
 import Statistical from '@/components/CMS/Statistical';
 import { useEffectOnce } from 'usehooks-ts';
+import { Footer as FooterAntd } from 'antd/es/layout/layout';
+import Footer from '@/components/Footer';
+import GeneralInformation from '@/components/CMS/GeneralInformation';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
-
 function getItem(
   label: React.ReactNode,
   key: React.Key,
@@ -42,13 +43,15 @@ function getItem(
 
 export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState(
-    Number(localStorage.getItem('page'))
-  );
+  const [currentPage, setCurrentPage] = useState(0);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const currentUser = useAppSelector((state) => state.user);
+
+  useEffectOnce(() => {
+    setCurrentPage(Number(localStorage.getItem('page')));
+  });
 
   ////Render taskbar
   const items: MenuItem[] = [
@@ -58,7 +61,7 @@ export default memo(function CMSPage() {
       getItem(<p>Đổi mật khẩu</p>, '3'),
       getItem(<p>Liên kết</p>, '4'),
     ]),
-    currentUser.user.system_role !== 'ADMIN'
+    currentUser.user.is_superuser
       ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
           getItem(<p>Quản lí sản phâm</p>, '5'),
           getItem(<p>Lịch sử giao dịch</p>, '6'),
@@ -66,7 +69,7 @@ export default memo(function CMSPage() {
       : null,
     // getItem('Files'
 
-    currentUser.user.system_role === 'ADMIN'
+    currentUser.user.is_superuser
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           // getItem('Thống kê hệ thống', '6'),
           getItem(<p>Quản lí user</p>, '7'),
@@ -83,7 +86,7 @@ export default memo(function CMSPage() {
     <ProductCMS key={4} />,
     <TransactionCMS key={5} />,
 
-    currentUser.user.system_role === 'ADMIN'
+    currentUser.user.is_superuser
       ? [
           // <div key={6}>asa</div>,
           <ManageUser key={6} />,
@@ -94,10 +97,11 @@ export default memo(function CMSPage() {
 
   return (
     currentUser.logged && (
-      <div className="w-full pt-[90px]">
+      <div className="w-full">
         <Layout className="w-full">
           <Sider
-            className="relative"
+            theme="light"
+            className="relative h-full"
             // collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
@@ -132,18 +136,19 @@ export default memo(function CMSPage() {
                 style={{
                   padding: 24,
                   paddingBottom: 50,
-                  minHeight: 600,
+                  minHeight: 500,
                   background: colorBgContainer,
                 }}
               >
                 {contents[currentPage - 1]}
               </div>
             </Content>
-            {/* <Footer style={{ textAlign: 'center' }}>
-          Ant Design ©2023 Created by Ant UED
-        </Footer> */}
+            <FooterAntd style={{ textAlign: 'center' }}>
+              Tracebility ©2023 Created by SimpRaidenEi
+            </FooterAntd>
           </Layout>
         </Layout>
+        <Footer />
       </div>
     )
   );

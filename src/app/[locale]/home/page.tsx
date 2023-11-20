@@ -17,12 +17,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import useSWR from 'swr';
 import { LeftArrow, RightArrow } from './components/Category';
+import { useAppSelector } from '@/hooks';
 
 export default function HomePage() {
   const [currentListType, setCurrentListType] = useState<
     'FISHERMEN' | 'FACTORY' | 'SEEDLING'
   >('SEEDLING');
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
+  const currentUser = useAppSelector((state) => state.user.user);
 
   // const fetchListProduct = useCallback(async () => {
   //   await instanceAxios
@@ -283,7 +285,13 @@ export default function HomePage() {
       </div>
       <div className="w-4/5 m-auto my-[50px]">
         {listProduct.map((item, index) => (
-          <ProductItem style="detail" key={index} data={item} />
+          <ProductItem
+            style="detail"
+            isOwner={currentUser.id === item.create_by?.id}
+            className="bg-[#f5f5f5]"
+            key={index}
+            data={item}
+          />
         ))}
       </div>
       <div className="w-full items-center flex h-[400px] bg-[#f5f5f5] px-[150px] font-sans">

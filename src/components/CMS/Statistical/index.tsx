@@ -132,146 +132,143 @@ export default function Statistical() {
       },
     ],
   };
-  const listStatistical =
-    currentUser.system_role === 'ADMIN'
-      ? [
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faUsers}
-                style={{ color: '#3e74d0' }}
-              />
-            ),
-            img: staticVariables.user_anonymous.src,
-            label: 'Tổng số User',
-            value: dataStatistical.statistical_user?.total_user || 0,
-          },
-          {
-            icon: <FontAwesomeIcon size={'4x'} icon={faUser} />,
-            img: staticVariables.user_anonymous.src,
-            label: 'Tổng tài khoản chưa kích hoạt',
-            value: dataStatistical.statistical_user?.member_count || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faUser}
-                style={{ color: '#1aa231' }}
-              />
-            ),
-            img: staticVariables.user_seed.src,
-            label: 'Tổng công ty hạt giống',
-            value: dataStatistical.statistical_user?.seedling_count || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faUser}
-                style={{ color: '#a4ac2a' }}
-              />
-            ),
-            img: staticVariables.user_farmer.src,
-            label: 'Tổng người trồng trọt',
-            value: dataStatistical.statistical_user?.farmer_count || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faIndustry}
-                style={{ color: '#443d57' }}
-              />
-            ),
-            img: staticVariables.user_factory.src,
-            label: 'Tổng nhà máy chế biến',
-            value: dataStatistical.statistical_user?.manufacturer_count || 0,
-          },
-          //Product
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faLeaf}
-                style={{ color: '#b8d818' }}
-              />
-            ),
-            img: staticVariables.product.src,
-            label: 'Tổng số loại sản phẩm trên hệ thống',
-            value: dataStatistical.statistical_product?.total_product || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faSeedling}
-                style={{ color: '#1aa231' }}
-              />
-            ),
-            img: staticVariables.product_seed.src,
-            label: 'Tổng loại cây giống đang mở bán',
-            value: dataStatistical.statistical_product?.seedling_count || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faCloudSun}
-                style={{ color: '#afca2b' }}
-              />
-            ),
-            img: staticVariables.product_farmer.src,
-            label: 'Tổng sản phẩm của nông dân đang mở bán trên hệ thống',
-            value: dataStatistical.statistical_product?.farmer_count || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faArrowUpFromWaterPump}
-                style={{ color: '#515358' }}
-              />
-            ),
-            img: staticVariables.product_factory.src,
-            label: 'Tổng loại sản phẩm từ nhà máy chế biến',
-            value: dataStatistical.statistical_product?.manufacturer_count || 0,
-          },
-        ]
-      : [
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faCloudSun}
-                style={{ color: '#afca2b' }}
-              />
-            ),
-            img: staticVariables.product_farmer.src,
-            label: 'Tổng sản phẩm của bạn',
-            value: dataStatistical.statistical_product?.total_product || 0,
-          },
-          {
-            icon: (
-              <FontAwesomeIcon
-                size={'4x'}
-                icon={faArrowUpFromWaterPump}
-                style={{ color: '#515358' }}
-              />
-            ),
-            img: staticVariables.product_factory.src,
-            label: 'Tổng lượt bán',
-            value: dataStatistical.statistical_product?.total_sales || 0,
-          },
-        ];
+  const listStatistical = currentUser.is_superuser
+    ? [
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faUsers}
+              style={{ color: '#3e74d0' }}
+            />
+          ),
+          img: staticVariables.user_anonymous.src,
+          label: 'Tổng số User',
+          value: dataStatistical.statistical_user?.total_user || 0,
+        },
+        {
+          icon: <FontAwesomeIcon size={'4x'} icon={faUser} />,
+          img: staticVariables.user_anonymous.src,
+          label: 'Tổng tài khoản chưa kích hoạt',
+          value: dataStatistical.statistical_user?.member_count || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faUser}
+              style={{ color: '#1aa231' }}
+            />
+          ),
+          img: staticVariables.user_seed.src,
+          label: 'Tổng công ty hạt giống',
+          value: dataStatistical.statistical_user?.seedling_count || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faUser}
+              style={{ color: '#a4ac2a' }}
+            />
+          ),
+          img: staticVariables.user_farmer.src,
+          label: 'Tổng người trồng trọt',
+          value: dataStatistical.statistical_user?.farmer_count || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faIndustry}
+              style={{ color: '#443d57' }}
+            />
+          ),
+          img: staticVariables.user_factory.src,
+          label: 'Tổng nhà máy chế biến',
+          value: dataStatistical.statistical_user?.manufacturer_count || 0,
+        },
+        //Product
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faLeaf}
+              style={{ color: '#b8d818' }}
+            />
+          ),
+          img: staticVariables.product.src,
+          label: 'Tổng số loại sản phẩm trên hệ thống',
+          value: dataStatistical.statistical_product?.total_product || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faSeedling}
+              style={{ color: '#1aa231' }}
+            />
+          ),
+          img: staticVariables.product_seed.src,
+          label: 'Tổng loại cây giống đang mở bán',
+          value: dataStatistical.statistical_product?.seedling_count || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faCloudSun}
+              style={{ color: '#afca2b' }}
+            />
+          ),
+          img: staticVariables.product_farmer.src,
+          label: 'Tổng sản phẩm của nông dân đang mở bán trên hệ thống',
+          value: dataStatistical.statistical_product?.farmer_count || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faArrowUpFromWaterPump}
+              style={{ color: '#515358' }}
+            />
+          ),
+          img: staticVariables.product_factory.src,
+          label: 'Tổng loại sản phẩm từ nhà máy chế biến',
+          value: dataStatistical.statistical_product?.manufacturer_count || 0,
+        },
+      ]
+    : [
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faCloudSun}
+              style={{ color: '#afca2b' }}
+            />
+          ),
+          img: staticVariables.product_farmer.src,
+          label: 'Tổng sản phẩm của bạn',
+          value: dataStatistical.statistical_product?.total_product || 0,
+        },
+        {
+          icon: (
+            <FontAwesomeIcon
+              size={'4x'}
+              icon={faArrowUpFromWaterPump}
+              style={{ color: '#515358' }}
+            />
+          ),
+          img: staticVariables.product_factory.src,
+          label: 'Tổng lượt bán',
+          value: dataStatistical.statistical_product?.total_sales || 0,
+        },
+      ];
   const fethStatisticalSystems = async () => {
     await instanceAxios
       .get(
         `${
-          currentUser.system_role === 'ADMIN'
-            ? 'user/statistical'
-            : 'user/statistical/me'
+          currentUser.is_superuser ? 'user/statistical' : 'user/statistical/me'
         }`
       )
       .then((res) => {
@@ -303,7 +300,7 @@ export default function Statistical() {
           </div>
         ))}
       </div>
-      {currentUser.system_role === 'ADMIN' && (
+      {currentUser.is_superuser && (
         <div className="w-full flex justify-around mt-10">
           <div className="w-1/3 ">
             <Doughnut options={options} data={userChartData} />

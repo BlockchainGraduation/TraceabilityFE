@@ -14,8 +14,17 @@ interface UserType {
   email?: string;
   is_staff?: boolean;
   date_joined?: string;
+  introduce?: string;
+  description?: string;
   fullname?: string;
   avatar?: string;
+  user_banner?: [
+    {
+      image?: string;
+      user?: string;
+      create_at?: string;
+    }
+  ];
   phone?: string;
   account_balance?: string;
   wallet_address?: string;

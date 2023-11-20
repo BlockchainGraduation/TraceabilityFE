@@ -139,15 +139,14 @@ export default memo(function Header() {
     fetchData();
   }, [locale]);
 
-  const fethGetUser = useCallback(async () => {
-    await instanceAxios
-      .get('user/me')
-      .then((res) => {
-        // console.log(res.data);
-        dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
-      })
-      .catch((err) => console.log(err));
-  }, [dispatch]);
+  // const fethGetUser = useCallback(async () => {
+  //   await instanceAxios
+  //     .get('user/me')
+  //     .then((res) => {
+  //       dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, [dispatch]);
   // useEffectOnce(() => {
   //   fethGetUser();
   // });
@@ -221,7 +220,7 @@ export default memo(function Header() {
   }, [logged]);
 
   useSWR('cart/list', fethListCart);
-  useSWR('user/me', fethGetUser);
+  // useSWR('user/me', fethGetUser);
   useSWR('notifications/list', fetchNotifications);
 
   const handleChangeLanguage = () => {

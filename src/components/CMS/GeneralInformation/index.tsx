@@ -5,7 +5,7 @@ import { useAppSelector } from '@/hooks';
 import { setUser } from '@/reducers/userSlice';
 import fetchUpdateUser from '@/services/fetchUpdate';
 import staticVariables from '@/static';
-import { PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { MailFilled, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 import {
   faEnvelope,
@@ -28,9 +28,11 @@ import {
   Typography,
   Upload,
   UploadFile,
+  message,
   notification,
 } from 'antd';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { getCookie } from 'cookies-next';
 // import Image from 'next/image';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -87,7 +89,6 @@ export default function GeneralInformation() {
       info.file.status = 'done';
       let formData = new FormData();
       let data = info.file;
-      // URL.createObjectURL(info.file.originFileObj as RcFile);
       formData.append(
         'avatar',
         info.file.originFileObj as Blob,
@@ -97,16 +98,7 @@ export default function GeneralInformation() {
         .put('user/avatar', formData)
         .then((res) => {
           console.log(res.data);
-          // dispatch(
-          //   setUser({
-          //     avatar: res.data,
-          //   })
-          // );
           mutate('user/me');
-          // notification.success({
-          //   message: 'Thông báo',
-          //   description: 'Cập nhật thành công',
-          // });
         })
         .catch((err) => console.log(err))
         .finally(() => setLoadingImage(false));
@@ -121,158 +113,141 @@ export default function GeneralInformation() {
   );
   return (
     <div>
-      <div className="flex">
-        <div className="relative mr-[50px]">
-          <Spin spinning={loadingImage}>
-            <Avatar
-              // className="rounded-[50%] object-cover"
-              icon={<UserOutlined />}
-              alt=""
-              size={300}
-              src={currentUser.avatar}
-            />
-            <Upload
-              accept="image/png, image/jpeg, image/jpg"
-              showUploadList={false}
-              onChange={handleChangeAvatar}
-            >
-              <FontAwesomeIcon
-                className="absolute top-[10%] right-[10%]"
-                icon={faPenToSquare}
-                style={{ color: '#295094' }}
+      <p className="py-[50px] font-bold text-[30px]">Thông tin của bạn</p>
+      <div className="flex space-x-10">
+        <div className="bg-[#f6f6f6] p-[30px] rounded-xl">
+          <p className="font-semibold text-[20px]">Ảnh đại diện</p>
+          <div className="relative mr-[50px] p-[20px]">
+            <Spin spinning={loadingImage}>
+              <Avatar
+                icon={<UserOutlined />}
+                alt=""
+                size={300}
+                src={currentUser.avatar}
               />
-            </Upload>
-          </Spin>
-        </div>
-        <div className=" flex w-1/2 justify-between">
-          <div className="flex w-1/2 flex-col gap-y-4">
-            <div>
-              <InputCustom
-                APIurl={'user/update_me'}
-                queryType={'user'}
-                name="full_name"
-                classNameLabel="text-2xl font-bold"
-                initialValue={currentUser.full_name || ''}
-              />
-              <Tag className="w-fit" color="success">
-                Fammer
-              </Tag>
-            </div>
-            <Row className="w-full flex items-center">
-              <Col span={3}>
+              <Upload
+                action={`${process.env.NEXT_PUBLIC_API_ORIGIN}user/update`}
+                accept="image/png, image/jpeg, image/jpg"
+                showUploadList={false}
+                method="PATCH"
+                name="avatar"
+                headers={{
+                  authorization: `Bearer ${getCookie('access')}`,
+                }}
+                onChange={(info) => {
+                  if (info.file.status === 'uploading') {
+                    setLoadingImage(true);
+                  }
+                  if (info.file.status === 'done') {
+                    mutate(`user/me`);
+                    message.success(`Upload thành công`);
+                  }
+                  if (info.file.status === 'error') {
+                    message.error(`Upload thất bại`);
+                  }
+                  setLoadingImage(false);
+                }}
+              >
                 <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faLocationDot}
-                  style={{ color: '#2754b0' }}
+                  className="absolute top-[10%] right-[10%]"
+                  icon={faPenToSquare}
+                  style={{ color: '#295094' }}
                 />
-              </Col>
-              <Col>
-                <InputCustom
-                  APIurl={'user/update_me'}
-                  queryType={'user'}
-                  name="as"
-                  initialValue="14-Khuy My  - NHS - DN"
-                />
-              </Col>
-            </Row>
-            <Row className="w-full flex items-center">
-              <Col span={3}>
-                <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faLocationDot}
-                  style={{ color: '#2754b0' }}
-                />
-              </Col>
-              <Col>
-                <InputCustom
-                  input={{
-                    type: 'date',
-                  }}
-                  name="birthday"
-                  initialValue={currentUser.birthday || ''}
-                  APIurl={'user/update_me'}
-                  queryType={'user'}
-                />
-              </Col>
-            </Row>
-            <Row className="w-full flex items-center">
-              <Col span={3}>
-                <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faWallet}
-                  style={{ color: '#2754b0' }}
-                />
-              </Col>
-              <Col>
-                <p>12313213</p>
-              </Col>
-            </Row>
+              </Upload>
+            </Spin>
           </div>
-          <div className="flex w-1/2 flex-col gap-y-4">
-            <Row className="w-full flex items-center">
-              <Col span={3}>
-                <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faSquareFacebook}
-                  style={{ color: '#2754b0' }}
-                />
-              </Col>
-              <Col>
-                <InputCustom
-                  APIurl={'user/update_me'}
-                  queryType={'user'}
-                  name="as"
-                  initialValue="http/asd/asdd"
-                />
-              </Col>
-            </Row>
-            <Row className="w-full flex items-center">
-              <Col span={3}>
-                <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faEnvelope}
-                  style={{ color: '#2754b0' }}
-                />
-              </Col>
-              <Col>
-                <InputCustom
-                  APIurl={'user/update_me'}
-                  queryType={'user'}
-                  name="as"
-                  initialValue="adbc@gmail.com"
-                />
-              </Col>
-            </Row>
-            <Row className="w-full flex items-center">
-              <Col span={3}>
-                <FontAwesomeIcon
-                  className="mr-[10px]"
-                  size={'2xl'}
-                  icon={faSquarePhone}
-                  style={{ color: '#2754b0' }}
-                />
-              </Col>
-              <Col>
-                <InputCustom
-                  name="as"
-                  initialValue="012313132"
-                  APIurl={'user/update_me'}
-                  queryType={'user'}
-                />
-              </Col>
-            </Row>
+        </div>
+        <div className="flex w-1/2 flex-col space-y-5">
+          <div className="p-[20px] flex flex-col w-full bg-[#f6f6f6] rounded-xl">
+            <p className="font-semibold text-[20px]">Tên của bạn</p>
+            <InputCustom
+              APIurl={'user/update'}
+              queryType={'user'}
+              name="fullname"
+              className="text-2xl font-bold p-[20px]"
+              initialValue={currentUser.fullname || ''}
+            />
+          </div>
+          <div className="w-full bg-[#f6f6f6] p-[20px] rounded-xl">
+            <p className="font-semibold text-[20px]">Thông tin khác</p>
+            <div className="p-[20px] flex gap-x-3">
+              <div className="w-1/2 flex flex-col space-y-5">
+                <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
+                  <p className="font-semibold">Email</p>
+                  <Row className="items-center">
+                    <Col span={2}>
+                      <MailFilled />
+                    </Col>
+                    <Col span={22}>
+                      <InputCustom
+                        showEdit={false}
+                        name={''}
+                        initialValue={currentUser.email || ''}
+                        APIurl={''}
+                        queryType={'user'}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+                <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
+                  <p className="font-semibold">Số điện thoại</p>
+                  <Row className="items-center">
+                    <Col span={2}>
+                      <MailFilled />
+                    </Col>
+                    <Col span={22}>
+                      <InputCustom
+                        name={'phone'}
+                        initialValue={currentUser.phone || ''}
+                        APIurl={'user/update'}
+                        queryType={'user'}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+                <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
+                  <p className=" font-semibold">Địa chỉ</p>
+                  <Row className="items-center">
+                    <Col span={2}>
+                      <MailFilled />
+                    </Col>
+                    <Col span={22}>
+                      <InputCustom
+                        name={'geographical_address'}
+                        initialValue={currentUser.geographical_address || ''}
+                        APIurl={'user/update'}
+                        queryType={'user'}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+              <div className="w-1/2">
+                <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
+                  <p className="font-semibold">Email</p>
+                  <Row className="items-center">
+                    <Col span={2}>
+                      <MailFilled />
+                    </Col>
+                    <Col>
+                      <InputCustom
+                        name={''}
+                        initialValue={currentUser.email || ''}
+                        APIurl={''}
+                        queryType={'user'}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="flex mt-[50px] justify-between px-[50px]">
-        <div className="w-1/2 relative">
+        <div className="w-1/2 relative  ">
           <Typography.Title level={4}>
-            Hình ảnh của bạn{' '}
+            Hình ảnh của bạn
             <FontAwesomeIcon
               onClick={() => setShowModalUpload(!showModalUpload)}
               className="ml-[10px]"
@@ -295,8 +270,8 @@ export default function GeneralInformation() {
               multiple
               maxCount={8}
               // fileList={fileList}
-              onPreview={handlePreview}
-              onChange={handleChange}
+              // onPreview={handlePreview}
+              // onChange={handleChange}
             >
               {fileList.length >= 8 ? null : uploadButton}
             </Upload>
@@ -332,14 +307,21 @@ export default function GeneralInformation() {
             </div>
           </Carousel>
         </div>
-        <div className="w-2/5">
+        <div className="w-2/5 bg-[#f6f6f6] p-[20px] rounded-xl">
           <Typography.Title level={4}>Giới thiệu bản thân</Typography.Title>
-          <TextAreaCustom
-            name="description"
-            initialValue="asdasdasdasdadadasda"
-            APIurl={'user/update_me'}
-            queryType={'user'}
-          />
+          <div className="w-full bg-[#f6f6f6] p-[20px] rounded-xl">
+            <TextAreaCustom
+              input={{
+                className: 'max-h-[400px]',
+              }}
+              name="introduce"
+              initialValue={
+                currentUser.introduce || 'Chưa có giới thiệu gì về bản thân!!!'
+              }
+              APIurl={'user/update'}
+              queryType={'user'}
+            />
+          </div>
         </div>
       </div>
     </div>

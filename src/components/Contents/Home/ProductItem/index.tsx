@@ -31,19 +31,28 @@ import instanceAxios from '@/api/instanceAxios';
 import useSWR from 'swr';
 import currency from '@/services/currency';
 import staticVariables from '@/static';
+import { useRouter } from 'next/navigation';
 
 const { Meta } = Card;
 
 export default function ProductItem({
   style = 'default',
+  isOwner = false,
   data,
+  className = '',
 }: {
+  isOwner?: boolean;
   style?: 'default' | 'detail';
   data: ProductType;
+  className?: string;
 }) {
+  const route = useRouter();
   return (
-    <div data-aos="flip-right" className="w-[250px] group font-sans">
-      <div className="w-full relative bg-[#f8f8f8]">
+    <div
+      data-aos="flip-right"
+      className={`w-[250px] group bg-white rounded-xl overflow-hidden font-sans ${className}`}
+    >
+      <div className="w-full relative">
         <Image
           className="object-cover"
           preview={false}
@@ -57,25 +66,32 @@ export default function ProductItem({
             <p className="text-center text-white">{data.product_type}</p>
           </div>
         )}
-        <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
-          <Tooltip title={'Add cart'}>
-            <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-          </Tooltip>
-          <Tooltip title={'Visit'}>
-            <SearchOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-          </Tooltip>
-          <Tooltip title={'Favourite'}>
-            <HeartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-          </Tooltip>
-          <Tooltip title={'Share'}>
-            <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-          </Tooltip>
-        </div>
+        {!isOwner && (
+          <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
+            <Tooltip title={'Add cart'}>
+              <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+            <Tooltip title={'Visit'}>
+              <SearchOutlined
+                onClick={() => route.push(`product/${data.id}`)}
+                className="rounded-full hover:bg-green-500 p-[5px]"
+              />
+            </Tooltip>
+            <Tooltip title={'Favourite'}>
+              <HeartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+            <Tooltip title={'Share'}>
+              <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+          </div>
+        )}
       </div>
-      <div className="w-full">
+      <div className="w-full ">
         <Link href={`/product/${data.id}`}>
-          <p className="text-center truncate p-[10px] pb-0">{data.name}</p>
-          <div className="w-full flex items-center p-[10px] ">
+          <p className="text-center font-semibold truncate p-[10px] pb-0">
+            {data.name}
+          </p>
+          <div className="w-full flex items-center py-[10px] px-[20px]">
             <div className="w-1/2 flex space-x-1 text-current-color ">
               <p className="font-semibold text-[10px]">{currency}</p>
               <p className="truncate">{data.price}/Kg</p>
@@ -86,12 +102,14 @@ export default function ProductItem({
             </div>
           </div>
         </Link>
-        <div className="flex items-center space-x-3 ">
-          <div>
-            <Avatar src={data.create_by?.avatar} />
+        {!isOwner && (
+          <div className="flex items-center space-x-3 ">
+            <div>
+              <Avatar src={data.create_by?.avatar} />
+            </div>
+            <p className="text-[12px]">{data.create_by?.fullname}</p>
           </div>
-          <p className="text-[12px]">{data.create_by?.fullname}</p>
-        </div>
+        )}
       </div>
     </div>
   );

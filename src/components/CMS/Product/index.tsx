@@ -47,6 +47,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
 import TransactionSelectItem from './TransactionSelectItem';
 import moment from 'moment';
+import CMSProductItem from './CMSProductItem';
 
 // interface DataType {
 //   key: React.Key;
@@ -128,26 +129,14 @@ export default memo(function ProductCMS() {
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
-      .get(
-        `product/me?skip=${skip}&limit=${limit}${name ? `&name=${name}` : ''}`
-      )
+      .get(`product-me/?create_by=${currentUser.id}`)
       .then((res) => {
-        console.log(res.data);
-        // let newProducts: DataType[] = [];
-        // [...res.data.data[1]].map((item, index) => {
-        //   return newProducts.push({ ...item, key: skip * limit + index + 1 });
-        // });
-        const newProducts = [...res.data.data[1]].map((item, index) => ({
-          ...item,
-          key: skip * limit + index + 1,
-        }));
-        setTotalProduct(res.data.data[0]);
-        setListProduct(newProducts);
+        setListProduct(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [limit, name, skip]);
+  }, [currentUser.id]);
 
   useEffect(() => {
     fetchProductMe();
@@ -203,204 +192,6 @@ export default memo(function ProductCMS() {
         console.log(err);
       });
   };
-
-  const columns: ColumnsType<ProductType> = [
-    {
-      key: 0,
-      title: 'Stt',
-      dataIndex: 'key',
-      width: 65,
-    },
-    {
-      key: 1,
-      title: 'Product Name',
-      dataIndex: 'name',
-      width: 250,
-    },
-    {
-      key: 2,
-      title: 'Số lượng',
-      dataIndex: 'quantity',
-    },
-    {
-      key: 3,
-      title: 'Giá đơn vị',
-      dataIndex: 'price',
-    },
-    {
-      key: 4,
-      title: 'Ngày bán',
-      dataIndex: 'created_at',
-      render: (value, record, index) => <p>{moment(value).format('L')}</p>,
-    },
-    {
-      key: 5,
-      title: 'Trạng thái',
-      dataIndex: 'product_status',
-      render: (value, record, index) =>
-        record.product_status === 'PUBLISH' ? (
-          <Tag color={'success'}>Đang mở bán</Tag>
-        ) : (
-          <Tag color={'error'}>Đóng</Tag>
-        ),
-    },
-    {
-      key: 6,
-      title: 'Action',
-      dataIndex: '',
-      width: 100,
-      render: (value, record, index) => (
-        <ConfigProvider
-          theme={{
-            components: {
-              Button: {
-                primaryColor: '#e62929',
-                colorPrimaryHover: '#2db457',
-                // colorBgTextHover: '#e62929',
-              },
-            },
-            token: {
-              colorBgContainer: '#7f84d4',
-            },
-          }}
-        >
-          <Dropdown
-            trigger={['click']}
-            menu={{
-              items: [
-                {
-                  key: 1,
-                  label: (
-                    <Link href={`/product/${record.id}`}>
-                      <Space>
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          style={{ color: '#2657ab' }}
-                        />
-                        <p>Chỉnh sửa</p>
-                      </Space>
-                    </Link>
-                  ),
-                },
-                {
-                  key: 2,
-                  label: (
-                    <Space
-                      onClick={() =>
-                        record.product_status === 'PUBLISH'
-                          ? fetchUpdateProductStatus(record.id || '', 'PRIVATE')
-                          : fetchUpdateProductStatus(record.id || '', 'PUBLISH')
-                      }
-                    >
-                      {record.product_status === 'PUBLISH' ? (
-                        <FontAwesomeIcon
-                          icon={faLockOpen}
-                          style={{ color: '#27913c' }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faLock}
-                          style={{ color: '#a87171' }}
-                        />
-                      )}
-                      <p>
-                        {record.product_status === 'PUBLISH'
-                          ? `Publish`
-                          : 'Private'}
-                      </p>
-                    </Space>
-                  ),
-                },
-                !record.is_sale
-                  ? {
-                      key: 3,
-                      label: (
-                        <Popconfirm
-                          placement={'left'}
-                          title="Sure to open market ?"
-                          onConfirm={() => fetchCreateMarket(record.id || '')}
-                        >
-                          <Space>
-                            <FontAwesomeIcon
-                              icon={faStore}
-                              style={{ color: '#65dd55' }}
-                            />
-                            <p>Đăng lên market</p>
-                          </Space>
-                        </Popconfirm>
-                      ),
-                    }
-                  : null,
-                {
-                  key: 4,
-                  label: (
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => fetchDeleteProduct(record.id || '')}
-                    >
-                      <Space>
-                        <FontAwesomeIcon
-                          icon={faCircleXmark}
-                          style={{ color: '#c01616' }}
-                        />
-                        <p>Xóa</p>
-                      </Space>
-                    </Popconfirm>
-                  ),
-                },
-              ],
-            }}
-          >
-            <ExclamationCircleTwoTone />
-          </Dropdown>
-          {/* <Row className="flex gap-x-2">
-            <Col span={3}>
-              <Link href={`/product/${record.id}`}>
-                <FontAwesomeIcon
-                  icon={faPenToSquare}
-                  style={{ color: '#2657ab' }}
-                />
-              </Link>
-            </Col>
-            <Col span={3}>
-              {record.product_status === 'PUBLISH' ? (
-                <FontAwesomeIcon
-                  onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                  icon={faLockOpen}
-                  style={{ color: '#27913c' }}
-                />
-              ) : (
-                <FontAwesomeIcon
-                  onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                  icon={faLock}
-                  style={{ color: '#a87171' }}
-                />
-              )}
-            </Col>
-            <Col span={3}>
-              <Popconfirm
-                title="Sure to open market ?"
-                onConfirm={() => fetchCreateMarket(record.id)}
-              >
-                <FontAwesomeIcon icon={faStore} style={{ color: '#65dd55' }} />
-              </Popconfirm>
-            </Col>
-            <Col span={3}>
-              <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() => fetchDeleteProduct(record.id)}
-              >
-                <FontAwesomeIcon
-                  icon={faCircleXmark}
-                  style={{ color: '#c01616' }}
-                />
-              </Popconfirm>
-            </Col>
-          </Row> */}
-        </ConfigProvider>
-      ),
-    },
-  ];
 
   return (
     <div className="transition duration-150 ease-out">
@@ -491,20 +282,33 @@ export default memo(function ProductCMS() {
           )}
         </Modal>
       </div>
-      <div>
-        <Table
-          columns={columns}
-          dataSource={listProduct}
-          pagination={{
-            onChange: (e) => {
-              setSkip(e - 1);
-            },
-            pageSize: 10,
-            total: totalProduct,
-            position: ['bottomCenter'],
-          }}
-          scroll={{ y: 340 }}
-        />
+      <div className="p-[30px]">
+        <Row className="py-[10px] bg-[#fafafa]">
+          <Col span={1}>
+            <p className="text-center">Stt</p>
+          </Col>
+          <Col span={7}>
+            <p>Tên sản phẩm</p>
+          </Col>
+          <Col span={3}>
+            <p>Giá đơn vị</p>
+          </Col>
+          <Col span={3}>
+            <p>Số lượng bán</p>
+          </Col>
+          <Col span={4}>
+            <p>Ngày tạo</p>
+          </Col>
+          <Col span={2}>
+            <p>Tình trạng</p>
+          </Col>
+          <Col span={4}>
+            <p className="text-center">Thao tác</p>
+          </Col>
+        </Row>
+        {listProduct.map((item, index) => (
+          <CMSProductItem key={index} index={index + 1} data={item} />
+        ))}
       </div>
     </div>
   );

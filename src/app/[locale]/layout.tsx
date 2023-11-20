@@ -69,6 +69,14 @@ export default async function LocaleLayout({
                     colorPrimaryHover: '#ffffff',
                     colorPrimaryBgHover: '#42bb67',
                   },
+                  Input: {
+                    activeBorderColor: '#36b75e',
+                    activeShadow: '#36b75e',
+                    hoverBorderColor: '#ffffff',
+                    colorBgContainerDisabled: '#36b75e',
+                    addonBg: '#36b75e',
+                    // controlItemBgActive: '#ffffff',
+                  },
                 },
               }}
             >
