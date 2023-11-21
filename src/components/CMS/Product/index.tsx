@@ -145,39 +145,6 @@ export default memo(function ProductCMS() {
 
   // const handleCancel = () => setPreviewOpen(false);
 
-  const fetchCreateMarket = async (productId: string) => {
-    await instanceAxios
-      .post(`marketplace/create?product_id=${productId}`)
-      .then((res) => {
-        notification.success({
-          message: 'Thông báo',
-          description: 'Tạo market thành công',
-        });
-      })
-      .catch((err) => {
-        notification.error({
-          message: 'Thông báo',
-          description: 'Tạo market thất bại',
-        });
-      });
-  };
-  const fetchUpdateProductStatus = async (
-    productId: string,
-    status: string
-  ) => {
-    await instanceAxios
-      .put(`product/${productId}/status?product_status=${status}`)
-      .then((res) => {
-        setHasChange(hasChange + 1);
-        notification.success({
-          message: 'Thông báo',
-          description: `Đổi trạng thái thành công --> ${status}`,
-        });
-        mutate('product/me');
-      })
-      .catch((err) => {});
-  };
-
   const fetchDeleteProduct = async (productId: string) => {
     await instanceAxios
       .delete(`product/${productId}/delete`)
@@ -195,8 +162,8 @@ export default memo(function ProductCMS() {
 
   return (
     <div className="transition duration-150 ease-out">
-      <div className="flex items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium">Danh sách sản phẩm</p>
+      <div className="flex items-center bg-[#f6f6f6] justify-between p-[20px] border-[1px] rounded-[10px]">
+        <p className="text-3xl font-medium">Sản phẩm của bạn</p>
         <div
           onClick={() => setOpenModalCreate(true)}
           className="flex items-center p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
@@ -223,62 +190,66 @@ export default memo(function ProductCMS() {
           onCancel={() => setOpenModalCreate(false)}
           footer={[]}
         >
-          <Typography.Title className="w-fit m-auto" level={3}>
-            {currentModalPage === 'CREATE_PRODUCT'
+          <p className="w-2/3 m-auto my-[20px]  text-center rounded-xl bg-[#f6f6f6] text-[30px]">
+            {currentUser.role === 'FACTORY'
+              ? `Thêm sản phẩm`
+              : currentModalPage === 'CREATE_PRODUCT'
               ? `Thêm sản phẩm`
               : `Chọn hóa đơn`}
-          </Typography.Title>
-          {currentModalPage === 'SELECT_TRANSACTION' && (
-            <div>
-              {listTransaction.length ? (
-                <>
-                  <p className="py-[10px]">
-                    * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty
-                    hạt giống
-                  </p>
-                  <div className="max-h-[600px] overflow-auto">
-                    {listTransaction.map((item, index) => (
-                      <TransactionSelectItem
-                        transactionId={item.id || ''}
-                        onFinish={changeCurrentModalPageToCreate}
-                        key={index}
-                        image={item.product?.banner || ''}
-                        productName={item.product?.name || ''}
-                        owner={item.product?.user?.username || ''}
-                        priceTotal={item.price || 0}
-                        buyQuantity={item.quantity || 0}
-                        buyDay={item.created_at || ''}
-                      />
-                    ))}
-                    {currentUser.role === 'SEEDLING_COMPANY' && (
-                      <Button
-                        className="m-auto block"
-                        onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
-                      >
-                        Bỏ qua
-                      </Button>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                  description={
-                    'Bạn không có giao dịch nào! Vui lòng mua sản phẩm phù hợp cho bạn rồi quay lại !!!'
-                  }
-                />
-              )}
-            </div>
-          )}
-
-          {currentModalPage === 'CREATE_PRODUCT' && (
+          </p>
+          {currentUser.role === 'FACTORY' ? (
             <CreateProductForm
               onSuccess={() => {
                 setOpenModalCreate(false);
                 mutate('product/me');
               }}
-              transactionId={transactionId}
             />
+          ) : (
+            <>
+              {currentModalPage === 'SELECT_TRANSACTION' && (
+                <div>
+                  {listTransaction.length ? (
+                    <>
+                      <p className="py-[10px]">
+                        * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công
+                        ty hạt giống
+                      </p>
+                      <div className="max-h-[600px] overflow-auto">
+                        {listTransaction.map((item, index) => (
+                          <TransactionSelectItem
+                            transactionId={item.id || ''}
+                            onFinish={changeCurrentModalPageToCreate}
+                            key={index}
+                            image={item.product?.banner || ''}
+                            productName={item.product?.name || ''}
+                            owner={item.product?.user?.username || ''}
+                            priceTotal={item.price || 0}
+                            buyQuantity={item.quantity || 0}
+                            buyDay={item.created_at || ''}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description={
+                        'Bạn không có giao dịch nào! Vui lòng mua sản phẩm phù hợp cho bạn rồi quay lại !!!'
+                      }
+                    />
+                  )}
+                </div>
+              )}
+              {currentModalPage === 'CREATE_PRODUCT' && (
+                <CreateProductForm
+                  onSuccess={() => {
+                    setOpenModalCreate(false);
+                    mutate('product/me');
+                  }}
+                  transactionId={transactionId}
+                />
+              )}
+            </>
           )}
         </Modal>
       </div>
