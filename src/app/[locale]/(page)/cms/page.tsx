@@ -33,6 +33,7 @@ import GeneralInformation from '@/components/CMS/GeneralInformation';
 import instanceAxios from '@/api/instanceAxios';
 import { logOut } from '@/reducers/userSlice';
 import { deleteCookie } from 'cookies-next';
+import OrderCMS from '@/components/CMS/Order';
 
 const { Header, Content, Sider } = Layout;
 
@@ -81,16 +82,18 @@ export default memo(function CMSPage() {
       '1',
       <HomeOutlined />
     ),
-    getItem(<p>Thống kê</p>, '2', <PieChartOutlined />),
+    getItem(<p>Đơn hàng</p>, '2', <HomeOutlined />),
+
+    getItem(<p>Thống kê</p>, '3', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem(<p>Thông tin chung</p>, '3', <WalletOutlined />),
-      getItem(<p>Đổi mật khẩu</p>, '4', <LockOutlined />),
-      getItem(<p>Liên kết</p>, '5', <LinkOutlined />),
+      getItem(<p>Thông tin chung</p>, '4', <WalletOutlined />),
+      getItem(<p>Đổi mật khẩu</p>, '5', <LockOutlined />),
+      getItem(<p>Liên kết</p>, '6', <LinkOutlined />),
     ]),
     !currentUser.user.is_superuser
       ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-          getItem(<p>Quản lí sản phâm</p>, '6', <BookOutlined />),
-          getItem(<p>Lịch sử giao dịch</p>, '7', <HistoryOutlined />),
+          getItem(<p>Quản lí sản phâm</p>, '7', <BookOutlined />),
+          getItem(<p>Lịch sử giao dịch</p>, '8', <HistoryOutlined />),
         ])
       : null,
 
@@ -99,24 +102,25 @@ export default memo(function CMSPage() {
     currentUser.user.is_superuser
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           // getItem('Thống kê hệ thống', '6'),
-          getItem(<p>Quản lí user</p>, '8'),
+          getItem(<p>Quản lí user</p>, '9'),
           // getItem('Quản lí sản phẩm', '8'),
         ])
       : null,
-    getItem(<p onClick={handleLogout}>Đăng xuất</p>, '9', <LoginOutlined />),
+    getItem(<p onClick={handleLogout}>Đăng xuất</p>, '10', <LoginOutlined />),
   ];
   const contents = [
     <></>,
-    <Statistical key={1} />,
-    <GeneralInformation key={2} />,
-    <ChangPassword className="w-2/5 m-auto" key={3} />,
+    <OrderCMS key={1} />,
+    <Statistical key={2} />,
+    <GeneralInformation key={3} />,
+    <ChangPassword className="w-2/5 m-auto" key={4} />,
     <></>,
-    <ProductCMS key={4} />,
-    <TransactionCMS key={5} />,
+    <ProductCMS key={5} />,
+    <TransactionCMS key={6} />,
     currentUser.user.is_superuser
       ? [
           // <div key={6}>asa</div>,
-          <ManageUser key={6} />,
+          <ManageUser key={7} />,
           // <ManageProduct key={8} />,
         ]
       : null,

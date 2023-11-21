@@ -34,6 +34,7 @@ interface UserType {
   confirm_status?: string;
   survey?: {};
   is_active?: boolean;
+  is_delete?: boolean;
 }
 interface HistoryType {
   id?: string;
@@ -193,6 +194,7 @@ interface ProductType {
       product_id?: int;
     }
   ];
+  total_transaction?: number;
   create_by?: UserType;
   name?: string;
   avatar?: string;
@@ -307,22 +309,14 @@ interface MarketType {
 }
 
 interface TransactionType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: ProductType;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  id?: number;
+  create_by?: UserType;
+  quantity: 2;
+  price: 12;
+  active: false;
+  is_reject: false;
+  create_at: '2023-11-18T06:44:56.970469Z';
+  product_id: 1;
 }
 
 interface NotificationItemType {
