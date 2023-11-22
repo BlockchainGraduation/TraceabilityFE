@@ -74,7 +74,7 @@ export default function RegisterRulePage() {
     </div>,
     // Question1
     <div key={2}>
-      <p className="text-2xl py-2 font-medium">Hi {currentUser.full_name}</p>
+      <p className="text-2xl py-2 font-medium">Hi {currentUser.fullname}</p>
       <div className="flex flex-col gap-y-5">
         <RadioCustom
           defaulValue={gender}

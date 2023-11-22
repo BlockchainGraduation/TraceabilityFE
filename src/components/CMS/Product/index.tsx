@@ -3,7 +3,11 @@ import CreateProductForm from '@/components/Contents/common/CreateProductForm';
 import { useAppSelector } from '@/hooks';
 import fetchUpdate from '@/services/fetchUpdate';
 import useLogin from '@/services/requireLogin';
-import { ExclamationCircleTwoTone, PlusOutlined } from '@ant-design/icons';
+import {
+  ExclamationCircleTwoTone,
+  LeftCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import {
   faCircleXmark,
   faLock,
@@ -68,7 +72,7 @@ export default memo(function ProductCMS() {
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
   const [hasChange, setHasChange] = useState(0);
-  const [transactionId, setTransactionId] = useState('');
+  const [transactionId, setTransactionId] = useState(0);
   const [currentModalPage, setCurrentModalPage] = useState<
     'SELECT_TRANSACTION' | 'CREATE_PRODUCT'
   >('SELECT_TRANSACTION');
@@ -82,9 +86,9 @@ export default memo(function ProductCMS() {
     fetchListTransaction();
   });
 
-  const changeCurrentModalPageToCreate = (e: string) => {
+  const changeCurrentModalPageToCreate = (e?: number) => {
     setCurrentModalPage('CREATE_PRODUCT');
-    setTransactionId(e);
+    setTransactionId(e || 0);
   };
   const fetchListTransaction = async () => {
     await instanceAxios(`transaction-me?status=DONE`)
@@ -149,9 +153,13 @@ export default memo(function ProductCMS() {
           width={700}
           title={
             currentModalPage === 'CREATE_PRODUCT' && (
-              <p onClick={() => setCurrentModalPage('SELECT_TRANSACTION')}>
-                Quay lại
-              </p>
+              <div
+                className="flex items-center space-x-2"
+                onClick={() => setCurrentModalPage('SELECT_TRANSACTION')}
+              >
+                <LeftCircleOutlined className="text-blue-500 text-[18px]" />
+                <p>Quay lại</p>
+              </div>
             )
           }
           onCancel={() => setOpenModalCreate(false)}
@@ -177,12 +185,12 @@ export default memo(function ProductCMS() {
                 <div className="w-full ">
                   {listTransaction.length ? (
                     <div className="w-full">
-                      <Row className="">
+                      <Row className="bg-[#f6f6f6] text-[18px] font-semibold p-[10px] rounded-xl">
                         <Col span={8}>
                           <p>Sản phẩm</p>
                         </Col>
                         <Col span={6}>
-                          <p>Owner</p>
+                          <p>Người bán</p>
                         </Col>
                         <Col span={3}>
                           <p>Đã mua</p>
@@ -194,9 +202,17 @@ export default memo(function ProductCMS() {
                           <p>Ngày mua</p>
                         </Col>
                       </Row>
-                      <div className="w-full overflow-auto">
+                      <div className="w-full flex flex-col gap-y-1 overflow-auto py-[20px]">
                         {listTransaction.map((item, index) => (
-                          <TransactionItemSelect key={index} data={item} />
+                          <TransactionItemSelect
+                            divProps={{
+                              onClick: () =>
+                                changeCurrentModalPageToCreate(item.id),
+                              // className: 'hover:bg-[#f6f6f6]',
+                            }}
+                            key={index}
+                            data={item}
+                          />
                           // <TransactionSelectItem
                           //   transactionId={item.id || ''}
                           //   onFinish={changeCurrentModalPageToCreate}

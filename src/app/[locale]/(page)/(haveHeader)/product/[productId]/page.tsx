@@ -99,11 +99,12 @@ import ProductInformation from '@/components/Contents/ProductInfo/ProductInforma
 import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import CommentInput from '@/components/Contents/common/CommentInput';
 import ProductItem from '@/components/Contents/Home/ProductItem';
+import useLogin from '@/services/requireLogin';
 
 export default function ProductInfoPage({
   params,
 }: {
-  params: { productId: string };
+  params: { productId: number };
 }) {
   const [openListImageModal, setOpenListImageModal] = useState(false);
   const [openCreateDescriptionModal, setOpenCreateDescriptionModal] =
@@ -117,6 +118,7 @@ export default function ProductInfoPage({
   const [loadingPage, setLoadingPage] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState(0);
+  const [currentAvatar, setCurrentAvatar] = useState('');
   const [buyQuantity, setBuyQuantity] = useState(0);
   const [currentTab, setCurrentTab] = useState<
     'DESCRIPTION' | 'INFORMATION' | 'COMMENT'
@@ -124,6 +126,7 @@ export default function ProductInfoPage({
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
   const [showModalPay, setShowModalPay] = useState(false);
   const { mutate } = useSWRConfig();
+  const { login } = useLogin();
   const [loadingBuy, setLoadingBuy] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
@@ -246,11 +249,15 @@ export default function ProductInfoPage({
           <div className="w-4/5 h-fit flex m-auto">
             <div className="w-1/2 ">
               <Image
-                className="object-cover rounded-xl"
+                className="object-cover rounded-xl bg-[#f6f6f6] p-[30px]"
                 width={'100%'}
                 height={400}
                 preview={false}
-                src={dataProduct.avatar}
+                src={
+                  currentAvatar ||
+                  dataProduct.avatar ||
+                  staticVariables.noImage.src
+                }
                 alt=""
               />
               <div className="w-full">
@@ -260,13 +267,18 @@ export default function ProductInfoPage({
                     noPolyfill
                     wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
                     scrollContainerClassName="mx-[20px]"
-                    itemClassName="mx-[20px]"
+                    itemClassName="mx-[5px]"
                     LeftArrow={LeftArrow}
                     RightArrow={RightArrow}
                   >
                     {dataProduct.banner?.map((item, index) => (
                       <Image
-                        className="object-cover rounded-xl"
+                        onClick={() => setCurrentAvatar(item.image || '')}
+                        className={`object-cover rounded-xl p-[10px] ${
+                          currentAvatar === item.image
+                            ? 'bg-current-color'
+                            : 'bg-[#f6f6f6]'
+                        }`}
                         key={index}
                         width={100}
                         height={100}
@@ -279,7 +291,7 @@ export default function ProductInfoPage({
                 )}
               </div>
             </div>
-            <div className="w-1/2 flex flex-col px-[30px] font-sans">
+            <div className="w-1/2 flex flex-col px-[30px] font-sans ">
               <p className="text-[22px] font-normal">{dataProduct.name}</p>
               <Space>
                 Create by:
@@ -320,9 +332,38 @@ export default function ProductInfoPage({
                   Add to cart
                 </button>
               </div>
+              {/* Buy product */}
               <div className="w-1/2 mx-auto my-[30px] ">
+                <Modal
+                  width={'70%'}
+                  centered
+                  open={showModalPay}
+                  onCancel={() => setShowModalPay(false)}
+                  footer={[]}
+                >
+                  <div className="px-[10px]">
+                    <CheckoutForm
+                      data={dataProduct}
+                      // producId={params.productId}
+                      buyQuantity={buyQuantity}
+                      // price={dataProduct.price}
+                      // quantity={dataProduct.quantity}
+                      onSuccess={() => mutate(`product/${params.productId}`)}
+                    />
+                  </div>
+                </Modal>
                 <Button
-                  onClick={fetchBuyProduct}
+                  onClick={() =>
+                    login(() => {
+                      buyQuantity
+                        ? setShowModalPay(true)
+                        : notification.error({
+                            message: 'Vui lòng chọn số lượng',
+                          });
+                    })
+                  }
+                  // onClick={() => setShowModalPay(true)}
+                  // onClick={fetchBuyProduct}
                   loading={loadingBuy}
                   disabled={currentUser.id === dataProduct.create_by?.id}
                   className="w-full h-fit rounded-xl font-semibold text-white text-[30px] bg-current-color"
@@ -332,29 +373,37 @@ export default function ProductInfoPage({
               </div>
             </div>
           </div>
-          <div className="w-4/5 m-auto border-[1px] bg-[#f7f7f7] rounded-xl overflow-hidden">
+          <div className="w-4/5 m-auto border-[1px] bg-[#f6f6f6] rounded-xl overflow-hidden">
             <div className="flex w-full text-[20px] text-[#555555] border-b-[1px]">
               <p
                 onClick={() => setCurrentTab('DESCRIPTION')}
-                className="px-[50px] py-[20px]"
+                className={`px-[50px] py-[20px] ${
+                  currentTab === 'DESCRIPTION' &&
+                  'border-b-2 border-current-color'
+                }`}
               >
                 Description
               </p>
               <p
                 onClick={() => setCurrentTab('INFORMATION')}
-                className="px-[50px] py-[20px] "
+                className={`px-[50px] py-[20px] ${
+                  currentTab === 'INFORMATION' &&
+                  'border-b-2 border-current-color'
+                }`}
               >
                 Infomation
               </p>
               <p
                 onClick={() => setCurrentTab('COMMENT')}
-                className="px-[50px] py-[20px] "
-              >{`Reviews (1)`}</p>
+                className={`px-[50px] py-[20px] ${
+                  currentTab === 'COMMENT' && 'border-b-2 border-current-color'
+                }`}
+              >{`Reviews ( ${dataProduct.detail_decriptions?.length} )`}</p>
             </div>
             <div className="w-full flex my-[20px]">
               {currentTab === 'DESCRIPTION' && (
                 <div className="w-full px-[100px]">
-                  {dataProduct.detail_decriptions?.length && (
+                  {dataProduct.detail_decriptions?.length ? (
                     <Carousel>
                       <div>
                         <Description
@@ -382,11 +431,16 @@ export default function ProductInfoPage({
                         />
                       </div>
                     </Carousel>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description="Chủ sản phẩm vẫn chưa thêm thông tin gì..."
+                    />
                   )}
                 </div>
               )}
               {currentTab === 'INFORMATION' && (
-                <div className="m-auto px-[100px]">
+                <div className="w-full m-auto px-[100px]">
                   <ProductInformation data={dataProduct} />
                 </div>
               )}

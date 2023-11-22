@@ -241,7 +241,7 @@ export default function HomePage() {
             <ScrollMenu
               Footer={[]}
               noPolyfill
-              wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
+              wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
               scrollContainerClassName="mx-[20px]"
               itemClassName="m-[20px]"
               LeftArrow={LeftArrow}

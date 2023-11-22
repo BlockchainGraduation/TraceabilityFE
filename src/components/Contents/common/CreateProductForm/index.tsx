@@ -44,7 +44,7 @@ export default function CreateProductForm({
   transactionId,
   onSuccess,
 }: {
-  transactionId?: string;
+  transactionId?: number;
   onSuccess?: () => void;
 }) {
   const [previewImage, setPreviewImage] = useState('');
@@ -120,7 +120,8 @@ export default function CreateProductForm({
     formData.append('price', e.price);
     formData.append('quantity', e.quantity);
     formData.append('product_type', currentUser.role || '');
-    transactionId && formData.append('transaction_id', transactionId);
+    transactionId &&
+      formData.append('transaction_id', transactionId.toString());
 
     await instanceAxios
       .post(`product/`, formData)
@@ -156,22 +157,30 @@ export default function CreateProductForm({
           name="name"
           rules={[{ required: true, message: tNotification('REQUIRED_FIELD') }]}
         >
-          <Input />
+          <Input placeholder="Nhập tên sản phẩm..." />
         </Form.Item>
         <Form.Item<FormType>
           // className="w-1/2"
-          label="Số lượng bán"
+          label="Nhập số lượng bán"
           name="quantity"
           rules={[{ required: true, message: tNotification('REQUIRED_FIELD') }]}
         >
-          <InputNumber className="w-1/2" min={0} />
+          <InputNumber
+            placeholder="Số lượng bán..."
+            className="w-1/2"
+            min={0}
+          />
         </Form.Item>
         <Form.Item<FormType>
-          label="Giá bán cho từng đơn vị"
+          label="Giá bán của 1 sản phẩm"
           name="price"
           rules={[{ required: true, message: tNotification('REQUIRED_FIELD') }]}
         >
-          <InputNumber className="w-1/2" min={0} />
+          <InputNumber
+            placeholder="Nhập giá tiền của 1 sản phẩm..."
+            className="w-1/2"
+            min={0}
+          />
         </Form.Item>
         <Form.Item<FormType>
           // className="w-1/2"
@@ -179,7 +188,11 @@ export default function CreateProductForm({
           name="description"
           rules={[{ required: true, message: tNotification('REQUIRED_FIELD') }]}
         >
-          <TextArea autoSize maxLength={255} />
+          <TextArea
+            placeholder="Nhập giới thiệu ngắn về sản phẩm..."
+            autoSize
+            maxLength={255}
+          />
         </Form.Item>
         <Form.Item<FormType>
           label="Ảnh chính của sản phẩm"

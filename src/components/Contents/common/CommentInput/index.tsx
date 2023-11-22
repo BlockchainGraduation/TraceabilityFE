@@ -11,7 +11,7 @@ export default function CommentInput({
   className,
 }: {
   className?: string;
-  productId?: string;
+  productId?: number;
 }) {
   const currentUser = useAppSelector((state) => state.user.user);
   const [commentValue, setCommentValue] = useState('');
