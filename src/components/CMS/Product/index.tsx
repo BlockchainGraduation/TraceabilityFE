@@ -45,9 +45,9 @@ import React, {
 } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
-import TransactionSelectItem from './TransactionSelectItem';
 import moment from 'moment';
 import CMSProductItem from './CMSProductItem';
+import TransactionItemSelect from './TransactionItemSelect';
 
 // interface DataType {
 //   key: React.Key;
@@ -59,33 +59,6 @@ import CMSProductItem from './CMSProductItem';
 //   created_at: string;
 //   product_status: string;
 // }
-interface TransactionType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: number;
-    quantity?: number;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-    };
-  };
-}
 
 export default memo(function ProductCMS() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -99,7 +72,9 @@ export default memo(function ProductCMS() {
   const [currentModalPage, setCurrentModalPage] = useState<
     'SELECT_TRANSACTION' | 'CREATE_PRODUCT'
   >('SELECT_TRANSACTION');
-  const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
+  const [listTransaction, setListTransaction] = useState<
+    DetailTransactionType[]
+  >([]);
   const currentUser = useAppSelector((state) => state.user.user);
   const { mutate } = useSWRConfig();
 
@@ -112,17 +87,9 @@ export default memo(function ProductCMS() {
     setTransactionId(e);
   };
   const fetchListTransaction = async () => {
-    await instanceAxios(
-      `${
-        currentUser.role === 'FARMER' ? 'transaction_sf' : 'transaction_fm'
-      }/list?skip=0&limit=100`
-    )
+    await instanceAxios(`transaction-me?status=DONE`)
       .then((res) => {
-        setListTransaction(
-          currentUser.role === 'FARMER'
-            ? res.data.data.list_transaction_sf
-            : res.data.data.list_transaction_fm
-        );
+        setListTransaction(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -205,31 +172,45 @@ export default memo(function ProductCMS() {
               }}
             />
           ) : (
-            <>
+            <div className="w-full ">
               {currentModalPage === 'SELECT_TRANSACTION' && (
-                <div>
+                <div className="w-full ">
                   {listTransaction.length ? (
-                    <>
-                      <p className="py-[10px]">
-                        * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công
-                        ty hạt giống
-                      </p>
-                      <div className="max-h-[600px] overflow-auto">
+                    <div className="w-full">
+                      <Row className="">
+                        <Col span={8}>
+                          <p>Sản phẩm</p>
+                        </Col>
+                        <Col span={6}>
+                          <p>Owner</p>
+                        </Col>
+                        <Col span={3}>
+                          <p>Đã mua</p>
+                        </Col>
+                        <Col span={3}>
+                          <p>Giá</p>
+                        </Col>
+                        <Col span={4}>
+                          <p>Ngày mua</p>
+                        </Col>
+                      </Row>
+                      <div className="w-full overflow-auto">
                         {listTransaction.map((item, index) => (
-                          <TransactionSelectItem
-                            transactionId={item.id || ''}
-                            onFinish={changeCurrentModalPageToCreate}
-                            key={index}
-                            image={item.product?.banner || ''}
-                            productName={item.product?.name || ''}
-                            owner={item.product?.user?.username || ''}
-                            priceTotal={item.price || 0}
-                            buyQuantity={item.quantity || 0}
-                            buyDay={item.created_at || ''}
-                          />
+                          <TransactionItemSelect key={index} data={item} />
+                          // <TransactionSelectItem
+                          //   transactionId={item.id || ''}
+                          //   onFinish={changeCurrentModalPageToCreate}
+                          //   key={index}
+                          //   image={item.product?.banner || ''}
+                          //   productName={item.product?.name || ''}
+                          //   owner={item.product?.user?.username || ''}
+                          //   priceTotal={item.price || 0}
+                          //   buyQuantity={item.quantity || 0}
+                          //   buyDay={item.created_at || ''}
+                          // />
                         ))}
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -249,7 +230,7 @@ export default memo(function ProductCMS() {
                   transactionId={transactionId}
                 />
               )}
-            </>
+            </div>
           )}
         </Modal>
       </div>

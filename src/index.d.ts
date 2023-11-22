@@ -319,6 +319,17 @@ interface TransactionType {
   create_at?: string;
   product_id?: number;
 }
+interface DetailTransactionType {
+  id?: number;
+  create_by?: UserType;
+  quantity?: number;
+  price?: number;
+  active?: boolean;
+  status?: string;
+  is_reject?: boolean;
+  create_at?: string;
+  product_id?: ProductType;
+}
 
 interface NotificationItemType {
   data?: {
