@@ -12,6 +12,7 @@ import theme from '@/theme/themeConfig';
 import dynamic from 'next/dynamic';
 import { StyleProviderX } from '@/components/RootStyleRegistry';
 import { StyleProvider } from '@ant-design/cssinjs';
+import moment from 'moment';
 // import { Suspense } from 'react';
 
 // const Header = dynamic(() => import('@/components/Header'), {
@@ -45,6 +46,7 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound();
   }
+  moment.locale(locale);
 
   return (
     <html lang={locale} suppressHydrationWarning className={''}>

@@ -327,7 +327,7 @@ export default function GeneralInformation() {
                     className="object-cover"
                     preview={false}
                     alt=""
-                    src={item.image}
+                    src={item.image || staticVariables.noImage.src}
                   />
                 </div>
               </div>

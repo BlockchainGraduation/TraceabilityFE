@@ -2,14 +2,19 @@ import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import staticVariables from '@/static';
 import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Empty, Image, Space } from 'antd';
+import { Avatar, Dropdown, Empty, Image, Segmented, Space } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import OrderItem from './OrderItem';
+import Item from 'antd/es/list/Item';
+import useSWR, { useSWRConfig } from 'swr';
 
 export default function OrderCMS() {
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
-  const [listTransaction, setListTransaction] = useState<TransactionType>();
+  const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
   const [currentProduct, setCurrentProduct] = useState<ProductType>();
+  const [transactionType, setTransactionType] = useState('PENDDING');
   const currentUser = useAppSelector((state) => state.user.user);
+  const { mutate } = useSWRConfig();
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
@@ -23,14 +28,16 @@ export default function OrderCMS() {
   }, [currentUser.id]);
   const fetchFilterTransaction = useCallback(async () => {
     await instanceAxios
-      .get(`filter-transaction?product_id=${currentProduct?.id}`)
+      .get(
+        `filter-transaction?product_id=${currentProduct?.id}&status=${transactionType}`
+      )
       .then((res) => {
         setListTransaction(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [currentProduct?.id]);
+  }, [currentProduct?.id, transactionType]);
 
   useEffect(() => {
     fetchFilterTransaction();
@@ -39,6 +46,12 @@ export default function OrderCMS() {
   useEffect(() => {
     fetchProductMe();
   }, [fetchProductMe]);
+
+  useSWR(
+    `filter-transaction?product_id=${currentProduct?.id}`,
+    fetchFilterTransaction
+  );
+
   return (
     <div className="w-full p-[30px] flex gap-x-5">
       <div className="w-1/2 bg-[#f6f6f6] rounded-xl p-[30px]">
@@ -59,7 +72,7 @@ export default function OrderCMS() {
           }}
         >
           <Space className="w-1/2 py-[20px] text-current-color ">
-            <p className="">Chọn sản phẩm</p>
+            <p className=" cursor-pointer">Chọn sản phẩm</p>
             <DownOutlined />
           </Space>
         </Dropdown>
@@ -106,6 +119,51 @@ export default function OrderCMS() {
       </div>
       <div className="w-1/2 bg-[#f6f6f6] rounded-xl p-[30px]">
         <p className="text-[25px] font-medium">Đơn đặt hàng</p>
+        <div className="w-full py-[20px]">
+          {currentProduct && (
+            <Segmented
+              className="my-[10px]"
+              block
+              value={transactionType}
+              // defaultValue={'PENDDING'}
+              onChange={(e) => setTransactionType(e.toString())}
+              options={[
+                { label: 'Chờ xác nhận', value: 'PENDDING' },
+                { label: 'Đã xác nhận', value: 'ACCEPT' },
+                { label: 'Đã từ chối', value: 'REJECT' },
+                { label: 'Đã hoàn thành', value: 'DONE' },
+              ]}
+            />
+          )}
+          <div className="w-full max-h-[600px] overflow-y-auto">
+            <div className="w-full flex flex-col gap-y-2">
+              {currentProduct ? (
+                <>
+                  {listTransaction.length ? (
+                    listTransaction.map((item, index) => (
+                      <OrderItem
+                        onFinish={() =>
+                          mutate(
+                            `filter-transaction?product_id=${currentProduct?.id}`
+                          )
+                        }
+                        key={index}
+                        data={item}
+                      />
+                    ))
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description="Chưa có dữ liệu"
+                    />
+                  )}
+                </>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

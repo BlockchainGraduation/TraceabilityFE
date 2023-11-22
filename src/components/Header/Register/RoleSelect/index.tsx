@@ -143,7 +143,7 @@ export default function RoleSelect({
                     preview={false}
                     height={100}
                     width={100}
-                    src={item.image}
+                    src={item.image || staticVariables.noImage.src}
                   />
                   <div>{item.rules}</div>
                 </div>

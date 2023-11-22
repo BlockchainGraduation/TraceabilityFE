@@ -4,7 +4,11 @@ import ProductItem from '@/components/Contents/Home/ProductItem';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import staticVariables from '@/static';
-import { PlayCircleFilled, RightCircleFilled } from '@ant-design/icons';
+import {
+  PlayCircleFilled,
+  RightCircleFilled,
+  RightCircleTwoTone,
+} from '@ant-design/icons';
 import {
   faHandSparkles,
   faShieldHeart,
@@ -13,7 +17,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Carousel, Image } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import useSWR from 'swr';
 import { LeftArrow, RightArrow } from './components/Category';
@@ -21,12 +25,12 @@ import { useAppSelector } from '@/hooks';
 
 export default function HomePage() {
   const [currentListType, setCurrentListType] = useState<
-    'FISHERMEN' | 'FACTORY' | 'SEEDLING'
-  >('SEEDLING');
+    'DISTRIBUTER' | 'FACTORY' | 'RETAILER'
+  >('FACTORY');
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
   const [loadingPage, setLoadingPage] = useState(true);
   const currentUser = useAppSelector((state) => state.user.user);
-
+  const ref = useRef();
   // const fetchListProduct = useCallback(async () => {
   //   await instanceAxios
   //     .get(`product/`)
@@ -127,12 +131,17 @@ export default function HomePage() {
         <Header />
         <div className="w-full pt-[100px]">
           <Carousel
+            swipe
+            swipeToSlide={true}
             waitForAnimate
             className="w-full h-[450px] bg-[#f5f5f5]"
             autoplay
           >
             {listSlide.map((item, index) => (
-              <div key={index} className="h-[450px] px-[200px]">
+              <div
+                key={index}
+                className="h-[450px] select-none cursor-pointer px-[200px]"
+              >
                 <div className="w-full h-full flex">
                   <div
                     // data-aos="fade-right"
@@ -176,7 +185,7 @@ export default function HomePage() {
                       // height={'100%'}
                       alt=""
                       preview={false}
-                      src={item.img}
+                      src={item.img || staticVariables.noImage.src}
                     />
                   </div>
                 </div>
@@ -201,28 +210,29 @@ export default function HomePage() {
           </p>
           <div className="flex m-auto gap-x-5 cursor-pointer my-[10px]">
             <p
-              onClick={() => setCurrentListType('SEEDLING')}
-              className={`px-[20px] py-[5px] ${
-                currentListType === 'SEEDLING' && 'bg-current-color text-white'
-              }  rounded-xl border-[1px]`}
-            >
-              SEEDLING COMPANY
-            </p>
-            <p
-              onClick={() => setCurrentListType('FISHERMEN')}
-              className={`px-[20px] py-[5px] ${
-                currentListType === 'FISHERMEN' && 'bg-current-color text-white'
-              }  rounded-xl border-[1px]`}
-            >
-              FISHERMEN
-            </p>
-            <p
               onClick={() => setCurrentListType('FACTORY')}
               className={`px-[20px] py-[5px] ${
                 currentListType === 'FACTORY' && 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
               FACTORY
+            </p>
+            <p
+              onClick={() => setCurrentListType('DISTRIBUTER')}
+              className={`px-[20px] py-[5px] ${
+                currentListType === 'DISTRIBUTER' &&
+                'bg-current-color text-white'
+              }  rounded-xl border-[1px]`}
+            >
+              DISTRIBUTER
+            </p>
+            <p
+              onClick={() => setCurrentListType('RETAILER')}
+              className={`px-[20px] py-[5px] ${
+                currentListType === 'RETAILER' && 'bg-current-color text-white'
+              }  rounded-xl border-[1px]`}
+            >
+              RETAILER
             </p>
           </div>
         </div>
@@ -233,7 +243,7 @@ export default function HomePage() {
               noPolyfill
               wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
               scrollContainerClassName="mx-[20px]"
-              itemClassName="my-[20px]"
+              itemClassName="m-[20px]"
               LeftArrow={LeftArrow}
               RightArrow={RightArrow}
             >
@@ -290,7 +300,7 @@ export default function HomePage() {
             Best sales of week
           </p>
         </div>
-        <div className="w-4/5 m-auto my-[50px]">
+        <div className="w-4/5 flex gap-10 m-auto my-[50px]">
           {listProduct.map((item, index) => (
             <ProductItem
               style="detail"

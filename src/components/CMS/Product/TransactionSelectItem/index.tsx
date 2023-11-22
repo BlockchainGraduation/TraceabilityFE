@@ -28,7 +28,7 @@ export default function TransactionSelectItem(props: PropsType) {
           alt=""
           width={100}
           height={100}
-          src={props.image}
+          src={props.image || staticVariables.noImage.src}
         />
         <div className="flex flex-col w-10/12 border-[1px] rounded">
           <p className="text-center text-xl font-medium	">{props.productName}</p>

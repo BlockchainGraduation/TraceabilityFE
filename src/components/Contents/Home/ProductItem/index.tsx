@@ -40,7 +40,7 @@ export default function ProductItem({
   style = 'default',
   isOwner = false,
   data,
-  className = '',
+  className,
 }: {
   isOwner?: boolean;
   style?: 'default' | 'detail';
@@ -53,7 +53,7 @@ export default function ProductItem({
   return (
     <div
       data-aos="flip-right"
-      className={`w-[250px] group bg-white rounded-xl overflow-hidden font-sans ${className}`}
+      className={`w-[250px] group bg-white  rounded-xl overflow-hidden font-sans ${className}`}
     >
       <div className="w-full relative">
         <Image
@@ -62,7 +62,7 @@ export default function ProductItem({
           width={'100%'}
           height={200}
           alt=""
-          src={data.avatar}
+          src={data.avatar || staticVariables.noImage.src}
         />
         {style === 'detail' && (
           <div className="absolute flex items-center justify-center rounded-xl bg-[#40a944] top-0 w-2/5 left-1/2 -translate-x-1/2 border-2 invisible  px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:translate-y-1/2 group-hover:visible duration-500  ">

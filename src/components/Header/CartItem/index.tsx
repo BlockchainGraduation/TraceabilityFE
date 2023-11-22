@@ -43,7 +43,7 @@ export default function CartItem({
           preview={false}
           className="rounded-xl  object-cover"
           alt=""
-          src={data.product?.avatar}
+          src={data.product?.avatar || staticVariables.noImage.src}
         />
       </div>
       <div className="w-5/6 relative flex items-center justify-between">

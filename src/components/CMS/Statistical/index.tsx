@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowUpFromWaterPump,
   faCloudSun,
+  faDatabase,
   faIndustry,
   faLeaf,
   faSeedling,
@@ -16,7 +17,7 @@ import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut, Pie } from 'react-chartjs-2';
 import staticVariables from '@/static';
-import { Avatar, Image } from 'antd';
+import { Avatar, Image, Space } from 'antd';
 import { useAppSelector } from '@/hooks';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -283,34 +284,137 @@ export default function Statistical() {
   });
   return (
     <div className="w-full pb-[50px]">
-      <div className="w-full flex justify-around flex-wrap gap-5">
-        {listStatistical.map((item, index) => (
-          <div
-            key={index}
-            className="flex w-1/4 gap-x-5 items-center p-[20px] bg-green-100 rounded-xl"
-          >
+      <p className="text-[#0b0c50] text-[30px] font-semibold">Tổng quan</p>
+      <div className="w-full flex p-[30px]  gap-x-10">
+        <div className="w-1/2 flex flex-col gap-5">
+          <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+            <p className="text-[#0b0c50] text-[20px] font-semibold">
+              Tổng quan
+            </p>
             <div>
-              <Avatar shape={'square'} size={50} src={item.img} />
-            </div>
-            {/* {item.icon} */}
-            <div className="flex flex-col">
-              <p className="text-[25px] font-bold">{item.value}</p>
-              <p>{item.label}</p>
+              <Chart />
             </div>
           </div>
-        ))}
-      </div>
-      {currentUser.is_superuser && (
-        <div className="w-full flex justify-around mt-10">
-          <div className="w-1/3 ">
-            <Doughnut options={options} data={userChartData} />
-          </div>
-          <div className="w-1/3">
-            <Pie options={productChartOptions} data={productChartData} />
+          <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+            <p className="text-[#0b0c50] text-[20px] font-semibold">
+              Tổng quan2
+            </p>
+            <div>
+              <Chart />
+            </div>
           </div>
         </div>
-      )}
-      {/* <Chart /> */}
+        <div className="w-1/2 flex gap-5">
+          <div className="w-1/2 flex flex-col gap-y-5">
+            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                <FontAwesomeIcon
+                  size={'2x'}
+                  icon={faDatabase}
+                  style={{ color: '#3d6ab8' }}
+                />
+              </div>
+              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                Sản phẩm
+              </p>
+              <div className="flex items-baseline space-x-3">
+                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
+                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+              </div>
+              <div className="w-full">
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang mở bán</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang đóng</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+              </div>
+            </div>
+            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                <FontAwesomeIcon
+                  size={'2x'}
+                  icon={faDatabase}
+                  style={{ color: '#3d6ab8' }}
+                />
+              </div>
+              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                Sản phẩm
+              </p>
+              <div className="flex items-baseline space-x-3">
+                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
+                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+              </div>
+              <div className="w-full">
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang mở bán</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang đóng</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-1/2 flex flex-col gap-y-5">
+            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                <FontAwesomeIcon
+                  size={'2x'}
+                  icon={faDatabase}
+                  style={{ color: '#3d6ab8' }}
+                />
+              </div>
+              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                Sản phẩm
+              </p>
+              <div className="flex items-baseline space-x-3">
+                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
+                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+              </div>
+              <div className="w-full">
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang mở bán</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang đóng</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+              </div>
+            </div>
+            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                <FontAwesomeIcon
+                  size={'2x'}
+                  icon={faDatabase}
+                  style={{ color: '#3d6ab8' }}
+                />
+              </div>
+              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                Sản phẩm
+              </p>
+              <div className="flex items-baseline space-x-3">
+                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
+                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+              </div>
+              <div className="w-full">
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang mở bán</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+                <div className="w-full flex justify-between">
+                  <p className="font-normal">Đang đóng</p>
+                  <p className="font-semibold text-[16px]">25 %</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

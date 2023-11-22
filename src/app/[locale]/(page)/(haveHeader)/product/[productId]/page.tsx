@@ -260,7 +260,7 @@ export default function ProductInfoPage({
                     noPolyfill
                     wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
                     scrollContainerClassName="mx-[20px]"
-                    // itemClassName="my-[20px]"
+                    itemClassName="mx-[20px]"
                     LeftArrow={LeftArrow}
                     RightArrow={RightArrow}
                   >
@@ -288,6 +288,7 @@ export default function ProductInfoPage({
                     {dataProduct.create_by?.fullname}
                   </p>
                 </Link>
+                {/* <p>{moment(dataProduct.create_at).fromNow()}</p> */}
               </Space>
               <Space className="text-current-color font-semibold my-[10px]">
                 <p className="text-[#2d2d2d]">Price:</p>
@@ -418,7 +419,7 @@ export default function ProductInfoPage({
                 noPolyfill
                 wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
                 scrollContainerClassName="mx-[20px]"
-                itemClassName="my-[20px]"
+                itemClassName="m-[20px]"
                 LeftArrow={LeftArrow}
                 RightArrow={RightArrow}
               >

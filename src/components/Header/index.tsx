@@ -216,7 +216,7 @@ export default memo(function Header() {
         <Link href={`/user/${currentUser.id}`}>
           <div className=" min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
             <div className="w-[30px]">
-              <FontAwesomeIcon icon={faUser} style={{ color: '#3c64aa' }} />
+              <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
             </div>
             <p>Thông tin</p>
           </div>
@@ -252,7 +252,7 @@ export default memo(function Header() {
       label: (
         <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
           <div className="w-[30px]">
-            <FontAwesomeIcon icon={faWallet} style={{ color: '#4096ff' }} />
+            <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
           <p>{`${currentUser.account_balance || 0} ${currency}`}</p>
         </div>
@@ -274,7 +274,10 @@ export default memo(function Header() {
             onClick={() => setShowCartModal(true)}
           >
             <div className="w-[30px]">
-              <FontAwesomeIcon icon={faCartShopping} />
+              <FontAwesomeIcon
+                icon={faCartShopping}
+                style={{ color: '#376ecd' }}
+              />
             </div>
             <p>Giỏ hàng</p>
           </div>
@@ -304,7 +307,7 @@ export default memo(function Header() {
           >
             <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
               <div className="w-[30px]">
-                <FontAwesomeIcon icon={faUser} />
+                <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
               </div>
               <p>Đăng kí thành viên</p>
             </div>

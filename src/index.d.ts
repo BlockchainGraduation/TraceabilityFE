@@ -311,12 +311,13 @@ interface MarketType {
 interface TransactionType {
   id?: number;
   create_by?: UserType;
-  quantity: 2;
-  price: 12;
-  active: false;
-  is_reject: false;
-  create_at: '2023-11-18T06:44:56.970469Z';
-  product_id: 1;
+  quantity?: number;
+  price?: number;
+  active?: boolean;
+  status?: string;
+  is_reject?: boolean;
+  create_at?: string;
+  product_id?: number;
 }
 
 interface NotificationItemType {

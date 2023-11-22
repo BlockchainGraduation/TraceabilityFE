@@ -103,7 +103,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-        <div className="w-full flex cursor-pointer">
+        <div className="w-full text-[18px] font-semibold flex cursor-pointer">
           <p
             onClick={() => setCurrentTab('STORY')}
             className={`px-[30px] py-[15px] ${
@@ -127,7 +127,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
           {currentTab === 'STORY' && <UserInformation data={dataUser} />}
         </div>
         {currentTab === 'PRODUCT' && (
-          <div className="w-full flex flex-wrap">
+          <div className="w-full flex flex-wrap gap-5">
             {listProduct.length ? (
               listProduct.map((item, index) => (
                 <ProductItem

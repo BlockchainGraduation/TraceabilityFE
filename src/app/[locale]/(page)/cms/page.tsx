@@ -12,6 +12,7 @@ import {
   LoginOutlined,
   PieChartOutlined,
   RightCircleTwoTone,
+  ScheduleOutlined,
   TeamOutlined,
   UserOutlined,
   WalletOutlined,
@@ -82,7 +83,7 @@ export default memo(function CMSPage() {
       '1',
       <HomeOutlined />
     ),
-    getItem(<p>Đơn hàng</p>, '2', <HomeOutlined />),
+    getItem(<p>Đơn hàng</p>, '2', <ScheduleOutlined />),
 
     getItem(<p>Thống kê</p>, '3', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [

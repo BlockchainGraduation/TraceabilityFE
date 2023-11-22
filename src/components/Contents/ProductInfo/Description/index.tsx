@@ -71,7 +71,7 @@ export default function Description(props: Props) {
           width="100%"
           height="100%"
           preview={false}
-          src={props.image || ''}
+          src={props.image || staticVariables.noImage.src}
           alt=""
         />
         {props.showEdit && (

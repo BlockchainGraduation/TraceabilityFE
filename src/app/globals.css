@@ -95,3 +95,6 @@ button{
 button:active{
   transform: scale(0.9);
 }
+p{
+  cursor: pointer;
+}
