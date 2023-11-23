@@ -4,6 +4,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Checkbox,
   Col,
   ConfigProvider,
   Dropdown,
@@ -72,14 +73,22 @@ import 'moment/locale/vi';
 import currency from '@/services/currency';
 import CartItem from './CartItem';
 import { CheckoutForm } from '../Contents/common/CheckoutForm';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 const inter = Inter({ subsets: ['latin'] });
+
+interface CheckboxItemType {
+  index?: number;
+  product?: CartItemType;
+  quantity?: number;
+}
 
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [valueRadioCart, setValueRadioCart] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
@@ -90,7 +99,13 @@ export default memo(function Header() {
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
   const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
-  const [listCart, setListCart] = useState<CartItemType[]>([]);
+  const [buyQuantityIndex, setBuyQuantityIndex] = useState<CheckboxItemType[]>(
+    []
+  );
+  const [listCart, setListCart] = useState<
+    (CartItemType & { buyQuantity?: number })[]
+  >([]);
+  const [checkedItems, setCheckedItems] = useState<any[]>([]);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -110,9 +125,33 @@ export default memo(function Header() {
   const dispatch = useAppDispatch();
   moment.locale(locale);
 
-  const onChange = (e: RadioChangeEvent) => {
-    // console.log('radio checked', e.target.value);
-    setValueRadioCart(e.target.value);
+  // const onChange = (e: RadioChangeEvent) => {
+  //   // console.log('radio checked', e.target.value);
+  //   setValueRadioCart(e.target.value);
+  // };
+
+  useEffect(() => {
+    setTotalPrice(
+      checkedItems.reduce(
+        (item, currentValue) =>
+          item +
+          (listCart[currentValue].buyQuantity || 0) *
+            listCart[currentValue].product_id?.price,
+        0
+      )
+    );
+  }, [checkedItems, listCart]);
+
+  const onChangeBuyQuantity = (value?: any, index?: number) => {
+    const newList = [...listCart];
+    newList[index || 0].buyQuantity = value;
+    setListCart(newList);
+    console.log('Number', buyQuantityIndex);
+    console.log('Value ', { value, index });
+  };
+  const onChange = (checkedValues: CheckboxItemType[]) => {
+    setCheckedItems(checkedValues);
+    console.log('checked = ', checkedValues);
   };
 
   const listIcon = [
@@ -159,6 +198,34 @@ export default memo(function Header() {
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
+
+  const fetchBuyCart = async () => {
+    const listBuyCart = checkedItems.map((item, index) => ({
+      id: listCart[item].id,
+      product_id: listCart[item].product_id?.id,
+      quantity: listCart[item].buyQuantity,
+      price:
+        (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
+    }));
+    console.log(listBuyCart);
+  };
+
+  const fetchCartMe = async () => {
+    await instanceAxios
+      .get(`cart-me`)
+      .then((res) => {
+        setListCart(res.data);
+
+        // setBuyQuantityIndex([...res.data].map(() => 1));
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useSWR('cart-me', fetchCartMe);
+
+  useEffect(() => {
+    fetchCartMe();
+  }, []);
 
   useEffect(() => {
     if (showFormLogin) {
@@ -505,7 +572,8 @@ export default memo(function Header() {
             </Dropdown>
 
             <Modal
-              style={{ float: 'right', margin: '10px' }}
+              width={'80%'}
+              // style={{ float: 'right', margin: '10px' }}
               onCancel={() => setShowCartModal(false)}
               centered
               title={
@@ -523,22 +591,36 @@ export default memo(function Header() {
                     <p className="text-[14px] font-semibold">Clear all</p>
                   )}
                 </div>
-                <div className="max-h-[360px] overflow-y-auto w-full flex flex-col">
+                <div className=" w-full max-h-[360px] overflow-y-auto  flex flex-col">
+                  {/* <CartItem
+                    onDeleteSuccess={() => mutate('cart/list')}
+                    active={valueRadioCart === index}
+                    key={index}
+                    data={listCart[0]}
+                  /> */}
                   {listCart.length ? (
-                    <Radio.Group onChange={onChange} className="flex flex-col">
+                    <Checkbox.Group
+                      onChange={(e) => onChange(e as CheckboxItemType[])}
+                      className="flex w-full flex-col gap-y-3"
+                    >
                       {listCart.map((item, index) => (
-                        <Radio key={index} value={index}>
-                          <div className="w-[410px]">
-                            <CartItem
-                              onDeleteSuccess={() => mutate('cart/list')}
-                              active={valueRadioCart === index}
-                              key={index}
-                              data={item}
-                            />
-                          </div>
-                        </Radio>
+                        <div className="flex items-center gap-x-3" key={index}>
+                          <Checkbox
+                            // key={index}
+                            disabled={!listCart[index].buyQuantity}
+                            value={index}
+                          />
+                          <CartItem
+                            onChangeBuyQuantity={(e) =>
+                              onChangeBuyQuantity(e, index)
+                            }
+                            onDeleteSuccess={() => mutate('cart/list')}
+                            active={valueRadioCart === index}
+                            data={item}
+                          />
+                        </div>
                       ))}
-                    </Radio.Group>
+                    </Checkbox.Group>
                   ) : (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -551,20 +633,21 @@ export default memo(function Header() {
                     <p className="text-[16px] font-bold">Total price</p>
                     <div className="flex flex-col">
                       <p className="text-[16px] font-semibold">
-                        {listCart[valueRadioCart]?.product?.price || 0}{' '}
+                        {totalPrice}
                         {currency}
                       </p>
-                      <p className="text-[14px]">
-                        {listCart[valueRadioCart]?.price || 0} {currency}
-                      </p>
+                      {/* <p className="text-[14px]">
+                        {listCart[valueRadioCart]?.product_id?.price || 0}{' '}
+                        {currency}
+                      </p> */}
                     </div>
                   </div>
                   {/* Button Checkout */}
                   <div className="w-full">
                     <button
                       // disabled
-                      // onClick={fetchBuyCartItem}
-                      onClick={() => setShowCheckoutModal(true)}
+                      onClick={fetchBuyCart}
+                      // onClick={() => setShowCheckoutModal(true)}
                       className="relative disabled:bg-gray-100 disabled:text-gray-300 block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0"
                     >
                       Buy now
@@ -575,11 +658,15 @@ export default memo(function Header() {
                       footer={[]}
                     >
                       <CheckoutForm
-                        buyQuantity={listCart[valueRadioCart]?.quantity || 0}
-                        producId={listCart[valueRadioCart]?.product?.id || 0}
-                        price={listCart[valueRadioCart]?.product?.price || 0}
+                        buyQuantity={
+                          listCart[valueRadioCart]?.product_id?.quantity > 0
+                            ? 1
+                            : 0
+                        }
+                        producId={listCart[valueRadioCart]?.product_id?.id || 0}
+                        price={listCart[valueRadioCart]?.product_id?.price || 0}
                         quantity={
-                          listCart[valueRadioCart]?.product?.quantity || 0
+                          listCart[valueRadioCart]?.product_id?.quantity || 0
                         }
                         cartId={listCart[valueRadioCart]?.id}
                         onSuccess={() => {

@@ -133,21 +133,10 @@ interface TopSellingType {
   total_sales?: number;
 }
 interface CartItemType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  product?: ProductType;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  id?: number;
+  product_id?: ProductType;
+  create_at?: string;
+  create_by?: string;
 }
 
 interface ProductType {

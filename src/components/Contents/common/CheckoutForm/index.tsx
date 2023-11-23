@@ -31,7 +31,7 @@ export const CheckoutForm = ({
 }: {
   form?: FormProps;
   producId?: number;
-  cartId?: string;
+  cartId?: number;
   buyQuantity: number;
   price?: number;
   quantity?: number;

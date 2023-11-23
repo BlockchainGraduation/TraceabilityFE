@@ -192,6 +192,15 @@ export default function ProductInfoPage({
     }
   };
 
+  const fetchAddCart = async () => {
+    await instanceAxios
+      .post(`cart/`, { product_id: params.productId })
+      .then((res) => {
+        message.success('Đã thêm vào giỏ hàng');
+      })
+      .catch((err) => message.warning('Thêm giỏ hàng thất bại'));
+  };
+
   // setOwner();
   const contentStyle: React.CSSProperties = {
     margin: 0,
@@ -248,18 +257,20 @@ export default function ProductInfoPage({
         <div className="w-full h-fit flex flex-col">
           <div className="w-4/5 h-fit flex m-auto">
             <div className="w-1/2 ">
-              <Image
-                className="object-cover rounded-xl bg-[#f6f6f6] p-[30px]"
-                width={'100%'}
-                height={400}
-                preview={false}
-                src={
-                  currentAvatar ||
-                  dataProduct.avatar ||
-                  staticVariables.noImage.src
-                }
-                alt=""
-              />
+              <div className="rounded-xl overflow-hidden bg-[#f6f6f6] p-[30px]">
+                <Image
+                  className="object-cover rounded-xl "
+                  width={'100%'}
+                  height={400}
+                  preview={false}
+                  src={
+                    currentAvatar ||
+                    dataProduct.avatar ||
+                    staticVariables.noImage.src
+                  }
+                  alt=""
+                />
+              </div>
               <div className="w-full">
                 {dataProduct.banner?.length && (
                   <ScrollMenu
@@ -328,7 +339,10 @@ export default function ProductInfoPage({
                   min={0}
                   max={dataProduct.quantity}
                 />
-                <button className="bg-current-color text-white font-semibold px-[20px] py-[10px] rounded-xl">
+                <button
+                  onClick={fetchAddCart}
+                  className="bg-current-color text-white font-semibold px-[20px] py-[10px] rounded-xl"
+                >
                   Add to cart
                 </button>
               </div>
