@@ -1,5 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
-import { Button, Form, Input, notification } from 'antd';
+import { Button, Form, Input, Spin, notification } from 'antd';
 import React, { useState } from 'react';
 
 type FieldType = {
@@ -20,6 +20,7 @@ export default function RegisterForm({
 
   const onFinish = async (data: FieldType) => {
     setLoading(true);
+    delete instanceAxios.defaults.headers.common.Authorization;
     await instanceAxios
       .post('register', data)
       .then((res) => {
@@ -28,7 +29,7 @@ export default function RegisterForm({
       .catch((err) => {
         console.log(err);
         notification.error({
-          message: 'Xác thực không thành công',
+          message: 'Xác thực không thành công!!!!!',
         });
       })
       .finally(() => setLoading(false));
@@ -54,7 +55,7 @@ export default function RegisterForm({
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
-          label="Username"
+          label="Tên đăng nhập"
           name="username"
           rules={[{ required: false }]}
         >
@@ -62,9 +63,9 @@ export default function RegisterForm({
         </Form.Item>
 
         <Form.Item>
-          <button
-            disabled={loading}
-            className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-green-500 text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
+          <Spin className="m-auto block" spinning={loading} />
+          {/* <button
+            className="overflow-hidden w-fit px-[20px] h-12  mt-[20px] disabled:bg-gray-200 disabled:text-gray-400 bg-green-500 text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
             type="submit"
           >
             Đăng ký
@@ -74,6 +75,17 @@ export default function RegisterForm({
             <p className="text-white group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
               Đăng ký
             </p>
+          </button> */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="cursor-pointer rounded-xl block m-auto mt-[20px] font-semibold overflow-hidden relative z-100 border border-green-500 group px-8 py-2"
+          >
+            <span className="relative z-10 text-green-500 group-hover:text-white text-xl duration-500">
+              Đăng ký !
+            </span>
+            <span className="absolute w-full h-full bg-green-500 -left-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:left-0 duration-500"></span>
+            <span className="absolute w-full h-full bg-green-500 -right-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:right-0 duration-500"></span>
           </button>
         </Form.Item>
       </Form>

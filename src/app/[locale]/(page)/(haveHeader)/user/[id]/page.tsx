@@ -79,13 +79,16 @@ export default function UserInfo({ params }: { params: { id: string } }) {
             width={'100%'}
             height={400}
             preview={false}
-            src={dataUser.avatar}
+            src={dataUser.avatar || staticVariables.noImage.src}
             alt=""
           />
         </div>
         <div className="relative w-full pt-[20px] pb-[50px] border-b-[1px] border-gray-300">
           <div className="w-fit -translate-y-10 absolute bottom-0 left-[5%] bg-white rounded-full p-[5px]">
-            <Avatar size={150} src={dataUser.avatar} />
+            <Avatar
+              size={150}
+              src={dataUser.avatar || staticVariables.noImage.src}
+            />
           </div>
           <div className="w-full flex pl-[25%]  ">
             <div className="w-1/2">

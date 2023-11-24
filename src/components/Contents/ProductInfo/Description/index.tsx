@@ -45,7 +45,7 @@ export default function Description(props: Props) {
     [mutate]
   );
   return (
-    <div className="w-full h-full flex border-green-500 rounded-2xl">
+    <div className="w-full h-full flex border-green-500 bg-[#f6f6f6] rounded-xl">
       <div className="w-1/2 p-[50px] flex flex-col">
         <InputCustom
           className="text-[20px] py-[20px] font-semibold"

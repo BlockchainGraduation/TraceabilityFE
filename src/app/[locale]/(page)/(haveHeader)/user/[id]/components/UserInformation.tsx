@@ -68,7 +68,7 @@ export default function UserInformation({ data }: { data?: UserType }) {
               width={'100%'}
               height={300}
               preview={false}
-              src={data?.avatar}
+              src={data?.avatar || staticVariables.noImage.src}
               alt=""
               className="object-cover rounded-xl"
             />

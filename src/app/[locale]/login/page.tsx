@@ -62,7 +62,12 @@ export default function LoginPage() {
               />
             )}
             {currentForm === 'REGISTER' && (
-              <Register onFinishOTP={onFinishOTP} onFinish={() => {}} />
+              <Register
+                // onFinishOTP={onFinishOTP}
+                onFinish={() => {
+                  route.push('/register-rule');
+                }}
+              />
             )}
             {currentForm === 'FORGET' && (
               <ForgetForm onFinishOTP={onFinishOTP} />

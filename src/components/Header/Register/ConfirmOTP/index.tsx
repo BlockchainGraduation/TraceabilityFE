@@ -1,7 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch } from '@/hooks';
 import { setLogin } from '@/reducers/userSlice';
-import { Button, Form, Input, notification } from 'antd';
+import { Button, Form, Input, Spin, notification } from 'antd';
 import { setCookie } from 'cookies-next';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -37,11 +37,13 @@ export default function ConfirmOTP({
           message: tNotification('WELCOME'),
           description: `${tNotification('WELCOME')} ${res.data.user.username}`,
         });
+
+        nextStep?.();
         // notification.success({
         //   message: tNotification('SUCCESS'),
         //   description: tNotification('SUCCESS_REGISTER'),
         // });
-        route.replace('/home');
+        // route.replace('/home');
       })
       .catch((err) => {
         notification.error({
@@ -124,18 +126,21 @@ export default function ConfirmOTP({
         </Form.Item>
 
         <Form.Item>
+          <Spin className="m-auto block" spinning={loading} />
           <button
-            disabled={loading}
-            className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-green-500 text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
             type="submit"
+            disabled={loading}
+            className="cursor-pointer rounded-xl block m-auto mt-[20px] text-green-500 font-semibold overflow-hidden relative z-100 border disabled:bg-gray-300 disabled:border-gray-500  border-green-500 group px-8 py-2"
           >
-            Xác nhận
-            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-200 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-bottom"></span>
-            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-300 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-bottom"></span>
-            <span className="absolute w-36 h-32 -top-8 -left-2 bg-green-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-1000 duration-500 origin-bottom"></span>
-            <p className="text-white group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute w-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              Xác nhận
-            </p>
+            <span
+              className={`relative z-10 ${
+                loading ? 'text-gray-500' : 'text-green-500'
+              } group-hover:text-white text-xl duration-500`}
+            >
+              Đăng ký !
+            </span>
+            <span className="absolute w-full h-full bg-green-500 -left-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:left-0 duration-500"></span>
+            <span className="absolute w-full h-full bg-green-500 -right-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:right-0 duration-500"></span>
           </button>
         </Form.Item>
       </Form>

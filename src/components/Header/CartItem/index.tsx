@@ -34,7 +34,7 @@ export default function CartItem({
 
   const fetchDeleteCart = async () => {
     await instanceAxios
-      .delete(`cart/${data.id}/delete`)
+      .delete(`cart/${data.id}/`)
       .then((res) => {
         message.success('Đã xóa cart');
         onDeleteSuccess?.();

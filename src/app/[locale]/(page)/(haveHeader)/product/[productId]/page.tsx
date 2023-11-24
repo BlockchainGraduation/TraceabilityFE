@@ -100,6 +100,7 @@ import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
 import CommentInput from '@/components/Contents/common/CommentInput';
 import ProductItem from '@/components/Contents/Home/ProductItem';
 import useLogin from '@/services/requireLogin';
+import unit from '@/services/unit';
 
 export default function ProductInfoPage({
   params,
@@ -197,6 +198,7 @@ export default function ProductInfoPage({
       .post(`cart/`, { product_id: params.productId })
       .then((res) => {
         message.success('Đã thêm vào giỏ hàng');
+        mutate('cart-me');
       })
       .catch((err) => message.warning('Thêm giỏ hàng thất bại'));
   };
@@ -277,7 +279,7 @@ export default function ProductInfoPage({
                     Footer={[]}
                     noPolyfill
                     wrapperClassName="max-w-full w-fit px-[10px] mb-[30px] "
-                    scrollContainerClassName="mx-[20px]"
+                    scrollContainerClassName="m-[20px]"
                     itemClassName="mx-[5px]"
                     LeftArrow={LeftArrow}
                     RightArrow={RightArrow}
@@ -327,8 +329,8 @@ export default function ProductInfoPage({
               </Space>
               <Tag></Tag>
               <Space className="text-current-color font-semibold my-[20px]">
-                <p className="text-[#2d2d2d]">Avaialble:</p>
-                <p className="text-[12px]">Kg </p>
+                <p className="text-[#2d2d2d]">Hiện có :</p>
+                <p className="text-[12px]">{unit} </p>
                 <p className="text-[23px]">{dataProduct.quantity} </p>
               </Space>
               <div className="flex items-center gap-x-4 my-[10px]">
@@ -343,7 +345,7 @@ export default function ProductInfoPage({
                   onClick={fetchAddCart}
                   className="bg-current-color text-white font-semibold px-[20px] py-[10px] rounded-xl"
                 >
-                  Add to cart
+                  Thêm giỏ hàng
                 </button>
               </div>
               {/* Buy product */}
@@ -382,13 +384,13 @@ export default function ProductInfoPage({
                   disabled={currentUser.id === dataProduct.create_by?.id}
                   className="w-full h-fit rounded-xl font-semibold text-white text-[30px] bg-current-color"
                 >
-                  Buy now
+                  Mua ngay
                 </Button>
               </div>
             </div>
           </div>
-          <div className="w-4/5 m-auto border-[1px] bg-[#f6f6f6] rounded-xl overflow-hidden">
-            <div className="flex w-full text-[20px] text-[#555555] border-b-[1px]">
+          <div className="w-4/5 m-auto border-[1px]  rounded-xl overflow-hidden">
+            <div className="flex w-full text-[20px] bg-[#f6f6f6] text-[#555555] border-b-[1px]">
               <p
                 onClick={() => setCurrentTab('DESCRIPTION')}
                 className={`px-[50px] py-[20px] ${
@@ -396,7 +398,7 @@ export default function ProductInfoPage({
                   'border-b-2 border-current-color'
                 }`}
               >
-                Description
+                Giới thiệu
               </p>
               <p
                 onClick={() => setCurrentTab('INFORMATION')}
@@ -405,18 +407,18 @@ export default function ProductInfoPage({
                   'border-b-2 border-current-color'
                 }`}
               >
-                Infomation
+                Thông tin
               </p>
               <p
                 onClick={() => setCurrentTab('COMMENT')}
                 className={`px-[50px] py-[20px] ${
                   currentTab === 'COMMENT' && 'border-b-2 border-current-color'
                 }`}
-              >{`Reviews ( ${dataProduct.detail_decriptions?.length} )`}</p>
+              >{`Ý kiến  ( ${dataProduct.detail_decriptions?.length} )`}</p>
             </div>
-            <div className="w-full flex my-[20px]">
+            <div className="w-full flex p-[20px]">
               {currentTab === 'DESCRIPTION' && (
-                <div className="w-full px-[100px]">
+                <div className="w-full px-[100px] ">
                   {dataProduct.detail_decriptions?.length ? (
                     <Carousel>
                       <div>
@@ -460,8 +462,9 @@ export default function ProductInfoPage({
               )}
               {currentTab === 'COMMENT' && (
                 <div className="w-2/3 m-auto">
-                  <p className="mt-[20px] mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
-                    {commentList.length} comments for {dataProduct.name}
+                  <p className="mt-[20px] flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
+                    Đã có {commentList.length} ý kiến cho{' '}
+                    <p className="font-semibold">{dataProduct.name}</p>
                   </p>
                   <div>
                     {commentList.map((item, index) => (
@@ -477,9 +480,77 @@ export default function ProductInfoPage({
               )}
             </div>
           </div>
+          <div className="w-full flex my-[50px]">
+            <div className="w-1/2 h-[300px]">
+              <div className="w-full p-[20px]">
+                <div className="flex w-fit items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                  <div>
+                    <Avatar size={'large'} src={staticVariables.shrimpBg.src} />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Sau ring vuet</p>
+                    <Space>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                      <p>Đã bán: 12</p>
+                    </Space>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full p-[20px]">
+                <Row className="w-full py-[20px] bg-[#f6f6f6]" align={'middle'}>
+                  <Col span={2}>
+                    {/* <Avatar size={'large'} src={staticVariables.shrimpBg.src} /> */}
+                  </Col>
+                  <Col span={8}>
+                    <p className="">Tên khách hàng</p>
+                  </Col>
+                  <Col span={3}>
+                    <p>Đã mua</p>
+                  </Col>
+                  <Col span={3}>
+                    <p>Tổng phí</p>
+                  </Col>
+                  <Col span={4}>
+                    <p>Ngày GD</p>
+                  </Col>
+                  <Col span={4}>
+                    <p>Trạng thái</p>
+                  </Col>
+                </Row>
+                <Row
+                  className="w-full hover:bg-[#f6f6f6] py-[10px]"
+                  align={'middle'}
+                >
+                  <Col span={2}>
+                    <Avatar
+                      className="block m-auto"
+                      size={'large'}
+                      src={staticVariables.shrimpBg.src}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <p className="">Nguyen van A</p>
+                  </Col>
+                  <Col span={3}>
+                    <p>12</p>
+                  </Col>
+                  <Col span={3}>
+                    <p>132123</p>
+                  </Col>
+                  <Col span={4}>
+                    <p>12312</p>
+                  </Col>
+                  <Col span={4}>
+                    <p>1312</p>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+            <div className="w-1/2 bg-slate-500 h-[300px]"></div>
+          </div>
           <div className="w-full px-[30px]">
             <div className="text-center my-[30px] text-[32px] text-[#222222]">
-              Related Products
+              Sản phẩm liên quan
             </div>
             {listRelatedProduct.length && (
               <ScrollMenu

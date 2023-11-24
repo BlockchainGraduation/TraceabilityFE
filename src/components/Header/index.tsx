@@ -135,17 +135,22 @@ export default memo(function Header() {
       checkedItems.reduce(
         (item, currentValue) =>
           item +
-          (listCart[currentValue].buyQuantity || 0) *
-            listCart[currentValue].product_id?.price,
+          (listCart[currentValue]?.buyQuantity || 0) *
+            listCart[currentValue]?.product_id?.price,
         0
       )
     );
   }, [checkedItems, listCart]);
 
+  const indexCartDeleted = async (index: number) => {
+    setCheckedItems(checkedItems.filter((item) => item !== index));
+  };
+
   const onChangeBuyQuantity = (value?: any, index?: number) => {
     const newList = [...listCart];
     newList[index || 0].buyQuantity = value;
     setListCart(newList);
+
     console.log('Number', buyQuantityIndex);
     console.log('Value ', { value, index });
   };
@@ -200,13 +205,15 @@ export default memo(function Header() {
   }, [debouncedValue]);
 
   const fetchBuyCart = async () => {
-    const listBuyCart = checkedItems.map((item, index) => ({
-      id: listCart[item].id,
-      product_id: listCart[item].product_id?.id,
-      quantity: listCart[item].buyQuantity,
-      price:
-        (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
-    }));
+    const listBuyCart = checkedItems
+      .filter((item) => listCart[item].buyQuantity !== 0)
+      .map((item, index) => ({
+        id: listCart[item].id,
+        product_id: listCart[item].product_id?.id,
+        quantity: listCart[item].buyQuantity,
+        price:
+          (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
+      }));
     console.log(listBuyCart);
   };
 
@@ -367,7 +374,7 @@ export default memo(function Header() {
     },
     {
       label:
-        currentUser.role === 'MEMBER' ? (
+        currentUser.confirm_status === 'NONE' ? (
           <Link
             // className="py-[10px] px-[5px] font-medium text-[16px] space-x-3 rounded-xl"
             href={'/register-rule'}
@@ -566,7 +573,10 @@ export default memo(function Header() {
               ) : ( */}
               <div>
                 {/* <Avatar src={currentUser.avatar} size={20} /> */}
-                <Avatar size={40} src={currentUser.avatar} />
+                <Avatar
+                  size={40}
+                  src={currentUser.avatar || staticVariables.noImage.src}
+                />
               </div>
               {/* )} */}
             </Dropdown>
@@ -577,7 +587,9 @@ export default memo(function Header() {
               onCancel={() => setShowCartModal(false)}
               centered
               title={
-                <p className="text-[20px] py-[10px] font-semibold">Your cart</p>
+                <p className="text-[20px] py-[10px] font-semibold">
+                  Giỏ hàng của bạn
+                </p>
               }
               open={showCartModal}
               footer={[]}
@@ -588,7 +600,9 @@ export default memo(function Header() {
                     {listCart.length} items
                   </p>
                   {listCart.length && (
-                    <p className="text-[14px] font-semibold">Clear all</p>
+                    <p className="text-[14px] font-semibold">
+                      Xóa tất cả giỏ hàng
+                    </p>
                   )}
                 </div>
                 <div className=" w-full max-h-[360px] overflow-y-auto  flex flex-col">
@@ -600,6 +614,7 @@ export default memo(function Header() {
                   /> */}
                   {listCart.length ? (
                     <Checkbox.Group
+                      value={checkedItems}
                       onChange={(e) => onChange(e as CheckboxItemType[])}
                       className="flex w-full flex-col gap-y-3"
                     >
@@ -614,7 +629,10 @@ export default memo(function Header() {
                             onChangeBuyQuantity={(e) =>
                               onChangeBuyQuantity(e, index)
                             }
-                            onDeleteSuccess={() => mutate('cart/list')}
+                            onDeleteSuccess={() => {
+                              // indexCartDeleted(index);
+                              mutate('cart-me');
+                            }}
                             active={valueRadioCart === index}
                             data={item}
                           />
@@ -630,7 +648,7 @@ export default memo(function Header() {
                 </div>
                 <div className="w-full flex flex-col space-y-5 border-t-[1px] mt-10 pt-5">
                   <div className="flex justify-between ">
-                    <p className="text-[16px] font-bold">Total price</p>
+                    <p className="text-[16px] font-bold">Tổng thanh toán</p>
                     <div className="flex flex-col">
                       <p className="text-[16px] font-semibold">
                         {totalPrice}
@@ -650,7 +668,7 @@ export default memo(function Header() {
                       // onClick={() => setShowCheckoutModal(true)}
                       className="relative disabled:bg-gray-100 disabled:text-gray-300 block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0"
                     >
-                      Buy now
+                      Mua ngay
                     </button>
                     <Modal
                       open={showCheckoutModal}
