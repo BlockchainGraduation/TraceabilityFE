@@ -67,7 +67,7 @@ export default function Description(props: Props) {
       </div>
       <div className="w-1/2 relative p-[10px]">
         <Image
-          className="object-cover rounded-2xl"
+          className="object-cover rounded-xl"
           width="100%"
           height="100%"
           preview={false}

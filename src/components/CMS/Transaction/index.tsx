@@ -147,11 +147,12 @@ export default function TransactionCMS() {
   }
   return (
     <div>
-      <div className="flex  items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium	">Danh sách sản phẩm</p>
+      <div className="flex bg-[#fafafa] items-center justify-between py-[10px] my-[20px] px-[20px] border-[1px] rounded-[10px]">
+        <p className="text-2xl font-medium">Danh sách sản phẩm</p>
       </div>
       <Segmented
         size={'large'}
+        className="mb-[20px]"
         defaultValue={currentTable}
         onChange={(e) => setCurrentTable(e.toString())}
         options={[

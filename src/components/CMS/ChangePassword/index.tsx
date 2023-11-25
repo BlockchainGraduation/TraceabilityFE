@@ -57,7 +57,7 @@ export default function ChangPassword({ className }: { className?: string }) {
             { required: true, message: 'Please input your Old Password!' },
           ]}
         >
-          <Input />
+          <Input.Password />
         </Form.Item>
 
         <Form.Item<FieldType>

@@ -78,23 +78,17 @@ export default memo(function CMSPage() {
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem(
-      <p onClick={() => route.push('/home')}>Home</p>,
-      '1',
-      <HomeOutlined />
-    ),
-    getItem(<p>Đơn hàng</p>, '2', <ScheduleOutlined />),
-
-    getItem(<p>Thống kê</p>, '3', <PieChartOutlined />),
+    getItem(<p>Đơn hàng</p>, '1', <ScheduleOutlined />),
+    getItem(<p>Thống kê</p>, '2', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem(<p>Thông tin chung</p>, '4', <WalletOutlined />),
-      getItem(<p>Đổi mật khẩu</p>, '5', <LockOutlined />),
-      getItem(<p>Liên kết</p>, '6', <LinkOutlined />),
+      getItem(<p>Thông tin chung</p>, '3', <WalletOutlined />),
+      getItem(<p>Đổi mật khẩu</p>, '4', <LockOutlined />),
+      getItem(<p>Liên kết</p>, '5', <LinkOutlined />),
     ]),
     !currentUser.user.is_superuser
       ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-          getItem(<p>Quản lí sản phâm</p>, '7', <BookOutlined />),
-          getItem(<p>Lịch sử giao dịch</p>, '8', <HistoryOutlined />),
+          getItem(<p>Quản lí sản phâm</p>, '6', <BookOutlined />),
+          getItem(<p>Lịch sử giao dịch</p>, '7', <HistoryOutlined />),
         ])
       : null,
 
@@ -103,14 +97,18 @@ export default memo(function CMSPage() {
     currentUser.user.is_superuser
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           // getItem('Thống kê hệ thống', '6'),
-          getItem(<p>Quản lí user</p>, '9'),
+          getItem(<p>Quản lí user</p>, '8'),
           // getItem('Quản lí sản phẩm', '8'),
         ])
       : null,
+    getItem(
+      <p onClick={() => route.push('/home')}>Về trang chủ</p>,
+      '9',
+      <HomeOutlined />
+    ),
     getItem(<p onClick={handleLogout}>Đăng xuất</p>, '10', <LoginOutlined />),
   ];
   const contents = [
-    <></>,
     <OrderCMS key={1} />,
     <Statistical key={2} />,
     <GeneralInformation key={3} />,
@@ -125,6 +123,7 @@ export default memo(function CMSPage() {
           // <ManageProduct key={8} />,
         ]
       : null,
+    <></>,
     <></>,
   ];
 
@@ -169,6 +168,7 @@ export default memo(function CMSPage() {
                 style={{
                   padding: 24,
                   paddingBottom: 50,
+                  paddingTop: 50,
                   minHeight: 500,
                   background: colorBgContainer,
                 }}

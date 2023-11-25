@@ -132,21 +132,47 @@ export default memo(function ProductCMS() {
   };
 
   return (
-    <div className="transition duration-150 ease-out">
-      <div className="flex items-center bg-[#f6f6f6] justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium">Sản phẩm của bạn</p>
-        <div
-          onClick={() => setOpenModalCreate(true)}
-          className="flex items-center p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
-        >
-          <FontAwesomeIcon
-            className="mr-[10px]"
-            size={'2x'}
-            icon={faSquarePlus}
-            style={{ color: '#21a147' }}
-          />
+    <div className="transition duration-150 py-[50px] ease-out">
+      <button
+        onClick={() => setOpenModalCreate(true)}
+        className="rounded-lg overflow-hidden px-[30px] relative w-fit h-10 cursor-pointer flex items-center border border-green-500 bg-white group hover:bg-green-500 active:bg-green-500 active:border-green-500"
+      >
+        <p className="text-black font-semibold px-[20px] transform group-hover:translate-x-20 transition-all duration-300">
           Thêm sản phẩm
-        </div>
+        </p>
+        <span className="absolute right-0 h-full w-10 rounded-lg bg-green-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+          <svg
+            className="svg w-8 text-black"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="12" x2="12" y1="5" y2="19"></line>
+            <line x1="5" x2="19" y1="12" y2="12"></line>
+          </svg>
+        </span>
+      </button>
+      {/* <div
+       
+        className="flex w-fit m-auto items-center p-[10px] my-[20px] border-[1px] border-[#83B970] rounded-[10px]"
+      >
+        <FontAwesomeIcon
+          className="mr-[10px]"
+          size={'2x'}
+          icon={faSquarePlus}
+          style={{ color: '#21a147' }}
+        />
+        Thêm sản phẩm
+      </div> */}
+      <div className="flex items-center bg-[#f6f6f6] justify-between py-[10px] my-[20px] px-[20px] border-[1px] rounded-[10px]">
+        <p className="text-2xl font-medium">Sản phẩm của bạn</p>
+
         <Modal
           centered
           open={openModalCreate}
@@ -250,8 +276,8 @@ export default memo(function ProductCMS() {
           )}
         </Modal>
       </div>
-      <div className="p-[30px]">
-        <Row className="py-[10px] bg-[#fafafa]">
+      <div className="px-[30px]">
+        <Row className="py-[10px] bg-[#ebebeb]">
           <Col span={1}>
             <p className="text-center">Stt</p>
           </Col>

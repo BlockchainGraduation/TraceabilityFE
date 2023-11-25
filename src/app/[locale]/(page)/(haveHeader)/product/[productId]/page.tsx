@@ -67,6 +67,7 @@ import {
   faArrowTrendUp,
   faEnvelope,
   faMobileScreenButton,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
 import Paragraph from 'antd/es/typography/Paragraph';
@@ -393,7 +394,7 @@ export default function ProductInfoPage({
             <div className="flex w-full text-[20px] bg-[#f6f6f6] text-[#555555] border-b-[1px]">
               <p
                 onClick={() => setCurrentTab('DESCRIPTION')}
-                className={`px-[50px] py-[20px] ${
+                className={`px-[50px] py-[10px] ${
                   currentTab === 'DESCRIPTION' &&
                   'border-b-2 border-current-color'
                 }`}
@@ -402,7 +403,7 @@ export default function ProductInfoPage({
               </p>
               <p
                 onClick={() => setCurrentTab('INFORMATION')}
-                className={`px-[50px] py-[20px] ${
+                className={`px-[50px] py-[10px] ${
                   currentTab === 'INFORMATION' &&
                   'border-b-2 border-current-color'
                 }`}
@@ -411,10 +412,10 @@ export default function ProductInfoPage({
               </p>
               <p
                 onClick={() => setCurrentTab('COMMENT')}
-                className={`px-[50px] py-[20px] ${
+                className={`px-[50px] py-[10px] ${
                   currentTab === 'COMMENT' && 'border-b-2 border-current-color'
                 }`}
-              >{`Ý kiến  ( ${dataProduct.detail_decriptions?.length} )`}</p>
+              >{`Bình luận  ( ${dataProduct.detail_decriptions?.length} )`}</p>
             </div>
             <div className="w-full flex p-[20px]">
               {currentTab === 'DESCRIPTION' && (
@@ -463,7 +464,7 @@ export default function ProductInfoPage({
               {currentTab === 'COMMENT' && (
                 <div className="w-2/3 m-auto">
                   <p className="mt-[20px] flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
-                    Đã có {commentList.length} ý kiến cho{' '}
+                    Đã có {commentList.length} bình luận cho{' '}
                     <p className="font-semibold">{dataProduct.name}</p>
                   </p>
                   <div>
@@ -480,10 +481,13 @@ export default function ProductInfoPage({
               )}
             </div>
           </div>
-          <div className="w-full flex my-[50px]">
-            <div className="w-1/2 h-[300px]">
-              <div className="w-full p-[20px]">
-                <div className="flex w-fit items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+          <div className="w-full flex my-[50px] gap-x-5">
+            <div className="w-1/2  px-[30px] bg-[#f6f6f6] rounded-xl">
+              <div className="w-full p-[20px] ">
+                <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">
+                  Các giao dịch
+                </p>
+                <div className="flex w-fit bg-white items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
                   <div>
                     <Avatar size={'large'} src={staticVariables.shrimpBg.src} />
                   </div>
@@ -496,7 +500,7 @@ export default function ProductInfoPage({
                   </div>
                 </div>
               </div>
-              <div className="w-full p-[20px]">
+              <div className="w-full p-[20px] bg-white rounded-xl">
                 <Row className="w-full py-[20px] bg-[#f6f6f6]" align={'middle'}>
                   <Col span={2}>
                     {/* <Avatar size={'large'} src={staticVariables.shrimpBg.src} /> */}
@@ -546,7 +550,88 @@ export default function ProductInfoPage({
                 </Row>
               </div>
             </div>
-            <div className="w-1/2 bg-slate-500 h-[300px]"></div>
+            <div className="w-1/2 bg-[#f6f6f6] rounded-xl p-[50px] pt-[20px]">
+              <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">
+                Các bên liên quan
+              </p>
+              <div className="w-full relative flex justify-between before:content-[''] before:absolute before:w-1/3 before:border-b-4 before:top-1/2 before:left-1/3 before:border-current-color before:border-dashed">
+                <div className="flex w-1/3 bg-white items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                  <div>
+                    <Avatar
+                      size={'large'}
+                      src={dataProduct.avatar || staticVariables.noImage.src}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-semibold truncate">Sản phẩm</p>
+                    <TooltipAntd title={dataProduct.name}>
+                      <p className="w-[100px] truncate">{dataProduct.name}</p>
+                    </TooltipAntd>
+                  </div>
+                </div>
+                <div className="flex w-1/3 bg-white items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                  <div>
+                    <Avatar size={'large'} src={staticVariables.shrimpBg.src} />
+                  </div>
+                  <div className="w-full -fit">
+                    <p className="font-semibold">Chủ sản phẩm</p>
+                    <Space className="w-full">
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        style={{ color: '#2b8c3f' }}
+                      />
+                      <TooltipAntd title={dataProduct.create_by?.fullname}>
+                        <p className="w-[100px] truncate">
+                          {dataProduct.create_by?.fullname}
+                        </p>
+                      </TooltipAntd>
+                    </Space>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex flex-col items-end justify-end">
+                <div className="w-1/2 relative flex justify-end py-[20px] before:absolute before:w-1/3 before:h-full before:border-current-color  before:rounded-bl-2xl before:border-dashed before:border-l-4 before:border-b-4 before:-top-[20px] before:left-0">
+                  <div className="flex w-2/3 bg-white translate-y-1/2 items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                    <div>
+                      <Avatar
+                        size={'large'}
+                        src={staticVariables.shrimpBg.src}
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Nhà phân phối</p>
+                      <Space>
+                        <FontAwesomeIcon
+                          icon={faUser}
+                          style={{ color: '#2b8c3f' }}
+                        />
+                        <p className="w-[100px] truncate">Nguyen Van A</p>
+                      </Space>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-1/2 relative flex justify-end py-[20px] before:absolute before:w-1/3 before:h-full before:border-current-color  before:rounded-bl-2xl before:border-dashed before:border-l-4 before:border-b-4 before:-top-[20px] before:left-0">
+                  <div className="flex w-2/3 bg-white translate-y-1/2 items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                    <div>
+                      <Avatar
+                        size={'large'}
+                        src={staticVariables.shrimpBg.src}
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Nhà máy chế biến</p>
+                      <Space>
+                        <FontAwesomeIcon
+                          icon={faUser}
+                          style={{ color: '#2b8c3f' }}
+                        />
+                        <p className="w-[100px] truncate">Nguyen Van A</p>
+                      </Space>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="w-full px-[30px]">
             <div className="text-center my-[30px] text-[32px] text-[#222222]">

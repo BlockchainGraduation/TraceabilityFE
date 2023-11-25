@@ -69,7 +69,7 @@ export default function CMSProductItem({
                 {
                   key: 1,
                   label: (
-                    <Link href={``}>
+                    <Link href={`/edit/${data?.id}`}>
                       <Row
                         onClick={() => {
                           //   setProductId(record.id || '');

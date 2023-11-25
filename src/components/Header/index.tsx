@@ -142,7 +142,10 @@ export default memo(function Header() {
     );
   }, [checkedItems, listCart]);
 
-  const indexCartDeleted = async (index: number) => {
+  const indexCartDeleted = (index: number) => {
+    const newList = [...listCart];
+    newList[index || 0].buyQuantity = newList[index + 1].buyQuantity || 0;
+    setListCart(newList);
     setCheckedItems(checkedItems.filter((item) => item !== index));
   };
 
@@ -292,7 +295,7 @@ export default memo(function Header() {
             <div className="w-[30px]">
               <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
             </div>
-            <p>Thông tin</p>
+            <p>Trang cá nhân</p>
           </div>
         </Link>
       ),
@@ -328,7 +331,13 @@ export default memo(function Header() {
           <div className="w-[30px]">
             <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
-          <p>{`${currentUser.account_balance || 0} ${currency}`}</p>
+          <div className="flex gap-x-2">
+            <p className="">Ví của bạn:</p>
+            <p className="text 18px font-bold">{`${
+              currentUser.account_balance || 0
+            } `}</p>
+            <p className="text-[12px] text-current-color">{currency}</p>
+          </div>
         </div>
       ),
       key: '1',
@@ -406,7 +415,7 @@ export default memo(function Header() {
               icon={faArrowRightFromBracket}
             />
           </div>
-          <p>Logout</p>
+          <p>Đăng xuất</p>
         </div>
       ),
       key: '5',
@@ -630,7 +639,7 @@ export default memo(function Header() {
                               onChangeBuyQuantity(e, index)
                             }
                             onDeleteSuccess={() => {
-                              // indexCartDeleted(index);
+                              indexCartDeleted(index);
                               mutate('cart-me');
                             }}
                             active={valueRadioCart === index}
