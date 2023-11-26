@@ -16,7 +16,7 @@ export default function Owner(props: UserType) {
         className="object-cover mt-8 rounded-full border-4 border-slate-50 z-10 group-hover:scale-150 group-hover:-translate-x-24  group-hover:-translate-y-20 transition-all duration-500"
       />
       <div className="z-10 group-hover:-translate-y-10 transition-all duration-500">
-        <p className="text-2xl mt-[20px] font-semibold">{props.full_name}</p>
+        <p className="text-2xl mt-[20px] font-semibold">{props.fullname}</p>
         <p>{props.email}</p>
       </div>
 

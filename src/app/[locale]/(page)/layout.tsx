@@ -6,12 +6,15 @@ import { Providers } from '@/providers';
 import Header from '@/components/Header';
 import { ReactNode, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
-import { useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { Skeleton, message } from 'antd';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import Footer from '@/components/Footer';
 import { getCookie } from 'cookies-next';
 import dynamic from 'next/dynamic';
+import instanceAxios from '@/api/instanceAxios';
+import { setLogin } from '@/reducers/userSlice';
+import { useEffectOnce } from 'usehooks-ts';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
@@ -37,18 +40,19 @@ export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
 
 export default function LocaleLayout({ children }: { children: ReactNode }) {
   const currentUser = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const { mutate } = useSWRConfig();
-  const cookie = getCookie('access_token');
+  const cookie = getCookie('access');
   const route = useRouter();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.user.id || '', (data: NotificationType) => {
+    channel.bind(currentUser.user.email || '', (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
-      if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
-        mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
-      }
-      mutate('notifications/list');
+      // if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
+      //   mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
+      // }
+      mutate('notifiation-me');
       console.log(data);
     });
 
@@ -56,21 +60,24 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       pusher.unsubscribe('general-channel');
     };
   }, [currentUser, mutate]);
+  const fethGetUser = async () => {
+    await instanceAxios
+      .get('user/me')
+      .then((res) => {
+        // console.log(re)
+        dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffectOnce(() => {
+    fethGetUser();
+  });
+  useSWR('user/me', fethGetUser);
   useEffect(() => {
     if (!cookie) {
       route.push('/');
     }
     setLoading(false);
   }, [cookie, route]);
-  return (
-    <>
-      {!loading && (
-        <div>
-          <Header />
-          <div className="min-h-[600px]">{children}</div>
-          <Footer />
-        </div>
-      )}
-    </>
-  );
+  return <>{!loading && <div className="min-h-[600px]">{children}</div>}</>;
 }

@@ -352,7 +352,7 @@ export default function HomePage() {
         {listMarket.length ? (
           listMarket.map((item: MarketType, index) => (
             <Badge.Ribbon text="Hot" color="blue" key={index}>
-              <ProductItem {...item} />
+              {/* <ProductItem {...item} /> */}
             </Badge.Ribbon>
           ))
         ) : (

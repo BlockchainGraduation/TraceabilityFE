@@ -4,7 +4,9 @@ import {
   HeartOutlined,
   LikeOutlined,
   MessageOutlined,
+  SearchOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import {
@@ -17,6 +19,7 @@ import {
   Space,
   Statistic,
   Tag,
+  Tooltip,
   Typography,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -27,198 +30,90 @@ import CommentInput from '../../common/CommentInput';
 import instanceAxios from '@/api/instanceAxios';
 import useSWR from 'swr';
 import currency from '@/services/currency';
+import staticVariables from '@/static';
+import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/hooks';
 
 const { Meta } = Card;
 
-interface Props {
-  id?: string;
-  order_type?: string;
-  order_id?: string;
-  order_by?: string;
-  hash_data?: string;
-  created_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: string;
-    quantity?: string;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-    };
-  };
-  comments?: {
-    content?: string;
-    marketplace_id?: string;
-    user_id?: string;
-    id?: string;
-    created_at?: string;
-    user?: string;
-    reply_comments?: string;
-  };
-}
+export default function ProductItem({
+  style = 'default',
+  isOwner = false,
+  data,
+  className,
+}: {
+  isOwner?: boolean;
+  style?: 'default' | 'detail';
+  data: ProductType;
+  className?: string;
+}) {
+  const route = useRouter();
+  const currentUser = useAppSelector((state) => state.user.user);
 
-export default function ProductItem(props: Props) {
-  const { login } = useLogin();
-  const [openComment, setOpenComment] = useState(false);
-  const [commentList, setCommentList] = useState<CommentItemType[]>([]);
-  const [skip, setKkip] = useState(0);
-  const [limit, setLimit] = useState(10);
-  const fetchDataComment = useCallback(async () => {
-    await instanceAxios
-      .get(
-        `comments/list?marketplace_id=${props.id}&skip=${skip}&limit=${limit}`
-      )
-      .then((res) => {
-        console.log(res.data.data.list_comment);
-        setCommentList(res.data.data.list_comment);
-      })
-      .catch((err) => {
-        setCommentList([]);
-        console.log(err);
-      });
-  }, [limit, props.id, skip]);
-  useSWR(`comments/list?marketplace_id=${props.id}`, fetchDataComment);
-  const afterOpenChange = async (e: boolean) => {
-    if (e) {
-      fetchDataComment();
-    }
-  };
-  // useEffect(() => {
-  //   fetchDataComment();
-  // }, [fetchDataComment, limit, props.marketId, skip]);
-  // const { isLoading } = useSWR(``, fetchDataComment);
   return (
-    <div data-aos="flip-right" className="w-fit">
-      <Card
-        hoverable
-        style={{ width: 300 }}
-        cover={
-          <div className="relative w-fit">
-            <Image
-              width={300}
-              height={200}
-              alt=""
-              className="object-cover"
-              src={props.product?.banner}
-            />
-          </div>
-        }
-        actions={[
-          <div onClick={() => login()} key="like">
-            <Statistic
-              valueStyle={{ fontSize: '10px' }}
-              title={<LikeOutlined />}
-              value={`112893`}
-            />
-          </div>,
-          <div key="message" onClick={() => login(() => setOpenComment(true))}>
-            <Statistic
-              valueStyle={{ fontSize: '10px' }}
-              title={<MessageOutlined />}
-              value={`${props.product?.quantity} Messenger`}
-            />
-          </div>,
-          <div key="cart" onClick={() => login()}>
-            <Statistic
-              valueStyle={{ fontSize: '10px' }}
-              title={<ShoppingCartOutlined />}
-              value={`${props.product?.quantity} Buyer`}
-            />
-          </div>,
-        ]}
-      >
-        <Link href={`/market/${props.id || props.order_id}`}>
-          <Meta
-            // avatar={<Avatar size={50} src={props.ownerImg} />}
-            title={
-              <div>
-                <div className="mb-[15px]">
-                  <Meta className="text-center" title={props.product?.name} />
-                </div>
-                {props.product?.user?.username ||
-                props.product?.user?.avatar ||
-                props.order_type ? (
-                  <div className="flex mt-[10px] items-center">
-                    <Avatar size={50} src={props.product?.user?.avatar} />
-                    <div className="ml-[10px]">
-                      <p className="font-normal text-xs mr-[10px]">
-                        {props.product?.user?.username}
-                      </p>
-                      <Tag
-                        color={
-                          props.order_type === 'FARMER'
-                            ? 'green'
-                            : 'blue-inverse'
-                        }
-                        className="font-light"
-                      >
-                        {props.order_type}
-                      </Tag>
-                    </div>
-                  </div>
-                ) : (
-                  ''
-                )}
-              </div>
-            }
-            description={
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Statistic: {
-                      contentFontSize: 20,
-                      // titleFontSize: 12,
-                    },
-                  },
-                }}
-              >
-                <div className="flex justify-around">
-                  <Statistic title="Quantity" value={props.product?.quantity} />
-                  <Statistic
-                    title="Price"
-                    suffix={currency}
-                    value={props.product?.price}
-                  />
-                </div>
-              </ConfigProvider>
-            }
-          />
-        </Link>
-      </Card>
-      <Modal
-        onCancel={() => setOpenComment(false)}
-        centered
-        title={'Bình luận về AA'}
-        open={openComment}
-        afterOpenChange={afterOpenChange}
-        footer={[]}
-      >
-        <div className="max-h-[500px] overflow-auto">
-          {commentList.length ? (
-            commentList.map((item, index) => (
-              <CommentItem {...item} key={index} />
-            ))
-          ) : (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_DEFAULT}
-              description={'Chưa có bình luận nào'}
-            />
-          )}
-        </div>
-        <CommentInput
-          marketId={props.id || ''}
-          productId={props.order_id || ''}
+    <div
+      data-aos="flip-right"
+      className={`w-[250px] group bg-white  rounded-xl overflow-hidden font-sans ${className}`}
+    >
+      <div className="w-full relative">
+        <Image
+          className="object-cover"
+          preview={false}
+          width={'100%'}
+          height={200}
+          alt=""
+          src={data.avatar || staticVariables.noImage.src}
         />
-      </Modal>
+        {style === 'detail' && (
+          <div className="absolute flex items-center justify-center rounded-xl bg-[#40a944] top-0 w-2/5 left-1/2 -translate-x-1/2 border-2 invisible  px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:translate-y-1/2 group-hover:visible duration-500  ">
+            <p className="text-center text-white">{data.product_type}</p>
+          </div>
+        )}
+        {currentUser.id !== data.create_by?.id && (
+          <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
+            <Tooltip title={'Add cart'}>
+              <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+            <Tooltip title={'Visit'}>
+              <SearchOutlined
+                onClick={() => route.push(`product/${data.id}`)}
+                className="rounded-full hover:bg-green-500 p-[5px]"
+              />
+            </Tooltip>
+            <Tooltip title={'Favourite'}>
+              <HeartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+            <Tooltip title={'Share'}>
+              <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+            </Tooltip>
+          </div>
+        )}
+      </div>
+      <div className="w-full ">
+        <Link href={`/product/${data.id}`}>
+          <p className="text-center font-semibold truncate p-[10px] pb-0">
+            {data.name}
+          </p>
+          <div className="w-full flex items-center py-[10px] px-[20px]">
+            <div className="w-1/2 flex space-x-1 text-current-color ">
+              <p className="font-semibold text-[10px]">{currency}</p>
+              <p className="truncate">{data.price}/Kg</p>
+            </div>
+            <div className="w-1/2 flex space-x-1 text-current-color ">
+              <p className="font-semibold text-[10px]">Kg</p>
+              <p className="truncate">{data.quantity}</p>
+            </div>
+          </div>
+        </Link>
+        {!isOwner && (
+          <div className="flex items-center space-x-3 ">
+            <div>
+              <Avatar src={data.create_by?.avatar} />
+            </div>
+            <p className="text-[12px]">{data.create_by?.fullname}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

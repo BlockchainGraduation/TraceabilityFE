@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 type FieldType = {
   old_password?: string;
   new_password?: string;
-  new_password_confirm?: string;
+  re_new_password?: string;
 };
 export default function ChangPassword({ className }: { className?: string }) {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ export default function ChangPassword({ className }: { className?: string }) {
   const onFinish = async (data: FieldType) => {
     setLoading(true);
     await instanceAxios
-      .put(`auth/reset_password`, data)
+      .post(`reset-password`, data)
       .then((res) => {
         notification.success({
           message: 'Thông báo',
@@ -57,7 +57,7 @@ export default function ChangPassword({ className }: { className?: string }) {
             { required: true, message: 'Please input your Old Password!' },
           ]}
         >
-          <Input />
+          <Input.Password />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -71,7 +71,7 @@ export default function ChangPassword({ className }: { className?: string }) {
         </Form.Item>
         <Form.Item<FieldType>
           label="Pre New Password"
-          name="new_password_confirm"
+          name="re_new_password"
           rules={[
             { required: true, message: 'Please input your Pre New Password!' },
           ]}

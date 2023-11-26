@@ -3,7 +3,11 @@ import CreateProductForm from '@/components/Contents/common/CreateProductForm';
 import { useAppSelector } from '@/hooks';
 import fetchUpdate from '@/services/fetchUpdate';
 import useLogin from '@/services/requireLogin';
-import { ExclamationCircleTwoTone, PlusOutlined } from '@ant-design/icons';
+import {
+  ExclamationCircleTwoTone,
+  LeftCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import {
   faCircleXmark,
   faLock,
@@ -18,6 +22,7 @@ import {
   Col,
   ConfigProvider,
   Dropdown,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -44,8 +49,9 @@ import React, {
 } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
-import TransactionSelectItem from './TransactionSelectItem';
 import moment from 'moment';
+import CMSProductItem from './CMSProductItem';
+import TransactionItemSelect from './TransactionItemSelect';
 
 // interface DataType {
 //   key: React.Key;
@@ -57,33 +63,6 @@ import moment from 'moment';
 //   created_at: string;
 //   product_status: string;
 // }
-interface TransactionType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: number;
-    quantity?: number;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-    };
-  };
-}
 
 export default memo(function ProductCMS() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -93,11 +72,13 @@ export default memo(function ProductCMS() {
   const [limit, setLimit] = useState(10);
   const [name, setName] = useState('');
   const [hasChange, setHasChange] = useState(0);
-  const [transactionId, setTransactionId] = useState('');
+  const [transactionId, setTransactionId] = useState(0);
   const [currentModalPage, setCurrentModalPage] = useState<
     'SELECT_TRANSACTION' | 'CREATE_PRODUCT'
   >('SELECT_TRANSACTION');
-  const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
+  const [listTransaction, setListTransaction] = useState<
+    DetailTransactionType[]
+  >([]);
   const currentUser = useAppSelector((state) => state.user.user);
   const { mutate } = useSWRConfig();
 
@@ -105,40 +86,30 @@ export default memo(function ProductCMS() {
     fetchListTransaction();
   });
 
-  const changeCurrentModalPageToCreate = (e: string) => {
+  const changeCurrentModalPageToCreate = (e?: number) => {
     setCurrentModalPage('CREATE_PRODUCT');
-    setTransactionId(e);
+    setTransactionId(e || 0);
   };
   const fetchListTransaction = async () => {
-    await instanceAxios(`transaction_sf/list?skip=0&limit=100`)
+    await instanceAxios(
+      `transaction-me?create_by=${currentUser.id}&status=DONE`
+    )
       .then((res) => {
-        setListTransaction(res.data.data.list_transaction_sf);
+        setListTransaction(res.data.results);
       })
       .catch((err) => console.log(err));
   };
 
   const fetchProductMe = useCallback(async () => {
     await instanceAxios
-      .get(
-        `product/me?skip=${skip}&limit=${limit}${name ? `&name=${name}` : ''}`
-      )
+      .get(`product-me/?create_by=${currentUser.id}`)
       .then((res) => {
-        console.log(res.data);
-        // let newProducts: DataType[] = [];
-        // [...res.data.data[1]].map((item, index) => {
-        //   return newProducts.push({ ...item, key: skip * limit + index + 1 });
-        // });
-        const newProducts = [...res.data.data[1]].map((item, index) => ({
-          ...item,
-          key: skip * limit + index + 1,
-        }));
-        setTotalProduct(res.data.data[0]);
-        setListProduct(newProducts);
+        setListProduct(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [limit, name, skip]);
+  }, [currentUser.id]);
 
   useEffect(() => {
     fetchProductMe();
@@ -146,39 +117,6 @@ export default memo(function ProductCMS() {
   useSWR('product/me', fetchProductMe);
 
   // const handleCancel = () => setPreviewOpen(false);
-
-  const fetchCreateMarket = async (productId: string) => {
-    await instanceAxios
-      .post(`marketplace/create?product_id=${productId}`)
-      .then((res) => {
-        notification.success({
-          message: 'Thông báo',
-          description: 'Tạo market thành công',
-        });
-      })
-      .catch((err) => {
-        notification.error({
-          message: 'Thông báo',
-          description: 'Tạo market thất bại',
-        });
-      });
-  };
-  const fetchUpdateProductStatus = async (
-    productId: string,
-    status: string
-  ) => {
-    await instanceAxios
-      .put(`product/${productId}/status?product_status=${status}`)
-      .then((res) => {
-        setHasChange(hasChange + 1);
-        notification.success({
-          message: 'Thông báo',
-          description: `Đổi trạng thái thành công --> ${status}`,
-        });
-        mutate('product/me');
-      })
-      .catch((err) => {});
-  };
 
   const fetchDeleteProduct = async (productId: string) => {
     await instanceAxios
@@ -195,296 +133,178 @@ export default memo(function ProductCMS() {
       });
   };
 
-  const columns: ColumnsType<ProductType> = [
-    {
-      key: 0,
-      title: 'Stt',
-      dataIndex: 'key',
-      width: 65,
-    },
-    {
-      key: 1,
-      title: 'Product Name',
-      dataIndex: 'name',
-      width: 250,
-    },
-    {
-      key: 2,
-      title: 'Số lượng',
-      dataIndex: 'quantity',
-    },
-    {
-      key: 3,
-      title: 'Giá đơn vị',
-      dataIndex: 'price',
-    },
-    {
-      key: 4,
-      title: 'Ngày bán',
-      dataIndex: 'created_at',
-      render: (value, record, index) => <p>{moment(value).format('L')}</p>,
-    },
-    {
-      key: 5,
-      title: 'Trạng thái',
-      dataIndex: 'product_status',
-      render: (value, record, index) =>
-        record.product_status === 'PUBLISH' ? (
-          <Tag color={'success'}>Đang mở bán</Tag>
-        ) : (
-          <Tag color={'error'}>Đóng</Tag>
-        ),
-    },
-    {
-      key: 6,
-      title: 'Action',
-      dataIndex: '',
-      width: 100,
-      render: (value, record, index) => (
-        <ConfigProvider
-          theme={{
-            components: {
-              Button: {
-                primaryColor: '#e62929',
-                colorPrimaryHover: '#2db457',
-                // colorBgTextHover: '#e62929',
-              },
-            },
-            token: {
-              colorBgContainer: '#7f84d4',
-            },
-          }}
-        >
-          <Dropdown
-            trigger={['click']}
-            menu={{
-              items: [
-                {
-                  key: 1,
-                  label: (
-                    <Link href={`/product/${record.id}`}>
-                      <Space>
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          style={{ color: '#2657ab' }}
-                        />
-                        <p>Chỉnh sửa</p>
-                      </Space>
-                    </Link>
-                  ),
-                },
-                {
-                  key: 2,
-                  label: (
-                    <Space
-                      onClick={() =>
-                        record.product_status === 'PUBLISH'
-                          ? fetchUpdateProductStatus(record.id || '', 'PRIVATE')
-                          : fetchUpdateProductStatus(record.id || '', 'PUBLISH')
-                      }
-                    >
-                      {record.product_status === 'PUBLISH' ? (
-                        <FontAwesomeIcon
-                          icon={faLockOpen}
-                          style={{ color: '#27913c' }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faLock}
-                          style={{ color: '#a87171' }}
-                        />
-                      )}
-                      <p>
-                        {record.product_status === 'PUBLISH'
-                          ? `Publish`
-                          : 'Private'}
-                      </p>
-                    </Space>
-                  ),
-                },
-                !record.is_sale
-                  ? {
-                      key: 3,
-                      label: (
-                        <Popconfirm
-                          placement={'left'}
-                          title="Sure to open market ?"
-                          onConfirm={() => fetchCreateMarket(record.id || '')}
-                        >
-                          <Space>
-                            <FontAwesomeIcon
-                              icon={faStore}
-                              style={{ color: '#65dd55' }}
-                            />
-                            <p>Đăng lên market</p>
-                          </Space>
-                        </Popconfirm>
-                      ),
-                    }
-                  : null,
-                {
-                  key: 4,
-                  label: (
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => fetchDeleteProduct(record.id || '')}
-                    >
-                      <Space>
-                        <FontAwesomeIcon
-                          icon={faCircleXmark}
-                          style={{ color: '#c01616' }}
-                        />
-                        <p>Xóa</p>
-                      </Space>
-                    </Popconfirm>
-                  ),
-                },
-              ],
-            }}
-          >
-            <ExclamationCircleTwoTone />
-          </Dropdown>
-          {/* <Row className="flex gap-x-2">
-            <Col span={3}>
-              <Link href={`/product/${record.id}`}>
-                <FontAwesomeIcon
-                  icon={faPenToSquare}
-                  style={{ color: '#2657ab' }}
-                />
-              </Link>
-            </Col>
-            <Col span={3}>
-              {record.product_status === 'PUBLISH' ? (
-                <FontAwesomeIcon
-                  onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                  icon={faLockOpen}
-                  style={{ color: '#27913c' }}
-                />
-              ) : (
-                <FontAwesomeIcon
-                  onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                  icon={faLock}
-                  style={{ color: '#a87171' }}
-                />
-              )}
-            </Col>
-            <Col span={3}>
-              <Popconfirm
-                title="Sure to open market ?"
-                onConfirm={() => fetchCreateMarket(record.id)}
-              >
-                <FontAwesomeIcon icon={faStore} style={{ color: '#65dd55' }} />
-              </Popconfirm>
-            </Col>
-            <Col span={3}>
-              <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() => fetchDeleteProduct(record.id)}
-              >
-                <FontAwesomeIcon
-                  icon={faCircleXmark}
-                  style={{ color: '#c01616' }}
-                />
-              </Popconfirm>
-            </Col>
-          </Row> */}
-        </ConfigProvider>
-      ),
-    },
-  ];
-
   return (
-    <div className="transition duration-150 ease-out">
-      <div className="flex items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium">Danh sách sản phẩm</p>
-        <div
-          onClick={() => setOpenModalCreate(true)}
-          className="flex items-center p-[10px] border-[1px] border-[#83B970] rounded-[10px]"
-        >
-          <FontAwesomeIcon
-            className="mr-[10px]"
-            size={'2x'}
-            icon={faSquarePlus}
-            style={{ color: '#21a147' }}
-          />
+    <div className="transition duration-150 py-[50px] ease-out">
+      <button
+        onClick={() => setOpenModalCreate(true)}
+        className="rounded-lg overflow-hidden px-[30px] relative w-fit h-10 cursor-pointer flex items-center border border-green-500 bg-white group hover:bg-green-500 active:bg-green-500 active:border-green-500"
+      >
+        <p className="text-black font-semibold px-[20px] transform group-hover:translate-x-20 transition-all duration-300">
           Thêm sản phẩm
-        </div>
+        </p>
+        <span className="absolute right-0 h-full w-10 rounded-lg bg-green-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+          <svg
+            className="svg w-8 text-black"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="12" x2="12" y1="5" y2="19"></line>
+            <line x1="5" x2="19" y1="12" y2="12"></line>
+          </svg>
+        </span>
+      </button>
+      {/* <div
+       
+        className="flex w-fit m-auto items-center p-[10px] my-[20px] border-[1px] border-[#83B970] rounded-[10px]"
+      >
+        <FontAwesomeIcon
+          className="mr-[10px]"
+          size={'2x'}
+          icon={faSquarePlus}
+          style={{ color: '#21a147' }}
+        />
+        Thêm sản phẩm
+      </div> */}
+      <div className="flex items-center bg-[#f6f6f6] justify-between py-[10px] my-[20px] px-[20px] border-[1px] rounded-[10px]">
+        <p className="text-2xl font-medium">Sản phẩm của bạn</p>
+
         <Modal
           centered
           open={openModalCreate}
           width={700}
           title={
             currentModalPage === 'CREATE_PRODUCT' && (
-              <p onClick={() => setCurrentModalPage('SELECT_TRANSACTION')}>
-                Quay lại
-              </p>
+              <div
+                className="flex items-center space-x-2"
+                onClick={() => setCurrentModalPage('SELECT_TRANSACTION')}
+              >
+                <LeftCircleOutlined className="text-blue-500 text-[18px]" />
+                <p>Quay lại</p>
+              </div>
             )
           }
           onCancel={() => setOpenModalCreate(false)}
           footer={[]}
         >
-          <Typography.Title className="w-fit m-auto" level={3}>
-            {currentModalPage === 'CREATE_PRODUCT'
+          <p className="w-2/3 m-auto my-[20px]  text-center rounded-xl bg-[#f6f6f6] text-[30px]">
+            {currentUser.role === 'FACTORY'
+              ? `Thêm sản phẩm`
+              : currentModalPage === 'CREATE_PRODUCT'
               ? `Thêm sản phẩm`
               : `Chọn hóa đơn`}
-          </Typography.Title>
-          {currentModalPage === 'SELECT_TRANSACTION' && (
-            <div>
-              <p className="py-[10px]">
-                * Nhắc nhở: Bạn có thể bỏ qua bước này nếu bạn là công ty hạt
-                giống
-              </p>
-              <div className="max-h-[600px] overflow-auto">
-                {listTransaction.map((item, index) => (
-                  <TransactionSelectItem
-                    transactionId={item.id || ''}
-                    onFinish={changeCurrentModalPageToCreate}
-                    key={index}
-                    image={item.product?.banner || ''}
-                    productName={item.product?.name || ''}
-                    owner={item.product?.user?.username || ''}
-                    priceTotal={item.price || 0}
-                    buyQuantity={item.quantity || 0}
-                    buyDay={item.created_at || ''}
-                  />
-                ))}
-                {currentUser.system_role === 'SEEDLING_COMPANY' && (
-                  <Button
-                    className="m-auto block"
-                    onClick={() => setCurrentModalPage('CREATE_PRODUCT')}
-                  >
-                    Bỏ qua
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {currentModalPage === 'CREATE_PRODUCT' && (
+          </p>
+          {currentUser.role === 'FACTORY' ? (
             <CreateProductForm
               onSuccess={() => {
                 setOpenModalCreate(false);
                 mutate('product/me');
               }}
-              transactionId={transactionId}
             />
+          ) : (
+            <div className="w-full ">
+              {currentModalPage === 'SELECT_TRANSACTION' && (
+                <div className="w-full ">
+                  {listTransaction.length ? (
+                    <div className="w-full">
+                      <Row className="bg-[#f6f6f6] text-[18px] font-semibold p-[10px] rounded-xl">
+                        <Col span={8}>
+                          <p>Sản phẩm</p>
+                        </Col>
+                        <Col span={6}>
+                          <p>Người bán</p>
+                        </Col>
+                        <Col span={3}>
+                          <p>Đã mua</p>
+                        </Col>
+                        <Col span={3}>
+                          <p>Giá</p>
+                        </Col>
+                        <Col span={4}>
+                          <p>Ngày mua</p>
+                        </Col>
+                      </Row>
+                      <div className="w-full flex flex-col gap-y-1 overflow-auto py-[20px]">
+                        {listTransaction.map((item, index) => (
+                          <TransactionItemSelect
+                            divProps={{
+                              onClick: () =>
+                                changeCurrentModalPageToCreate(item.id),
+                              // className: 'hover:bg-[#f6f6f6]',
+                            }}
+                            key={index}
+                            data={item}
+                          />
+                          // <TransactionSelectItem
+                          //   transactionId={item.id || ''}
+                          //   onFinish={changeCurrentModalPageToCreate}
+                          //   key={index}
+                          //   image={item.product?.banner || ''}
+                          //   productName={item.product?.name || ''}
+                          //   owner={item.product?.user?.username || ''}
+                          //   priceTotal={item.price || 0}
+                          //   buyQuantity={item.quantity || 0}
+                          //   buyDay={item.created_at || ''}
+                          // />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_DEFAULT}
+                      description={
+                        'Bạn không có giao dịch nào! Vui lòng mua sản phẩm phù hợp cho bạn rồi quay lại !!!'
+                      }
+                    />
+                  )}
+                </div>
+              )}
+              {currentModalPage === 'CREATE_PRODUCT' && (
+                <CreateProductForm
+                  onSuccess={() => {
+                    setOpenModalCreate(false);
+                    mutate('product/me');
+                  }}
+                  transactionId={transactionId}
+                />
+              )}
+            </div>
           )}
         </Modal>
       </div>
-      <div>
-        <Table
-          columns={columns}
-          dataSource={listProduct}
-          pagination={{
-            onChange: (e) => {
-              setSkip(e - 1);
-            },
-            pageSize: 10,
-            total: totalProduct,
-            position: ['bottomCenter'],
-          }}
-          scroll={{ y: 340 }}
-        />
+      <div className="px-[30px]">
+        <Row className="py-[10px] bg-[#ebebeb]">
+          <Col span={1}>
+            <p className="text-center">Stt</p>
+          </Col>
+          <Col span={7}>
+            <p>Tên sản phẩm</p>
+          </Col>
+          <Col span={3}>
+            <p>Giá đơn vị</p>
+          </Col>
+          <Col span={3}>
+            <p>Số lượng bán</p>
+          </Col>
+          <Col span={4}>
+            <p>Ngày tạo</p>
+          </Col>
+          <Col span={2}>
+            <p>Tình trạng</p>
+          </Col>
+          <Col span={4}>
+            <p className="text-center">Thao tác</p>
+          </Col>
+        </Row>
+        {listProduct.map((item, index) => (
+          <CMSProductItem key={index} index={index + 1} data={item} />
+        ))}
       </div>
     </div>
   );

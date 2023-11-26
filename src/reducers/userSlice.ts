@@ -1,3 +1,4 @@
+import staticVariables from '@/static';
 import { Action, PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface Auth {
@@ -5,20 +6,7 @@ interface Auth {
   user: UserType;
 }
 
-export const initialUser: UserType = {
-  id: '',
-  username: '',
-  email: '',
-  avatar: '',
-  full_name: '',
-  birthday: '',
-  phone: '',
-  address_wallet: '',
-  address_real: '',
-  is_active: false,
-  system_role: '',
-  account_balance: 0,
-};
+export const initialUser: UserType = { avatar: staticVariables.noImage.src };
 const initialAuth: Auth = {
   logged: false,
   user: initialUser,

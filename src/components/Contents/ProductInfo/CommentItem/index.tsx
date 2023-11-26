@@ -18,17 +18,19 @@ export default function CommentItem(props: CommentItemType & Props) {
           content={
             <div className="flex flex-col space-y-5">
               <div className="flex space-x-5">
-                <Avatar size={100} src={props.user?.avatar} />
+                <Avatar size={100} src={props.user_id?.avatar} />
                 <div className="flex flex-col space-y-1">
-                  <p className="text-[20px] font-bold">
-                    {props.user?.username}
+                  <p className="text-[20px] pb-[10px] font-semibold">
+                    {props.user_id?.fullname}
                   </p>
                   <Space>
                     <FontAwesomeIcon
                       icon={faEnvelope}
                       style={{ color: '#4b7dd2' }}
                     />
-                    <p>{props.user?.email}</p>
+                    <Typography.Text copyable>
+                      {props.user_id?.email}
+                    </Typography.Text>
                   </Space>
                   {/* <Space>
                     <FontAwesomeIcon
@@ -37,14 +39,16 @@ export default function CommentItem(props: CommentItemType & Props) {
                     />
                     <p>{moment(props.user.).format('DD/MM/YYYY')}</p>
                   </Space> */}
-                  <Tag color={'green-inverse'}>{props.user?.username}</Tag>
+                  <p className="w-fit text-green-500 py-[10px]">
+                    {props.user_id?.role}
+                  </p>
                 </div>
               </div>
               <Space className="px-[20px] space-x-1 ">
-                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
+                {/* <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Nhắn tin
-                </button>
-                <Link href={`/user/${props.user?.id}`}>
+                </button> */}
+                <Link href={`/user/${props.user_id?.id}`}>
                   <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                     Xem thông tin
                   </button>
@@ -52,36 +56,36 @@ export default function CommentItem(props: CommentItemType & Props) {
                     Xem thông tin
                   </p> */}
                 </Link>
-                <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
+                {/* <button className="bg-green-500 text-white px-[20px] py-[5px] rounded-xl transition duration-200 ease-in-out hover:bg-green-700 active:bg-green-900 focus:outline-none">
                   Báo cáo
-                </button>
+                </button> */}
               </Space>
             </div>
           }
         >
           <div className="flex flex-col items-center">
-            <Avatar src={props.user?.avatar} />
+            <Avatar src={props.user_id?.avatar} />
           </div>
         </Popover>
-        <div className="flex ml-[10px] p-[8px] flex-col rounded-bl-[10px] rounded-r-[10px] bg-[#f0f2f5] ">
+        <div className="flex ml-[10px] p-[10px] flex-col rounded-bl-[10px] rounded-r-[10px] bg-[#f0f2f5] ">
           <Space className="text-[14px]">
-            <p className="font-medium">{props.user?.username}</p>
             {props.isOwner && (
-              <p className="text-[12px] text-blue-600">Owner</p>
+              <p className="text-[12px] text-current-color">Owner</p>
             )}
-            <p className="w-fit p-[5px]  bg-blue-100 rounded-lg text-blue-500 text-[11px] font-light">
-              {props.user?.username}
+            <p className="font-medium">{props.user_id?.fullname}</p>
+            <p className="w-fit p-[5px] rounded-lg text-current-color border-[1px] text-[11px] font-light">
+              {props.user_id?.role}
             </p>
           </Space>
-          <div className="max-w-[500px] min-w-[50px] w-fit text-[13px]  ">
-            {props.content}
+          <div className="max-w-[500px] min-w-[50px] pt-[10px] w-fit text-[13px]  ">
+            {props.description}
           </div>
         </div>
       </div>
       <div className="ml-[40px] mt-[5px]">
         <div className="flex mt-1 space-x-5 ml-3 text-[12px]  tetx-[#65676b]">
           <p className="font-semibold">Phản hồi</p>
-          <p>{moment(props.created_at).fromNow()}</p>
+          <p>{moment(props.create_at).fromNow()}</p>
         </div>
       </div>
     </div>

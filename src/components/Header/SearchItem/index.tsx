@@ -1,4 +1,5 @@
 'use client';
+import currency from '@/services/currency';
 import staticVariables from '@/static';
 import { Avatar } from 'antd';
 import Link from 'next/link';
@@ -9,7 +10,7 @@ export default function SearchItem({
   data,
 }: {
   parent?: HTMLAttributes<HTMLDivElement>;
-  data: MarketType;
+  data: ProductType;
 }) {
   return (
     <Link
@@ -20,17 +21,19 @@ export default function SearchItem({
         {...parent}
         className={`flex gap-x-5 items-center ${parent.className} `}
       >
-        <Avatar size={50} src={data.product?.banner} />
+        <Avatar size={50} src={data.avatar} />
         <div>
-          <p className="text-lg font-medium">{data.product?.name}</p>
+          <p className="text-lg font-medium">{data.name}</p>
           <div className="flex gap-x-2">
             <p className="font-light">Sản phẩm của</p>
-            <p className="font-medium">{data.product?.user?.username}</p>
+            <p className="font-medium">{data.create_by?.fullname}</p>
           </div>
         </div>
-        <div className="self-end">Còn {data.product?.quantity}</div>
+        <div className="self-end">Còn {data.quantity}</div>
       </div>
-      <div className="">{data.product?.price?.toLocaleString()} VND</div>
+      <div className="">
+        {data.price?.toLocaleString()} {currency}
+      </div>
     </Link>
   );
 }

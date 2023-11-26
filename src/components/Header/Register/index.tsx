@@ -19,14 +19,15 @@ export default function Register({
   onFinishOTP,
 }: {
   onFinish: () => void;
-  onFinishOTP: () => void;
+  onFinishOTP?: () => void;
 }) {
   const [current, setCurrent] = useState(0);
   const [email, setEmail] = useState('');
   const dispatch = useAppDispatch();
   const nextStep = (e?: string) => {
     if (current === steps.length - 1) {
-      onFinishOTP();
+      onFinish();
+      onFinishOTP?.();
     } else {
       setCurrent(current + 1);
       if (e) setEmail(e);

@@ -18,6 +18,9 @@ import { Inter } from 'next/font/google';
 import StyledComponentsRegistry from '../lib/AntdRegistry';
 import { Providers } from '@/providers';
 import { App } from 'antd';
+import { useAppDispatch } from '@/hooks';
+import { setLogin } from '@/reducers/userSlice';
+import { useEffectOnce } from 'usehooks-ts';
 
 export const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || '', {
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || '', // Replace with 'cluster' from dashboard
@@ -29,6 +32,7 @@ export default function RootLayout({ children }: Props) {
   useEffect(() => {
     AOS.init();
   });
+
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
     channel.bind('general-channel', (data: any) => {
@@ -49,6 +53,7 @@ export default function RootLayout({ children }: Props) {
         revalidateIfStale: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: false,
+        revalidateOnMount: false,
       }}
     >
       <Providers>

@@ -8,17 +8,45 @@ interface DataType {
 }
 interface UserType {
   id?: string;
+  last_login?: string;
+  is_superuser?: boolean;
   username?: string;
   email?: string;
+  is_staff?: boolean;
+  date_joined?: string;
+  introduce?: string;
+  description?: string;
+  fullname?: string;
   avatar?: string;
-  full_name?: string;
-  birthday?: string;
+  user_banner?: [
+    {
+      image?: string;
+      user?: string;
+      create_at?: string;
+    }
+  ];
   phone?: string;
-  address_wallet?: string;
-  address_real?: string;
+  account_balance?: string;
+  wallet_address?: string;
+  geographical_address?: string;
+  role?: string;
+  link?: {};
+  confirm_status?: string;
+  survey?: {
+    name?: string;
+    phone?: string;
+    device?: string;
+    yearOld?: string;
+    education?: string;
+    introduce?: string;
+    user_role?: string;
+    numericKeypad?: string;
+    japaneseAbility?: string;
+    digitsExperience?: string;
+    aphabetExperience?: string;
+  };
   is_active?: boolean;
-  system_role?: string;
-  account_balance?: number;
+  is_delete?: boolean;
 }
 interface HistoryType {
   id?: string;
@@ -117,54 +145,69 @@ interface TopSellingType {
   total_sales?: number;
 }
 interface CartItemType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  product?: ProductType;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  id?: number;
+  product_id?: ProductType;
+  create_at?: string;
+  create_by?: string;
 }
+
 interface ProductType {
-  id?: string;
-  name?: string;
-  number_of_sales?: number;
-  banner?: string;
-  created_by?: string;
-  description?: string;
-  created_at?: string;
-  price?: number;
-  is_sale?: boolean;
-  updated_at?: string;
-  quantity?: number;
-  hashed_data?: string;
-  product_status?: string;
-  product_type?: string;
-  detail_description?: [
+  id?: int;
+  banner?: [
     {
-      id?: string;
+      id?: int;
+      image?: string;
+      create_at?: string;
+      product?: int;
+    }
+  ];
+  growup?: [
+    {
+      id?: int;
+      growup_images?: [
+        {
+          id?: int;
+          image?: string;
+          create_at?: string;
+          growup_id?: int;
+        }
+      ];
+      title?: string;
+      description?: string;
+      product_id?: int;
+    }
+  ];
+  comments?: [
+    {
+      id?: int;
+      description?: string;
+      create_at?: string;
+      product_id?: int;
+      user_id?: string;
+    }
+  ];
+  detail_decriptions?: [
+    {
+      id?: int;
       title?: string;
       description?: string;
       image?: string;
-      product_id?: string;
+      product_id?: int;
     }
   ];
-
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-  };
+  total_transaction?: number;
+  create_by?: UserType;
+  name?: string;
+  avatar?: string;
+  description?: string;
+  price?: int;
+  quantity?: int;
+  product_type?: string;
+  product_status?: string;
+  active?: boolean;
+  create_at?: string;
+  updated_at?: string;
+  transaction_id?: {};
 }
 interface StatisticalSystemType {
   statistical_user?: {
@@ -187,6 +230,27 @@ interface StatisticalSystemType {
   };
   statistical_transaction_fm?: {
     total_transaction_fm?: number;
+  };
+}
+interface StatisticalUserType {
+  product?: {
+    product_count?: number;
+    public_product_count?: number;
+    private_product_count?: number;
+  };
+  transaction?: {
+    transaction_count?: number;
+    pendding_transaction_count?: number;
+    accept_transaction_count?: number;
+    reject_transaction_count?: number;
+    done_transaction_count?: number;
+  };
+  sales?: {
+    transaction_sales_count?: number;
+    accept_transaction_sales_count?: number;
+    pendding_transaction_sales_count?: number;
+    reject_transaction_sales_count?: number;
+    done_transaction_sales_count?: number;
   };
 }
 
@@ -224,19 +288,11 @@ interface GrowUpType {
   };
 }
 interface CommentItemType {
-  content?: string;
-  marketplace_id?: string;
-  user_id?: string;
-  id?: string;
-  created_at?: string;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-  };
-  reply_comments?: [];
+  id?: int;
+  description?: string;
+  create_at?: string;
+  product_id?: int;
+  user_id?: UserType;
 }
 interface MarketType {
   id?: string;
@@ -275,46 +331,33 @@ interface MarketType {
 }
 
 interface TransactionType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
+  id?: number;
+  create_by?: UserType;
   quantity?: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: ProductType;
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  price?: number;
+  active?: boolean;
+  status?: string;
+  is_reject?: boolean;
+  create_at?: string;
+  product_id?: ProductType;
+}
+interface DetailTransactionType {
+  id?: number;
+  create_by?: UserType;
+  quantity?: number;
+  price?: number;
+  active?: boolean;
+  status?: string;
+  is_reject?: boolean;
+  create_at?: string;
+  product_id?: ProductType;
 }
 
 interface NotificationItemType {
-  data?: {
-    message?: string;
-    params?: {
-      product_id?: string;
-      product_name?: string;
-      notification_type?: string;
-      marketplace_id?: string;
-      action?: string;
-    };
-    data?: {
-      created_at?: number;
-      unread?: boolean;
-      notification_id?: string;
-    };
-  };
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  active?: boolean;
+  create_by?: UserType;
+  id?: number;
+  notification_type?: string;
+  product_id?: ProductType;
+  create_at?: string;
 }

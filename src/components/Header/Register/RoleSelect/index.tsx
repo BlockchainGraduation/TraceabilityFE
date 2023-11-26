@@ -113,45 +113,17 @@ export default function RoleSelect({
   return (
     <div className="w-full flex">
       <div className="w-full overflow-x-auto">
-        <ConfigProvider
-          theme={{
-            components: {
-              Segmented: { itemSelectedBg: '#42bb67' },
-            },
-            token: {
-              colorBgLayout: '#E8FFF2B5',
-              // paddingXXS: 0,
-            },
-          }}
-        >
-          <p className="font-bold text-center	text-4xl font-sans text-green-950 mb-[30px]">
-            Bạn muốn giữ vai trò gì trong hệ thống ?
-          </p>
-          <Segmented
-            onChange={(e: SegmentedValue) => {
-              setValue(e.toString());
-            }}
-            options={listRuleDescription.map((item, index) => ({
-              label: (
-                <div
-                  onClick={() => setCurrentDescriptionPage(index)}
-                  style={{ padding: 20 }}
-                >
-                  <Image
-                    alt=""
-                    className="rounded object-cover"
-                    preview={false}
-                    height={100}
-                    width={100}
-                    src={item.image}
-                  />
-                  <div>{item.rules}</div>
-                </div>
-              ),
-              value: item.value,
-            }))}
-          />
-        </ConfigProvider>
+        <p className="font-bold text-center	text-4xl font-sans text-green-950 mb-[30px]">
+          Bạn muốn giữ vai trò gì trong hệ thống ?
+        </p>
+        <Image
+          alt=""
+          width={'30%'}
+          preview={false}
+          height={'50%'}
+          className="object-cover"
+          src={staticVariables.shrimpBg.src}
+        />
       </div>
       {/* <div className="w-1/2 p-[30px]">
         <p className="text-3xl font-semibold p-[20px]">

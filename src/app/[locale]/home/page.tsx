@@ -1,353 +1,342 @@
 'use client';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Carousel,
-  Col,
-  ConfigProvider,
-  Empty,
-  Image,
-  Input,
-  List,
-  Modal,
-  Pagination,
-  Row,
-  Segmented,
-  Select,
-  Skeleton,
-  Statistic,
-  Typography,
-} from 'antd';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
-import ProductItem from '@/components/Contents/Home/ProductItem';
-import staticVariables from '@/static';
-import TopBanner from '@/components/Contents/Home/TopBanner';
-import {
-  AppstoreOutlined,
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  BarsOutlined,
-  CaretDownOutlined,
-} from '@ant-design/icons';
-import Table, { ColumnsType } from 'antd/es/table';
-import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-// import ProductTodayItem from '@/components/Contents/Home/ProductTodayItem';
-import dynamic from 'next/dynamic';
 import instanceAxios from '@/api/instanceAxios';
-import useSWR, { useSWRConfig } from 'swr';
-import Meta from 'antd/es/card/Meta';
-import LeaderBoard from './components/LeaderBoard';
-import currency from '@/services/currency';
-import Category, { LeftArrow, RightArrow } from './components/Category';
-import Header from '@/components/Header';
+import ProductItem from '@/components/Contents/Home/ProductItem';
 import Footer from '@/components/Footer';
-
-const { Search } = Input;
-const ProductTodayItem = dynamic(
-  () => import('@/components/Contents/Home/ProductTodayItem'),
-  {
-    loading: () => <Skeleton />,
-    ssr: false,
-  }
-);
-// interface MarketType {
-//   id?: string;
-//   order_type?: string;
-//   order_id?: string;
-//   order_by?: string;
-//   hash_data?: string;
-//   created_at?: string;
-//   product?: {
-//     id?: string;
-//     product_type?: string;
-//     product_status?: string;
-//     name?: string;
-//     description?: string;
-//     price?: string;
-//     quantity?: string;
-//     banner?: string;
-//     created_by?: string;
-//     created_at?: string;
-//     user?: {
-//       id?: string;
-//       avatar?: string;
-//       username?: string;
-//       email?: string;
-//     };
-//   };
-//   comments?: {
-//     content?: string;
-//     marketplace_id?: string;
-//     user_id?: string;
-//     id?: string;
-//     created_at?: string;
-//     user?: string;
-//     reply_comments?: string;
-//   };
-// }
-// interface TopSellingType {
-//   Product?: {
-//     name?: string;
-//     number_of_sales?: number;
-//     banner?: string;
-//     created_by?: string;
-//     description?: string;
-//     created_at?: string;
-//     price?: number;
-//     updated_at?: string;
-//     quantity?: number;
-//     hashed_data?: string;
-//     id?: string;
-//     product_status?: string;
-//     product_type?: string;
-//   };
-//   total_quantity?: number;
-//   total_sales?: number;
-// }
-interface DataType {
-  gender: string;
-  name: {
-    title: string;
-    first: string;
-    last: string;
-  };
-  email: string;
-  picture: {
-    large: string;
-    medium: string;
-    thumbnail: string;
-  };
-  nat: string;
-}
-
-// function LeftArrow() {
-//   const { isFirstItemVisible, scrollPrev } =
-//     React.useContext(VisibilityContext);
-
-//   return (
-//     <ArrowLeftOutlined
-//       disabled={isFirstItemVisible}
-//       onClick={() => scrollPrev()}
-//     />
-//   );
-// }
-
-// function RightArrow() {
-//   const { isLastItemVisible, scrollNext } = React.useContext(VisibilityContext);
-
-//   return (
-//     <ArrowRightOutlined
-//       disabled={isLastItemVisible}
-//       onClick={() => scrollNext()}
-//     />
-//   );
-// }
+import Header from '@/components/Header';
+import staticVariables from '@/static';
+import {
+  PlayCircleFilled,
+  RightCircleFilled,
+  RightCircleTwoTone,
+} from '@ant-design/icons';
+import {
+  faHandSparkles,
+  faShieldHeart,
+  faSoap,
+  faTruckFast,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Carousel, Image } from 'antd';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollMenu } from 'react-horizontal-scrolling-menu';
+import useSWR from 'swr';
+import { LeftArrow, RightArrow } from './components/Category';
+import { useAppSelector } from '@/hooks';
 
 export default function HomePage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [orderType, setOrderType] = useState('');
-  const [productName, setProductName] = useState('');
-  const [dataTopSelling, setDataTopSelling] = useState<TopSellingType[]>([]);
-  const [dataSegmented, setDataSegmented] = useState('SEEDLING_COMPANY');
-  const [orderTypeTopSelling, setOrderTypeTopSelling] =
-    useState('SEEDLING_COMPANY');
-  const [limit, setLimit] = useState(10);
-  const [listMarket, setListMarket] = useState<MarketType[]>([]);
-  // const [data, setData] = useState<DataType[]>([]);
-  const [totalMarket, setTotalMarket] = useState(0);
-  const { mutate } = useSWRConfig();
+  const [currentListType, setCurrentListType] = useState<
+    'DISTRIBUTER' | 'FACTORY' | 'RETAILER'
+  >('FACTORY');
+  const [listProduct, setListProduct] = useState<ProductType[]>([]);
   const [loadingPage, setLoadingPage] = useState(true);
-
-  const fetchListMarket = useCallback(async () => {
+  const currentUser = useAppSelector((state) => state.user.user);
+  const ref = useRef();
+  // const fetchListProduct = useCallback(async () => {
+  //   await instanceAxios
+  //     .get(`product/`)
+  //     .then((res) => setListProduct(res.data.results || []))
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+  const fetchFilterProduct = useCallback(async () => {
     await instanceAxios
-      .get(
-        `marketplace/list?${orderType ? `order_type=${orderType}` : ''}${
-          productName ? `&name_product=${productName}` : ''
-        }&skip=${currentPage - 1}&limit=15`
-      )
-      .then((res) => {
-        setListMarket(res.data.data.list_marketplace);
-        setTotalMarket(res.data.data.total_marketplace);
-      })
+      .get(`filter-product/?product_type=${currentListType}`)
+      .then((res) => setListProduct(res.data.results || []))
       .catch((err) => {
         console.log(err);
-        setListMarket([]);
-      });
-  }, [currentPage, orderType, productName]);
-  const fetchTopSelling = useCallback(async () => {
-    await instanceAxios
-      .get(`product/top_selling?product_type=${orderTypeTopSelling}`)
-      .then((res) => {
-        setDataTopSelling(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setDataTopSelling([]);
       })
       .finally(() => setLoadingPage(false));
-  }, [orderTypeTopSelling]);
+  }, [currentListType]);
   useEffect(() => {
-    fetchTopSelling();
-  }, [fetchTopSelling]);
-  useEffect(() => {
-    fetchListMarket();
-  }, [fetchListMarket]);
+    fetchFilterProduct();
+  }, [fetchFilterProduct]);
+  // useSWR(`fetchLisProduct`, fetchListProduct);
 
-  // useSWR('marketplace/list', fetchListMarket);
-
-  // useEffect(() => {
-  //   fetchListMarket();
-  // }, [fetchListMarket]);
-
-  // const loadMoreData = () => {
-  //   if (loading) {
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   fetch(
-  //     'https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo'
-  //   )
-  //     .then((res) => res.json())
-  //     .then((body) => {
-  //       setData([...data, ...body.results]);
-  //       setLoading(false);
-  //     })
-  //     .catch(() => {
-  //       setLoading(false);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   loadMoreData();
-  // }, []);
+  const listIntroduct = [
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faTruckFast}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'FAST SHIPPNG',
+      content: 'Delivery anywhere nationwide',
+    },
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faShieldHeart}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'SAFE',
+      content: 'Product quality is more guaranteed when applying blockchain',
+    },
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faSoap}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'TRANSPARENT',
+      content: 'Information is more transparent with storage on blockchain',
+    },
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faHandSparkles}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'EASY',
+      content: 'All buying and selling operations are very easy',
+    },
+  ];
+  const listSlide = [
+    {
+      img: staticVariables.shrimp3.src,
+      title: 'Seed Shrimp',
+      label: 'Seed Shrimp',
+      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
+      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
+      không gian trang trí...`,
+    },
+    {
+      img: staticVariables.shrimp2.src,
+      title: 'Fishermen Shrimp',
+      label: 'Fishermen Shrimp',
+      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
+      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
+      không gian trang trí...`,
+    },
+    {
+      img: staticVariables.shrimp1.src,
+      title: 'Fatory Shrimp',
+      label: 'Fatory Shrimp',
+      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
+      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
+      không gian trang trí...`,
+    },
+  ];
   return (
-    <div className="w-full">
-      {loadingPage ? (
-        <></>
-      ) : (
-        <>
-          <Header />
-          <div className="w-full flex-col items-center  bg-gradient-to-b from-black">
-            <div className="w-full flex flex-col">
-              <div className="w-1/3 h-[450px] text-white flex items-center ">
-                <div className="text-[32px] px-[20px]">
-                  <p className="font-[600]">Collections. Next Level.</p>
-                  <p className="text-[16px] text-[#b3b3b3]">
-                    Discover new collection pages with rich storytelling,
-                    featured items, and more
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="w-full m-auto text-white flex">
-              <ScrollMenu
-                wrapperClassName="w-full px-[20px] mb-[30px] "
-                scrollContainerClassName="mx-[20px]"
-                LeftArrow={LeftArrow}
-                RightArrow={RightArrow}
+    !loadingPage && (
+      <div className="w-full">
+        <Header />
+        <div className="w-full pt-[100px]">
+          <Carousel
+            swipe
+            swipeToSlide={true}
+            waitForAnimate
+            className="w-full h-[450px] bg-[#f5f5f5]"
+            autoplay
+          >
+            {listSlide.map((item, index) => (
+              <div
+                key={index}
+                className="h-[450px] select-none cursor-pointer px-[200px]"
               >
-                {listMarket.map((item, index) => (
+                <div className="w-full h-full flex">
                   <div
-                    key={index}
-                    className="relative rounded-2xl overflow-hidden w-[230px] mx-[20px] transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
+                    // data-aos="fade-right"
+                    // data-aos-duration="1000"
+                    // data-aos-anchor-placement="center-center"
+                    // data-aos-mirror="true"
+                    className="w-1/2 my-auto flex flex-col font-sans"
                   >
-                    <Image
-                      width={230}
-                      height={230}
-                      preview={false}
-                      className="rounded-2xl object-cover"
-                      alt=""
-                      src={item.product?.banner}
-                    />
-                    <p className="w-full absolute bottom-0 font-bold p-[20px] text-[14px] bg-gradient-to-t truncate from-[#000000]">
-                      {item.product?.name}
+                    <p
+                      data-aos="fade-right"
+                      data-aos-duration="1000"
+                      data-aos-delay="200"
+                      data-aos-mirror="true"
+                      className="text-[48px] font-semibold "
+                    >
+                      {item.title}
+                    </p>
+                    <p
+                      data-aos="fade-right"
+                      data-aos-duration="1000"
+                      data-aos-delay="400"
+                      data-aos-mirror="true"
+                      className="text-[36px] font-light"
+                    >
+                      {item.label}
+                    </p>
+                    <p
+                      data-aos="fade-right"
+                      data-aos-duration="1000"
+                      data-aos-delay="600"
+                      data-aos-mirror="true"
+                      className="text-[16px] "
+                    >
+                      {item.content}
                     </p>
                   </div>
-                ))}
-              </ScrollMenu>
-            </div>
-          </div>
-          {/* LeaderBoard Item */}
-          <div className="w-full p-[50px]">
-            <ConfigProvider
-              theme={{
-                components: {
-                  Segmented: {
-                    fontSize: 24,
-                  },
-                },
-              }}
-            >
-              <Segmented
-                className="font-bold p-[5px] rounded-xl"
-                size={'large'}
-                onChange={(e) => setOrderTypeTopSelling(e.toString())}
-                options={[
-                  {
-                    label: 'Seed Company',
-                    value: 'SEEDLING_COMPANY',
-                    className: 'p-[5px] rounded-xl',
-                  },
-                  {
-                    label: 'Farmer',
-                    value: 'FARMER',
-                    className: 'p-[5px] rounded-xl',
-                  },
-                  {
-                    label: 'Manufacturer',
-                    value: 'MANUFACTURER',
-                    className: 'p-[5px] rounded-xl',
-                  },
-                ]}
-              />
-            </ConfigProvider>
-            <div className="w-full flex justify-between gap-x-16">
-              {dataTopSelling.length ? (
-                <>
-                  <div className="w-1/2">
-                    {dataTopSelling.length > 1 ? (
-                      <LeaderBoard
-                        listTopSelling={dataTopSelling.slice(
-                          0,
-                          dataTopSelling.length / 2
-                        )}
-                      />
-                    ) : (
-                      <LeaderBoard listTopSelling={dataTopSelling} />
-                    )}
+                  <div className="w-1/2 my-auto">
+                    <Image
+                      className="object-cover"
+                      width={'100%'}
+                      // height={'100%'}
+                      alt=""
+                      preview={false}
+                      src={item.img || staticVariables.noImage.src}
+                    />
                   </div>
-                  {dataTopSelling.length > 1 && (
-                    <div className="w-1/2">
-                      <LeaderBoard
-                        skip={dataTopSelling.length / 2}
-                        listTopSelling={dataTopSelling.slice(
-                          dataTopSelling.length / 2,
-                          dataTopSelling.length
-                        )}
-                      />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Empty
-                  className="m-auto"
-                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                  description={'Không tìm thấy dữ liệu'}
-                />
-              )}
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+        <div className="w-full flex flex-wrap px-[150px] my-[50px] gap-5 justify-around">
+          {listIntroduct.map((item, index) => (
+            <div key={index} className="w-3/12 flex items-center space-x-5">
+              {item.icon}
+              <div className="font-sans">
+                <p className="text-[16px]">{item.label}</p>
+                <p className="text-[13px]">{item.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="w-full flex flex-col">
+          <p className="m-auto text-[32px] font-extralight">
+            Trendding Products
+          </p>
+          <div className="flex m-auto gap-x-5 cursor-pointer my-[10px]">
+            <p
+              onClick={() => setCurrentListType('FACTORY')}
+              className={`px-[20px] py-[5px] ${
+                currentListType === 'FACTORY' && 'bg-current-color text-white'
+              }  rounded-xl border-[1px]`}
+            >
+              FACTORY
+            </p>
+            <p
+              onClick={() => setCurrentListType('DISTRIBUTER')}
+              className={`px-[20px] py-[5px] ${
+                currentListType === 'DISTRIBUTER' &&
+                'bg-current-color text-white'
+              }  rounded-xl border-[1px]`}
+            >
+              DISTRIBUTER
+            </p>
+            <p
+              onClick={() => setCurrentListType('RETAILER')}
+              className={`px-[20px] py-[5px] ${
+                currentListType === 'RETAILER' && 'bg-current-color text-white'
+              }  rounded-xl border-[1px]`}
+            >
+              RETAILER
+            </p>
+          </div>
+        </div>
+        <div className="w-4/5 m-auto my-[50px]">
+          {listProduct.length ? (
+            <ScrollMenu
+              Footer={[]}
+              noPolyfill
+              wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
+              scrollContainerClassName="mx-[20px]"
+              itemClassName="m-[20px]"
+              LeftArrow={LeftArrow}
+              RightArrow={RightArrow}
+            >
+              {listProduct.map((item, index) => (
+                <ProductItem key={index} data={item} />
+              ))}
+            </ScrollMenu>
+          ) : (
+            ''
+          )}
+        </div>
+        <div className="w-4/5 m-auto flex space-x-5">
+          <div className="w-1/2 flex bg-[#f5f5f5] p-[20px]">
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <p className="text-[20px]">Seed Shrimp</p>
+              <div className="flex space-x-3 items-center">
+                <p>VISIT NOW </p>
+                <PlayCircleFilled />
+              </div>
+            </div>
+            <div className="w-1/2 my-auto">
+              <Image
+                className="object-cover my-auto"
+                width={'100%'}
+                // height={'100%'}
+                alt=""
+                preview={false}
+                src={staticVariables.shrimp2.src}
+              />
             </div>
           </div>
-          {/* Category */}
-          <div className="pb-[100px]">
-            <Category orderType={'SEEDLING_COMPANY'} title="Seed Company" />
-            <Category orderType={'FARMER'} title="Farmer" />
-            <Category orderType={'MANUFACTURER'} title="Manufacturer" />
+          <div className="w-1/2 flex  bg-[#f5f5f5] p-[20px]">
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <p className="text-[20px]">Fishermen</p>
+              <div className="flex space-x-3 items-center">
+                <p>VISIT NOW </p>
+                <PlayCircleFilled />
+              </div>
+            </div>
+            <div className="w-1/2">
+              <Image
+                className="object-fill"
+                width={'100%'}
+                height={'100%'}
+                alt=""
+                preview={false}
+                src={staticVariables.shrimp3.src}
+              />
+            </div>
           </div>
-          <Footer />
-        </>
-      )}
-    </div>
+        </div>
+        <div className="w-full flex flex-col mt-[50px]">
+          <p className="m-auto text-[32px] font-extralight">
+            Best sales of week
+          </p>
+        </div>
+        <div className="w-4/5 flex gap-10 m-auto my-[50px]">
+          {listProduct.map((item, index) => (
+            <ProductItem
+              style="detail"
+              isOwner={currentUser.id === item.create_by?.id}
+              className="bg-[#f5f5f5]"
+              key={index}
+              data={item}
+            />
+          ))}
+        </div>
+        <div className="w-full items-center flex h-[400px] bg-[#f5f5f5] px-[150px] font-sans">
+          <div className="w-1/2 flex flex-col">
+            <p className="text-[20px] text-current-color">
+              BEST SALE PRODUCT!!
+            </p>
+            <p className="text-[46px] font-semibold">TOP SALE PRODUCT</p>
+            <p className="text-[28px] text-[#222222]">ALL VEGETABLE PRODUCTS</p>
+            <button className="flex w-1/2  m-auto my-[50px] items-center justify-center space-x-3 py-[10px] px-[15px] rounded-xl bg-current-color text-white">
+              <p>VISIT NOW </p>
+              <RightCircleFilled />
+            </button>
+          </div>
+          <div className="w-1/2">
+            <Image
+              className="object-cover"
+              width={'100%'}
+              height={'100%'}
+              alt=""
+              preview={false}
+              src={staticVariables.shrimp1.src}
+            />
+          </div>
+        </div>
+        <div></div>
+        <Footer />
+      </div>
+    )
   );
 }

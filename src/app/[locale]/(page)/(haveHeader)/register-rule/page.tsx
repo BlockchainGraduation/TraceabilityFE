@@ -7,6 +7,7 @@ import {
   Button,
   ConfigProvider,
   Image,
+  Input,
   Radio,
   Space,
   Typography,
@@ -17,14 +18,17 @@ import React, { useState } from 'react';
 import { useSWRConfig } from 'swr';
 import Questions from './components/Questions';
 import RadioCustom from './components/RadioCustom';
+import TextArea from 'antd/es/input/TextArea';
 
 export default function RegisterRulePage() {
   const [currentTab, setCurrentTab] = useState(0);
   const [rule, setRule] = useState('');
-  const [gender, setGender] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [yearOld, setYearOld] = useState('');
   const [education, setEducation] = useState('');
   const [device, setDevice] = useState('');
+  const [introduce, setIntroduce] = useState('');
   const [numericKeypad, setNumericKeypad] = useState('');
   const [experience, setExperience] = useState('');
   const [digitsExperience, setDigitsExperience] = useState('');
@@ -58,42 +62,83 @@ export default function RegisterRulePage() {
     // Get start
     <div key={0}>
       <div>
-        <p className="text-lg font-medium">Chào mừng bạn tham gia OPENCROWD</p>
+        <p className="text-[25px] font-medium">
+          Chào mừng bạn tham gia hệ thống của chúng tôi
+        </p>
         <p className="pt-[12px] pb-[20px] text-[14px]">
           Hãy bắt đầu thiết lập tài khoản của bạn!
         </p>
-        <Button onClick={handleSubmit}>Get go</Button>
+        <button
+          onClick={handleSubmit}
+          className="cursor-pointer rounded-xl  bg-green-100 font-semibold overflow-hidden relative z-100 border border-green-500 group px-8 py-2"
+        >
+          <span className="relative z-10 text-green-500 group-hover:text-white text-xl duration-500">
+            Bắt đầu !
+          </span>
+          <span className="absolute w-full h-full bg-green-500 -left-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:left-0 duration-500"></span>
+          <span className="absolute w-full h-full bg-green-500 -right-32 top-0 -rotate-45 group-hover:rotate-0 group-hover:right-0 duration-500"></span>
+        </button>
+        {/* <Button onClick={handleSubmit}>Bắt đầu</Button> */}
       </div>
     </div>,
     // Select Roles
     <div key={1}>
-      <RoleSelect onFinishSelectRule={onFinishSelectRule} />
-      <Button className="w-fit block m-auto mt-[100px]" onClick={handleSubmit}>
-        Next
+      <RadioCustom
+        defaulValue={phone}
+        spaceProps={{ direction: 'vertical' }}
+        titleClassName="text-[20px]"
+        onChange={onFinishSelectRule}
+        title="Bạn muốn làm vai trò gì trong hệ thống?"
+        itemList={[
+          { label: 'Factory ( Nhà máy chế biến )', value: 'FACTORY' },
+          { label: 'Distributer ( Nhà phân phối )', value: 'DISTRIBUTER' },
+          { label: 'Retailer ( Nhà bán lẻ )', value: 'RETAILER' },
+        ]}
+      />
+      {/* <RoleSelect onFinishSelectRule={onFinishSelectRule} /> */}
+      <Button
+        disabled={!!!rule}
+        className="w-fit block m-auto mt-[100px]"
+        onClick={handleSubmit}
+      >
+        Tiếp
       </Button>
+    </div>,
+    // Question0
+    <div key={1.1}>
+      <div>
+        <p className="text-[20px] py-[20px]">
+          Tên của bạn hoặc công ty là gì ???
+        </p>
+        <Input
+          onChange={(e) => setName(e.target.value)}
+          max={50}
+          placeholder="Nhập tên của bạn hoặc công ty...(tối thiểu 8 kí tự)"
+        />
+      </div>
+      {/* <RoleSelect onFinishSelectRule={onFinishSelectRule} /> */}
+      <div className="w-full flex justify-center gap-x-10 mt-[100px]">
+        <Button className="" onClick={handlePrev}>
+          Trước
+        </Button>
+        <Button disabled={!(name.length > 8)} onClick={handleSubmit}>
+          Tiếp
+        </Button>
+      </div>
     </div>,
     // Question1
     <div key={2}>
-      <p className="text-2xl py-2 font-medium">Hi {currentUser.full_name}</p>
+      <p className="text-2xl py-2 font-medium">Hi {currentUser.fullname}</p>
       <div className="flex flex-col gap-y-5">
-        <RadioCustom
-          defaulValue={gender}
-          onChange={(e) => setGender(e)}
-          title="Giới tính của bạn là gì?"
-          itemList={[
-            { label: 'Nam', value: 'Nam' },
-            { label: 'Nữ', value: 'Nữ' },
-          ]}
-        />
         <RadioCustom
           defaulValue={yearOld}
           onChange={(e) => setYearOld(e)}
-          title="Xin vui lòng cho biết, Anh/Chị nằm trong độ tuổi nào? "
+          title="Bạn hoặc công ty của bạn kinh doanh đã được bao nhiêu năm ? "
           itemList={[
-            { label: 'Từ 18-25 tuổi', value: 'Từ 18-25 tuổi' },
-            { label: 'Từ 26-35 tuổi', value: 'Từ 26-35 tuổi' },
-            { label: 'Từ 36-45 tuổi', value: 'Từ 36-45 tuổi' },
-            { label: 'Trên 45 tuổi', value: 'Trên 45 tuổi' },
+            { label: 'Mới kinh doanh', value: 'Mới kinh doanh' },
+            { label: '1-5 năm', value: 'Kinh doanh 1-5 năm' },
+            { label: '5-10 năm', value: 'Kinh doanh 5-10 năm' },
+            { label: 'Trên 10 năm', value: 'Trên 10 năm' },
           ]}
         />
       </div>
@@ -101,33 +146,29 @@ export default function RegisterRulePage() {
         <Button className="" onClick={handlePrev}>
           Trước
         </Button>
-        <Button disabled={!!!yearOld || !!!gender} onClick={handleSubmit}>
-          Next
+        <Button disabled={!!!yearOld} onClick={handleSubmit}>
+          Tiếp
         </Button>
       </div>
     </div>,
     // Question 2
     <div key={3}>
       <div className="flex flex-col gap-y-5">
-        <RadioCustom
-          defaulValue={education}
-          onChange={(e) => setEducation(e)}
-          title="Xin vui lòng cho biết, trình độ học vấn hiện tại của Anh/Chị"
-          spaceProps={{ direction: 'vertical' }}
-          itemList={[
-            { label: 'Trung cấp', value: 'Trung cấp' },
-            { label: 'Cao đẳng', value: 'Cao đẳng' },
-            { label: 'Đại học', value: 'Đại học' },
-            { label: 'Sau đại học', value: 'Sau đại học' },
-          ]}
+        <p className="text-[20px] py-[20px]">Số điện thoại của bạn là gì ???</p>
+        <Input
+          type={'tel'}
+          max={15}
+          onChange={(e) => setPhone(e.target.value)}
+          title="Số điện thoại của bạn ?"
+          placeholder="Nhập tên SDT của b..."
         />
       </div>
       <div className="w-full flex justify-center gap-x-10 mt-[100px]">
         <Button className="" onClick={handlePrev}>
           Trước
         </Button>
-        <Button disabled={!!!education} onClick={handleSubmit}>
-          Next
+        <Button disabled={!!!phone} onClick={handleSubmit}>
+          Tiếp
         </Button>
       </div>
     </div>,
@@ -144,62 +185,37 @@ export default function RegisterRulePage() {
             { label: 'Laptop', value: 'Laptop' },
           ]}
         />
-        <RadioCustom
-          defaulValue={numericKeypad}
-          onChange={(e) => setNumericKeypad(e)}
-          title="Anh/chị đã thuộc phím trên bàn phím số không?"
-          spaceProps={{ direction: 'vertical' }}
-          itemList={[
-            { label: 'Có', value: 'Có thuộc phím trên bàn phím số' },
-            { label: 'Không', value: 'Không thuộc phím trên bàn phím số' },
-          ]}
-        />
       </div>
       <div className="w-full flex justify-center gap-x-10 mt-[100px]">
         <Button className="" onClick={handlePrev}>
           Trước
         </Button>
-        <Button disabled={!!!device || !!!numericKeypad} onClick={handleSubmit}>
-          Next
+        <Button disabled={!!!device} onClick={handleSubmit}>
+          Tiếp
         </Button>
       </div>
     </div>,
     // Question 4
-    <div key={5}>
+    <div key={5} className="w-full">
       <div className="flex flex-col gap-y-5">
-        <RadioCustom
-          defaulValue={digitsExperience}
-          onChange={(e) => setDigitsExperience(e)}
-          title="Anh/chị có kinh nghiệm nhập chữ số viết tay không?"
-          spaceProps={{ direction: 'vertical' }}
-          itemList={[
-            { label: 'Có', value: 'Có kinh nghiệm nhập chữ số viết tay' },
-            { label: 'Không', value: 'Không kinh nghiệm nhập chữ số viết tay' },
-          ]}
-        />
-        <RadioCustom
-          defaulValue={aphabetExperience}
-          onChange={(e) => setAphabetExperience(e)}
-          title="Anh/chị có kinh nghiệm nhập chữ Aphabet viết tay không ?"
-          spaceProps={{ direction: 'vertical' }}
-          itemList={[
-            { label: 'Có', value: 'Có kinh nghiệm nhập chữ Aphabet viết tay' },
-            {
-              label: 'Không',
-              value: 'Không kinh nghiệm nhập chữ Aphabet viết tay',
-            },
-          ]}
+        <p className="text-[20px] py-[20px]">
+          Hãy giới thiệu ngắn về cửa hàng hoặc công ty của bạn ???
+        </p>
+
+        <TextArea
+          maxLength={100}
+          onChange={(e) => setIntroduce(e.target.value)}
+          autoSize
+          title="Số điện thoại của bạn ?"
+          placeholder="Giới thiệu ngắn về cửa hàng hoặc công ty của bạn..."
         />
       </div>
       <div className="w-full flex justify-center gap-x-10 mt-[100px]">
         <Button className="" onClick={handlePrev}>
           Trước
         </Button>
-        <Button
-          disabled={!!!aphabetExperience || !!!digitsExperience}
-          onClick={handleSubmit}
-        >
-          Next
+        <Button disabled={!(introduce.length > 20)} onClick={handleSubmit}>
+          Tiếp
         </Button>
       </div>
     </div>,
@@ -209,13 +225,13 @@ export default function RegisterRulePage() {
         <RadioCustom
           defaulValue={japaneseAbility}
           onChange={(e) => setJapaneseAbility(e)}
-          title="Anh/chị có năng lực tiếng Nhật không ?"
+          title="Bạn có năng lực tiếng Anh không ?"
           spaceProps={{ direction: 'vertical' }}
           itemList={[
-            { label: 'Có', value: 'Có năng lực tiếng Nhật' },
+            { label: 'Có', value: 'Có năng lực tiếng Anh' },
             {
               label: 'Không',
-              value: 'Không năng lực tiếng Nhật',
+              value: 'Không năng lực tiếng Anh',
             },
           ]}
         />
@@ -235,13 +251,15 @@ export default function RegisterRulePage() {
   const fetchChangeRule = async () => {
     console.log(rule);
     await instanceAxios
-      .put(`user/surveys`, {
-        survey_data: {
+      .post(`survey`, {
+        survey: {
           user_role: rule,
-          gender,
+          phone,
           yearOld,
           education,
           device,
+          introduce,
+          name,
           numericKeypad,
           digitsExperience,
           aphabetExperience,
@@ -269,25 +287,27 @@ export default function RegisterRulePage() {
       });
   };
   return (
-    <div className="flex min-h-[750px]">
-      <div className="w-1/2 pt-[100px] flex flex-col items-center min-h-[750px]">
-        <Image
-          width={'50%'}
-          // height={'70%'}
-          preview={false}
-          className="object-cover m-auto"
-          alt=""
-          src={staticVariables.register_rule.src}
-        />
-        <p className="flex items-center gap-1 text-txt-secondary font-bold text-[32px] leading-[44px] mt-[13px] relative text-center ">
-          Wellcome
-        </p>
-        <p className="font-normal text-[18px] leading-7 mt-3">
-          We provide data on extended sourcing methods in the community..
-        </p>
-      </div>
-      <div className="w-1/2 h-full min-h-[750px] px-[100px] py-[150px] bg-[#f9f9f9]">
-        {listTab[currentTab]}
+    <div className="flex min-h-[750px] relative before:content-[''] before:w-full before:h-full before:absolute before:z-0 before:bg-[#00000084]  bg-[url('/shrimpBg.jpg')] bg-cover	bg-no-repeat	">
+      <div className="absolute w-full h-full flex z-2">
+        <div className="w-1/2 flex flex-col px-[30px] items-center justify-center text-white min-h-[750px]">
+          <Image
+            // width={'100%'}
+            // height={'50%'}
+            preview={false}
+            className="object-cover m-auto p-[50px]"
+            alt=""
+            src={staticVariables.register_rule.src}
+          />
+          <p className="flex items-center gap-1 text-txt-secondary font-bold text-[50px] py-[20px] leading-[44px] mt-[13px] relative text-center ">
+            Xin chào bạn
+          </p>
+          <p className="font-normal text-[18px] leading-7 mt-3">
+            Vui lòng cho chúng tôi biết thêm về bạn...
+          </p>
+        </div>
+        <div className="w-2/5 h-[500px] rounded-xl m-auto px-[100px] flex items-center justify-center bg-[#F7FAFFEA]">
+          {listTab[currentTab]}
+        </div>
       </div>
       {/* <div className="flex h-full w-full">{listTab[currentTab]}</div>
       <div className="flex items-center gap-x-10 mt-10">

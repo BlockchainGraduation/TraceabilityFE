@@ -16,8 +16,14 @@ import user_anonymous from '../public/cms/user_anonymous.png';
 import user_factory from '../public/cms/user_factory.png';
 import user_farmer from '../public/cms/user_farmer.png';
 import user_seed from '../public/cms/user_seed.png';
-import register_rule from '../public/register_rule.png';
-// import factory from '../public/cms/factory.png';
+import register_rule from '../public/register_rule.svg';
+import shrimp1 from '../public/shrimp1.png';
+import shrimp2 from '../public/shrimp2.png';
+import shrimp3 from '../public/shrimp3.png';
+import shrimp4 from '../public/shrimp4.png';
+import shrimpBg from '../public/shrimpBg.jpg';
+import noImage from '../public/noImage.jpg';
+
 // import factory from '../public/cms/factory.png';
 // import factory from '../public/cms/factory.png';
 
@@ -41,5 +47,11 @@ const staticVariables = {
   user_farmer,
   user_seed,
   register_rule,
+  shrimp1,
+  shrimp2,
+  shrimp3,
+  shrimp4,
+  shrimpBg,
+  noImage,
 };
 export default staticVariables;

@@ -74,7 +74,7 @@ export default memo(function InputNumberCustom({
   const handleOk = async () => {
     setLoading(true);
     await instanceAxios
-      .put(
+      .patch(
         passType === 'body' ? APIurl : `${APIurl}?${name}=${value}`,
         passType === 'body' && { [name]: value }
       )

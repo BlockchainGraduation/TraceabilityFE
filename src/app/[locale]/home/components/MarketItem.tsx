@@ -8,14 +8,14 @@ export default function MarketItem(props: ProductType) {
     <div className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300 ">
       <Link className="hover:text-inherit" href={`/market/${props.id}`}>
         <div className="relative w-[278px] flex flex-col mx-[10px] rounded-2xl overflow-hidden hover:shadow-lg shadow transition ease-in-out hover:-translate-y-2 duration-100 ">
-          <Image
+          {/* <Image
             width={278}
             height={185}
             preview={false}
             className=" object-cover"
             alt=""
             src={props.banner}
-          />
+          /> */}
 
           <div className="w-full flex flex-col space-x-2 p-[16px]">
             <ConfigProvider

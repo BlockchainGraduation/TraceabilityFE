@@ -4,6 +4,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Checkbox,
   Col,
   ConfigProvider,
   Dropdown,
@@ -55,7 +56,7 @@ import {
   faCartShopping,
   faEarthAsia,
   faHouse,
-  // faUser,
+  faUser,
   faUserGear,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons';
@@ -65,19 +66,29 @@ import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
 import { Inter } from 'next/font/google';
-import { faBell, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
 import NotificationItem from './NotificationItem';
 import moment from 'moment';
 import 'moment/locale/vi';
 import currency from '@/services/currency';
 import CartItem from './CartItem';
+import { CheckoutForm } from '../Contents/common/CheckoutForm';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 const inter = Inter({ subsets: ['latin'] });
+
+interface CheckboxItemType {
+  index?: number;
+  product?: CartItemType;
+  quantity?: number;
+}
 
 export default memo(function Header() {
   // const [user, setUser] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [valueRadioCart, setValueRadioCart] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
@@ -87,8 +98,14 @@ export default memo(function Header() {
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
-  const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
-  const [listCart, setListCart] = useState<CartItemType[]>([]);
+  const [resultSearch, setResultSearch] = useState<ProductType[]>([]);
+  const [buyQuantityIndex, setBuyQuantityIndex] = useState<CheckboxItemType[]>(
+    []
+  );
+  const [listCart, setListCart] = useState<
+    (CartItemType & { buyQuantity?: number })[]
+  >([]);
+  const [checkedItems, setCheckedItems] = useState<any[]>([]);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -108,9 +125,41 @@ export default memo(function Header() {
   const dispatch = useAppDispatch();
   moment.locale(locale);
 
-  const onChange = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
-    setValueRadioCart(e.target.value);
+  // const onChange = (e: RadioChangeEvent) => {
+  //   // console.log('radio checked', e.target.value);
+  //   setValueRadioCart(e.target.value);
+  // };
+
+  useEffect(() => {
+    setTotalPrice(
+      checkedItems.reduce(
+        (item, currentValue) =>
+          item +
+          (listCart[currentValue]?.buyQuantity || 0) *
+            listCart[currentValue]?.product_id?.price,
+        0
+      )
+    );
+  }, [checkedItems, listCart]);
+
+  const indexCartDeleted = (index: number) => {
+    const newList = [...listCart];
+    newList[index || 0].buyQuantity = newList[index + 1].buyQuantity || 0;
+    setListCart(newList);
+    setCheckedItems(checkedItems.filter((item) => item !== index));
+  };
+
+  const onChangeBuyQuantity = (value?: any, index?: number) => {
+    const newList = [...listCart];
+    newList[index || 0].buyQuantity = value;
+    setListCart(newList);
+
+    console.log('Number', buyQuantityIndex);
+    console.log('Value ', { value, index });
+  };
+  const onChange = (checkedValues: CheckboxItemType[]) => {
+    setCheckedItems(checkedValues);
+    console.log('checked = ', checkedValues);
   };
 
   const listIcon = [
@@ -141,63 +190,63 @@ export default memo(function Header() {
     await instanceAxios
       .get('user/me')
       .then((res) => {
-        // console.log(res.data.data);
-        dispatch(setLogin({ logged: true, user: { ...res.data.data } }));
+        dispatch(setLogin({ logged: true, user: { ...res.data.user } }));
       })
       .catch((err) => console.log(err));
   }, [dispatch]);
-  // useEffectOnce(() => {
-  //   fethGetUser();
-  // });
+  useEffectOnce(() => {
+    fethGetUser();
+  });
 
-  const fetchNotifications = async () => {
-    await instanceAxios
-      .get(`notifications/list`)
-      .then((res) => {
-        setListNotifications(res.data.data);
-        // setListUnreadNotifications(res.data.data.meta.unread_total);
-        // setTotalNotifications(res.data.data.meta.total);
-      })
-      .catch((err) => console.log(err));
-  };
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
-      .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
+      .get(`search-product/?name=${debouncedValue}`)
       .then((res) => {
-        setResultSearch(res.data.data.list_marketplace);
+        console.log(res.data);
+        setResultSearch(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
 
-  const fethListCart = async () => {
+  const fetchBuyCart = async () => {
+    const listBuyCart = checkedItems
+      .filter((item) => listCart[item].buyQuantity !== 0)
+      .map((item, index) => ({
+        id: listCart[item].id,
+        product_id: listCart[item].product_id?.id,
+        quantity: listCart[item].buyQuantity,
+        price:
+          (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
+      }));
+    console.log(listBuyCart);
+  };
+
+  const fetchCartMe = async () => {
     await instanceAxios
-      .get(`cart/list?skip=0&limit=1000`)
+      .get(`cart-me`)
       .then((res) => {
-        setListCart(res.data.data.list_cart);
+        setListCart(res.data);
+
+        // setBuyQuantityIndex([...res.data].map(() => 1));
       })
       .catch((err) => console.log(err));
   };
-  const fetchBuyCartItem = async () => {
-    setLoadingBuy(true);
+  const fetchNotificationMe = async () => {
     await instanceAxios
-      .put(
-        `product/${listCart[valueRadioCart].product_id}/purchase?price=${listCart[valueRadioCart].price}&quantity=${listCart[valueRadioCart].quantity}&cart_id=${listCart[valueRadioCart].id}`
-      )
-      .then((res) => {
-        notification.success({
-          message: 'Mua hàng thành công',
-          description: 'Bạn có thể xem lại đơn hàng ở trang thông tin',
-        });
-        mutate('cart/list');
-      })
-      .catch((err) => {
-        notification.error({
-          message: 'Mua hàng thất bại',
-          description: 'Bạn có thể vui lòng xem lại thông tin',
-        });
-      })
-      .finally(() => setLoadingBuy(false));
+      .get(`notification-me`)
+      .then((res) => setListNotifications(res.data.detail))
+      .catch((err) => console.log(err));
   };
+
+  useSWR('notifiation-me', fetchNotificationMe);
+  useSWR('cart-me', fetchCartMe);
+
+  useEffect(() => {
+    fetchNotificationMe();
+  }, []);
+  useEffect(() => {
+    fetchCartMe();
+  }, []);
 
   useEffect(() => {
     if (showFormLogin) {
@@ -211,16 +260,6 @@ export default memo(function Header() {
       fethMarketSearch();
     }
   }, [debouncedValue, fethMarketSearch]);
-  useEffect(() => {
-    fethListCart();
-  }, [logged]);
-  useEffect(() => {
-    fetchNotifications();
-  }, [logged]);
-
-  useSWR('cart/list', fethListCart);
-  useSWR('user/me', fethGetUser);
-  useSWR('notifications/list', fetchNotifications);
 
   const handleChangeLanguage = () => {
     router.replace(pathname, { locale: locale === 'vi' ? 'en' : 'vi' });
@@ -236,7 +275,8 @@ export default memo(function Header() {
     // const access = getCookie('access_token');
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
-    deleteCookie('access_token');
+    deleteCookie('access');
+    deleteCookie('refresh');
     // router.push('/');
     // setShowModal(true);
     setCurrentForm('LOGIN');
@@ -263,13 +303,12 @@ export default memo(function Header() {
     {
       label: (
         <Link href={`/user/${currentUser.id}`}>
-          <Space
-            className="py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl"
-            wrap={false}
-          >
-            <FontAwesomeIcon icon={faUser} style={{ color: '#3c64aa' }} />
-            <p>Thông tin</p>
-          </Space>
+          <div className=" min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+            <div className="w-[30px]">
+              <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
+            </div>
+            <p>Trang cá nhân</p>
+          </div>
         </Link>
       ),
       key: '0',
@@ -286,83 +325,87 @@ export default memo(function Header() {
     //           <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
     //         </Col>
     //         <Col span={24}>
-    //           {listUnreadNotifications ? (
-    //             <Badge
-    //               count={listUnreadNotifications}
-    //               offset={[5, 8]}
-    //               color="blue"
-    //             >
-    //               <p className="pr-[10px]">Thông báo</p>
-    //             </Badge>
-    //           ) : (
+    //           <div className="flex">
     //             <p className="pr-[10px]">Thông báo</p>
-    //           )}
+    //             {listNotifications.length && (
+    //               <p className="p-[5px] rounded-full">10</p>
+    //             )}
+    //           </div>
     //         </Col>
     //       </Row>
     //     </Popover>
     //   ),
-    //   key: '1',
+    //   key: '1.4',
     // },
     {
       label: (
-        <Space
-          className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
-          wrap={false}
-        >
-          <FontAwesomeIcon icon={faWallet} style={{ color: '#4096ff' }} />
-          <p>{`${currentUser.account_balance} ${currency}`}</p>
-        </Space>
+        <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+          <div className="w-[30px]">
+            <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
+          </div>
+          <div className="flex gap-x-2">
+            <p className="">Ví của bạn:</p>
+            <p className="text 18px font-bold">{`${
+              currentUser.account_balance || 0
+            } `}</p>
+            <p className="text-[12px] text-current-color">{currency}</p>
+          </div>
+        </div>
       ),
       key: '1',
     },
-    // {
-    //   label: (
-    //     <ConfigProvider
-    //       theme={{
-    //         token: {
-    //           lineWidth: 3,
-    //           paddingXS: 10,
-    //         },
-    //       }}
-    //     >
-    //       <Space wrap={false} onClick={() => setShowCartModal(true)}>
-    //         <Badge count={listCart.length} offset={[-30, 8]} color="blue">
-    //           <FontAwesomeIcon icon={faCartShopping} />
-    //         </Badge>
-    //         <p>Giỏ hàng</p>
-    //       </Space>
-    //     </ConfigProvider>
-    //   ),
-    //   key: '2',
-    // },
+    {
+      label: (
+        <ConfigProvider
+          theme={{
+            token: {
+              lineWidth: 3,
+              paddingXS: 10,
+            },
+          }}
+        >
+          <div
+            className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl"
+            onClick={() => setShowCartModal(true)}
+          >
+            <div className="w-[30px]">
+              <FontAwesomeIcon
+                icon={faCartShopping}
+                style={{ color: '#376ecd' }}
+              />
+            </div>
+            <p>Giỏ hàng</p>
+          </div>
+        </ConfigProvider>
+      ),
+      key: '2',
+    },
     {
       label: (
         <Link href={'/cms'}>
-          <Space
-            className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
-            wrap={false}
-          >
-            <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
+          <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+            <div className="w-[30px]">
+              <FontAwesomeIcon icon={faUserGear} style={{ color: '#376ecd' }} />
+            </div>
             <p>Quản lí</p>
-          </Space>
+          </div>
         </Link>
       ),
       key: '3',
     },
     {
       label:
-        currentUser.system_role === 'MEMBER' ? (
+        currentUser.confirm_status === 'NONE' ? (
           <Link
             // className="py-[10px] px-[5px] font-medium text-[16px] space-x-3 rounded-xl"
             href={'/register-rule'}
           >
-            <Space
-              className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
-              wrap={false}
-            >
-              <FontAwesomeIcon icon={faUser} />
+            <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+              <div className="w-[30px]">
+                <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
+              </div>
               <p>Đăng kí thành viên</p>
-            </Space>
+            </div>
           </Link>
         ) : (
           ''
@@ -374,17 +417,17 @@ export default memo(function Header() {
     },
     {
       label: (
-        <div onClick={handleLogout}>
-          <Space
-            className="py-[10px] font-medium text-[16px] px-[5px] space-x-3 rounded-xl"
-            wrap={false}
-          >
+        <div
+          className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl"
+          onClick={handleLogout}
+        >
+          <div className="w-[30px]">
             <FontAwesomeIcon
               // className="mr-[10px]"
               icon={faArrowRightFromBracket}
             />
-            <p>Logout</p>
-          </Space>
+          </div>
+          <p>Đăng xuất</p>
         </div>
       ),
       key: '5',
@@ -396,7 +439,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed top-0 z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -423,6 +466,7 @@ export default memo(function Header() {
       </div>
       <div className="relative w-1/4">
         <Popover
+          getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
           title={
             <p className=" w-full truncate">
               {`Kết quả tìm kiếm: ${debouncedValue}`}
@@ -477,7 +521,7 @@ export default memo(function Header() {
         </Popover>
       </div>
       <div className="flex items-center ">
-        <ConfigProvider
+        {/* <ConfigProvider
           theme={{
             token: {
               // colorText: `${isHomePage && 'white'}`,
@@ -495,6 +539,7 @@ export default memo(function Header() {
               style={{ color: '#3748c8' }}
             />
             <Select
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               defaultValue={locale}
               style={{ width: 100 }}
               onChange={handleChangeLanguage}
@@ -508,11 +553,12 @@ export default memo(function Header() {
               ]}
             />
           </Space>
-        </ConfigProvider>
+        </ConfigProvider> */}
 
         {logged ? (
           <div className="flex items-center space-x-5">
             <Popover
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               title="Thông báo của bạn"
               placement={'bottomLeft'}
               trigger={['click']}
@@ -538,47 +584,35 @@ export default memo(function Header() {
               </div>
             </Popover>
 
-            <Dropdown menu={{ items }} placement={'bottom'}>
-              {/* {listUnreadNotifications ? (
-                <Badge
-                  count={listUnreadNotifications}
-                  offset={[5, 10]}
-                  color="blue"
-                >
+            <Dropdown
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+              menu={{ items }}
+              placement={'bottomLeft'}
+            >
+              {/* {listNotifications ? (
+                <Badge count={10} offset={[5, 10]} color="blue">
                   <Avatar src={currentUser.avatar} size="large" />
                 </Badge>
               ) : ( */}
-              <div className="bg-[#1212120A] hover:bg-[#ececec]  px-[20px] py-[10px] rounded-lg">
+              <div>
                 {/* <Avatar src={currentUser.avatar} size={20} /> */}
-                <FontAwesomeIcon icon={faUser} style={{ color: '#000000' }} />
+                <Avatar
+                  size={40}
+                  src={currentUser.avatar || staticVariables.noImage.src}
+                />
               </div>
               {/* )} */}
             </Dropdown>
-            <ConfigProvider
-              theme={{
-                token: {
-                  // lineWidth: 3,
-                  // paddingXS: 10,
-                },
-              }}
-            >
-              <Space
-                className="bg-[#1212120A] hover:bg-[#ececec]  px-[20px] py-[10px] rounded-lg"
-                wrap={false}
-                onClick={() => setShowCartModal(true)}
-              >
-                <Badge count={listCart.length} offset={[16, -8]} color="blue">
-                  <FontAwesomeIcon icon={faCartShopping} />
-                </Badge>
-                {/* <p>Giỏ hàng</p> */}
-              </Space>
-            </ConfigProvider>
+
             <Modal
-              style={{ float: 'right', margin: '10px' }}
+              width={'80%'}
+              // style={{ float: 'right', margin: '10px' }}
               onCancel={() => setShowCartModal(false)}
               centered
               title={
-                <p className="text-[20px] py-[10px] font-semibold">Your cart</p>
+                <p className="text-[20px] py-[10px] font-semibold">
+                  Giỏ hàng của bạn
+                </p>
               }
               open={showCartModal}
               footer={[]}
@@ -589,25 +623,45 @@ export default memo(function Header() {
                     {listCart.length} items
                   </p>
                   {listCart.length && (
-                    <p className="text-[14px] font-semibold">Clear all</p>
+                    <p className="text-[14px] font-semibold">
+                      Xóa tất cả giỏ hàng
+                    </p>
                   )}
                 </div>
-                <div className="max-h-[360px] overflow-y-auto w-full flex flex-col">
+                <div className=" w-full max-h-[360px] overflow-y-auto  flex flex-col">
+                  {/* <CartItem
+                    onDeleteSuccess={() => mutate('cart/list')}
+                    active={valueRadioCart === index}
+                    key={index}
+                    data={listCart[0]}
+                  /> */}
                   {listCart.length ? (
-                    <Radio.Group onChange={onChange} className="flex flex-col">
+                    <Checkbox.Group
+                      value={checkedItems}
+                      onChange={(e) => onChange(e as CheckboxItemType[])}
+                      className="flex w-full flex-col gap-y-3"
+                    >
                       {listCart.map((item, index) => (
-                        <Radio key={index} value={index}>
-                          <div className="w-[410px]">
-                            <CartItem
-                              onDeleteSuccess={() => mutate('cart/list')}
-                              active={valueRadioCart === index}
-                              key={index}
-                              data={item}
-                            />
-                          </div>
-                        </Radio>
+                        <div className="flex items-center gap-x-3" key={index}>
+                          <Checkbox
+                            // key={index}
+                            disabled={!listCart[index].buyQuantity}
+                            value={index}
+                          />
+                          <CartItem
+                            onChangeBuyQuantity={(e) =>
+                              onChangeBuyQuantity(e, index)
+                            }
+                            onDeleteSuccess={() => {
+                              indexCartDeleted(index);
+                              mutate('cart-me');
+                            }}
+                            active={valueRadioCart === index}
+                            data={item}
+                          />
+                        </div>
                       ))}
-                    </Radio.Group>
+                    </Checkbox.Group>
                   ) : (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_DEFAULT}
@@ -617,37 +671,64 @@ export default memo(function Header() {
                 </div>
                 <div className="w-full flex flex-col space-y-5 border-t-[1px] mt-10 pt-5">
                   <div className="flex justify-between ">
-                    <p className="text-[16px] font-bold">Total price</p>
+                    <p className="text-[16px] font-bold">Tổng thanh toán</p>
                     <div className="flex flex-col">
                       <p className="text-[16px] font-semibold">
-                        {listCart[valueRadioCart]?.product?.price || 0}{' '}
+                        {totalPrice}
                         {currency}
                       </p>
-                      <p className="text-[14px]">
-                        {listCart[valueRadioCart]?.price || 0} {currency}
-                      </p>
+                      {/* <p className="text-[14px]">
+                        {listCart[valueRadioCart]?.product_id?.price || 0}{' '}
+                        {currency}
+                      </p> */}
                     </div>
                   </div>
+                  {/* Button Checkout */}
                   <div className="w-full">
                     <button
                       // disabled
-                      onClick={fetchBuyCartItem}
+                      onClick={fetchBuyCart}
+                      // onClick={() => setShowCheckoutModal(true)}
                       className="relative disabled:bg-gray-100 disabled:text-gray-300 block m-auto py-2 px-8 text-black text-base font-bold bg-green-100 rounded-xl overflow-hidden transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-xl hover:before:left-0"
                     >
-                      Buy now
+                      Mua ngay
                     </button>
+                    <Modal
+                      open={showCheckoutModal}
+                      onCancel={() => setShowCheckoutModal(false)}
+                      footer={[]}
+                    >
+                      <CheckoutForm
+                        buyQuantity={
+                          listCart[valueRadioCart]?.product_id?.quantity > 0
+                            ? 1
+                            : 0
+                        }
+                        producId={listCart[valueRadioCart]?.product_id?.id || 0}
+                        price={listCart[valueRadioCart]?.product_id?.price || 0}
+                        quantity={
+                          listCart[valueRadioCart]?.product_id?.quantity || 0
+                        }
+                        cartId={listCart[valueRadioCart]?.id}
+                        onSuccess={() => {
+                          mutate(`marketplace/id`);
+                        }}
+                      />
+                    </Modal>
                   </div>
                 </div>
               </div>
             </Modal>
           </div>
         ) : (
-          <div
-            className={`text-inherit'} cursor-pointer`}
-            onClick={() => setShowModal(true)}
-          >
-            Đăng nhập
-          </div>
+          <Link href={'/login'}>
+            <div
+              className={`text-inherit'} cursor-pointer`}
+              // onClick={() => setShowModal(true)}
+            >
+              Đăng nhập
+            </div>
+          </Link>
         )}
         <ConfigProvider
           theme={{

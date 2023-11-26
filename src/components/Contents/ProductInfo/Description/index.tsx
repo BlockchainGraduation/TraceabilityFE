@@ -11,11 +11,11 @@ import { getCookie } from 'cookies-next';
 
 interface Props {
   showEdit?: boolean;
-  id?: string;
+  id?: number;
   title?: string;
   description?: string;
   image?: string;
-  product_id?: string;
+  product_id?: number;
 }
 
 export default function Description(props: Props) {
@@ -45,7 +45,7 @@ export default function Description(props: Props) {
     [mutate]
   );
   return (
-    <div className="w-full h-full flex border-2 border-green-500 rounded-2xl">
+    <div className="w-full h-full flex border-green-500 bg-[#f6f6f6] rounded-xl">
       <div className="w-1/2 p-[50px] flex flex-col">
         <InputCustom
           className="text-[20px] py-[20px] font-semibold"
@@ -67,11 +67,11 @@ export default function Description(props: Props) {
       </div>
       <div className="w-1/2 relative p-[10px]">
         <Image
-          className="object-cover rounded-2xl"
+          className="object-cover rounded-xl"
           width="100%"
           height="100%"
           preview={false}
-          src={props.image || ''}
+          src={props.image || staticVariables.noImage.src}
           alt=""
         />
         {props.showEdit && (
@@ -81,7 +81,7 @@ export default function Description(props: Props) {
             action={`${process.env.NEXT_PUBLIC_API_ORIGIN}detail_description/${props.id}/img`}
             method="PUT"
             headers={{
-              authorization: `Bearer ${getCookie('access_token')}`,
+              authorization: `Bearer ${getCookie('access')}`,
             }}
             name="image"
             onChange={(info) => {

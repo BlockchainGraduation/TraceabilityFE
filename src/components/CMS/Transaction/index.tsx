@@ -1,4 +1,5 @@
 import instanceAxios from '@/api/instanceAxios';
+import { useAppSelector } from '@/hooks';
 import currency from '@/services/currency';
 import {
   faCircleXmark,
@@ -12,36 +13,6 @@ import { Col, Row, Segmented, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-
-interface TransactionType {
-  id?: string;
-  product_id?: string;
-  user_id?: string;
-  price?: number;
-  quantity?: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: {
-    id?: string;
-    product_type?: string;
-    product_status?: string;
-    name?: string;
-    description?: string;
-    price?: number;
-    quantity?: number;
-    number_of_sales?: number;
-    banner?: string;
-    created_by?: string;
-    created_at?: string;
-    user?: {
-      id?: string;
-      avatar?: string;
-      username?: string;
-      email?: string;
-      phone?: string;
-    };
-  };
-}
 
 interface DataType {
   key: React.Key;
@@ -61,22 +32,24 @@ export default function TransactionCMS() {
   const [transactionTotal, setTransactionTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
+  const currentUser = useAppSelector((state) => state.user.user);
 
   const fetchDataTransaction = useCallback(async () => {
     setLoading(true);
     await instanceAxios
-      .get(`transaction_sf/list?skip=${skip - 1}&limit=${limit}`)
+      .get(`transaction-me?create_by=${currentUser.id}&page=${skip}`)
       .then((res) => {
-        console.log(res.data.data.list_transaction_sf);
-        setTransactionTotal(res.data.data.total_transaction_sf);
-        const newListTransaction = [...res.data.data.list_transaction_sf].map(
-          (item, index) => ({ key: (skip - 1) * limit + index + 1, ...item })
-        );
+        console.log(res.data);
+        setTransactionTotal(res.data.count);
+        const newListTransaction = [...res.data.results].map((item, index) => ({
+          key: (skip - 1) * limit + index + 1,
+          ...item,
+        }));
         setListTransaction(newListTransaction);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [limit, skip]);
+  }, [currentUser.id, skip, limit]);
   useEffect(() => {
     fetchDataTransaction();
   }, [fetchDataTransaction]);
@@ -90,13 +63,13 @@ export default function TransactionCMS() {
     {
       title: currentTable === 'BUY' ? 'Người bán' : 'Người mua',
       dataIndex: 'product.user.username',
-      render: (value, record, index) => record.product?.user?.username,
+      render: (value, record, index) => record.product_id?.create_by?.fullname,
       width: 250,
     },
     {
       title: 'Tên sản phẩm',
       dataIndex: 'product.name',
-      render: (value, record, index) => record.product?.name,
+      render: (value, record, index) => record.product_id?.name,
     },
     {
       title: 'Số lượng bán',
@@ -109,7 +82,7 @@ export default function TransactionCMS() {
     },
     {
       title: 'Tổng giá trị',
-      dataIndex: 'total',
+      dataIndex: 'quantity',
       render: (value, record, index) =>
         `${(
           (record.price || 0) * (record.quantity || 0)
@@ -118,17 +91,29 @@ export default function TransactionCMS() {
     {
       title: 'Ngày giao dịch',
       dataIndex: 'created_at',
-      render: (value, record, index) => moment(value).format('DD/MM/YYYY'),
+      render: (value, record, index) =>
+        moment(value).format('DD/MM/YYYY - HH:mm:ss'),
     },
     {
       title: 'Trạng thái',
       dataIndex: '',
-      render: (value, record, index) =>
-        record.price || 0 % 2 ? (
-          <Tag color={'success'}>Thành công</Tag>
-        ) : (
-          <Tag color={'error'}>Thất bại</Tag>
-        ),
+      render: (value, record, index) => {
+        switch (record.status) {
+          case 'REJECT':
+            return <Tag color={'red'}>GD Thất bại</Tag>;
+          case 'DONE':
+            return <Tag color={'success'}>GD thành công</Tag>;
+          case 'ACCEPT':
+            return <Tag color={'blue'}>Đã xác nhận</Tag>;
+          default:
+            return <Tag color={'yellow'}>Đang chờ</Tag>;
+        }
+      },
+      // record.status === 'PENDDING' ? (
+      //   <Tag color={'success'}>Thành công</Tag>
+      // ) : (
+      //   <Tag color={'error'}>Thất bại</Tag>
+      // ),
     },
   ];
   const data: DataType[] = [];
@@ -147,11 +132,12 @@ export default function TransactionCMS() {
   }
   return (
     <div>
-      <div className="flex  items-center justify-between p-[20px] border-[1px] rounded-[10px]">
-        <p className="text-3xl font-medium	">Danh sách sản phẩm</p>
+      <div className="flex bg-[#fafafa] items-center justify-between py-[10px] my-[20px] px-[20px] border-[1px] rounded-[10px]">
+        <p className="text-2xl font-medium">Lịch sử giao dịch của bạn</p>
       </div>
       <Segmented
         size={'large'}
+        className="mb-[20px]"
         defaultValue={currentTable}
         onChange={(e) => setCurrentTable(e.toString())}
         options={[
@@ -166,7 +152,7 @@ export default function TransactionCMS() {
           dataSource={listTransaction}
           pagination={{
             onChange: (e) => {
-              setSkip(e - 1);
+              setSkip(e);
             },
             current: skip,
             pageSize: 10,

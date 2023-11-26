@@ -12,6 +12,7 @@ import theme from '@/theme/themeConfig';
 import dynamic from 'next/dynamic';
 import { StyleProviderX } from '@/components/RootStyleRegistry';
 import { StyleProvider } from '@ant-design/cssinjs';
+import moment from 'moment';
 // import { Suspense } from 'react';
 
 // const Header = dynamic(() => import('@/components/Header'), {
@@ -45,6 +46,7 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound();
   }
+  moment.locale(locale);
 
   return (
     <html lang={locale} suppressHydrationWarning className={''}>
@@ -65,9 +67,17 @@ export default async function LocaleLayout({
                     itemSelectedColor: '#000000',
                     // itemHoverBg: '#D7E4FDFF',
                   },
-                  Button: {
-                    colorPrimaryHover: '#ffffff',
-                    colorPrimaryBgHover: '#42bb67',
+                  // Button: {
+                  //   colorPrimaryHover: '#ffffff',
+                  //   colorPrimaryBgHover: '#42bb67',
+                  // },
+                  Input: {
+                    activeBorderColor: '#36b75e',
+                    activeShadow: '#36b75e',
+                    hoverBorderColor: '#36b75e',
+                    colorBgContainerDisabled: '#36b75e',
+                    addonBg: '#36b75e',
+                    // controlItemBgActive: '#ffffff',
                   },
                 },
               }}

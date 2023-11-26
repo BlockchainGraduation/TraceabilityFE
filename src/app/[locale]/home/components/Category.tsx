@@ -168,7 +168,7 @@ export default function Category(props: Props) {
                   preview={false}
                   className=" object-cover"
                   alt=""
-                  src={item.product?.banner}
+                  src={item.product?.banner || staticVariables.noImage.src}
                 />
 
                 <div className="w-full flex flex-col space-x-2 p-[16px]">

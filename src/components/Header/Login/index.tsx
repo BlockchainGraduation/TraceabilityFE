@@ -26,18 +26,16 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
 
   const fethLogin = async (data: object) => {
     await instanceAxios
-      .post('auth/login', data)
+      .post('login', data)
       .then((res) => {
         onFinish();
         dispatch(setshowFormLogin({ showFormLogin: false }));
-        dispatch(
-          setLogin({ logged: true, user: res.data.data.user as UserType })
-        );
-        setCookie('access_token', res.data.data.access_token);
-        instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.data.access_token}`;
+        dispatch(setLogin({ logged: true, user: res.data.user as UserType }));
+        setCookie('access', res.data.access);
+        instanceAxios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
         notification.success({
           message: 'Thông báo',
-          description: `Xin chào ${res.data.data.user.username}`,
+          description: `Xin chào ${res.data.user.username}`,
         });
         form.resetFields();
         requireLogin();
@@ -73,7 +71,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
   // };
   return (
     <div>
-      <p className="my-[30px] text-3xl font-normal block text-center">
+      <p className="my-[30px] text-[#222222] text-3xl font-bold block text-center">
         Đăng nhập
       </p>
       <Form
@@ -90,14 +88,14 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
       >
         <Form.Item<FieldType>
           label="Username"
-          name="email"
+          name="username"
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
           <Input
             // style={{
             //   boxShadow: `rgba(133, 189, 215, 0.8784313725) 0px 12px 10px -8px`,
             // }}
-            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
+            className="py-[10px] px-[15px] rounded-bl-3xl rounded-tr-3xl shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
             prefix={<UserOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
@@ -108,7 +106,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password
-            className="shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
+            className="py-[10px] px-[15px] rounded-tr-3xl rounded-bl-3xl shadow-[0px_12px_10px_-8px_rgba(133,189,215,0.8784313725)]"
             prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>

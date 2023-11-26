@@ -7,6 +7,7 @@ interface Props {
     label?: string;
     value?: string | number;
   }[];
+  titleClassName?: string;
   spaceProps?: SpaceProps;
   defaulValue?: string | number;
   onChange?: (e?: any) => void;
@@ -16,7 +17,9 @@ export default function RadioCustom(props: Props) {
   //   const [valueRadio, setValueRadio] = useState(props.defaulValue || '');
   return (
     <div>
-      <p className="pt-[12px] pb-[20px] text-[14px]">{props.title}</p>
+      <p className={`pt-[12px] pb-[20px] text-[14px] ${props.titleClassName}`}>
+        {props.title}
+      </p>
       <Radio.Group
         defaultValue={props.defaulValue || ''}
         onChange={(e) => {
