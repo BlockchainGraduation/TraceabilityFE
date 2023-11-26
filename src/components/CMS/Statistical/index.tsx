@@ -19,12 +19,16 @@ import { Doughnut, Pie } from 'react-chartjs-2';
 import staticVariables from '@/static';
 import { Avatar, Image, Space } from 'antd';
 import { useAppSelector } from '@/hooks';
+import getPercent from '@/services/getPercent';
+import Percent from './Percent';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Statistical() {
-  const [dataStatistical, setSataStatistical] = useState<StatisticalSystemType>(
+  const [dataStatistical, setDataStatistical] = useState<StatisticalSystemType>(
     {}
   );
+  const [dataStatisticalUser, setDataStatisticalUser] =
+    useState<StatisticalUserType>({});
   const currentUser = useAppSelector((state) => state.user.user);
 
   const options = {
@@ -265,22 +269,33 @@ export default function Statistical() {
           value: dataStatistical.statistical_product?.total_sales || 0,
         },
       ];
-  const fethStatisticalSystems = async () => {
+  // const fethStatisticalSystems = async () => {
+  //   await instanceAxios
+  //     .get(
+  //       `${
+  //         currentUser.is_superuser ? 'user/statistical' : 'user/statistical/me'
+  //       }`
+  //     )
+  //     .then((res) => {
+  //       setDataStatistical(res.data.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log('user/statistical', err);
+  //     });
+  // };
+  const fethStatisticalUser = async () => {
     await instanceAxios
-      .get(
-        `${
-          currentUser.is_superuser ? 'user/statistical' : 'user/statistical/me'
-        }`
-      )
+      .get(`user/statistical`)
       .then((res) => {
-        setSataStatistical(res.data.data);
+        setDataStatisticalUser(res.data.detail);
       })
       .catch((err) => {
         console.log('user/statistical', err);
       });
   };
   useEffectOnce(() => {
-    fethStatisticalSystems();
+    fethStatisticalUser();
+    // fethStatisticalSystems();
   });
   return (
     <div className="w-full pb-[50px]">
@@ -318,18 +333,24 @@ export default function Statistical() {
                 Sản phẩm
               </p>
               <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
+                <p className="text-[#0b0c50] text-[50px] font-semibold">
+                  {dataStatisticalUser.product?.product_count}
+                </p>
                 <p className="text-gray-500 font-semibold">Sản phẩm</p>
               </div>
               <div className="w-full">
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang mở bán</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang đóng</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
+                <Percent
+                  label="Đang mở bán"
+                  total={dataStatisticalUser.product?.product_count || 0}
+                  value={dataStatisticalUser.product?.public_product_count || 0}
+                />
+                <Percent
+                  label="Không mở bán"
+                  total={dataStatisticalUser.product?.product_count || 0}
+                  value={
+                    dataStatisticalUser.product?.private_product_count || 0
+                  }
+                />
               </div>
             </div>
             <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
@@ -369,21 +390,54 @@ export default function Statistical() {
                 />
               </div>
               <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Sản phẩm
+                Giao dịch mua sản phẩm của bạn
               </p>
               <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
-                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+                <p className="text-[#0b0c50] text-[50px] font-semibold">
+                  {dataStatisticalUser.transaction?.transaction_count || 0}
+                </p>
+                <p className="text-gray-500 font-semibold">Giao dịch mua</p>
               </div>
               <div className="w-full">
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang mở bán</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang đóng</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
+                <Percent
+                  label="Đang chờ"
+                  total={
+                    dataStatisticalUser.transaction?.transaction_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.transaction
+                      ?.pendding_transaction_count || 0
+                  }
+                />
+                <Percent
+                  label="Bị từ chối"
+                  total={
+                    dataStatisticalUser.transaction?.transaction_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.transaction?.reject_transaction_count ||
+                    0
+                  }
+                />
+                <Percent
+                  label="Đã xác nhận"
+                  total={
+                    dataStatisticalUser.transaction?.transaction_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.transaction?.accept_transaction_count ||
+                    0
+                  }
+                />
+                <Percent
+                  label="Đã hoàn thành"
+                  total={
+                    dataStatisticalUser.transaction?.transaction_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.transaction?.done_transaction_count || 0
+                  }
+                />
               </div>
             </div>
             <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
@@ -395,21 +449,57 @@ export default function Statistical() {
                 />
               </div>
               <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Sản phẩm
+                Giao dịch về sản phẩm của bạn
               </p>
               <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
-                <p className="text-gray-500 font-semibold">Sản phẩm</p>
+                <p className="text-[#0b0c50] text-[50px] font-semibold">
+                  {dataStatisticalUser.sales?.transaction_sales_count || 0}
+                </p>
+                <p className="text-gray-500 font-semibold">
+                  GD / {dataStatisticalUser.product?.product_count || 0} Sản
+                  phẩm
+                </p>
               </div>
               <div className="w-full">
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang mở bán</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang đóng</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
+                <Percent
+                  label="GD đang chờ"
+                  total={
+                    dataStatisticalUser.sales?.transaction_sales_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.sales
+                      ?.pendding_transaction_sales_count || 0
+                  }
+                />
+                <Percent
+                  label="GD đã bị bạn từ chối"
+                  total={
+                    dataStatisticalUser.sales?.transaction_sales_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.sales?.reject_transaction_sales_count ||
+                    0
+                  }
+                />
+                <Percent
+                  label="GD bạn đã xác nhận"
+                  total={
+                    dataStatisticalUser.sales?.transaction_sales_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.sales?.accept_transaction_sales_count ||
+                    0
+                  }
+                />
+                <Percent
+                  label="GD đã hoàn thành"
+                  total={
+                    dataStatisticalUser.sales?.transaction_sales_count || 0
+                  }
+                  value={
+                    dataStatisticalUser.sales?.done_transaction_sales_count || 0
+                  }
+                />
               </div>
             </div>
           </div>

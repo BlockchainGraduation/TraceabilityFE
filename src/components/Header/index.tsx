@@ -230,7 +230,14 @@ export default memo(function Header() {
       })
       .catch((err) => console.log(err));
   };
+  const fetchNotifiactionMe = async () => {
+    await instanceAxios
+      .get(`notification-me`)
+      .then((res) => setListNotifications(res.data.detail))
+      .catch((err) => console.log(err));
+  };
 
+  useSWR('notifiation-me', fetchNotifiactionMe);
   useSWR('cart-me', fetchCartMe);
 
   useEffect(() => {
@@ -265,6 +272,7 @@ export default memo(function Header() {
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
     deleteCookie('access');
+    deleteCookie('refresh');
     // router.push('/');
     // setShowModal(true);
     setCurrentForm('LOGIN');
@@ -508,7 +516,7 @@ export default memo(function Header() {
         </Popover>
       </div>
       <div className="flex items-center ">
-        <ConfigProvider
+        {/* <ConfigProvider
           theme={{
             token: {
               // colorText: `${isHomePage && 'white'}`,
@@ -539,7 +547,7 @@ export default memo(function Header() {
               ]}
             />
           </Space>
-        </ConfigProvider>
+        </ConfigProvider> */}
 
         {logged ? (
           <div className="flex items-center space-x-5">

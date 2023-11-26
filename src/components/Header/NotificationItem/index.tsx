@@ -19,20 +19,15 @@ export default function NotificationItem(props: NotificationItemType) {
   const route = useRouter();
   const fetchGetDetail = async () => {
     await instanceAxios
-      .get(`notifications/${props.data?.data?.notification_id}/detail`)
+      .get(`notifications/${props.id}/detail`)
       .then((res) => {
         mutate('notifications/list');
       })
-      .catch((err) =>
-        console.log(
-          'Error',
-          `notifications/${props.data?.data?.notification_id}/detail`
-        )
-      );
+      .catch((err) => console.log('Error', `notifications/${props.id}/detail`));
   };
   const fetchDeleteNotification = async () => {
     await instanceAxios
-      .delete(`notifications/${props.data?.data?.notification_id}`)
+      .delete(`notifications/${props.id}`)
       .then((res) => {
         message.success('Bạn đã xóa thông báo');
         mutate('notifications/list');
@@ -42,14 +37,12 @@ export default function NotificationItem(props: NotificationItemType) {
   return (
     <div
       className={`relative flex items-center p-[10px] ${
-        props.data?.data?.unread ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
-      } ${
-        props.data?.data?.unread ? `bg-sky-50` : ''
-      } rounded max-w-[400px] gap-x-3`}
+        props.active ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
+      } ${props.active ? `bg-sky-50` : ''} rounded max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
-      {props.data?.data?.unread && !showDeleteIcon && (
+      {props.active && !showDeleteIcon && (
         <FontAwesomeIcon
           className="absolute top-1/2 right-[10px]"
           icon={faCircle}
@@ -82,22 +75,12 @@ export default function NotificationItem(props: NotificationItemType) {
           {/* </Popconfirm> */}
         </ConfigProvider>
       )}
-      <Avatar size={'large'} src={props.user?.avatar} />
+      <Avatar size={'large'} src={props.create_by?.avatar} />
       <div className="w-9/12">
         <div
           onClick={async () => {
             await fetchGetDetail();
-            route.push(
-              `/${
-                props.data?.params?.notification_type === 'PRODUCT_NOTIFICATION'
-                  ? 'product'
-                  : 'market'
-              }/${
-                props.data?.params?.notification_type === 'PRODUCT_NOTIFICATION'
-                  ? props.data?.params.product_id
-                  : props.data?.params?.marketplace_id
-              }`
-            );
+            route.push(`product/${props.product_id?.id}`);
           }}
           className="hover:text-black"
         >
@@ -110,16 +93,18 @@ export default function NotificationItem(props: NotificationItemType) {
           ) : ( */}
           <div
             className=" w-full line-clamp-2 text-justify"
-            dangerouslySetInnerHTML={{
-              __html: props.data?.message?.toString() || '',
-            }}
-          ></div>
-          <p
-            className={
-              props.data?.data?.unread ? 'text-[#0866ff]' : 'text-gray-500'
-            }
+            // dangerouslySetInnerHTML={{
+            //   __html: props.data?.message?.toString() || '',
+            // }}
           >
-            {moment(props.data?.data?.created_at).fromNow()}
+            <p>
+              {`${props.create_by?.fullname} ${tNotifications(
+                props.notification_type
+              )} ${props.product_id?.name}`}
+            </p>
+          </div>
+          <p className={props.active ? 'text-[#0866ff]' : 'text-gray-500'}>
+            {moment(props.create_at).fromNow()}
           </p>
         </div>
       </div>

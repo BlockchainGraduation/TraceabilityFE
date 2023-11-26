@@ -1,4 +1,5 @@
 'use client';
+import instanceAxios from '@/api/instanceAxios';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import Login from '@/components/Header/Login';
@@ -21,6 +22,7 @@ export default function LoginPage() {
     setCurrentForm('LOGIN');
   };
   useEffectOnce(() => {
+    delete instanceAxios.defaults.headers.common.Authorization;
     setLoadingPage(false);
   });
   return (

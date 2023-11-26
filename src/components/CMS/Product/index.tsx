@@ -91,9 +91,11 @@ export default memo(function ProductCMS() {
     setTransactionId(e || 0);
   };
   const fetchListTransaction = async () => {
-    await instanceAxios(`transaction-me?status=DONE`)
+    await instanceAxios(
+      `transaction-me?create_by=${currentUser.id}&status=DONE`
+    )
       .then((res) => {
-        setListTransaction(res.data);
+        setListTransaction(res.data.results);
       })
       .catch((err) => console.log(err));
   };

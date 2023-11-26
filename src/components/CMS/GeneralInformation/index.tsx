@@ -133,7 +133,7 @@ export default function GeneralInformation() {
   return (
     <div>
       <p className="py-[50px] font-bold text-[30px]">Thông tin của bạn</p>
-      <div className="flex space-x-10">
+      <div className="flex gap-x-10 justify-center">
         <div className="bg-[#f6f6f6] p-[30px] rounded-xl">
           <p className="font-semibold text-[20px]">Ảnh đại diện</p>
           <div className="relative mr-[50px] p-[20px]">
@@ -176,7 +176,7 @@ export default function GeneralInformation() {
             </Spin>
           </div>
         </div>
-        <div className="flex w-1/2 flex-col space-y-5">
+        <div className="flex w-1/2 flex-col gap-y-5">
           <div className="p-[20px] flex flex-col w-full bg-[#f6f6f6] rounded-xl">
             <p className="font-semibold text-[20px]">Tên của bạn</p>
             <InputCustom

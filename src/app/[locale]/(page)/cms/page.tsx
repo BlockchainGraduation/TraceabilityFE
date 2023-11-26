@@ -55,7 +55,9 @@ function getItem(
 
 export default memo(function CMSPage() {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(
+    Number(localStorage.getItem('page'))
+  );
   const route = useRouter();
   const {
     token: { colorBgContainer },
@@ -63,9 +65,9 @@ export default memo(function CMSPage() {
   const currentUser = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
-  useEffectOnce(() => {
-    setCurrentPage(Number(localStorage.getItem('page')));
-  });
+  // useEffectOnce(() => {
+  //   setCurrentPage(Number(localStorage.getItem('page')));
+  // });
   const handleLogout = async () => {
     delete instanceAxios.defaults.headers.common.Authorization;
     dispatch(logOut());
@@ -78,17 +80,17 @@ export default memo(function CMSPage() {
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem(<p>Đơn hàng</p>, '1', <ScheduleOutlined />),
-    getItem(<p>Thống kê</p>, '2', <PieChartOutlined />),
+    getItem('Đơn hàng', '1', <ScheduleOutlined />),
+    getItem('Thống kê', '2', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
-      getItem(<p>Thông tin chung</p>, '3', <WalletOutlined />),
-      getItem(<p>Đổi mật khẩu</p>, '4', <LockOutlined />),
-      getItem(<p>Liên kết</p>, '5', <LinkOutlined />),
+      getItem('Thông tin chung', '3', <WalletOutlined />),
+      getItem('Đổi mật khẩu', '4', <LockOutlined />),
+      getItem('Liên kết', '5', <LinkOutlined />),
     ]),
     !currentUser.user.is_superuser
       ? getItem('Sản phẩm', 'sub2', <TeamOutlined />, [
-          getItem(<p>Quản lí sản phâm</p>, '6', <BookOutlined />),
-          getItem(<p>Lịch sử giao dịch</p>, '7', <HistoryOutlined />),
+          getItem('Quản lí sản phẩm', '6', <BookOutlined />),
+          getItem('Lịch sử giao dịch', '7', <HistoryOutlined />),
         ])
       : null,
 
@@ -97,16 +99,12 @@ export default memo(function CMSPage() {
     currentUser.user.is_superuser
       ? getItem('Admin', 'sub3', <TeamOutlined />, [
           // getItem('Thống kê hệ thống', '6'),
-          getItem(<p>Quản lí user</p>, '8'),
+          getItem('Quản lí user', '8'),
           // getItem('Quản lí sản phẩm', '8'),
         ])
       : null,
-    getItem(
-      <p onClick={() => route.push('/home')}>Về trang chủ</p>,
-      '9',
-      <HomeOutlined />
-    ),
-    getItem(<p onClick={handleLogout}>Đăng xuất</p>, '10', <LoginOutlined />),
+    getItem('Về trang chủ', '9', <HomeOutlined />),
+    getItem('Đăng xuất', '10', <LoginOutlined />),
   ];
   const contents = [
     <OrderCMS key={1} />,
@@ -131,32 +129,44 @@ export default memo(function CMSPage() {
     currentUser.logged && (
       <div className="w-full">
         <Layout className="w-full">
-          <Sider
-            theme="light"
-            className="relative h-full"
-            // collapsible
-            collapsed={collapsed}
-            onCollapse={(value) => setCollapsed(value)}
-          >
-            <Menu
-              theme={'light'}
-              defaultSelectedKeys={[currentPage.toString()]}
-              mode="inline"
-              items={items}
-              onSelect={(e) => {
-                setCurrentPage(Number(e.key));
-                localStorage.setItem('page', e.key);
-              }}
-            />
-            <div
-              className="absolute top-0 right-0 translate-x-1/2 py-2 text-[20px]"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              {collapsed ? <RightCircleTwoTone /> : <LeftCircleTwoTone />}
-            </div>
-          </Sider>
           <Layout>
-            {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+            <Header style={{ padding: 0, background: colorBgContainer }}>
+              {/* <Sider
+                theme="dark"
+                className="relative h-full"
+                // collapsible
+                collapsed={collapsed}
+                onCollapse={(value) => setCollapsed(value)}
+              > */}
+              <Menu
+                theme={'dark'}
+                defaultSelectedKeys={[currentPage.toString()]}
+                mode={'horizontal'}
+                className="h-full"
+                items={items}
+                onClick={(e) => {
+                  if (e.key == '9') {
+                    route.push('/home');
+                  }
+                  if (e.key == '10') {
+                    handleLogout();
+                  }
+                }}
+                onSelect={(e) => {
+                  setCurrentPage(Number(e.key));
+                  if (e.key !== '9' && e.key !== '10') {
+                    localStorage.setItem('page', e.key);
+                  }
+                }}
+              />
+              {/* <div
+                className="absolute top-0 right-0 translate-x-1/2 py-2 text-[20px]"
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                {collapsed ? <RightCircleTwoTone /> : <LeftCircleTwoTone />}
+              </div> */}
+              {/* </Sider> */}
+            </Header>
             <Content
             //  style={{ margin: '0 16px' }}
             >
@@ -169,7 +179,7 @@ export default memo(function CMSPage() {
                   padding: 24,
                   paddingBottom: 50,
                   paddingTop: 50,
-                  minHeight: 500,
+                  minHeight: 700,
                   background: colorBgContainer,
                 }}
               >
@@ -181,7 +191,7 @@ export default memo(function CMSPage() {
             </FooterAntd>
           </Layout>
         </Layout>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     )
   );

@@ -57,7 +57,7 @@ export default function CMSProductItem({
           <p>{data?.quantity}</p>
         </Col>
         <Col span={4}>
-          <p>{moment(data?.create_at).format('DD/MM/YYYY - HH:MM:SS')}</p>
+          <p>{moment(data?.create_at).format('DD/MM/YYYY - HH:mm:ss')}</p>
         </Col>
         <Col span={2}>
           <p>{data?.active ? 'Mở bán' : 'Không mở bán'}</p>

@@ -220,6 +220,27 @@ interface StatisticalSystemType {
     total_transaction_fm?: number;
   };
 }
+interface StatisticalUserType {
+  product?: {
+    product_count?: number;
+    public_product_count?: number;
+    private_product_count?: number;
+  };
+  transaction?: {
+    transaction_count?: number;
+    pendding_transaction_count?: number;
+    accept_transaction_count?: number;
+    reject_transaction_count?: number;
+    done_transaction_count?: number;
+  };
+  sales?: {
+    transaction_sales_count?: number;
+    accept_transaction_sales_count?: number;
+    pendding_transaction_sales_count?: number;
+    reject_transaction_sales_count?: number;
+    done_transaction_sales_count?: number;
+  };
+}
 
 interface GrowUpType {
   id?: string;
@@ -306,7 +327,7 @@ interface TransactionType {
   status?: string;
   is_reject?: boolean;
   create_at?: string;
-  product_id?: number;
+  product_id?: ProductType;
 }
 interface DetailTransactionType {
   id?: number;
@@ -321,27 +342,10 @@ interface DetailTransactionType {
 }
 
 interface NotificationItemType {
-  data?: {
-    message?: string;
-    params?: {
-      product_id?: string;
-      product_name?: string;
-      notification_type?: string;
-      marketplace_id?: string;
-      action?: string;
-    };
-    data?: {
-      created_at?: number;
-      unread?: boolean;
-      notification_id?: string;
-    };
-  };
-  user?: {
-    id?: string;
-    avatar?: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    system_role?: string;
-  };
+  active?: boolean;
+  create_by?: UserType;
+  id?: number;
+  notification_type?: string;
+  product_id?: ProductType;
+  create_at?: string;
 }
