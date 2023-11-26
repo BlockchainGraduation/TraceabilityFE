@@ -1,7 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import staticVariables from '@/static';
 import { DeleteTwoTone } from '@ant-design/icons';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, ConfigProvider, Popconfirm, message } from 'antd';
 import moment from 'moment';
@@ -19,33 +19,33 @@ export default function NotificationItem(props: NotificationItemType) {
   const route = useRouter();
   const fetchGetDetail = async () => {
     await instanceAxios
-      .get(`notifications/${props.id}/detail`)
+      .patch(`active-notification/${props.id}`)
       .then((res) => {
-        mutate('notifications/list');
+        mutate('notifiation-me');
       })
       .catch((err) => console.log('Error', `notifications/${props.id}/detail`));
   };
   const fetchDeleteNotification = async () => {
     await instanceAxios
-      .delete(`notifications/${props.id}`)
+      .delete(`delete-notification/${props.id}`)
       .then((res) => {
         message.success('Bạn đã xóa thông báo');
-        mutate('notifications/list');
+        mutate('notifiation-me');
       })
       .catch((err) => message.error('Xóa thông báo thất bại'));
   };
   return (
     <div
       className={`relative flex items-center p-[10px] ${
-        props.active ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
-      } ${props.active ? `bg-sky-50` : ''} rounded max-w-[400px] gap-x-3`}
+        !props.active ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
+      } ${!props.active ? `bg-sky-50` : ''} rounded max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
-      {props.active && !showDeleteIcon && (
+      {!props.active && !showDeleteIcon && (
         <FontAwesomeIcon
           className="absolute top-1/2 right-[10px]"
-          icon={faCircle}
+          icon={faBell}
           size={'1x'}
           style={{ color: '#0866ff' }}
         />
@@ -80,7 +80,7 @@ export default function NotificationItem(props: NotificationItemType) {
         <div
           onClick={async () => {
             await fetchGetDetail();
-            route.push(`product/${props.product_id?.id}`);
+            route.push(`/product/${props.product_id?.id}`);
           }}
           className="hover:text-black"
         >

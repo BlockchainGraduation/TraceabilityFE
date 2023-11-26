@@ -436,7 +436,7 @@ export default function ProductEditage({
                   />
                 </Space>
                 <div className="flex items-center gap-x-4 my-[10px]">
-                  <p>Quantity</p>
+                  <p>Số lượng hiện có : </p>
                   <InputNumber
                     onChange={(e) => setBuyQuantity(e)}
                     defaultValue={0}
@@ -518,7 +518,7 @@ export default function ProductEditage({
                     currentTab === 'COMMENT' &&
                     'border-b-2 border-current-color'
                   }`}
-                >{`Bình luận  ( ${dataProduct.detail_decriptions?.length} )`}</p>
+                >{`Bình luận  ( ${commentList.length} )`}</p>
               </div>
               <div className="w-full flex p-[20px]">
                 {currentTab === 'DESCRIPTION' && (
@@ -571,10 +571,10 @@ export default function ProductEditage({
                 )}
                 {currentTab === 'COMMENT' && (
                   <div className="w-2/3 m-auto">
-                    <p className="mt-[20px] flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
+                    <div className="mt-[20px] flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
                       Đã có {commentList.length} bình luận cho{' '}
                       <p className="font-semibold">{dataProduct.name}</p>
-                    </p>
+                    </div>
                     <div>
                       {commentList.map((item, index) => (
                         <CommentItem

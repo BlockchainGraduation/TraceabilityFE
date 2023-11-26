@@ -53,6 +53,7 @@ export default function RootLayout({ children }: Props) {
         revalidateIfStale: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: false,
+        revalidateOnMount: false,
       }}
     >
       <Providers>

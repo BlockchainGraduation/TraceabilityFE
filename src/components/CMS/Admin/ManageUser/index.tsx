@@ -1,5 +1,13 @@
 import instanceAxios from '@/api/instanceAxios';
-import { ExclamationCircleTwoTone } from '@ant-design/icons';
+import {
+  CloseCircleTwoTone,
+  ExclamationCircleTwoTone,
+  EyeTwoTone,
+  LockTwoTone,
+  MessageTwoTone,
+  SettingTwoTone,
+  UnlockTwoTone,
+} from '@ant-design/icons';
 import {
   faCircleXmark,
   faEnvelope,
@@ -25,6 +33,7 @@ import {
   Tag,
   notification,
 } from 'antd';
+import { SegmentedValue } from 'antd/es/segmented';
 import { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import Link from 'next/link';
@@ -37,46 +46,32 @@ import React, {
 } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
-interface UserRequest {
-  key: React.Key;
-  index: number;
-  full_name?: string;
-  hashed_data?: string;
-  updated_at?: string;
-  avatar?: string;
-  birthday?: string;
-  phone?: string;
-  hashed_password?: string;
-  email?: string;
-  verify_code?: string;
-  address_wallet?: null;
-  system_role?: string;
-  is_active?: true;
-  confirm_status?: string;
-  username?: string;
-  private_key?: string;
-  survey_data?: any;
-  id: string;
-  address_real?: string;
-  created_at?: string;
-}
-
 export default memo(function ManageUser() {
   const [currentTable, setCurrentTable] = useState('all');
-  const [skip, setSkip] = useState(0);
+  const [confirmStatus, setConfirmStatus] = useState<SegmentedValue>('');
+  const [skip, setSkip] = useState(1);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
   const [totalUser, setTotalUser] = useState(0);
-  const [userList, setUserList] = useState<UserRequest[]>([]);
+  const [userList, setUserList] = useState<UserType[]>([]);
   const { mutate } = useSWRConfig();
-  const fetchAction = async (record: UserRequest, action: string) => {
+  const fetchAction = async (record: UserType, status: boolean) => {
     await instanceAxios
-      .put(`user/${record.id}/confirm_user?confirm=${action}`)
+      .patch(`user/confirm`, {
+        user_id: record.id,
+        status,
+      })
       .then((res) => {
-        notification.success({
-          message: 'Thành công',
-          description: `Đã ${action} yêu cầu của ${record.username}`,
-        });
+        if (status)
+          notification.success({
+            message: 'Thành công',
+            description: `Đã chấp nhận yêu cầu của ${record.username}`,
+          });
+        else
+          notification.success({
+            message: 'Thành công',
+            description: `Đã từ chối yêu cầu của ${record.username}`,
+          });
         mutate('user/list');
       })
       .catch((err) => {
@@ -86,36 +81,43 @@ export default memo(function ManageUser() {
         });
       });
   };
-  const columnsWaiting: ColumnsType<UserRequest> =
-    currentTable === 'waiting'
+  const columnsWaiting: ColumnsType<UserType> =
+    confirmStatus === 'PENDDING'
       ? [
           {
             title: 'Role',
-            dataIndex: 'system_role',
+            dataIndex: 'role',
           },
           {
             title: 'Role yêu cầu',
             // dataIn   dex: '',
-            render: (value, record, index) => record.survey_data?.user_role,
+            render: (value, record, index) => record.survey?.user_role,
           },
         ]
       : [
           {
             title: 'Role',
-            dataIndex: 'system_role',
+            dataIndex: 'role',
           },
         ];
-  const columns: ColumnsType<UserRequest> = [
+  const columns: ColumnsType<UserType> = [
     {
       title: 'Stt',
       dataIndex: 'key',
       width: 65,
     },
-    {
-      title: 'Người dùng',
-      dataIndex: 'full_name',
-      width: 200,
-    },
+    confirmStatus === 'PENDDING'
+      ? {
+          title: 'Tên yêu cầu',
+          dataIndex: 'fullname',
+          width: 200,
+          render: (value, record, index) => record.survey?.name,
+        }
+      : {
+          title: 'Người dùng',
+          dataIndex: 'fullname',
+          width: 200,
+        },
     {
       title: 'Tên tài khoản',
       dataIndex: 'username',
@@ -144,8 +146,8 @@ export default memo(function ManageUser() {
     },
 
     {
-      title: 'Hành động',
-      width: 140,
+      title: <p className="text-center"> Hành động</p>,
+      width: 150,
       render: (value, record, index) => (
         <ConfigProvider
           theme={{
@@ -162,19 +164,19 @@ export default memo(function ManageUser() {
             },
           }}
         >
-          {currentTable === 'waiting' ? (
-            <div className="flex items-center">
+          {confirmStatus === 'PENDDING' ? (
+            <div className="flex items-center gap-2">
               <Button
-                onClick={() => fetchAction(record, 'REJECT')}
+                onClick={() => fetchAction(record, false)}
                 className="text-[10px] py-[6px] px-[10px]"
               >
-                Reject
+                Từ chối
               </Button>
               <Button
-                onClick={() => fetchAction(record, 'ACCEPT')}
+                onClick={() => fetchAction(record, true)}
                 className="text-[10px] py-[6px] px-[10px]"
               >
-                Accept
+                Xác nhận
               </Button>
             </div>
           ) : (
@@ -189,10 +191,7 @@ export default memo(function ManageUser() {
                       <Link href={`/product/${record.id}`}>
                         {/* <Popover placement={'left'} title="Xem người dùng"> */}
                         <Space>
-                          <FontAwesomeIcon
-                            icon={faEye}
-                            style={{ color: '#2657ab' }}
-                          />
+                          <EyeTwoTone />
                           <p>Xem người dùng</p>
                         </Space>
                         {/* </Popover> */}
@@ -204,9 +203,9 @@ export default memo(function ManageUser() {
                     label: (
                       <Popconfirm
                         title={`${
-                          record.system_role === 'PUBLISH'
-                            ? 'Sure to block this user ?'
-                            : 'Sure to open this user ?'
+                          record.is_active
+                            ? 'Chặn người dùng ?'
+                            : 'Mở khóa người dùng ?'
                         }`}
                         // onConfirm={() => fetchCreateMarket(record.id)}
                       >
@@ -219,23 +218,25 @@ export default memo(function ManageUser() {
                           }
                         > */}
                         <Space>
-                          {record.system_role === 'PUBLISH' ? (
-                            <FontAwesomeIcon
-                              //   onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
-                              icon={faLockOpen}
-                              style={{ color: '#27913c' }}
-                            />
+                          {record.is_active ? (
+                            <LockTwoTone />
                           ) : (
-                            <FontAwesomeIcon
-                              //   onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
-                              icon={faLock}
-                              style={{ color: '#a87171' }}
-                            />
+                            // <FontAwesomeIcon
+                            //   //   onClick={() => fetchUpdateProductStatus(record.id, 'PRIVATE')}
+                            //   icon={faLockOpen}
+                            //   style={{ color: '#27913c' }}
+                            // />
+                            // <FontAwesomeIcon
+                            //   //   onClick={() => fetchUpdateProductStatus(record.id, 'PUBLISH')}
+                            //   icon={faLock}
+                            //   style={{ color: '#a87171' }}
+                            // />
+                            <UnlockTwoTone />
                           )}
                           <p>
-                            {record.system_role === 'PUBLISH'
-                              ? 'Block this account'
-                              : 'Open this account'}
+                            {record.is_active
+                              ? 'Chặn người dùng này'
+                              : 'Mở khóa người dùng này'}
                           </p>
                         </Space>
                         {/* </Popover> */}
@@ -250,10 +251,7 @@ export default memo(function ManageUser() {
                       //   title="Nhắn tin cho người dùng"
                       // >
                       <Space>
-                        <FontAwesomeIcon
-                          icon={faEnvelope}
-                          style={{ color: '#65dd55' }}
-                        />
+                        <MessageTwoTone />
                         <p>Nhắn tin cho người dùng</p>
                       </Space>
                       // </Popover>
@@ -268,10 +266,7 @@ export default memo(function ManageUser() {
                       >
                         {/* <Popover placement={'left'} title="Xóa người dùng"> */}
                         <Space>
-                          <FontAwesomeIcon
-                            icon={faCircleXmark}
-                            style={{ color: '#c01616' }}
-                          />
+                          <CloseCircleTwoTone className="text-red-600" />
                           <p>Xóa người dùng</p>
                         </Space>
                         {/* </Popover> */}
@@ -281,7 +276,9 @@ export default memo(function ManageUser() {
                 ],
               }}
             >
-              <ExclamationCircleTwoTone className="ml-[30px]" />
+              {/* <div className='text'> */}
+              <SettingTwoTone className="m-auto block" />
+              {/* </div> */}
             </Dropdown>
           )}
         </ConfigProvider>
@@ -292,24 +289,24 @@ export default memo(function ManageUser() {
     setLoading(true);
     await instanceAxios
       .get(
-        `${
-          currentTable === 'waiting' ? `user/list_users_request` : `user/list`
-        }?skip=${skip}&limit=${limit}`
+        `user/list?${
+          confirmStatus === '' ? '' : `confirm_status=${confirmStatus}&`
+        }page=${skip}`
       )
       .then((res) => {
         // console.log(res.data.data);
-        const newList: UserRequest[] = [...res.data.data.list_users].map(
+        const newList: UserType[] = [...res.data.results].map(
           (item, index) => ({
-            key: skip * limit + index + 1,
+            key: `${skip - 1}${index + 1}`,
             ...item,
           })
         );
         setUserList(newList);
-        setTotalUser(res.data.data.total_users);
+        setTotalUser(res.data.count);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [currentTable, limit, skip]);
+  }, [confirmStatus, skip]);
   useSWR(`user/list`, fetchUser);
 
   useEffect(() => {
@@ -318,9 +315,10 @@ export default memo(function ManageUser() {
 
   // useSWR('user/list_users_request', fetchUserRequest);
   // useSWR('user/list', fetchAllUser);
-  const handleChangeTable = async (e: any) => {
-    setSkip(0);
+  const handleChangeTable = async (e: SegmentedValue) => {
+    setSkip(1);
     setCurrentTable(e.toString());
+    setConfirmStatus(e);
   };
 
   return (
@@ -330,13 +328,14 @@ export default memo(function ManageUser() {
       </div>
       <Segmented
         size={'large'}
-        defaultValue={currentTable}
+        className="m-auto block w-fit my-[30px]"
+        defaultValue={confirmStatus}
         onChange={handleChangeTable}
         options={[
-          { label: 'All', value: 'all' },
-          { label: 'Yêu cầu kích hoạt', value: 'waiting' },
-          { label: 'Đã duyệt', value: 'active' },
-          { label: 'Chưa kích hoạt', value: 'not-activate' },
+          { label: 'All', value: '' },
+          { label: 'Yêu cầu kích hoạt', value: 'PENDDING' },
+          { label: 'Đã kích hoạt', value: 'DONE' },
+          { label: 'Chưa kích hoạt', value: 'NONE' },
         ]}
       />
       <div data-aos="fade-left">
@@ -349,6 +348,7 @@ export default memo(function ManageUser() {
             onChange: (e) => setSkip(e - 1),
             total: totalUser,
             position: ['bottomCenter'],
+            current: skip,
           }}
           scroll={{ y: 400 }}
         />

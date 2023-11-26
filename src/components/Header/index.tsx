@@ -98,7 +98,7 @@ export default memo(function Header() {
   >('LOGIN');
   const [dataHeader, setDataHeader] = useState({});
   const [valueSearch, setValueSearch] = useState('');
-  const [resultSearch, setResultSearch] = useState<MarketType[]>([]);
+  const [resultSearch, setResultSearch] = useState<ProductType[]>([]);
   const [buyQuantityIndex, setBuyQuantityIndex] = useState<CheckboxItemType[]>(
     []
   );
@@ -200,9 +200,9 @@ export default memo(function Header() {
 
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
-      .get(`marketplace/list?name_product=${debouncedValue}&skip=0&limit=10`)
+      .get(`filter-product/?name=${debouncedValue}`)
       .then((res) => {
-        setResultSearch(res.data.data.list_marketplace);
+        setResultSearch(res.data.results);
       })
       .catch((err) => console.log(err));
   }, [debouncedValue]);
@@ -230,16 +230,19 @@ export default memo(function Header() {
       })
       .catch((err) => console.log(err));
   };
-  const fetchNotifiactionMe = async () => {
+  const fetchNotificationMe = async () => {
     await instanceAxios
       .get(`notification-me`)
       .then((res) => setListNotifications(res.data.detail))
       .catch((err) => console.log(err));
   };
 
-  useSWR('notifiation-me', fetchNotifiactionMe);
+  useSWR('notifiation-me', fetchNotificationMe);
   useSWR('cart-me', fetchCartMe);
 
+  useEffect(() => {
+    fetchNotificationMe();
+  }, []);
   useEffect(() => {
     fetchCartMe();
   }, []);
@@ -462,6 +465,7 @@ export default memo(function Header() {
       </div>
       <div className="relative w-1/4">
         <Popover
+          getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
           title={
             <p className=" w-full truncate">
               {`Kết quả tìm kiếm: ${debouncedValue}`}
@@ -534,6 +538,7 @@ export default memo(function Header() {
               style={{ color: '#3748c8' }}
             />
             <Select
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               defaultValue={locale}
               style={{ width: 100 }}
               onChange={handleChangeLanguage}

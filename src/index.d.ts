@@ -32,7 +32,19 @@ interface UserType {
   role?: string;
   link?: {};
   confirm_status?: string;
-  survey?: {};
+  survey?: {
+    name?: string;
+    phone?: string;
+    device?: string;
+    yearOld?: string;
+    education?: string;
+    introduce?: string;
+    user_role?: string;
+    numericKeypad?: string;
+    japaneseAbility?: string;
+    digitsExperience?: string;
+    aphabetExperience?: string;
+  };
   is_active?: boolean;
   is_delete?: boolean;
 }

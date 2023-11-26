@@ -47,12 +47,12 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
   const route = useRouter();
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
-    channel.bind(currentUser.user.id || '', (data: NotificationType) => {
+    channel.bind(currentUser.user.email || '', (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
-      if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
-        mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
-      }
-      mutate('notifications/list');
+      // if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
+      //   mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
+      // }
+      mutate('notifiation-me');
       console.log(data);
     });
 
