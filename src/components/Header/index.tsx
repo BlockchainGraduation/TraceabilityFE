@@ -200,8 +200,9 @@ export default memo(function Header() {
 
   const fethMarketSearch = useCallback(async () => {
     await instanceAxios
-      .get(`filter-product/?name=${debouncedValue}`)
+      .get(`search-product/?name=${debouncedValue}`)
       .then((res) => {
+        console.log(res.data);
         setResultSearch(res.data.results);
       })
       .catch((err) => console.log(err));
