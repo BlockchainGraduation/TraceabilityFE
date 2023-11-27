@@ -65,6 +65,7 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowTrendUp,
+  faDatabase,
   faEnvelope,
   faMobileScreenButton,
   faUser,
@@ -102,6 +103,7 @@ import CommentInput from '@/components/Contents/common/CommentInput';
 import ProductItem from '@/components/Contents/Home/ProductItem';
 import useLogin from '@/services/requireLogin';
 import unit from '@/services/unit';
+import Percent from '@/components/CMS/Statistical/Percent';
 
 export default function ProductInfoPage({
   params,
@@ -367,7 +369,10 @@ export default function ProductInfoPage({
                       buyQuantity={buyQuantity}
                       // price={dataProduct.price}
                       // quantity={dataProduct.quantity}
-                      onSuccess={() => mutate(`product/${params.productId}`)}
+                      onSuccess={() => {
+                        mutate(`product/${params.productId}`);
+                        setShowModalPay(false);
+                      }}
                     />
                   </div>
                 </Modal>
@@ -485,7 +490,74 @@ export default function ProductInfoPage({
           </div>
           <div className="w-full flex my-[50px] gap-x-5">
             <div className="w-1/2  px-[30px] bg-[#f6f6f6] rounded-xl">
-              <div className="w-full p-[20px] ">
+              <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+                <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    icon={faDatabase}
+                    style={{ color: '#3d6ab8' }}
+                  />
+                </div>
+                <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                  Giao dịch mua sản phẩm của bạn
+                </p>
+                <div className="flex items-baseline space-x-3">
+                  <p className="text-[#0b0c50] text-[50px] font-semibold">
+                    100
+                    {/* {dataProduct.transaction?.transaction_count || 0} */}
+                  </p>
+                  <p className="text-gray-500 font-semibold">Giao dịch mua</p>
+                </div>
+                <div className="w-full">
+                  <Percent
+                    label="Đang chờ"
+                    total={
+                      10
+                      // dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      7
+                      // dataStatisticalUser.transaction
+                      //   ?.pendding_transaction_count || 0
+                    }
+                  />
+                  <Percent
+                    label="Bị từ chối"
+                    total={
+                      10
+                      // dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      2
+                      // dataStatisticalUser.transaction?.reject_transaction_count ||
+                      // 0
+                    }
+                  />
+                  <Percent
+                    label="Đã xác nhận"
+                    total={
+                      10
+                      // dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      // dataStatisticalUser.transaction?.accept_transaction_count ||
+                      0
+                    }
+                  />
+                  <Percent
+                    label="Đã hoàn thành"
+                    total={
+                      10
+                      // dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      1
+                      // dataStatisticalUser.transaction?.done_transaction_count || 0
+                    }
+                  />
+                </div>
+              </div>
+              {/* <div className="w-full p-[20px] ">
                 <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">
                   Các giao dịch
                 </p>
@@ -501,12 +573,10 @@ export default function ProductInfoPage({
                     </Space>
                   </div>
                 </div>
-              </div>
-              <div className="w-full p-[20px] bg-white rounded-xl">
+              </div> */}
+              {/* <div className="w-full p-[20px] bg-white rounded-xl">
                 <Row className="w-full py-[20px] bg-[#f6f6f6]" align={'middle'}>
-                  <Col span={2}>
-                    {/* <Avatar size={'large'} src={staticVariables.shrimpBg.src} /> */}
-                  </Col>
+                  <Col span={2}></Col>
                   <Col span={8}>
                     <p className="">Tên khách hàng</p>
                   </Col>
@@ -550,7 +620,7 @@ export default function ProductInfoPage({
                     <p>1312</p>
                   </Col>
                 </Row>
-              </div>
+              </div> */}
             </div>
             <div className="w-1/2 bg-[#f6f6f6] rounded-xl p-[50px] pt-[20px]">
               <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">

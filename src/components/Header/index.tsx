@@ -106,6 +106,7 @@ export default memo(function Header() {
     (CartItemType & { buyQuantity?: number })[]
   >([]);
   const [checkedItems, setCheckedItems] = useState<any[]>([]);
+  const [unread, setUnread] = useState(0);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -234,7 +235,10 @@ export default memo(function Header() {
   const fetchNotificationMe = async () => {
     await instanceAxios
       .get(`notification-me`)
-      .then((res) => setListNotifications(res.data.detail))
+      .then((res) => {
+        setUnread(res.data.unread);
+        setListNotifications(res.data.detail);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -337,6 +341,23 @@ export default memo(function Header() {
     //   ),
     //   key: '1.4',
     // },
+    // {
+    //   label: (
+    //     <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+    //       <div className="w-[30px]">
+    //         <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
+    //       </div>
+    //       <div className="flex gap-x-2">
+    //         <p className="">Ví của bạn:</p>
+    //         <p className="text 18px font-bold">{`${
+    //           currentUser.account_balance || 0
+    //         } `}</p>
+    //         <p className="text-[12px] text-current-color">{currency}</p>
+    //       </div>
+    //     </div>
+    //   ),
+    //   key: '1',
+    // },
     {
       label: (
         <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
@@ -344,11 +365,11 @@ export default memo(function Header() {
             <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
           <div className="flex gap-x-2">
-            <p className="">Ví của bạn:</p>
-            <p className="text 18px font-bold">{`${
+            <p className="">Nạp card</p>
+            {/* <p className="text 18px font-bold">{`${
               currentUser.account_balance || 0
             } `}</p>
-            <p className="text-[12px] text-current-color">{currency}</p>
+            <p className="text-[12px] text-current-color">{currency}</p> */}
           </div>
         </div>
       ),
@@ -557,6 +578,18 @@ export default memo(function Header() {
 
         {logged ? (
           <div className="flex items-center space-x-5">
+            <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+              <div className="w-[30px]">
+                <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
+              </div>
+              <div className="flex gap-x-2">
+                <p className="">Ví của bạn:</p>
+                <p className="text 18px font-bold">{`${
+                  currentUser.account_balance || 0
+                } `}</p>
+                <p className="text-[12px] text-current-color">{currency}</p>
+              </div>
+            </div>
             <Popover
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               title="Thông báo của bạn"
@@ -565,12 +598,8 @@ export default memo(function Header() {
               content={contentNotifications}
             >
               <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
-                {listNotifications.length ? (
-                  <Badge
-                    count={listNotifications.length}
-                    offset={[16, -8]}
-                    color="blue"
-                  >
+                {unread ? (
+                  <Badge count={unread} offset={[16, -8]} color="blue">
                     <FontAwesomeIcon
                       size={'1x'}
                       className=""
@@ -653,7 +682,7 @@ export default memo(function Header() {
                               onChangeBuyQuantity(e, index)
                             }
                             onDeleteSuccess={() => {
-                              indexCartDeleted(index);
+                              // indexCartDeleted(index);
                               mutate('cart-me');
                             }}
                             active={valueRadioCart === index}

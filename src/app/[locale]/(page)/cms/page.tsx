@@ -80,8 +80,8 @@ export default memo(function CMSPage() {
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem('Đơn hàng', '1', <ScheduleOutlined />),
-    getItem('Thống kê', '2', <PieChartOutlined />),
+    getItem('Thống kê', '1', <ScheduleOutlined />),
+    getItem('Đơn hàng', '2', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
       getItem('Thông tin chung', '3', <WalletOutlined />),
       getItem('Đổi mật khẩu', '4', <LockOutlined />),
@@ -107,8 +107,8 @@ export default memo(function CMSPage() {
     getItem('Đăng xuất', '10', <LoginOutlined />),
   ];
   const contents = [
-    <OrderCMS key={1} />,
-    <Statistical key={2} />,
+    <Statistical key={1} />,
+    <OrderCMS key={2} />,
     <GeneralInformation key={3} />,
     <ChangPassword className="w-2/5 m-auto" key={4} />,
     <></>,

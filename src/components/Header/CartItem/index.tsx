@@ -8,7 +8,7 @@ import {
   MinusSquareTwoTone,
   PlusSquareTwoTone,
 } from '@ant-design/icons';
-import { Avatar, Image, Input, InputNumber, message } from 'antd';
+import { Avatar, Image, Input, InputNumber, Spin, message } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 
@@ -24,6 +24,7 @@ export default function CartItem({
   onChangeBuyQuantity?: (value?: any, index?: number) => void;
 }) {
   const [isHover, setIsHover] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [buyQuantity, setBuyQuantity] = useState(
     data.product_id?.quantity ? 1 : 0
   );
@@ -33,6 +34,7 @@ export default function CartItem({
   }, [buyQuantity]);
 
   const fetchDeleteCart = async () => {
+    setLoadingDelete(true);
     await instanceAxios
       .delete(`cart/${data.id}/`)
       .then((res) => {
@@ -41,7 +43,8 @@ export default function CartItem({
       })
       .catch((err) => {
         message.error('Xoá cart thất bại');
-      });
+      })
+      .catch(() => setLoadingDelete(false));
   };
   return (
     <div
@@ -118,10 +121,17 @@ export default function CartItem({
             Tổng : {`${data.product_id?.price * buyQuantity || 0} ${currency}`}
           </p>
           {/* {isHover && ( */}
-          <DeleteTwoTone
-            className="absolute top-1/2 right-0 -translate-y-1/2 z-500 invisible opacity-0 transition-all duration-500  group-hover:opacity-100 group-hover:right-7 group-hover:visible"
-            onClick={fetchDeleteCart}
-          />
+          {loadingDelete ? (
+            <Spin
+              className="absolute top-1/2 right-0 -translate-y-1/2 z-500 invisible opacity-0 transition-all duration-500  group-hover:opacity-100 group-hover:right-7 group-hover:visible"
+              spinning={loadingDelete}
+            />
+          ) : (
+            <DeleteTwoTone
+              className="absolute top-1/2 right-0 -translate-y-1/2 z-500 invisible opacity-0 transition-all duration-500  group-hover:opacity-100 group-hover:right-7 group-hover:visible"
+              onClick={fetchDeleteCart}
+            />
+          )}
           {/* )} */}
         </div>
       </div>

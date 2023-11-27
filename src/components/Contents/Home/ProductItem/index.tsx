@@ -21,6 +21,7 @@ import {
   Tag,
   Tooltip,
   Typography,
+  message,
 } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -28,11 +29,12 @@ import useLogin from '@/services/requireLogin';
 import CommentItem from '../../ProductInfo/CommentItem';
 import CommentInput from '../../common/CommentInput';
 import instanceAxios from '@/api/instanceAxios';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import currency from '@/services/currency';
 import staticVariables from '@/static';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/hooks';
+import { useTranslations } from 'next-intl';
 
 const { Meta } = Card;
 
@@ -49,6 +51,19 @@ export default function ProductItem({
 }) {
   const route = useRouter();
   const currentUser = useAppSelector((state) => state.user.user);
+  const tNotification = useTranslations('notification');
+
+  const fetchAddCart = async () => {
+    await instanceAxios
+      .post(`cart/`, { product_id: data.id })
+      .then((res) => {
+        message.success('Đã thêm vào giỏ hàng');
+        mutate('cart-me');
+      })
+      .catch((err) => {
+        message.warning(tNotification(err.response.data.detail));
+      });
+  };
 
   return (
     <div
@@ -72,7 +87,10 @@ export default function ProductItem({
         {currentUser.id !== data.create_by?.id && (
           <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
             <Tooltip title={'Add cart'}>
-              <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+              <ShoppingCartOutlined
+                onClick={fetchAddCart}
+                className="rounded-full hover:bg-green-500 p-[5px]"
+              />
             </Tooltip>
             <Tooltip title={'Visit'}>
               <SearchOutlined

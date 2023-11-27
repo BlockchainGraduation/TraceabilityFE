@@ -16,6 +16,7 @@ import {
   notification,
 } from 'antd';
 import { CompoundedComponent } from 'antd/es/float-button/interface';
+import { useTranslations } from 'next-intl';
 import { ReactNode, useEffect, useState } from 'react';
 import { useEffectOnce } from 'usehooks-ts';
 
@@ -44,6 +45,7 @@ export const CheckoutForm = ({
   // const [orderType, setOrderType] = useState<'CART' | 'BUY'>('BUY');
   const currentUser = useAppSelector((state) => state.user.user);
   const [loadingBuy, setLoadingBuy] = useState(false);
+  const tNotification = useTranslations('notification');
 
   const [useForm] = Form.useForm();
   useEffect(() => {
@@ -77,7 +79,8 @@ export const CheckoutForm = ({
         .catch((err) =>
           notification.error({
             message: 'Thông báo',
-            description: 'Mua hàng thất bại',
+            description:
+              tNotification(err.response.data.detail) || 'Mua hàng thất bại',
           })
         )
         .finally(() => setLoadingBuy(false));

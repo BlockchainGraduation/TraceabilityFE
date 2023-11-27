@@ -151,7 +151,7 @@ export default function ProductEditage({
 
   const fethProduct = async () => {
     await instanceAxios
-      .get(`product/${params.productId}/`)
+      .get(`edit-product/${params.productId}`)
       .then(async (res) => {
         setDataProduct(res.data || {});
         await instanceAxios
