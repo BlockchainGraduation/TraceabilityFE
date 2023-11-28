@@ -160,6 +160,7 @@ export default function ProductInfoComponent({
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const tNotification = useTranslations('notification');
 
   const fethProduct = async () => {
     await instanceAxios
@@ -260,7 +261,7 @@ export default function ProductInfoComponent({
         message.success('Đã thêm vào giỏ hàng');
         mutate('cart-me');
       })
-      .catch((err) => message.warning('Thêm giỏ hàng thất bại'));
+      .catch((err) => message.warning(tNotification(err.response.data.detail)));
   };
 
   const getColor = (status: string) => {
@@ -492,9 +493,9 @@ export default function ProductInfoComponent({
                 max={dataProduct.quantity}
               />
               <button
-                disabled
+                disabled={edit}
                 onClick={fetchAddCart}
-                className="bg-[#f5f5f5] cursor-not-allowed text-[#c7c7c7] font-semibold px-[20px] py-[10px] rounded-xl"
+                className="disabled:bg-[#f5f5f5] disabled:cursor-not-allowed bg-current-color text-white disabled:text-[#c7c7c7] font-semibold px-[20px] py-[10px] rounded-xl"
               >
                 Thêm giỏ hàng
               </button>

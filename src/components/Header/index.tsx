@@ -117,6 +117,7 @@ export default memo(function Header() {
 
   const router = useRouter();
   const t = useTranslations('header');
+  const tNotification = useTranslations('notification');
   const pathname = pathLanguage();
   const path = usePathname();
   const locale = useLocale();
@@ -210,17 +211,30 @@ export default memo(function Header() {
   }, [debouncedValue]);
 
   const fetchBuyCart = async () => {
+    setLoadingBuy(true);
     const listBuyCart = checkedItems
       .filter((item) => listCart[item].buyQuantity !== 0)
       .map((item, index) => ({
-        id: listCart[item].id,
+        cart_id: listCart[item].id,
         product_id: listCart[item].product_id?.id,
         quantity: listCart[item].buyQuantity,
         price:
           (listCart[item].buyQuantity || 0) *
           (listCart[item].product_id?.price || 0),
       }));
-    console.log(listBuyCart);
+
+    if (listBuyCart.length)
+      await instanceAxios
+        .post(`create-multi-transaction`, { list_transactions: listBuyCart })
+        .then((res) => {
+          mutate('cart-me');
+          message.success(
+            'Mua hàng thành công, vui lòng chờ cửa hàng xác nhận!!!'
+          );
+        })
+        .catch((err) => message.error(tNotification(err.response.data.detail)))
+        .finally(() => setLoadingBuy(false));
+    // console.log(listBuyCart);
   };
 
   const fetchCartMe = async () => {

@@ -48,15 +48,15 @@ export default function RegisterForm({
         autoComplete="off"
       >
         <Form.Item<FieldType>
-          label="Email"
-          name="email"
+          label="Tên đăng nhập"
+          name="username"
           rules={[{ required: false }]}
         >
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
-          label="Tên đăng nhập"
-          name="username"
+          label="Email"
+          name="email"
           rules={[{ required: false }]}
         >
           <Input />
