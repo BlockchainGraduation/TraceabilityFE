@@ -95,7 +95,7 @@ export default function OrderItem({
                         style: { backgroundColor: '#66ae02' },
                       }}
                       okButtonProps={{ style: { backgroundColor: 'red' } }}
-                      onConfirm={() => fetchAcceptTransaction(true)}
+                      onConfirm={() => fetchAcceptTransaction(false)}
                       title="Từ chối"
                     >
                       <p className="text-red-500 truncate">Từ chối</p>

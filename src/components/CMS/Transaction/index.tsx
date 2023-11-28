@@ -37,7 +37,11 @@ export default function TransactionCMS() {
   const fetchDataTransaction = useCallback(async () => {
     setLoading(true);
     await instanceAxios
-      .get(`transaction-me?create_by=${currentUser.id}&page=${skip}`)
+      .get(
+        currentTable === 'BUY'
+          ? `transaction-me?create_by=${currentUser.id}&page=${skip}`
+          : `sell-transaction-me`
+      )
       .then((res) => {
         console.log(res.data);
         setTransactionTotal(res.data.count);
@@ -49,7 +53,7 @@ export default function TransactionCMS() {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [currentUser.id, skip, limit]);
+  }, [currentTable, currentUser.id, skip, limit]);
   useEffect(() => {
     fetchDataTransaction();
   }, [fetchDataTransaction]);
