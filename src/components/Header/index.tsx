@@ -137,7 +137,7 @@ export default memo(function Header() {
         (item, currentValue) =>
           item +
           (listCart[currentValue]?.buyQuantity || 0) *
-            listCart[currentValue]?.product_id?.price,
+            (listCart[currentValue]?.product_id?.price || 0),
         0
       )
     );
@@ -217,7 +217,8 @@ export default memo(function Header() {
         product_id: listCart[item].product_id?.id,
         quantity: listCart[item].buyQuantity,
         price:
-          (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
+          (listCart[item].buyQuantity || 0) *
+          (listCart[item].product_id?.price || 0),
       }));
     console.log(listBuyCart);
   };
@@ -729,7 +730,8 @@ export default memo(function Header() {
                     >
                       <CheckoutForm
                         buyQuantity={
-                          listCart[valueRadioCart]?.product_id?.quantity > 0
+                          (listCart[valueRadioCart]?.product_id?.quantity ||
+                            0) > 0
                             ? 1
                             : 0
                         }

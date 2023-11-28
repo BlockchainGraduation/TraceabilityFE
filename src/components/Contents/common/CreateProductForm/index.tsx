@@ -132,6 +132,8 @@ export default function CreateProductForm({
           description: 'Tạo sản phẩm thành công',
         });
         onSuccess?.();
+        setFileAvartar([]);
+        setFileList([]);
       })
       .catch((err) => {
         console.log(err);

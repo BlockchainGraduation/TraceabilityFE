@@ -104,8 +104,9 @@ import ProductItem from '@/components/Contents/Home/ProductItem';
 import useLogin from '@/services/requireLogin';
 import unit from '@/services/unit';
 import Percent from '@/components/CMS/Statistical/Percent';
+import ProductInfoComponent from '@/components/ProductInfoComponent';
 
-export default function ProductInfoPage({
+export default function ProductInforPage({
   params,
 }: {
   params: { productId: number };
@@ -122,6 +123,8 @@ export default function ProductInfoPage({
   const [loadingPage, setLoadingPage] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState(0);
+  const [statisticalProduct, setStatisticalProduct] =
+    useState<StatisticalProductType>({});
   const [currentAvatar, setCurrentAvatar] = useState('');
   const [buyQuantity, setBuyQuantity] = useState(0);
   const [currentTab, setCurrentTab] = useState<
@@ -141,6 +144,12 @@ export default function ProductInfoPage({
         setDataProduct(res.data || {});
         await instanceAxios
           .get(`filter-product/?create_by=${res.data.create_by.id}`)
+          .then(async (res) => {
+            setListRelatedProduct(res.data.results || []);
+          })
+          .catch((err) => setCommentList([]));
+        await instanceAxios
+          .get(`statistical-product/${params.productId}`)
           .then(async (res) => {
             setListRelatedProduct(res.data.results || []);
           })
@@ -177,7 +186,7 @@ export default function ProductInfoPage({
       await instanceAxios
         .post('transaction', {
           quantity: buyQuantity,
-          price: buyQuantity * dataProduct.price,
+          price: buyQuantity * (dataProduct.price || 0),
           product_id: params.productId,
         })
         .then((res) =>
@@ -258,8 +267,8 @@ export default function ProductInfoPage({
   return (
     !loadingPage && (
       <div className="w-full h-fit m-auto pt-[100px] pb-[50px]">
-        {/* {dataProduct.create_by?.id === currentUser.id ? ( */}
-        <div className="w-full h-fit flex flex-col">
+        <ProductInfoComponent productId={params.productId} />
+        {/* <div className="w-full h-fit flex flex-col">
           <div className="w-4/5 h-fit flex m-auto">
             <div className="w-1/2 ">
               <div className="rounded-xl overflow-hidden bg-[#f6f6f6] p-[30px]">
@@ -316,7 +325,6 @@ export default function ProductInfoPage({
                     {dataProduct.create_by?.fullname}
                   </p>
                 </Link>
-                {/* <p>{moment(dataProduct.create_at).fromNow()}</p> */}
               </Space>
               <Space className="text-current-color font-semibold my-[10px]">
                 <p className="text-[#2d2d2d]">Price:</p>
@@ -340,7 +348,7 @@ export default function ProductInfoPage({
                 <p>Số lượng hiện có</p>
                 <InputNumber
                   disabled={currentUser.id === dataProduct.create_by?.id}
-                  onChange={(e) => setBuyQuantity(e)}
+                  onChange={(e) => setBuyQuantity(e || 0)}
                   defaultValue={0}
                   min={0}
                   max={dataProduct.quantity}
@@ -353,7 +361,6 @@ export default function ProductInfoPage({
                   Thêm giỏ hàng
                 </button>
               </div>
-              {/* Buy product */}
               <div className="w-1/2 mx-auto my-[30px] ">
                 <Modal
                   width={'70%'}
@@ -365,10 +372,7 @@ export default function ProductInfoPage({
                   <div className="px-[10px]">
                     <CheckoutForm
                       data={dataProduct}
-                      // producId={params.productId}
                       buyQuantity={buyQuantity}
-                      // price={dataProduct.price}
-                      // quantity={dataProduct.quantity}
                       onSuccess={() => {
                         mutate(`product/${params.productId}`);
                         setShowModalPay(false);
@@ -386,8 +390,6 @@ export default function ProductInfoPage({
                           });
                     })
                   }
-                  // onClick={() => setShowModalPay(true)}
-                  // onClick={fetchBuyProduct}
                   loading={loadingBuy}
                   disabled={currentUser.id === dataProduct.create_by?.id}
                   className="w-full h-fit rounded-xl font-semibold text-white text-[30px] bg-current-color"
@@ -489,7 +491,7 @@ export default function ProductInfoPage({
             </div>
           </div>
           <div className="w-full flex my-[50px] gap-x-5">
-            <div className="w-1/2  px-[30px] bg-[#f6f6f6] rounded-xl">
+            <div className="w-1/2 flex items-center justify-center px-[30px] bg-[#f6f6f6] rounded-xl">
               <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
                 <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
                   <FontAwesomeIcon
@@ -504,123 +506,16 @@ export default function ProductInfoPage({
                 <div className="flex items-baseline space-x-3">
                   <p className="text-[#0b0c50] text-[50px] font-semibold">
                     100
-                    {/* {dataProduct.transaction?.transaction_count || 0} */}
                   </p>
                   <p className="text-gray-500 font-semibold">Giao dịch mua</p>
                 </div>
                 <div className="w-full">
-                  <Percent
-                    label="Đang chờ"
-                    total={
-                      10
-                      // dataStatisticalUser.transaction?.transaction_count || 0
-                    }
-                    value={
-                      7
-                      // dataStatisticalUser.transaction
-                      //   ?.pendding_transaction_count || 0
-                    }
-                  />
-                  <Percent
-                    label="Bị từ chối"
-                    total={
-                      10
-                      // dataStatisticalUser.transaction?.transaction_count || 0
-                    }
-                    value={
-                      2
-                      // dataStatisticalUser.transaction?.reject_transaction_count ||
-                      // 0
-                    }
-                  />
-                  <Percent
-                    label="Đã xác nhận"
-                    total={
-                      10
-                      // dataStatisticalUser.transaction?.transaction_count || 0
-                    }
-                    value={
-                      // dataStatisticalUser.transaction?.accept_transaction_count ||
-                      0
-                    }
-                  />
-                  <Percent
-                    label="Đã hoàn thành"
-                    total={
-                      10
-                      // dataStatisticalUser.transaction?.transaction_count || 0
-                    }
-                    value={
-                      1
-                      // dataStatisticalUser.transaction?.done_transaction_count || 0
-                    }
-                  />
+                  <Percent label="Đang chờ" total={10} value={7} />
+                  <Percent label="Bị từ chối" total={10} value={2} />
+                  <Percent label="Đã xác nhận" total={10} value={0} />
+                  <Percent label="Đã hoàn thành" total={10} value={1} />
                 </div>
               </div>
-              {/* <div className="w-full p-[20px] ">
-                <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">
-                  Các giao dịch
-                </p>
-                <div className="flex w-fit bg-white items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
-                  <div>
-                    <Avatar size={'large'} src={staticVariables.shrimpBg.src} />
-                  </div>
-                  <div>
-                    <p className="font-semibold">Sau ring vuet</p>
-                    <Space>
-                      <FontAwesomeIcon icon={faEnvelope} />
-                      <p>Đã bán: 12</p>
-                    </Space>
-                  </div>
-                </div>
-              </div> */}
-              {/* <div className="w-full p-[20px] bg-white rounded-xl">
-                <Row className="w-full py-[20px] bg-[#f6f6f6]" align={'middle'}>
-                  <Col span={2}></Col>
-                  <Col span={8}>
-                    <p className="">Tên khách hàng</p>
-                  </Col>
-                  <Col span={3}>
-                    <p>Đã mua</p>
-                  </Col>
-                  <Col span={3}>
-                    <p>Tổng phí</p>
-                  </Col>
-                  <Col span={4}>
-                    <p>Ngày GD</p>
-                  </Col>
-                  <Col span={4}>
-                    <p>Trạng thái</p>
-                  </Col>
-                </Row>
-                <Row
-                  className="w-full hover:bg-[#f6f6f6] py-[10px]"
-                  align={'middle'}
-                >
-                  <Col span={2}>
-                    <Avatar
-                      className="block m-auto"
-                      size={'large'}
-                      src={staticVariables.shrimpBg.src}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <p className="">Nguyen van A</p>
-                  </Col>
-                  <Col span={3}>
-                    <p>12</p>
-                  </Col>
-                  <Col span={3}>
-                    <p>132123</p>
-                  </Col>
-                  <Col span={4}>
-                    <p>12312</p>
-                  </Col>
-                  <Col span={4}>
-                    <p>1312</p>
-                  </Col>
-                </Row>
-              </div> */}
             </div>
             <div className="w-1/2 bg-[#f6f6f6] rounded-xl p-[50px] pt-[20px]">
               <p className="text-[#0b0c50] text-[20px] font-semibold py-[20px]">
@@ -725,19 +620,7 @@ export default function ProductInfoPage({
               </ScrollMenu>
             )}
           </div>
-        </div>
-        {/* ) : (
-          <Result
-            status="403"
-            title="403"
-            subTitle="Sorry, you are not authorized to access this page."
-            extra={
-              <Button type={'link'} href="/home">
-                Back Home
-              </Button>
-            }
-          />
-        )} */}
+        </div> */}
       </div>
     )
   );

@@ -48,7 +48,9 @@ export default function ProductInformation({ data }: { data?: ProductType }) {
           </Col>
         </Row>
       ))}
-      <p className="my-[30px] tracking-wider">{data?.description}</p>
+      <p className="my-[30px] tracking-wider p-[20px] rounded-xl bg-[#f6f6f6]">
+        {data?.description}
+      </p>
     </div>
   );
 }

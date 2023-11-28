@@ -200,8 +200,8 @@ interface ProductType {
   name?: string;
   avatar?: string;
   description?: string;
-  price?: int;
-  quantity?: int;
+  price?: number;
+  quantity?: number;
   product_type?: string;
   product_status?: string;
   active?: boolean;
@@ -360,4 +360,14 @@ interface NotificationItemType {
   notification_type?: string;
   product_id?: ProductType;
   create_at?: string;
+}
+
+interface StatisticalProductType {
+  transaction?: {
+    transaction_count?: number;
+    pendding_transaction_count?: number;
+    reject_transaction_count?: number;
+    done_transaction_count?: number;
+    accept_transaction_count?: number;
+  };
 }

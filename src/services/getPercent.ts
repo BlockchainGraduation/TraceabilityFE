@@ -1,5 +1,5 @@
 const getPercent = (total: number, value: number) => {
-  return ((value / total) * 100).toFixed(2);
+  const result = (value / total) * 100;
+  return isNaN(result) ? 0 : result.toFixed(2);
 };
-
 export default getPercent;

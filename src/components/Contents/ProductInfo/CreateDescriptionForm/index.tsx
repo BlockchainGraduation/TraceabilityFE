@@ -12,14 +12,15 @@ import {
   notification,
 } from 'antd';
 import { DatePickerType } from 'antd/es/date-picker';
+import { useForm } from 'antd/es/form/Form';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import { type } from 'os';
 import React, { useState } from 'react';
 
 type FormType = {
-  file?: UploadFile;
-  description?: string;
-  title?: string;
+  file: UploadFile;
+  description: string;
+  title: string;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -35,7 +36,7 @@ export default function CreateDescriptionForm({
   onSuccess,
 }: {
   className?: string;
-  productId: string;
+  productId: number;
   onSuccess?: () => void;
 }) {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -43,6 +44,8 @@ export default function CreateDescriptionForm({
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const [form] = useForm();
 
   const handleCancel = () => setPreviewOpen(false);
   const normFile = (e: any) => {
@@ -74,23 +77,25 @@ export default function CreateDescriptionForm({
     setLoading(true);
 
     let formData = new FormData();
-    formData.append('img', fileList[0].originFileObj as Blob);
+    formData.append('image', fileList[0].originFileObj as Blob);
+    formData.append('title', e.title);
+    formData.append('description', e.description);
+    formData.append('product_id', productId.toString());
     await instanceAxios
-      .post(
-        `detail_description/create?title=${e.title}&description=${e.description}&product_id=${productId}`,
-        formData
-      )
+      .post(`detai_description/`, formData)
       .then((res) => {
         notification.success({
           message: 'Thành công',
           description: 'Thêm mô tả thành công',
         });
+        form.resetFields();
         onSuccess?.();
+        setFileList([]);
       })
       .catch((err) =>
         notification.error({
           message: 'Lỗi',
-          description: 'Upload mô tả không  thành công',
+          description: 'Thêm mô tả thất bại, vui lòng xem lại',
         })
       )
       .finally(() => setLoading(false));
@@ -105,6 +110,7 @@ export default function CreateDescriptionForm({
   return (
     <div className={className}>
       <Form
+        form={form}
         layout={'vertical'}
         name="basic"
         // labelCol={{ span: 8 }}
@@ -112,6 +118,31 @@ export default function CreateDescriptionForm({
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
       >
+        <Form.Item<FormType>
+          label={'Tiêu đề'}
+          name={'title'}
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng thêm tiêu đề',
+            },
+          ]}
+        >
+          <Input placeholder="Nhập tiêu đề" />
+        </Form.Item>
+        <Form.Item<FormType>
+          label={'Mô tả'}
+          name={'description'}
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng thêm mô tả',
+            },
+          ]}
+        >
+          <Input.TextArea placeholder="Nhập tiêu đề" autoSize />
+        </Form.Item>
+
         <Form.Item<FormType>
           label="Chọn hình ảnh"
           valuePropName="fileList"
@@ -136,30 +167,6 @@ export default function CreateDescriptionForm({
           >
             {fileList.length >= 1 ? null : uploadButton}
           </Upload>
-        </Form.Item>
-        <Form.Item<FormType>
-          label={'Tiêu đề'}
-          name={'title'}
-          rules={[
-            {
-              required: true,
-              message: 'Vui lòng thêm tiêu đề',
-            },
-          ]}
-        >
-          <Input.TextArea autoSize />
-        </Form.Item>
-        <Form.Item<FormType>
-          label={'Mô tả'}
-          name={'description'}
-          rules={[
-            {
-              required: true,
-              message: 'Vui lòng thêm mô tả',
-            },
-          ]}
-        >
-          <Input.TextArea autoSize />
         </Form.Item>
         <Form.Item>
           <Button className="block m-auto" loading={loading} htmlType="submit">

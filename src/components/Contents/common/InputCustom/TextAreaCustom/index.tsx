@@ -148,7 +148,7 @@ export default memo(function TextAreaCustom({
         />
       ) : (
         <p
-          defaultValue={initialValue}
+          defaultValue={value}
           className={`max-w-[100%] text-ellipsis overflow-hidden ${classNameLabel}`}
         >
           {value}

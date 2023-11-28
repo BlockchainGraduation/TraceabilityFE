@@ -45,8 +45,8 @@ export default function Description(props: Props) {
     [mutate]
   );
   return (
-    <div className="w-full h-full flex border-green-500 bg-[#f6f6f6] rounded-xl">
-      <div className="w-1/2 p-[50px] flex flex-col">
+    <div className=" w-full h-full flex border-2 text-gray-800 bg-gradient-to-t from-green-600 rounded-xl">
+      <div className="w-1/2 h-full p-[50px]  flex flex-col">
         <InputCustom
           className="text-[20px] py-[20px] font-semibold"
           showEdit={props.showEdit}
@@ -65,11 +65,11 @@ export default function Description(props: Props) {
           initialValue={props.description || ''}
         />
       </div>
-      <div className="w-1/2 relative p-[10px]">
+      <div className=" relative w-1/2 h-full  p-[20px]">
         <Image
           className="object-cover rounded-xl"
           width="100%"
-          height="100%"
+          height={'100%'}
           preview={false}
           src={props.image || staticVariables.noImage.src}
           alt=""
