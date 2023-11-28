@@ -61,7 +61,6 @@ import {
   faWallet,
 } from '@fortawesome/free-solid-svg-icons';
 import { logOut, setLogin } from '@/reducers/userSlice';
-import SearchItem from './SearchItem';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
 import ForgetForm from './Register/ForgetForm';
@@ -74,6 +73,7 @@ import currency from '@/services/currency';
 import CartItem from './CartItem';
 import { CheckoutForm } from '../Contents/common/CheckoutForm';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import SearchItem from './SearchItem';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -134,14 +134,27 @@ export default memo(function Header() {
 
   useEffect(() => {
     setTotalPrice(
-      checkedItems.reduce(
-        (item, currentValue) =>
-          item +
-          (listCart[currentValue]?.buyQuantity || 0) *
-            (listCart[currentValue]?.product_id?.price || 0),
-        0
-      )
+      listCart
+        .filter(
+          (item) => checkedItems.includes(item.id) && item.buyQuantity !== 0
+        )
+        .reduce(
+          (item, currentValue) =>
+            item +
+            (currentValue.buyQuantity || 0) *
+              (currentValue.product_id?.price || 0),
+          0
+        )
     );
+    // setTotalPrice(
+    //   checkedItems.reduce(
+    //     (item, currentValue) =>
+    //       item +
+    //       (listCart[currentValue]?.buyQuantity || 0) *
+    //         (listCart[currentValue]?.product_id?.price || 0),
+    //     0
+    //   )
+    // );
   }, [checkedItems, listCart]);
 
   const indexCartDeleted = (index: number) => {
@@ -153,15 +166,20 @@ export default memo(function Header() {
 
   const onChangeBuyQuantity = (value?: any, index?: number) => {
     const newList = [...listCart];
-    newList[index || 0].buyQuantity = value;
+
+    newList.find((item) => {
+      if (item.id === index) return (item.buyQuantity = value);
+    });
+    // console.log(newList);
+    // newList[index || 0].buyQuantity = value;
     setListCart(newList);
 
     console.log('Number', buyQuantityIndex);
     console.log('Value ', { value, index });
   };
   const onChange = (checkedValues: CheckboxItemType[]) => {
+    console.log(checkedValues);
     setCheckedItems(checkedValues);
-    console.log('checked = ', checkedValues);
   };
 
   const listIcon = [
@@ -211,16 +229,16 @@ export default memo(function Header() {
   }, [debouncedValue]);
 
   const fetchBuyCart = async () => {
-    setLoadingBuy(true);
-    const listBuyCart = checkedItems
-      .filter((item) => listCart[item].buyQuantity !== 0)
+    // setLoadingBuy(true);
+    const listBuyCart = listCart
+      .filter(
+        (item) => checkedItems.includes(item.id) && item.buyQuantity !== 0
+      )
       .map((item, index) => ({
-        cart_id: listCart[item].id,
-        product_id: listCart[item].product_id?.id,
-        quantity: listCart[item].buyQuantity,
-        price:
-          (listCart[item].buyQuantity || 0) *
-          (listCart[item].product_id?.price || 0),
+        cart_id: item.id,
+        product_id: item.product_id?.id,
+        quantity: item.buyQuantity,
+        price: (item.buyQuantity || 0) * (item.product_id?.price || 0),
       }));
 
     if (listBuyCart.length)
@@ -242,6 +260,7 @@ export default memo(function Header() {
       .get(`cart-me`)
       .then((res) => {
         setListCart(res.data);
+        // console.log(res.data);
 
         // setBuyQuantityIndex([...res.data].map(() => 1));
       })
@@ -666,10 +685,12 @@ export default memo(function Header() {
                   <p className="text-[16px] font-semibold">
                     {listCart.length} items
                   </p>
-                  {listCart.length && (
+                  {listCart.length ? (
                     <p className="text-[14px] font-semibold">
                       Xóa tất cả giỏ hàng
                     </p>
+                  ) : (
+                    ''
                   )}
                 </div>
                 <div className=" w-full max-h-[360px] overflow-y-auto  flex flex-col">
@@ -686,15 +707,18 @@ export default memo(function Header() {
                       className="flex w-full flex-col gap-y-3"
                     >
                       {listCart.map((item, index) => (
-                        <div className="flex items-center gap-x-3" key={index}>
+                        <div
+                          className="flex items-center gap-x-3"
+                          key={item.id}
+                        >
                           <Checkbox
-                            // key={index}
-                            disabled={!listCart[index].buyQuantity}
-                            value={index}
+                            // key={item.id}
+                            disabled={item.buyQuantity === 0}
+                            value={item.id}
                           />
                           <CartItem
                             onChangeBuyQuantity={(e) =>
-                              onChangeBuyQuantity(e, index)
+                              onChangeBuyQuantity(e, item.id)
                             }
                             onDeleteSuccess={() => {
                               // indexCartDeleted(index);

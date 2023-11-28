@@ -14,7 +14,7 @@ export default function SearchItem({
 }) {
   return (
     <Link
-      href={`/market/${data.id}`}
+      href={`/product/${data.id}`}
       className="flex justify-between w-[500px] rounded px-[10px] items-center gap-x-5 py-[10px] pr-[30px] border-t-[1px] bg-[#1212120A] hover:bg-[#ececec] hover:text-inherit"
     >
       <div

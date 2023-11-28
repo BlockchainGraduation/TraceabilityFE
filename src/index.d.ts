@@ -152,47 +152,47 @@ interface CartItemType {
 }
 
 interface ProductType {
-  id?: int;
+  id?: number;
   banner?: [
     {
-      id?: int;
+      id?: number;
       image?: string;
       create_at?: string;
-      product?: int;
+      product?: number;
     }
   ];
   growup?: [
     {
-      id?: int;
+      id?: number;
       growup_images?: [
         {
-          id?: int;
+          id?: number;
           image?: string;
           create_at?: string;
-          growup_id?: int;
+          growup_id?: number;
         }
       ];
       title?: string;
       description?: string;
-      product_id?: int;
+      product_id?: number;
     }
   ];
   comments?: [
     {
-      id?: int;
+      id?: number;
       description?: string;
       create_at?: string;
-      product_id?: int;
+      product_id?: number;
       user_id?: string;
     }
   ];
   detail_decriptions?: [
     {
-      id?: int;
+      id?: number;
       title?: string;
       description?: string;
       image?: string;
-      product_id?: int;
+      product_id?: number;
     }
   ];
   total_transaction?: number;
@@ -288,10 +288,10 @@ interface GrowUpType {
   };
 }
 interface CommentItemType {
-  id?: int;
+  id?: number;
   description?: string;
   create_at?: string;
-  product_id?: int;
+  product_id?: number;
   user_id?: UserType;
 }
 interface MarketType {

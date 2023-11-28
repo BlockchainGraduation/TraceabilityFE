@@ -104,7 +104,7 @@ export default function CartItem({
             <PlusSquareTwoTone
               onClick={() =>
                 setBuyQuantity(
-                  buyQuantity >= data.product_id?.quantity
+                  buyQuantity >= (data.product_id?.quantity || 0)
                     ? buyQuantity
                     : buyQuantity + 1
                 )
@@ -118,7 +118,8 @@ export default function CartItem({
         </div>
         <div className="w-1/6 font-bold relative pr-[30px]">
           <p className="truncate">
-            Tổng : {`${data.product_id?.price * buyQuantity || 0} ${currency}`}
+            Tổng :{' '}
+            {`${(data.product_id?.price || 0) * buyQuantity || 0} ${currency}`}
           </p>
           {/* {isHover && ( */}
           {loadingDelete ? (

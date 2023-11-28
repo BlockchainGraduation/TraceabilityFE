@@ -64,6 +64,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -161,6 +162,11 @@ export default function ProductInfoComponent({
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const tNotification = useTranslations('notification');
+
+  // const ref = useRef<HTMLDivElement>(null);
+  // useEffect(() => {
+  //   let newChild = ref.current?.lastElementChild?.cloneNode(true);
+  // });
 
   const fethProduct = async () => {
     await instanceAxios
@@ -634,18 +640,24 @@ export default function ProductInfoComponent({
             )}
             {currentTab === 'COMMENT' && (
               <div className="w-2/3 m-auto">
-                <div className="mt-[20px] flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
-                  Đã có {commentList.length} bình luận cho{' '}
-                  <p className="font-semibold">{dataProduct.name}</p>
+                <div className="mt-[20px] flex justify-between ">
+                  <div className="flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
+                    Đã có {commentList.length} bình luận cho{' '}
+                    <p className="font-semibold">{dataProduct.name}</p>
+                  </div>
+                  <p>Xem thêm</p>
                 </div>
-                <div className="max-h-[400px] overflow-y-auto">
-                  {commentList.map((item, index) => (
-                    <CommentItem
-                      key={index}
-                      isOwner={item.user_id?.id === dataProduct.create_by?.id}
-                      {...item}
-                    />
-                  ))}
+                <div className="flex max-h-[400px] flex-col-reverse overflow-auto">
+                  <div className="">
+                    {/* <p className="w-fit m-auto text-blue-500">Xem thêm</p> */}
+                    {commentList.map((item, index) => (
+                      <CommentItem
+                        key={index}
+                        isOwner={item.user_id?.id === dataProduct.create_by?.id}
+                        {...item}
+                      />
+                    ))}
+                  </div>
                 </div>
                 <CommentInput productId={productId} />
               </div>
