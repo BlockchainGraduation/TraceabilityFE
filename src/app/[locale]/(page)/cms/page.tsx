@@ -19,22 +19,23 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import ChangPassword from '@/components/CMS/ChangePassword';
-import ProductCMS from '@/components/CMS/Product';
-import TransactionCMS from '@/components/CMS/Transaction';
+import ChangPassword from '@/components/ChangePassword';
+import ProductCMS from '@/components/Product';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
-import ManageUser from '@/components/CMS/Admin/ManageUser';
-import ManageProduct from '@/components/CMS/Admin/ManageProduct';
-import Statistical from '@/components/CMS/Statistical';
+import ManageUser from '@/components/ManageUser';
+import ManageProduct from '@/components/ManageProduct';
+import Statistical from '@/components/Statistical';
 import { useEffectOnce } from 'usehooks-ts';
 import { Footer as FooterAntd } from 'antd/es/layout/layout';
 import Footer from '@/components/Footer';
-import GeneralInformation from '@/components/CMS/GeneralInformation';
+import 'moment/locale/vi';
+import GeneralInformation from '@/components/GeneralInformation';
 import instanceAxios from '@/api/instanceAxios';
 import { logOut } from '@/reducers/userSlice';
 import { deleteCookie } from 'cookies-next';
-import OrderCMS from '@/components/CMS/Order';
+import OrderCMS from '@/components/Order';
+import TransactionCMS from '@/components/Transaction';
 
 const { Header, Content, Sider } = Layout;
 

@@ -90,7 +90,7 @@ import { useTranslations } from 'next-intl';
 import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
-import { Chart } from '@/components/CMS/Statistical/Chart';
+import { Chart } from '@/components/Chart';
 import { Line } from 'react-chartjs-2';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -106,7 +106,7 @@ import CommentInput from '@/components/Contents/common/CommentInput';
 import ProductItem from '@/components/Contents/Home/ProductItem';
 import useLogin from '@/services/requireLogin';
 import unit from '@/services/unit';
-import Percent from '@/components/CMS/Statistical/Percent';
+import Percent from '@/components/Percent';
 import getRole from '@/services/getRole';
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -123,10 +123,6 @@ export default function ProductInfoComponent({
   edit?: boolean;
   productId?: number;
 }) {
-  const [openListImageModal, setOpenListImageModal] = useState(false);
-  const [openCreateDescriptionModal, setOpenCreateDescriptionModal] =
-    useState(false);
-  const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [listRelatedProduct, setListRelatedProduct] = useState<ProductType[]>(
     []
@@ -140,6 +136,7 @@ export default function ProductInfoComponent({
     'DESCRIPTION' | 'INFORMATION' | 'COMMENT'
   >('DESCRIPTION');
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
+  const [commentCount, setCommentCount] = useState(0);
   const [showModalPay, setShowModalPay] = useState(false);
   const { mutate } = useSWRConfig();
   const { login } = useLogin();
@@ -160,6 +157,7 @@ export default function ProductInfoComponent({
   const [loadingBanner, setLoadingBanner] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [changeComment, setChangeComment] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const tNotification = useTranslations('notification');
 
@@ -203,6 +201,7 @@ export default function ProductInfoComponent({
       .then(async (res) => {
         {
           setCommentList(res.data.results || []);
+          setCommentCount(res.data.count || 0);
         }
       })
       .catch((err) => setCommentList([]));
@@ -222,6 +221,9 @@ export default function ProductInfoComponent({
   useEffectOnce(() => {
     fetchListTransaction();
   });
+  useEffect(() => {
+    fethComments();
+  }, [changeComment]);
   useSWR(`product/${productId}`, fethProduct);
   useSWR(`fethComments`, fethComments);
 
@@ -594,7 +596,7 @@ export default function ProductInfoComponent({
               className={`px-[50px] py-[10px] ${
                 currentTab === 'COMMENT' && 'border-b-2 border-current-color'
               }`}
-            >{`Bình luận  ( ${commentList.length} )`}</p>
+            >{`Bình luận  ( ${commentCount} )`}</p>
           </div>
           <div className="w-full flex p-[20px]">
             {currentTab === 'DESCRIPTION' && (
@@ -642,13 +644,13 @@ export default function ProductInfoComponent({
               <div className="w-2/3 m-auto">
                 <div className="mt-[20px] flex justify-between ">
                   <div className="flex gap-x-3 mb-[20px] font-medium text-[18px] text-[#1a1a1a]">
-                    Đã có {commentList.length} bình luận cho{' '}
+                    Đã có {commentCount} bình luận cho{' '}
                     <p className="font-semibold">{dataProduct.name}</p>
                   </div>
                   <p>Xem thêm</p>
                 </div>
                 <div className="flex max-h-[400px] flex-col-reverse overflow-auto">
-                  <div className="">
+                  <div className="flex flex-col-reverse">
                     {/* <p className="w-fit m-auto text-blue-500">Xem thêm</p> */}
                     {commentList.map((item, index) => (
                       <CommentItem
@@ -659,7 +661,13 @@ export default function ProductInfoComponent({
                     ))}
                   </div>
                 </div>
-                <CommentInput productId={productId} />
+                <CommentInput
+                  onSuccess={() => {
+                    setChangeComment(!changeComment);
+                    // mutate('fethComments');
+                  }}
+                  productId={productId}
+                />
               </div>
             )}
           </div>

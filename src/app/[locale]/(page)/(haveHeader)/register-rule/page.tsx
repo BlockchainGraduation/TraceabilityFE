@@ -1,6 +1,6 @@
 'use client';
 import instanceAxios from '@/api/instanceAxios';
-import RoleSelect from '@/components/Header/Register/RoleSelect';
+import RoleSelect from '@/components/RoleSelect';
 import { useAppSelector } from '@/hooks';
 import staticVariables from '@/static';
 import {

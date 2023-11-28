@@ -1,5 +1,5 @@
 'use client';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, useLocale } from 'next-intl';
 import { notFound, useRouter } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Providers } from '@/providers';
@@ -15,6 +15,7 @@ import dynamic from 'next/dynamic';
 import instanceAxios from '@/api/instanceAxios';
 import { setLogin } from '@/reducers/userSlice';
 import { useEffectOnce } from 'usehooks-ts';
+import moment from 'moment';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
@@ -45,6 +46,8 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
   const { mutate } = useSWRConfig();
   const cookie = getCookie('access');
   const route = useRouter();
+  const locale = useLocale();
+  moment.locale(locale);
   useEffect(() => {
     const channel = pusher.subscribe('general-channel');
     channel.bind(currentUser.user.email || '', (data: NotificationType) => {

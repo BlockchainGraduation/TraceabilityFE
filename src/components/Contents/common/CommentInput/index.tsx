@@ -9,9 +9,11 @@ import { useSWRConfig } from 'swr';
 export default function CommentInput({
   productId,
   className,
+  onSuccess,
 }: {
   className?: string;
   productId?: number;
+  onSuccess?: () => void;
 }) {
   const currentUser = useAppSelector((state) => state.user.user);
   const [commentValue, setCommentValue] = useState('');
@@ -24,7 +26,8 @@ export default function CommentInput({
       await instanceAxios
         .post(`comment/`, { product_id: productId, description: commentValue })
         .then((res) => {
-          mutate(`fethComments`);
+          onSuccess?.();
+          // mutate(`fethComments`);
           setCommentValue('');
         })
         .catch((err) => console.log(err));

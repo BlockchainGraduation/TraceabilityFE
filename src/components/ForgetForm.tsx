@@ -9,7 +9,7 @@ import {
 } from 'antd';
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
-import ConfirmOTP from '../ConfirmOTP';
+import ConfirmOTP from './ConfirmOTP';
 
 type FieldType = {
   email?: string;

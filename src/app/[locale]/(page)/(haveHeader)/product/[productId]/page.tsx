@@ -1,109 +1,11 @@
 'use client';
-import staticVariables from '@/static';
-import {
-  DeleteTwoTone,
-  EditTwoTone,
-  EyeOutlined,
-  FieldTimeOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  PlusCircleTwoTone,
-  PlusOutlined,
-  SearchOutlined,
-  SendOutlined,
-  ShoppingCartOutlined,
-} from '@ant-design/icons';
-import {
-  Avatar,
-  Button,
-  Carousel,
-  Col,
-  ConfigProvider,
-  DatePicker,
-  Empty,
-  Form,
-  Image,
-  Input,
-  List,
-  Modal,
-  Popconfirm,
-  Popover,
-  QRCode,
-  Result,
-  Tooltip as TooltipAntd,
-  Row,
-  Segmented,
-  Table,
-  Tag,
-  Timeline,
-  Typography,
-  Upload,
-  UploadFile,
-  message,
-  notification,
-  Space,
-  InputNumber,
-} from 'antd';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import React, {
-  ReactNode,
-  use,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowTrendUp,
-  faDatabase,
-  faEnvelope,
-  faMobileScreenButton,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
-import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
-import Paragraph from 'antd/es/typography/Paragraph';
-import { ColumnsType } from 'antd/es/table';
-import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
+
+import React, { useState } from 'react';
 import instanceAxios from '@/api/instanceAxios';
-import GrowUpForm from '@/components/Contents/ProductInfo/GrowUpForm';
-import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
-import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
 import { useAppSelector } from '@/hooks';
 import { useEffectOnce } from 'usehooks-ts';
-import moment from 'moment';
-import { useTranslations } from 'next-intl';
-import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
-import { UploadChangeParam } from 'antd/es/upload';
-import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
-import { Chart } from '@/components/CMS/Statistical/Chart';
-import { Line } from 'react-chartjs-2';
-import Link from 'next/link';
-import Owner from '../../market/[marketId]/components/Owner';
-import ProductOrigin from '../../market/[marketId]/components/PoductOrigin';
-import { useRouter } from 'next/navigation';
-import Description from '@/components/Contents/ProductInfo/Description';
 import useSWR, { useSWRConfig } from 'swr';
-import { getCookie } from 'cookies-next';
-import currency from '@/services/currency';
-import { ScrollMenu } from 'react-horizontal-scrolling-menu';
-import { LeftArrow, RightArrow } from '@/app/[locale]/home/components/Category';
-import ProductInformation from '@/components/Contents/ProductInfo/ProductInformation';
-import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
-import CommentInput from '@/components/Contents/common/CommentInput';
-import ProductItem from '@/components/Contents/Home/ProductItem';
 import useLogin from '@/services/requireLogin';
-import unit from '@/services/unit';
-import Percent from '@/components/CMS/Statistical/Percent';
 import ProductInfoComponent from '@/components/ProductInfoComponent';
 
 export default function ProductInforPage({
@@ -111,10 +13,6 @@ export default function ProductInforPage({
 }: {
   params: { productId: number };
 }) {
-  const [openListImageModal, setOpenListImageModal] = useState(false);
-  const [openCreateDescriptionModal, setOpenCreateDescriptionModal] =
-    useState(false);
-  const [openGrowUpModal, setOpenGrowUpModal] = useState(false);
   const [dataProduct, setDataProduct] = useState<ProductType>({});
   const [listRelatedProduct, setListRelatedProduct] = useState<ProductType[]>(
     []
@@ -122,19 +20,9 @@ export default function ProductInforPage({
   const [dataChart, setDataChart] = useState({});
   const [loadingPage, setLoadingPage] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
-  const [selectedDescription, setSelectedDescription] = useState(0);
-  const [statisticalProduct, setStatisticalProduct] =
-    useState<StatisticalProductType>({});
-  const [currentAvatar, setCurrentAvatar] = useState('');
-  const [buyQuantity, setBuyQuantity] = useState(0);
-  const [currentTab, setCurrentTab] = useState<
-    'DESCRIPTION' | 'INFORMATION' | 'COMMENT'
-  >('DESCRIPTION');
   const [commentList, setCommentList] = useState<CommentItemType[]>([]);
-  const [showModalPay, setShowModalPay] = useState(false);
   const { mutate } = useSWRConfig();
   const { login } = useLogin();
-  const [loadingBuy, setLoadingBuy] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
 
   const fethProduct = async () => {
@@ -175,95 +63,6 @@ export default function ProductInforPage({
   useSWR(`product/${params.productId}`, fethProduct);
   useSWR(`fethComments`, fethComments);
 
-  const fetchBuyProduct = async () => {
-    if (buyQuantity === 0) {
-      notification.error({
-        message: 'Thông báo',
-        description: 'Vui lòng chọn số lượng',
-      });
-    } else {
-      setLoadingBuy(true);
-      await instanceAxios
-        .post('transaction', {
-          quantity: buyQuantity,
-          price: buyQuantity * (dataProduct.price || 0),
-          product_id: params.productId,
-        })
-        .then((res) =>
-          notification.success({
-            message: 'Thông báo',
-            description: 'Mua hàng thành công',
-          })
-        )
-        .catch((err) =>
-          notification.error({
-            message: 'Thông báo',
-            description: 'Mua hàng thất bại',
-          })
-        )
-        .finally(() => setLoadingBuy(false));
-    }
-  };
-
-  const fetchAddCart = async () => {
-    await instanceAxios
-      .post(`cart/`, { product_id: params.productId })
-      .then((res) => {
-        message.success('Đã thêm vào giỏ hàng');
-        mutate('cart-me');
-      })
-      .catch((err) => message.warning('Thêm giỏ hàng thất bại'));
-  };
-
-  // setOwner();
-  const contentStyle: React.CSSProperties = {
-    margin: 0,
-    height: '300px',
-    color: '#fff',
-    lineHeight: '160px',
-    textAlign: 'center',
-    background: '#364d79',
-    borderRadius: '10px',
-  };
-
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'Buyer',
-      dataIndex: 'buyer',
-      width: 200,
-    },
-    {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-    },
-    {
-      title: 'Time',
-      dataIndex: 'time',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-    },
-  ];
-  const data: DataType[] = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      buyer: `Edward King ${i}`,
-      quantity: 32,
-      price: 1231313 + i,
-      time: `2${i}/12/1212`,
-      status: i,
-    });
-  }
-
-  const onUpload = (e: UploadChangeParam<UploadFile<any>>) => {
-    console.log(e);
-  };
   return (
     !loadingPage && (
       <div className="w-full h-fit m-auto pt-[100px] pb-[50px]">

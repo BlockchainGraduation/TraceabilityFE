@@ -34,7 +34,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import Login from './Login';
+import Login from '../Login';
 import Register from './Register';
 import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
 import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
@@ -63,17 +63,17 @@ import {
 import { logOut, setLogin } from '@/reducers/userSlice';
 import instanceAxios from '@/api/instanceAxios';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
-import ForgetForm from './Register/ForgetForm';
+import ForgetForm from '../ForgetForm';
 import { Inter } from 'next/font/google';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import NotificationItem from './NotificationItem';
 import moment from 'moment';
 import 'moment/locale/vi';
 import currency from '@/services/currency';
-import CartItem from './CartItem';
+import CartItem from '../CartItem';
 import { CheckoutForm } from '../Contents/common/CheckoutForm';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import SearchItem from './SearchItem';
+import SearchItem from '../SearchItem';
 
 const inter = Inter({ subsets: ['latin'] });
 
