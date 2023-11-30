@@ -92,7 +92,7 @@ export default memo(function ProductCMS() {
   };
   const fetchListTransaction = async () => {
     await instanceAxios(
-      `transaction-me?create_by=${currentUser.id}&status=DONE`
+      `transaction-me?create_by=${currentUser.id}&status=DONE&active=false`
     )
       .then((res) => {
         setListTransaction(res.data.results);
@@ -115,6 +115,7 @@ export default memo(function ProductCMS() {
     fetchProductMe();
   }, [fetchProductMe]);
   useSWR('product/me', fetchProductMe);
+  useSWR('transaction-me', fetchListTransaction);
 
   // const handleCancel = () => setPreviewOpen(false);
 
@@ -211,6 +212,10 @@ export default memo(function ProductCMS() {
             <div className="w-full ">
               {currentModalPage === 'SELECT_TRANSACTION' && (
                 <div className="w-full ">
+                  <p className="py-[10px] text-yellow-600">
+                    *Lưu ý: Bạn chỉ có thể chọn giao dịch 1 lần, nếu bạn muốn
+                    tạo thêm sản phẩm thì phải chọn 1 giao dịch mới !
+                  </p>
                   {listTransaction.length ? (
                     <div className="w-full">
                       <Row className="bg-[#f6f6f6] text-[18px] font-semibold p-[10px] rounded-xl">
@@ -270,6 +275,7 @@ export default memo(function ProductCMS() {
                   onSuccess={() => {
                     setOpenModalCreate(false);
                     mutate('product/me');
+                    mutate('transaction-me');
                   }}
                   transactionId={transactionId}
                 />
