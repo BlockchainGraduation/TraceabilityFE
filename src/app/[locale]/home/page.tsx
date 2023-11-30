@@ -12,6 +12,7 @@ import {
 import {
   faHandSparkles,
   faShieldHeart,
+  faShuffle,
   faSoap,
   faTruckFast,
 } from '@fortawesome/free-solid-svg-icons';
@@ -62,8 +63,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'FAST SHIPPNG',
-      content: 'Delivery anywhere nationwide',
+      label: 'HỆ THỐNG TOÀN QUỐC',
+      content: 'Ai ai cũng có thể sử dụng dịch vụ của chúng tôi trên toàn quốc',
     },
     {
       icon: (
@@ -73,8 +74,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'SAFE',
-      content: 'Product quality is more guaranteed when applying blockchain',
+      label: 'AN TOÀN',
+      content: 'Chất lượng sản phẩm được đảm bảo hơn khi áp dụng blockchain',
     },
     {
       icon: (
@@ -84,8 +85,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'TRANSPARENT',
-      content: 'Information is more transparent with storage on blockchain',
+      label: 'MINH BẠCH',
+      content: 'Thông tin minh bạch hơn với việc lưu trữ trên blockchain',
     },
     {
       icon: (
@@ -95,8 +96,19 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'EASY',
-      content: 'All buying and selling operations are very easy',
+      label: 'DỄ DÀNG',
+      content: 'Mọi thao tác mua bán trên hệ thống đều rất dễ dàng',
+    },
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faShuffle}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'NGUỒN GỐC RÕ RÀNG',
+      content: 'Dễ dàng truy xuất được nguồn gốc khi sản phẩm có vấn đề',
     },
   ];
   const listSlide = [
@@ -193,7 +205,7 @@ export default function HomePage() {
             ))}
           </Carousel>
         </div>
-        <div className="w-full flex flex-wrap px-[150px] my-[50px] gap-5 justify-around">
+        <div className="w-full flex flex-wrap px-[200px] my-[50px] gap-5 justify-around">
           {listIntroduct.map((item, index) => (
             <div key={index} className="w-3/12 flex items-center space-x-5">
               {item.icon}
@@ -206,7 +218,7 @@ export default function HomePage() {
         </div>
         <div className="w-full flex flex-col">
           <p className="m-auto text-[32px] font-extralight">
-            Trendding Products
+            Sản phẩm đang bán chạy
           </p>
           <div className="flex m-auto gap-x-5 cursor-pointer my-[10px]">
             <p
@@ -215,7 +227,7 @@ export default function HomePage() {
                 currentListType === 'FACTORY' && 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              FACTORY
+              NHÀ MÁY CHẾ BIẾN
             </p>
             <p
               onClick={() => setCurrentListType('DISTRIBUTER')}
@@ -224,7 +236,7 @@ export default function HomePage() {
                 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              DISTRIBUTER
+              NHÀ PHÂN PHỐI
             </p>
             <p
               onClick={() => setCurrentListType('RETAILER')}
@@ -232,7 +244,7 @@ export default function HomePage() {
                 currentListType === 'RETAILER' && 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              RETAILER
+              NHÀ BÁN LẺ
             </p>
           </div>
         </div>
@@ -297,7 +309,7 @@ export default function HomePage() {
         </div>
         <div className="w-full flex flex-col mt-[50px]">
           <p className="m-auto text-[32px] font-extralight">
-            Best sales of week
+            Bán chạy tuần nay
           </p>
         </div>
         <div className="w-4/5 flex gap-10 m-auto my-[50px]">

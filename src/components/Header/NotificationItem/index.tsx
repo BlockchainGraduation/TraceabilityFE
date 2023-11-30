@@ -38,7 +38,7 @@ export default function NotificationItem(props: NotificationItemType) {
     <div
       className={`relative flex items-center p-[10px] ${
         !props.active ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
-      } ${!props.active ? `bg-sky-50` : ''} rounded max-w-[400px] gap-x-3`}
+      }  hover:bg-gray-100  rounded max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
@@ -103,7 +103,11 @@ export default function NotificationItem(props: NotificationItemType) {
               )} ${props.product_id?.name}`}
             </p>
           </div>
-          <p className={props.active ? 'text-[#0866ff]' : 'text-gray-500'}>
+          <p
+            className={`${
+              !props.active ? 'text-[#0866ff]' : 'text-gray-500'
+            } text-[12px]`}
+          >
             {moment(props.create_at).fromNow()}
           </p>
         </div>

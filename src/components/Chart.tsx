@@ -22,39 +22,52 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
+export function Chart({
+  data,
+  label,
+  type = 'product',
+}: {
+  type: 'product' | 'transaction';
+  label?: string;
+  data: StatisticalUserType;
+}) {
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: label || 'Bảng thống kê',
+      },
     },
-    title: {
-      display: true,
-      text: 'Chart.js Line Chart',
+    scales: {
+      y: {
+        min: 0,
+      },
     },
-  },
-};
+  };
+  const statistiacal =
+    type === 'product'
+      ? data?.month_product || {}
+      : data?.month_transaction || {};
+  const labels = Object.keys(statistiacal as any).map((key) => key);
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => 200),
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: [1, 300, 3, 30, 624, 12, 34, 50],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
-
-export function Chart() {
-  return <Line options={options} data={data} />;
+  const statisticalData = {
+    labels,
+    datasets: [
+      {
+        label: type === 'product' ? 'Sản phẩm' : 'Giao dịch',
+        data: Object.values(statistiacal as any).map((value) => value),
+        borderColor:
+          type === 'product' ? 'rgb(255, 99, 132)' : 'rgb(61, 106, 184)',
+        backgroundColor:
+          type === 'product'
+            ? 'rgba(255, 99, 132, 0.5)'
+            : 'rgb(61, 106, 184, 0.5)',
+      },
+    ],
+  };
+  return <Line options={options} data={statisticalData} />;
 }

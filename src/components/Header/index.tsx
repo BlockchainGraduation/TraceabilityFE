@@ -44,6 +44,7 @@ import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import useSWR, { useSWRConfig } from 'swr';
 import {
+  BellOutlined,
   FieldTimeOutlined,
   GroupOutlined,
   HomeOutlined,
@@ -56,6 +57,7 @@ import {
   faCartShopping,
   faEarthAsia,
   faHouse,
+  faMagnifyingGlass,
   faUser,
   faUserGear,
   faWallet,
@@ -92,6 +94,7 @@ export default memo(function Header() {
   const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
+  const [showModalSearch, setShowModalSearch] = useState(false);
 
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
@@ -146,23 +149,7 @@ export default memo(function Header() {
           0
         )
     );
-    // setTotalPrice(
-    //   checkedItems.reduce(
-    //     (item, currentValue) =>
-    //       item +
-    //       (listCart[currentValue]?.buyQuantity || 0) *
-    //         (listCart[currentValue]?.product_id?.price || 0),
-    //     0
-    //   )
-    // );
   }, [checkedItems, listCart]);
-
-  const indexCartDeleted = (index: number) => {
-    const newList = [...listCart];
-    newList[index || 0].buyQuantity = newList[index + 1].buyQuantity || 0;
-    setListCart(newList);
-    setCheckedItems(checkedItems.filter((item) => item !== index));
-  };
 
   const onChangeBuyQuantity = (value?: any, index?: number) => {
     const newList = [...listCart];
@@ -170,8 +157,6 @@ export default memo(function Header() {
     newList.find((item) => {
       if (item.id === index) return (item.buyQuantity = value);
     });
-    // console.log(newList);
-    // newList[index || 0].buyQuantity = value;
     setListCart(newList);
 
     console.log('Number', buyQuantityIndex);
@@ -351,47 +336,7 @@ export default memo(function Header() {
       ),
       key: '0',
     },
-    // {
-    //   label: (
-    //     <Popover
-    //       title="Thông báo của bạn"
-    //       placement={'left'}
-    //       content={contentNotifications}
-    //     >
-    //       <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-    //         <Col className="justify-center" span={6}>
-    //           <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
-    //         </Col>
-    //         <Col span={24}>
-    //           <div className="flex">
-    //             <p className="pr-[10px]">Thông báo</p>
-    //             {listNotifications.length && (
-    //               <p className="p-[5px] rounded-full">10</p>
-    //             )}
-    //           </div>
-    //         </Col>
-    //       </Row>
-    //     </Popover>
-    //   ),
-    //   key: '1.4',
-    // },
-    // {
-    //   label: (
-    //     <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
-    //       <div className="w-[30px]">
-    //         <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
-    //       </div>
-    //       <div className="flex gap-x-2">
-    //         <p className="">Ví của bạn:</p>
-    //         <p className="text 18px font-bold">{`${
-    //           currentUser.account_balance || 0
-    //         } `}</p>
-    //         <p className="text-[12px] text-current-color">{currency}</p>
-    //       </div>
-    //     </div>
-    //   ),
-    //   key: '1',
-    // },
+
     {
       label: (
         <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
@@ -399,7 +344,13 @@ export default memo(function Header() {
             <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
           <div className="flex gap-x-2">
-            <p className="">Nạp card</p>
+            <form
+              action={`http://localhost:8000/api/user/checkout`}
+              method="POST"
+              className=""
+            >
+              <button>Nạp card</button>
+            </form>
             {/* <p className="text 18px font-bold">{`${
               currentUser.account_balance || 0
             } `}</p>
@@ -494,7 +445,7 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed top-0 z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed top-0 z-50 flex lg:py-1.5 items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
@@ -519,7 +470,12 @@ export default memo(function Header() {
           </Link>
         ))}
       </div>
-      <div className="relative w-1/4">
+      {/* <div className="relative w-1/4"> */}
+      <Modal
+        open={showModalSearch}
+        onCancel={() => setShowModalSearch(false)}
+        footer={[]}
+      >
         <Popover
           getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
           title={
@@ -553,7 +509,7 @@ export default memo(function Header() {
           <input
             // tabIndex={1}
             maxLength={50}
-            className="border-0 bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
+            className="border-0 mt-[20px] bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
             placeholder="Search Product...(Max 50 char)"
             value={valueSearch}
             onChange={(e) => {
@@ -574,8 +530,15 @@ export default memo(function Header() {
             }}
           />
         </Popover>
-      </div>
+      </Modal>
+      {/* </div> */}
       <div className="flex items-center ">
+        <div className="p-[20px]" onClick={() => setShowModalSearch(true)}>
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            style={{ color: '#3b71ce' }}
+          />
+        </div>
         {/* <ConfigProvider
           theme={{
             token: {
@@ -626,7 +589,16 @@ export default memo(function Header() {
             </div>
             <Popover
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-              title="Thông báo của bạn"
+              title={
+                <div className="flex items-center space-x-3">
+                  <FontAwesomeIcon
+                    icon={faBell}
+                    size={'1x'}
+                    style={{ color: '#0866ff' }}
+                  />
+                  <p>Thông báo của bạn</p>
+                </div>
+              }
               placement={'bottomLeft'}
               trigger={['click']}
               content={contentNotifications}

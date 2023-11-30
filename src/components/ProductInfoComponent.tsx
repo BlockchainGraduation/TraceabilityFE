@@ -195,7 +195,7 @@ export default function ProductInfoComponent({
     await fethComments();
   };
 
-  const fethComments = async () => {
+  const fethComments = useCallback(async () => {
     await instanceAxios
       .get(`comment/filter-comment?product_id=${productId}`)
       .then(async (res) => {
@@ -205,7 +205,7 @@ export default function ProductInfoComponent({
         }
       })
       .catch((err) => setCommentList([]));
-  };
+  }, [productId]);
   const fetchListTransaction = async () => {
     await instanceAxios
       .get(`filter-transaction?product_id=${productId}`)
@@ -223,7 +223,7 @@ export default function ProductInfoComponent({
   });
   useEffect(() => {
     fethComments();
-  }, [changeComment]);
+  }, [changeComment, fethComments]);
   useSWR(`product/${productId}`, fethProduct);
   useSWR(`fethComments`, fethComments);
 
@@ -415,7 +415,7 @@ export default function ProductInfoComponent({
                       onClick={handleSubmitChangeBanner}
                       className="block m-auto"
                     >
-                      Done
+                      Xác nhận
                     </Button>
                     <Modal
                       open={previewOpen}
@@ -444,7 +444,7 @@ export default function ProductInfoComponent({
               queryType={'product'}
             />
             <Space>
-              Create by:
+              Được tạo bởi:
               <Link href={`/user/${dataProduct.create_by?.id}`}>
                 <p className="text-current-color">
                   {dataProduct.create_by?.fullname}
@@ -469,13 +469,14 @@ export default function ProductInfoComponent({
               className="text-[14px] tracking-wide my-[20px] text-[#343434]"
               name={'description'}
               APIurl={`product/${productId}/`}
+              input={{ maxLength: 500 }}
               queryType={'product'}
               initialValue={
                 dataProduct.description || 'Chủ sản phẩm chưa thêm mô tả gì'
               }
             />
             <Space className="my-[10px]">
-              <p>Category:</p>
+              <p>Loại sản phẩm:</p>
               <Tag color={'green'}>{dataProduct.product_type}</Tag>
             </Space>
 

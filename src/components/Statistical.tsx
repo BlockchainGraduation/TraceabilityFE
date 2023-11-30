@@ -21,6 +21,7 @@ import { Avatar, Image, Space } from 'antd';
 import { useAppSelector } from '@/hooks';
 import getPercent from '@/services/getPercent';
 import Percent from './Percent';
+import AdminStatistical from './AdminStatistical';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Statistical() {
@@ -300,211 +301,229 @@ export default function Statistical() {
   return (
     <div className="w-full pb-[50px]">
       <p className="text-[#0b0c50] text-[30px] font-semibold">Tổng quan</p>
-      <div className="w-full flex p-[30px]  gap-x-10">
-        <div className="w-1/2 flex flex-col gap-5">
-          <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-            <p className="text-[#0b0c50] text-[20px] font-semibold">
-              Tổng quan
-            </p>
-            <div>
-              <Chart />
+      {currentUser.is_staff ? (
+        <AdminStatistical />
+      ) : (
+        <div className="w-full flex p-[30px]  gap-x-10">
+          <div className="w-1/2 flex flex-col gap-5">
+            <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <p className="text-[#0b0c50] text-[20px] font-semibold">
+                Thống kê sản phẩm của bạn
+              </p>
+              <div>
+                <Chart
+                  label="Bảng thống kê sản phẩm của bạn trong 12 tháng"
+                  type={'product'}
+                  data={dataStatisticalUser}
+                />
+              </div>
+            </div>
+            <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+              <p className="text-[#0b0c50] text-[20px] font-semibold">
+                Thống kê giao dịch của bạn của bạn
+              </p>
+              <div>
+                <Chart
+                  label="Bảng thống kê giao dịch của bạn trong 12 tháng"
+                  type={'transaction'}
+                  data={dataStatisticalUser}
+                />
+              </div>
             </div>
           </div>
-          <div className="p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-            <p className="text-[#0b0c50] text-[20px] font-semibold">
-              Tổng quan2
-            </p>
-            <div>
-              <Chart />
+          <div className="w-1/2 flex gap-5">
+            <div className="w-1/2 flex flex-col gap-y-5">
+              <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+                <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    icon={faDatabase}
+                    style={{ color: '#3d6ab8' }}
+                  />
+                </div>
+                <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                  Sản phẩm
+                </p>
+                <div className="flex items-baseline space-x-3">
+                  <p className="text-[#0b0c50] text-[50px] font-semibold">
+                    {dataStatisticalUser.product?.product_count}
+                  </p>
+                  <p className="text-gray-500 font-semibold">Sản phẩm</p>
+                </div>
+                <div className="w-full">
+                  <Percent
+                    label="Đang mở bán"
+                    total={dataStatisticalUser.product?.product_count || 0}
+                    value={
+                      dataStatisticalUser.product?.public_product_count || 0
+                    }
+                  />
+                  <Percent
+                    label="Không mở bán"
+                    total={dataStatisticalUser.product?.product_count || 0}
+                    value={
+                      dataStatisticalUser.product?.private_product_count || 0
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+                <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    icon={faDatabase}
+                    style={{ color: '#3d6ab8' }}
+                  />
+                </div>
+                <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                  Sản phẩm
+                </p>
+                <div className="flex items-baseline space-x-3">
+                  <p className="text-[#0b0c50] text-[50px] font-semibold">
+                    200
+                  </p>
+                  <p className="text-gray-500 font-semibold">Sản phẩm</p>
+                </div>
+                <div className="w-full">
+                  <div className="w-full flex justify-between">
+                    <p className="font-normal">Đang mở bán</p>
+                    <p className="font-semibold text-[16px]">25 %</p>
+                  </div>
+                  <div className="w-full flex justify-between">
+                    <p className="font-normal">Đang đóng</p>
+                    <p className="font-semibold text-[16px]">25 %</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-1/2 flex flex-col gap-y-5">
+              <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+                <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    icon={faDatabase}
+                    style={{ color: '#3d6ab8' }}
+                  />
+                </div>
+                <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                  Giao dịch mua sản phẩm của bạn
+                </p>
+                <div className="flex items-baseline space-x-3">
+                  <p className="text-[#0b0c50] text-[50px] font-semibold">
+                    {dataStatisticalUser.transaction?.transaction_count || 0}
+                  </p>
+                  <p className="text-gray-500 font-semibold">Giao dịch mua</p>
+                </div>
+                <div className="w-full">
+                  <Percent
+                    label="Đang chờ"
+                    total={
+                      dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.transaction
+                        ?.pendding_transaction_count || 0
+                    }
+                  />
+                  <Percent
+                    label="Bị từ chối"
+                    total={
+                      dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.transaction
+                        ?.reject_transaction_count || 0
+                    }
+                  />
+                  <Percent
+                    label="Đã xác nhận"
+                    total={
+                      dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.transaction
+                        ?.accept_transaction_count || 0
+                    }
+                  />
+                  <Percent
+                    label="Đã hoàn thành"
+                    total={
+                      dataStatisticalUser.transaction?.transaction_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.transaction?.done_transaction_count ||
+                      0
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
+                <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    icon={faDatabase}
+                    style={{ color: '#3d6ab8' }}
+                  />
+                </div>
+                <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
+                  Giao dịch về sản phẩm của bạn
+                </p>
+                <div className="flex items-baseline space-x-3">
+                  <p className="text-[#0b0c50] text-[50px] font-semibold">
+                    {dataStatisticalUser.sales?.transaction_sales_count || 0}
+                  </p>
+                  <p className="text-gray-500 font-semibold">
+                    GD / {dataStatisticalUser.product?.product_count || 0} Sản
+                    phẩm
+                  </p>
+                </div>
+                <div className="w-full">
+                  <Percent
+                    label="GD đang chờ"
+                    total={
+                      dataStatisticalUser.sales?.transaction_sales_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.sales
+                        ?.pendding_transaction_sales_count || 0
+                    }
+                  />
+                  <Percent
+                    label="GD đã bị bạn từ chối"
+                    total={
+                      dataStatisticalUser.sales?.transaction_sales_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.sales
+                        ?.reject_transaction_sales_count || 0
+                    }
+                  />
+                  <Percent
+                    label="GD bạn đã xác nhận"
+                    total={
+                      dataStatisticalUser.sales?.transaction_sales_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.sales
+                        ?.accept_transaction_sales_count || 0
+                    }
+                  />
+                  <Percent
+                    label="GD đã hoàn thành"
+                    total={
+                      dataStatisticalUser.sales?.transaction_sales_count || 0
+                    }
+                    value={
+                      dataStatisticalUser.sales?.done_transaction_sales_count ||
+                      0
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="w-1/2 flex gap-5">
-          <div className="w-1/2 flex flex-col gap-y-5">
-            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
-                <FontAwesomeIcon
-                  size={'2x'}
-                  icon={faDatabase}
-                  style={{ color: '#3d6ab8' }}
-                />
-              </div>
-              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Sản phẩm
-              </p>
-              <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">
-                  {dataStatisticalUser.product?.product_count}
-                </p>
-                <p className="text-gray-500 font-semibold">Sản phẩm</p>
-              </div>
-              <div className="w-full">
-                <Percent
-                  label="Đang mở bán"
-                  total={dataStatisticalUser.product?.product_count || 0}
-                  value={dataStatisticalUser.product?.public_product_count || 0}
-                />
-                <Percent
-                  label="Không mở bán"
-                  total={dataStatisticalUser.product?.product_count || 0}
-                  value={
-                    dataStatisticalUser.product?.private_product_count || 0
-                  }
-                />
-              </div>
-            </div>
-            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
-                <FontAwesomeIcon
-                  size={'2x'}
-                  icon={faDatabase}
-                  style={{ color: '#3d6ab8' }}
-                />
-              </div>
-              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Sản phẩm
-              </p>
-              <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">200</p>
-                <p className="text-gray-500 font-semibold">Sản phẩm</p>
-              </div>
-              <div className="w-full">
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang mở bán</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
-                <div className="w-full flex justify-between">
-                  <p className="font-normal">Đang đóng</p>
-                  <p className="font-semibold text-[16px]">25 %</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="w-1/2 flex flex-col gap-y-5">
-            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
-                <FontAwesomeIcon
-                  size={'2x'}
-                  icon={faDatabase}
-                  style={{ color: '#3d6ab8' }}
-                />
-              </div>
-              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Giao dịch mua sản phẩm của bạn
-              </p>
-              <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">
-                  {dataStatisticalUser.transaction?.transaction_count || 0}
-                </p>
-                <p className="text-gray-500 font-semibold">Giao dịch mua</p>
-              </div>
-              <div className="w-full">
-                <Percent
-                  label="Đang chờ"
-                  total={
-                    dataStatisticalUser.transaction?.transaction_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.transaction
-                      ?.pendding_transaction_count || 0
-                  }
-                />
-                <Percent
-                  label="Bị từ chối"
-                  total={
-                    dataStatisticalUser.transaction?.transaction_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.transaction?.reject_transaction_count ||
-                    0
-                  }
-                />
-                <Percent
-                  label="Đã xác nhận"
-                  total={
-                    dataStatisticalUser.transaction?.transaction_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.transaction?.accept_transaction_count ||
-                    0
-                  }
-                />
-                <Percent
-                  label="Đã hoàn thành"
-                  total={
-                    dataStatisticalUser.transaction?.transaction_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.transaction?.done_transaction_count || 0
-                  }
-                />
-              </div>
-            </div>
-            <div className="w-full p-[20px] flex flex-col border-2 bg-[#fbfbfb] rounded-xl">
-              <div className="w-[50px] h-[50px] flex items-center justify-center rounded-full bg-white">
-                <FontAwesomeIcon
-                  size={'2x'}
-                  icon={faDatabase}
-                  style={{ color: '#3d6ab8' }}
-                />
-              </div>
-              <p className="text-[#0b0c50] my-[10px] text-[16px] font-semibold">
-                Giao dịch về sản phẩm của bạn
-              </p>
-              <div className="flex items-baseline space-x-3">
-                <p className="text-[#0b0c50] text-[50px] font-semibold">
-                  {dataStatisticalUser.sales?.transaction_sales_count || 0}
-                </p>
-                <p className="text-gray-500 font-semibold">
-                  GD / {dataStatisticalUser.product?.product_count || 0} Sản
-                  phẩm
-                </p>
-              </div>
-              <div className="w-full">
-                <Percent
-                  label="GD đang chờ"
-                  total={
-                    dataStatisticalUser.sales?.transaction_sales_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.sales
-                      ?.pendding_transaction_sales_count || 0
-                  }
-                />
-                <Percent
-                  label="GD đã bị bạn từ chối"
-                  total={
-                    dataStatisticalUser.sales?.transaction_sales_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.sales?.reject_transaction_sales_count ||
-                    0
-                  }
-                />
-                <Percent
-                  label="GD bạn đã xác nhận"
-                  total={
-                    dataStatisticalUser.sales?.transaction_sales_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.sales?.accept_transaction_sales_count ||
-                    0
-                  }
-                />
-                <Percent
-                  label="GD đã hoàn thành"
-                  total={
-                    dataStatisticalUser.sales?.transaction_sales_count || 0
-                  }
-                  value={
-                    dataStatisticalUser.sales?.done_transaction_sales_count || 0
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
