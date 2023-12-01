@@ -114,27 +114,21 @@ export default function HomePage() {
   const listSlide = [
     {
       img: staticVariables.shrimp3.src,
-      title: 'Seed Shrimp',
-      label: 'Seed Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'FACTORY',
+      label: 'Nhà máy chế biến',
+      content: `Vai trò của nhà máy chế biến là chuyển đổi nguyên liệu đầu vào thành sản phẩm thành phẩm thông qua quá trình chế biến...`,
     },
     {
       img: staticVariables.shrimp2.src,
-      title: 'Fishermen Shrimp',
-      label: 'Fishermen Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'DISTRIBUTER',
+      label: 'Nhà phân phối',
+      content: `Nhà phân phối đóng vai trò quan trọng trong quá trình cung ứng và phân phối sản phẩm từ nhà sản xuất đến người tiêu dùng cuối cùng....`,
     },
     {
       img: staticVariables.shrimp1.src,
-      title: 'Fatory Shrimp',
-      label: 'Fatory Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'RETAILER',
+      label: 'Nhà bán lẻ',
+      content: ` Nhà bán lẻ (Retailer) đóng một vai trò quan trọng trong chuỗi cung ứng và phân phối sản phẩm từ nhà sản xuất đến người tiêu dùng...`,
     },
   ];
   return (
@@ -270,9 +264,9 @@ export default function HomePage() {
         <div className="w-4/5 m-auto flex space-x-5">
           <div className="w-1/2 flex bg-[#f5f5f5] p-[20px]">
             <div className="w-1/2 flex flex-col items-center justify-center">
-              <p className="text-[20px]">Seed Shrimp</p>
+              <p className="text-[20px] font-semibold">Nhà máy chế biến</p>
               <div className="flex space-x-3 items-center">
-                <p>VISIT NOW </p>
+                <p>TÌM KIẾM NGAY </p>
                 <PlayCircleFilled />
               </div>
             </div>
@@ -289,9 +283,9 @@ export default function HomePage() {
           </div>
           <div className="w-1/2 flex  bg-[#f5f5f5] p-[20px]">
             <div className="w-1/2 flex flex-col items-center justify-center">
-              <p className="text-[20px]">Fishermen</p>
+              <p className="text-[20px] font-semibold">Nhà phân phối</p>
               <div className="flex space-x-3 items-center">
-                <p>VISIT NOW </p>
+                <p>TÌM KIẾM NGAY</p>
                 <PlayCircleFilled />
               </div>
             </div>
