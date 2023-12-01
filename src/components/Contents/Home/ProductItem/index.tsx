@@ -126,7 +126,9 @@ export default function ProductItem({
         {!isOwner && (
           <div className="flex items-center space-x-3 ">
             <div>
-              <Avatar src={data.create_by?.avatar} />
+              <Avatar
+                src={data.create_by?.avatar || staticVariables.noImage.src}
+              />
             </div>
             <p className="text-[12px]">{data.create_by?.fullname}</p>
           </div>

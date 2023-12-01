@@ -142,7 +142,7 @@ export default function GeneralInformation() {
                 icon={<UserOutlined />}
                 alt=""
                 size={300}
-                src={currentUser.avatar}
+                src={currentUser.avatar || staticVariables.noImage.src}
               />
               <Upload
                 action={`${process.env.NEXT_PUBLIC_API_ORIGIN}user/update`}

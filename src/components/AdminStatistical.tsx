@@ -254,7 +254,7 @@ export default function AdminStatistical() {
       <div className="w-2/3 mt-[10px]">
         <div className="w-full  ">
           <p className="text-[20px] py-[30px] font-semibold">Người dùng</p>
-          <div className="flex flex-wrap gap-5">
+          <div className="flex flex-wrap gap-10">
             {dataListCardUser.map((item, index) => (
               <div
                 key={index}
@@ -278,7 +278,7 @@ export default function AdminStatistical() {
         </div>
         <div className="w-full mt-[50px] ">
           <p className="text-[20px] py-[30px] font-semibold">Sản phẩm</p>
-          <div className="flex flex-wrap gap-5">
+          <div className="flex flex-wrap gap-10">
             {dataListCardProduct.map((item, index) => (
               <div
                 key={index}

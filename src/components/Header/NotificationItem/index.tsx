@@ -37,45 +37,50 @@ export default function NotificationItem(props: NotificationItemType) {
   return (
     <div
       className={`relative flex items-center p-[10px] ${
-        !props.active ? 'hover:bg-sky-200' : 'hover:bg-gray-100'
-      }  hover:bg-gray-100  rounded max-w-[400px] gap-x-3`}
+        !props.active
+          ? 'hover:bg-sky-100 hover:border hover:border-sky-600'
+          : 'hover:bg-gray-100'
+      }  hover:bg-gray-100 group rounded-xl max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
-      {!props.active && !showDeleteIcon && (
-        <FontAwesomeIcon
-          className="absolute top-1/2 right-[10px]"
-          icon={faBell}
-          size={'1x'}
-          style={{ color: '#0866ff' }}
-        />
-      )}
-      {showDeleteIcon && (
-        <ConfigProvider
-          theme={{
-            components: {
-              Button: {
-                primaryColor: '#e62929',
-                colorPrimaryBgHover: '#e62929',
-              },
+      {/* {!props.active && !showDeleteIcon && ( */}
+      <FontAwesomeIcon
+        className="absolute top-1/2 right-[20px] opacity-100 duration-500 visible transition-all group-hover:invisible group-hover:opacity-0 group-hover:translate-x-[10px]"
+        icon={faBell}
+        size={'1x'}
+        style={{ color: '#0866ff' }}
+      />
+      {/* )} */}
+      {/* {showDeleteIcon && ( */}
+      <ConfigProvider
+        theme={{
+          components: {
+            Button: {
+              primaryColor: '#e62929',
+              colorPrimaryBgHover: '#e62929',
             },
-            token: {
-              colorBgContainer: '#7f84d4',
-            },
-          }}
-        >
-          {/* <Popconfirm
+          },
+          token: {
+            colorBgContainer: '#7f84d4',
+          },
+        }}
+      >
+        {/* <Popconfirm
             title={'Xóa thông báo'}
             onConfirm={fetchDeleteNotification}
           > */}
-          <DeleteTwoTone
-            onClick={fetchDeleteNotification}
-            className="absolute top-1/2 right-[10px]"
-          />
-          {/* </Popconfirm> */}
-        </ConfigProvider>
-      )}
-      <Avatar size={'large'} src={props.create_by?.avatar} />
+        <DeleteTwoTone
+          onClick={fetchDeleteNotification}
+          className="absolute top-1/2 right-0 opacity-0 duration-500 invisible transition-all group-hover:visible group-hover:opacity-100 group-hover:-translate-x-[20px]"
+        />
+        {/* </Popconfirm> */}
+      </ConfigProvider>
+      {/* )} */}
+      <Avatar
+        size={'large'}
+        src={props.create_by?.avatar || staticVariables.noImage.src}
+      />
       <div className="w-9/12">
         <div
           onClick={async () => {
