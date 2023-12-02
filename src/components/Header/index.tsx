@@ -506,29 +506,35 @@ export default memo(function Header() {
           // trigger={'focus'}
           placement={'bottom'}
         >
-          <input
-            // tabIndex={1}
-            maxLength={50}
-            className="border-0 mt-[20px] bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
-            placeholder="Search Product...(Max 50 char)"
-            value={valueSearch}
-            onChange={(e) => {
-              setValueSearch(e.target.value);
-              if (e.target.value.trim()) {
-                setShowSearchItems(true);
-              } else {
-                setShowSearchItems(false);
-              }
-            }}
-            onFocus={(e) => {
-              if (!e.target.value.trim()) {
-                return;
-              } else {
-                setShowSearchItems(true);
-                fethMarketSearch();
-              }
-            }}
-          />
+          <div className="relative h-fit">
+            <input
+              maxLength={50}
+              className="w-full mt-[20px]  hover:bg-[#ececec] border rounded-lg outline-0 px-[20px] pl-[50px] py-[10px] text-sm font-light font-sans text-gray-900 "
+              placeholder="Tìm kiếm sản phẩm...(Max 50 char)"
+              value={valueSearch}
+              onChange={(e) => {
+                setValueSearch(e.target.value);
+                if (e.target.value.trim()) {
+                  setShowSearchItems(true);
+                } else {
+                  setShowSearchItems(false);
+                }
+              }}
+              onFocus={(e) => {
+                if (!e.target.value.trim()) {
+                  return;
+                } else {
+                  setShowSearchItems(true);
+                  fethMarketSearch();
+                }
+              }}
+            />
+            <FontAwesomeIcon
+              className="absolute left-0 top-1/2 translate-x-full translate-y-1/3"
+              icon={faMagnifyingGlass}
+              style={{ color: '#2958c7' }}
+            />
+          </div>
         </Popover>
       </Modal>
       {/* </div> */}

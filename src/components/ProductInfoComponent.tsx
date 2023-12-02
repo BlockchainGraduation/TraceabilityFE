@@ -108,6 +108,8 @@ import useLogin from '@/services/requireLogin';
 import unit from '@/services/unit';
 import Percent from '@/components/Percent';
 import getRole from '@/services/getRole';
+import HistoryItem from './RelatedHistoryItem';
+import RelatedHistoryItem from './RelatedHistoryItem';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -878,31 +880,32 @@ export default function ProductInfoComponent({
               {historyData.map(
                 (item, index) =>
                   index !== 0 && (
-                    <div
-                      key={index}
-                      className="w-3/5 relative flex justify-end py-[20px] before:absolute before:w-1/3 before:h-full before:border-current-color  before:rounded-bl-2xl before:border-dashed before:border-l-4 before:border-b-4 before:-top-[20px] before:left-0"
-                    >
-                      <div className="flex w-2/3 bg-white translate-y-1/2 items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
-                        <div>
-                          <Avatar
-                            size={'large'}
-                            src={item.avatar || staticVariables.noImage.src}
-                          />
-                        </div>
-                        <div className="flex flex-col gap-y-3">
-                          <p className="font-semibold">
-                            {getRole(item.product_type || '')}
-                          </p>
-                          <Space>
-                            <FontAwesomeIcon
-                              icon={faUser}
-                              style={{ color: '#2b8c3f' }}
-                            />
-                            <p className="w-[100px] truncate">{item.name}</p>
-                          </Space>
-                        </div>
-                      </div>
-                    </div>
+                    <RelatedHistoryItem data={item} key={index} />
+                    // <div
+                    //   key={index}
+                    //   className="w-3/5 relative flex justify-end py-[20px] before:absolute before:w-1/3 before:h-full before:border-current-color  before:rounded-bl-2xl before:border-dashed before:border-l-4 before:border-b-4 before:-top-[20px] before:left-0"
+                    // >
+                    //   <div className="flex w-2/3 bg-white translate-y-1/2 items-center gap-x-5 py-[10px] px-[20px] rounded-xl border-[1px]">
+                    //     <div>
+                    //       <Avatar
+                    //         size={'large'}
+                    //         src={item.avatar || staticVariables.noImage.src}
+                    //       />
+                    //     </div>
+                    //     <div className="flex flex-col gap-y-3">
+                    //       <p className="font-semibold">
+                    //         {getRole(item.product_type || '')}
+                    //       </p>
+                    //       <Space>
+                    //         <FontAwesomeIcon
+                    //           icon={faUser}
+                    //           style={{ color: '#2b8c3f' }}
+                    //         />
+                    //         <p className="w-[100px] truncate">{item.name}</p>
+                    //       </Space>
+                    //     </div>
+                    //   </div>
+                    // </div>
                   )
               )}
               {/* <div className="w-1/2 relative flex justify-end py-[20px] before:absolute before:w-1/3 before:h-full before:border-current-color  before:rounded-bl-2xl before:border-dashed before:border-l-4 before:border-b-4 before:-top-[20px] before:left-0">

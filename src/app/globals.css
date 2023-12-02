@@ -63,13 +63,13 @@
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(86, 190, 167); 
+  background: rgb(86, 159, 190); 
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(52, 132, 114); 
+  background: rgb(52, 109, 132); 
 }
 
 @media (prefers-color-scheme: dark) {

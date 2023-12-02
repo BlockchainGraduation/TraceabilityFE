@@ -188,7 +188,7 @@ export default memo(function ManageUser() {
                   {
                     key: 1,
                     label: (
-                      <Link href={`/product/${record.id}`}>
+                      <Link href={`/user/${record.id}`}>
                         {/* <Popover placement={'left'} title="Xem người dùng"> */}
                         <Space>
                           <EyeTwoTone />

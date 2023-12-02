@@ -44,14 +44,14 @@ export default function NotificationItem(props: NotificationItemType) {
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
     >
-      {/* {!props.active && !showDeleteIcon && ( */}
-      <FontAwesomeIcon
-        className="absolute top-1/2 right-[20px] opacity-100 duration-500 visible transition-all group-hover:invisible group-hover:opacity-0 group-hover:translate-x-[10px]"
-        icon={faBell}
-        size={'1x'}
-        style={{ color: '#0866ff' }}
-      />
-      {/* )} */}
+      {!props.active && !showDeleteIcon && (
+        <FontAwesomeIcon
+          className="absolute top-1/2 right-[20px] opacity-100 duration-500 visible transition-all group-hover:invisible group-hover:opacity-0 group-hover:translate-x-[10px]"
+          icon={faBell}
+          size={'1x'}
+          style={{ color: '#0866ff' }}
+        />
+      )}
       {/* {showDeleteIcon && ( */}
       <ConfigProvider
         theme={{
