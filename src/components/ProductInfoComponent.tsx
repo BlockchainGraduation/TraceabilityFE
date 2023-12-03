@@ -1,114 +1,59 @@
 'use client';
+import instanceAxios from '@/api/instanceAxios';
+import { LeftArrow, RightArrow } from '@/app/[locale]/home/components/Category';
+import ProductItem from '@/components/Contents/Home/ProductItem';
+import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
+import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
+import Description from '@/components/Contents/ProductInfo/Description';
+import ProductInformation from '@/components/Contents/ProductInfo/ProductInformation';
+import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
+import CommentInput from '@/components/Contents/common/CommentInput';
+import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
+import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
+import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
+import Percent from '@/components/Percent';
+import { useAppSelector } from '@/hooks';
+import currency from '@/services/currency';
+import useLogin from '@/services/requireLogin';
+import unit from '@/services/unit';
 import staticVariables from '@/static';
 import {
-  DeleteTwoTone,
   EditTwoTone,
-  EyeOutlined,
-  FieldTimeOutlined,
-  MailOutlined,
-  PhoneOutlined,
   PlusCircleTwoTone,
   PlusOutlined,
-  RightCircleOutlined,
-  RightCircleTwoTone,
-  SearchOutlined,
-  SendOutlined,
-  ShoppingCartOutlined,
 } from '@ant-design/icons';
+import { faDatabase, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Avatar,
   Button,
   Carousel,
   Col,
-  ConfigProvider,
-  DatePicker,
   Empty,
-  Form,
   Image,
-  Input,
-  List,
+  InputNumber,
   Modal,
-  Popconfirm,
-  Popover,
-  QRCode,
-  Result,
-  Tooltip as TooltipAntd,
+  Pagination,
   Row,
-  Segmented,
-  Table,
+  Space,
+  Spin,
   Tag,
-  Timeline,
+  Tooltip as TooltipAntd,
   Typography,
   Upload,
   UploadFile,
   message,
   notification,
-  Space,
-  InputNumber,
-  Spin,
-  Pagination,
 } from 'antd';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import React, {
-  ReactNode,
-  use,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowTrendUp,
-  faDatabase,
-  faEnvelope,
-  faMobileScreenButton,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
-import GrowUpItem from '@/components/Contents/ProductInfo/GrowUpItem';
-import Paragraph from 'antd/es/typography/Paragraph';
-import { ColumnsType } from 'antd/es/table';
-import { CheckoutForm } from '@/components/Contents/common/CheckoutForm';
-import instanceAxios from '@/api/instanceAxios';
-import GrowUpForm from '@/components/Contents/ProductInfo/GrowUpForm';
-import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
-import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
-import { useAppSelector } from '@/hooks';
-import { useEffectOnce } from 'usehooks-ts';
+import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
+import { getCookie } from 'cookies-next';
 import moment from 'moment';
 import { useTranslations } from 'next-intl';
-import CreateDescriptionForm from '@/components/Contents/ProductInfo/CreateDescriptionForm';
-import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import InputNumberCustom from '@/components/Contents/common/InputCustom/InputNumberCustom';
-import { Chart } from '@/components/Chart';
-import { Line } from 'react-chartjs-2';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Description from '@/components/Contents/ProductInfo/Description';
-import useSWR, { useSWRConfig } from 'swr';
-import { getCookie } from 'cookies-next';
-import currency from '@/services/currency';
+import { useCallback, useEffect, useState } from 'react';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
-import { LeftArrow, RightArrow } from '@/app/[locale]/home/components/Category';
-import ProductInformation from '@/components/Contents/ProductInfo/ProductInformation';
-import CommentItem from '@/components/Contents/ProductInfo/CommentItem';
-import CommentInput from '@/components/Contents/common/CommentInput';
-import ProductItem from '@/components/Contents/Home/ProductItem';
-import useLogin from '@/services/requireLogin';
-import unit from '@/services/unit';
-import Percent from '@/components/Percent';
-import getRole from '@/services/getRole';
-import HistoryItem from './RelatedHistoryItem';
+import useSWR, { useSWRConfig } from 'swr';
+import { useEffectOnce } from 'usehooks-ts';
 import RelatedHistoryItem from './RelatedHistoryItem';
 
 const getBase64 = (file: RcFile): Promise<string> =>

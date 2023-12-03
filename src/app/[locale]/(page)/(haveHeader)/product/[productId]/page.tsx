@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
 import instanceAxios from '@/api/instanceAxios';
-import { useAppSelector } from '@/hooks';
-import { useEffectOnce } from 'usehooks-ts';
-import useSWR, { useSWRConfig } from 'swr';
-import useLogin from '@/services/requireLogin';
 import ProductInfoComponent from '@/components/ProductInfoComponent';
+import { useAppSelector } from '@/hooks';
+import useLogin from '@/services/requireLogin';
+import { useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useEffectOnce } from 'usehooks-ts';
 
 export default function ProductInforPage({
   params,

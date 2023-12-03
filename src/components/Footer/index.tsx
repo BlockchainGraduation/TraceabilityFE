@@ -1,15 +1,14 @@
 'use client';
 import staticVariables from '@/static';
-import { CustomerServiceOutlined, MessageOutlined } from '@ant-design/icons';
 import {
   faEnvelope,
   faLocationDot,
   faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Drawer, FloatButton, Input, Tag } from 'antd';
+import { Avatar, Drawer, Input, Tag } from 'antd';
 import Meta from 'antd/es/card/Meta';
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 
 export default memo(function Footer() {
   const [openDrawer, setOpenDrawer] = useState(false);

@@ -1,15 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import currency from '@/services/currency';
-import {
-  faCircleXmark,
-  faLock,
-  faLockOpen,
-  faPenToSquare,
-  faSquarePlus,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, Row, Segmented, Tag } from 'antd';
+import { Segmented, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';

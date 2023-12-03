@@ -77,7 +77,7 @@ export default function ProductPage() {
                 height={150}
                 style={{ boxShadow: `0 8px 10px rgba(0,0,0,.25)` }}
                 preview={false}
-                src={staticVariables.qc5.src}
+                src={staticVariables.shrimpBg.src}
                 alt=""
               />
               <p className="absolute tracking-widest p-[10px] rounded-xl border-2 text-white font-bold text-[20px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

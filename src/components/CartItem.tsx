@@ -1,5 +1,4 @@
 import instanceAxios from '@/api/instanceAxios';
-import { useAppSelector } from '@/hooks';
 import currency from '@/services/currency';
 import unit from '@/services/unit';
 import staticVariables from '@/static';
@@ -8,9 +7,9 @@ import {
   MinusSquareTwoTone,
   PlusSquareTwoTone,
 } from '@ant-design/icons';
-import { Avatar, Image, Input, InputNumber, Spin, message } from 'antd';
+import { Image, InputNumber, Spin, message } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function CartItem({
   active = false,

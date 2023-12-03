@@ -1,81 +1,56 @@
 'use client';
+import instanceAxios from '@/api/instanceAxios';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { setshowFormLogin } from '@/reducers/showFormSlice';
+import { logOut, setLogin } from '@/reducers/userSlice';
+import currency from '@/services/currency';
 import staticVariables from '@/static';
 import {
-  Avatar,
-  Badge,
-  Button,
-  Checkbox,
-  Col,
-  ConfigProvider,
-  Dropdown,
-  Empty,
-  Image,
-  Input,
-  InputNumber,
-  MenuProps,
-  Modal,
-  Popover,
-  Radio,
-  RadioChangeEvent,
-  Row,
-  Select,
-  Space,
-  message,
-  notification,
-} from 'antd';
-import Link from 'next/link';
-import { deleteCookie, getCookie } from 'cookies-next';
-import React, {
-  ChangeEvent,
-  ReactNode,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import Login from '../Login';
-import Register from './Register';
-import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
-import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
-import { useLocale } from 'next-intl';
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import useSWR, { useSWRConfig } from 'swr';
-import {
-  BellOutlined,
   FieldTimeOutlined,
   GroupOutlined,
   HomeOutlined,
-  LogoutOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRightFromBracket,
+  faBell,
   faCartShopping,
-  faEarthAsia,
-  faHouse,
   faMagnifyingGlass,
   faUser,
   faUserGear,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons';
-import { logOut, setLogin } from '@/reducers/userSlice';
-import instanceAxios from '@/api/instanceAxios';
-import { setshowFormLogin } from '@/reducers/showFormSlice';
-import ForgetForm from '../ForgetForm';
-import { Inter } from 'next/font/google';
-import { faBell } from '@fortawesome/free-regular-svg-icons';
-import NotificationItem from './NotificationItem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  Avatar,
+  Badge,
+  Checkbox,
+  ConfigProvider,
+  Dropdown,
+  Empty,
+  MenuProps,
+  Modal,
+  Popover,
+  message,
+} from 'antd';
+import { deleteCookie } from 'cookies-next';
 import moment from 'moment';
 import 'moment/locale/vi';
-import currency from '@/services/currency';
+import { useLocale, useTranslations } from 'next-intl';
+import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
+import { Inter } from 'next/font/google';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
 import CartItem from '../CartItem';
 import { CheckoutForm } from '../Contents/common/CheckoutForm';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import ForgetForm from '../ForgetForm';
+import Login from '../Login';
 import SearchItem from '../SearchItem';
+import NotificationItem from './NotificationItem';
+import Register from './Register';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -326,7 +301,7 @@ export default memo(function Header() {
     {
       label: (
         <Link href={`/user/${currentUser.id}`}>
-          <div className=" min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+          <div className=" min-w-[200px]  items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
             <div className="w-[30px]">
               <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
             </div>
@@ -339,7 +314,7 @@ export default memo(function Header() {
 
     {
       label: (
-        <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+        <div className="min-w-[200px]  items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
           <div className="w-[30px]">
             <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
@@ -609,7 +584,7 @@ export default memo(function Header() {
               trigger={['click']}
               content={contentNotifications}
             >
-              <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
+              <div className=" hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
                 {unread ? (
                   <Badge count={unread} offset={[16, -8]} color="blue">
                     <FontAwesomeIcon
@@ -624,26 +599,35 @@ export default memo(function Header() {
                 )}
               </div>
             </Popover>
-
-            <Dropdown
-              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-              menu={{ items }}
-              placement={'bottomLeft'}
+            <ConfigProvider
+              theme={{
+                token: {
+                  controlItemBgHover: 'rgb(230, 240, 238)',
+                },
+              }}
             >
-              {/* {listNotifications ? (
+              <Dropdown
+                getPopupContainer={(trigger) =>
+                  trigger.parentNode as HTMLElement
+                }
+                menu={{ items }}
+                placement={'bottomLeft'}
+              >
+                {/* {listNotifications ? (
                 <Badge count={10} offset={[5, 10]} color="blue">
                   <Avatar src={currentUser.avatar} size="large" />
                 </Badge>
               ) : ( */}
-              <div>
-                {/* <Avatar src={currentUser.avatar} size={20} /> */}
-                <Avatar
-                  size={40}
-                  src={currentUser.avatar || staticVariables.noImage.src}
-                />
-              </div>
-              {/* )} */}
-            </Dropdown>
+                <div>
+                  {/* <Avatar src={currentUser.avatar} size={20} /> */}
+                  <Avatar
+                    size={40}
+                    src={currentUser.avatar || staticVariables.noImage.src}
+                  />
+                </div>
+                {/* )} */}
+              </Dropdown>
+            </ConfigProvider>
 
             <Modal
               width={'80%'}

@@ -3,12 +3,10 @@ import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { nextEvent } from '@/reducers/nextEventSlice';
 import { setshowFormLogin } from '@/reducers/showFormSlice';
-import { initialUser, setLogin } from '@/reducers/userSlice';
+import { setLogin } from '@/reducers/userSlice';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, notification } from 'antd';
+import { Form, Input, notification } from 'antd';
 import { setCookie } from 'cookies-next';
-import { title } from 'process';
-import React from 'react';
 import { useSWRConfig } from 'swr';
 
 type FieldType = {
@@ -116,7 +114,7 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
             // onClick={() => {}}
             // className=""
             // type="primary"
-            className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-[#6dd297] text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
+            className="overflow-hidden w-fit px-[20px] h-12 block m-auto mt-[20px] bg-[#37a055] text-white border-none rounded-xl text-lg font-bold cursor-pointer relative z-10 group"
             // htmlType="submit"
             type="submit"
           >

@@ -1,32 +1,16 @@
 import instanceAxios from '@/api/instanceAxios';
 import {
   CloseCircleTwoTone,
-  ExclamationCircleTwoTone,
   EyeTwoTone,
   LockTwoTone,
-  MessageTwoTone,
   SettingTwoTone,
   UnlockTwoTone,
 } from '@ant-design/icons';
 import {
-  faCircleXmark,
-  faEnvelope,
-  faEye,
-  faLock,
-  faLockOpen,
-  faPenToSquare,
-  faStore,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
   Button,
-  Col,
-  Collapse,
   ConfigProvider,
   Dropdown,
   Popconfirm,
-  Popover,
-  Row,
   Segmented,
   Space,
   Table,
@@ -37,13 +21,7 @@ import { SegmentedValue } from 'antd/es/segmented';
 import { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {
-  ReactNode,
-  useEffect,
-  useState,
-  memo,
-  useCallback,
-} from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
 export default memo(function ManageUser() {
@@ -243,20 +221,20 @@ export default memo(function ManageUser() {
                       </Popconfirm>
                     ),
                   },
-                  {
-                    key: 3,
-                    label: (
-                      // <Popover
-                      //   placement={'left'}
-                      //   title="Nhắn tin cho người dùng"
-                      // >
-                      <Space>
-                        <MessageTwoTone />
-                        <p>Nhắn tin cho người dùng</p>
-                      </Space>
-                      // </Popover>
-                    ),
-                  },
+                  // {
+                  //   key: 3,
+                  //   label: (
+                  //     // <Popover
+                  //     //   placement={'left'}
+                  //     //   title="Nhắn tin cho người dùng"
+                  //     // >
+                  //     <Space>
+                  //       <MessageTwoTone />
+                  //       <p>Nhắn tin cho người dùng</p>
+                  //     </Space>
+                  //     // </Popover>
+                  //   ),
+                  // },
                   {
                     key: 4,
                     label: (

@@ -1,21 +1,16 @@
 'use client';
-import { NextIntlClientProvider, useLocale } from 'next-intl';
-import { notFound, useRouter } from 'next/navigation';
-import type { Metadata } from 'next';
-import { Providers } from '@/providers';
-import Header from '@/components/Header';
-import { ReactNode, useEffect, useState } from 'react';
-import Pusher from 'pusher-js';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { Skeleton, message } from 'antd';
-import useSWR, { useSWRConfig } from 'swr';
-import Footer from '@/components/Footer';
-import { getCookie } from 'cookies-next';
-import dynamic from 'next/dynamic';
 import instanceAxios from '@/api/instanceAxios';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { setLogin } from '@/reducers/userSlice';
-import { useEffectOnce } from 'usehooks-ts';
+import { message } from 'antd';
+import { getCookie } from 'cookies-next';
 import moment from 'moment';
+import { useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import Pusher from 'pusher-js';
+import { ReactNode, useEffect, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useEffectOnce } from 'usehooks-ts';
 // export function generateStaticParams() {
 //   return [{ locale: 'en' }, { locale: 'vi' }];
 // }
@@ -52,9 +47,6 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
     const channel = pusher.subscribe('general-channel');
     channel.bind(currentUser.user.email || '', (data: NotificationType) => {
       message.info('Bạn vừa có thông báo mới');
-      // if (data.params.notification_type === 'COMMENT_NOTIFICATION') {
-      //   mutate(`comments/list?marketplace_id=${data.params.marketplace_id}`);
-      // }
       mutate('notifiation-me');
       console.log(data);
     });

@@ -24,13 +24,16 @@ import shrimp4 from '../public/shrimp4.png';
 import shrimpBg from '../public/shrimpBg.jpg';
 import noImage from '../public/noImage.jpg';
 import logoShrimp from '../public/logo_shrimp.jpg';
-
-// import factory from '../public/cms/factory.png';
-// import factory from '../public/cms/factory.png';
+import distributerHome from '../public/distributerHome.png';
+import factoryHome from '../public/factory.jpg';
+import retailerHome from '../public/retailerHome.jpg';
 
 const staticVariables = {
   logo,
   logoRaiden,
+  distributerHome,
+  factoryHome,
+  retailerHome,
   qc1,
   qc2,
   qc3,

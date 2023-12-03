@@ -2,11 +2,10 @@ import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import staticVariables from '@/static';
 import { DownOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Empty, Image, Segmented, Space } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import OrderItem from './OrderItem';
-import Item from 'antd/es/list/Item';
+import { Dropdown, Empty, Image, Segmented, Space } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import OrderItem from './OrderItem';
 
 export default function OrderCMS() {
   const [listProduct, setListProduct] = useState<ProductType[]>([]);

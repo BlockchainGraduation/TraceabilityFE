@@ -2,19 +2,9 @@ import instanceAxios from '@/api/instanceAxios';
 import InputCustom from '@/components/Contents/common/InputCustom/InputCustom';
 import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
 import { useAppSelector } from '@/hooks';
-import { setUser } from '@/reducers/userSlice';
-import fetchUpdateUser from '@/services/fetchUpdate';
 import staticVariables from '@/static';
 import { MailFilled, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
-import {
-  faEnvelope,
-  faL,
-  faLocationDot,
-  faPenToSquare,
-  faSquarePhone,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Avatar,
@@ -25,17 +15,15 @@ import {
   Modal,
   Row,
   Spin,
-  Tag,
   Typography,
   Upload,
   UploadFile,
   message,
-  notification,
 } from 'antd';
 import { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
 import { getCookie } from 'cookies-next';
 // import Image from 'next/image';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSWRConfig } from 'swr';
 
