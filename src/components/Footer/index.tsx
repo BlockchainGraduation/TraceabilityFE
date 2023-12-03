@@ -97,14 +97,14 @@ export default memo(function Footer() {
           </div>
         </div>
       </div>
-      <FloatButton
+      {/* <FloatButton
         badge={{ count: 12 }}
         shape="square"
         type="primary"
         onClick={() => setOpenDrawer(true)}
         style={{ right: 24 }}
         icon={<MessageOutlined />}
-      />
+      /> */}
 
       <Drawer
         title="Messenger"
