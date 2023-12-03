@@ -23,6 +23,7 @@ import shrimp3 from '../public/shrimp3.png';
 import shrimp4 from '../public/shrimp4.png';
 import shrimpBg from '../public/shrimpBg.jpg';
 import noImage from '../public/noImage.jpg';
+import logoShrimp from '../public/logo_shrimp.jpg';
 
 // import factory from '../public/cms/factory.png';
 // import factory from '../public/cms/factory.png';
@@ -37,6 +38,7 @@ const staticVariables = {
   qc5,
   qc6,
   logoDurian,
+  logoShrimp,
   factory,
   product,
   product_factory,

@@ -452,7 +452,7 @@ export default memo(function Header() {
         <Avatar
           size={50}
           className={`object-cover scale-[1.8]`}
-          src={staticVariables.logoDurian.src}
+          src={staticVariables.logoShrimp.src}
           alt=""
         />
       </Link>

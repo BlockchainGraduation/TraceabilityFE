@@ -13,7 +13,7 @@ import React from 'react';
 
 export default function CardProductItem({ data }: { data: ProductType }) {
   return (
-    <Link className="hover:text-inherit " href={`/market/${data.id}`}>
+    <Link className="hover:text-inherit " href={`/product/${data.id}`}>
       <div
         // style={{ boxShadow: `0 2px 8px rgba(0,0,0,.15)` }}
         className="rounded-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:shadow-[0_2px_8px_rgba(66,187,103,0.95)]"
