@@ -102,10 +102,13 @@ export default function NotificationItem(props: NotificationItemType) {
             //   __html: props.data?.message?.toString() || '',
             // }}
           >
-            <p>
-              {`${props.create_by?.fullname} ${tNotifications(
-                props.notification_type
-              )} ${props.product_id?.name}`}
+            <p className="">
+              <b className="font-medium text-[#2d4b7c]">
+                {props.create_by?.fullname}
+              </b>
+              {` ${tNotifications(props.notification_type)} ${
+                props.product_id?.name
+              }`}
             </p>
           </div>
           <p

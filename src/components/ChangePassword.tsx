@@ -1,5 +1,7 @@
 import instanceAxios from '@/api/instanceAxios';
-import { Button, Form, Input, Typography, notification } from 'antd';
+import { useAppSelector } from '@/hooks';
+import staticVariables from '@/static';
+import { Avatar, Button, Form, Input, Typography, notification } from 'antd';
 import React, { useState } from 'react';
 
 type FieldType = {
@@ -9,6 +11,7 @@ type FieldType = {
 };
 export default function ChangPassword({ className }: { className?: string }) {
   const [loading, setLoading] = useState(false);
+  const currentUser = useAppSelector((state) => state.user.user);
   const [form] = Form.useForm();
   const onFinish = async (data: FieldType) => {
     setLoading(true);
@@ -38,12 +41,19 @@ export default function ChangPassword({ className }: { className?: string }) {
       <Typography.Title className="w-fit m-auto" level={3}>
         Thay đổi mật khẩu
       </Typography.Title>
+      <div className="flex flex-col items-center">
+        <Avatar
+          size={100}
+          src={currentUser.avatar || staticVariables.noImage.src}
+        />
+        <p className="font-medium text-[20px]">{currentUser.fullname}</p>
+      </div>
       <Form
         form={form}
         name="basic"
         className="mt-[50px]"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        // labelCol={{ span: 8 }}
+        // wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
@@ -79,7 +89,7 @@ export default function ChangPassword({ className }: { className?: string }) {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Form.Item>
           <Button loading={loading} className="block m-auto" htmlType="submit">
             Submit
           </Button>

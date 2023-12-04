@@ -77,7 +77,12 @@ export default function ForgetForm({
           </Form.Item>
         </Form>
       ) : (
-        <ConfirmOTP nextStep={() => {}} email={email} />
+        <ConfirmOTP
+          nextStep={() => {
+            onFinishOTP();
+          }}
+          email={email}
+        />
       )}
     </div>
   );

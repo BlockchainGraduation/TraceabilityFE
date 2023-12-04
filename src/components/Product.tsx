@@ -1,55 +1,11 @@
 import instanceAxios from '@/api/instanceAxios';
 import CreateProductForm from '@/components/Contents/common/CreateProductForm';
 import { useAppSelector } from '@/hooks';
-import fetchUpdate from '@/services/fetchUpdate';
-import useLogin from '@/services/requireLogin';
-import {
-  ExclamationCircleTwoTone,
-  LeftCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import {
-  faCircleXmark,
-  faLock,
-  faLockOpen,
-  faPenToSquare,
-  faSquarePlus,
-  faStore,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Col,
-  ConfigProvider,
-  Dropdown,
-  Empty,
-  Form,
-  Input,
-  InputNumber,
-  MenuProps,
-  Modal,
-  Popconfirm,
-  Row,
-  Select,
-  Space,
-  Tag,
-  Typography,
-  UploadFile,
-  notification,
-} from 'antd';
-import Table, { ColumnsType } from 'antd/es/table';
-import Upload, { RcFile, UploadChangeParam, UploadProps } from 'antd/es/upload';
-import Link from 'next/link';
-import React, {
-  ReactNode,
-  memo,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { LeftCircleOutlined } from '@ant-design/icons';
+import { Col, Empty, Modal, Row, notification } from 'antd';
+import { memo, useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
-import moment from 'moment';
 import CMSProductItem from './CMSProductItem';
 import TransactionItemSelect from './TransactionItemSelect';
 
@@ -246,17 +202,6 @@ export default memo(function ProductCMS() {
                             key={index}
                             data={item}
                           />
-                          // <TransactionSelectItem
-                          //   transactionId={item.id || ''}
-                          //   onFinish={changeCurrentModalPageToCreate}
-                          //   key={index}
-                          //   image={item.product?.banner || ''}
-                          //   productName={item.product?.name || ''}
-                          //   owner={item.product?.user?.username || ''}
-                          //   priceTotal={item.price || 0}
-                          //   buyQuantity={item.quantity || 0}
-                          //   buyDay={item.created_at || ''}
-                          // />
                         ))}
                       </div>
                     </div>

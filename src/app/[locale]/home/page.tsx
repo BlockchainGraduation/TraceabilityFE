@@ -303,10 +303,10 @@ export default function HomePage() {
         </div>
         <div className="w-full flex flex-col mt-[50px]">
           <p className="m-auto text-[32px] font-extralight">
-            Bán chạy tuần nay
+            Bán chạy tháng nay
           </p>
         </div>
-        <div className="w-4/5 flex gap-10 m-auto my-[50px]">
+        <div className="w-4/5 flex flex-wrap justify-center gap-10 m-auto my-[50px]">
           {listProduct.map((item, index) => (
             <ProductItem
               style="detail"

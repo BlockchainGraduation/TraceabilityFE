@@ -1,10 +1,11 @@
 import instanceAxios from '@/api/instanceAxios';
 import { useAppSelector } from '@/hooks';
 import currency from '@/services/currency';
-import { Segmented, Tag } from 'antd';
+import { Button, Segmented, Tag, message } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
 
 interface DataType {
   key: React.Key;
@@ -25,6 +26,17 @@ export default function TransactionCMS() {
   const [loading, setLoading] = useState(false);
   const [listTransaction, setListTransaction] = useState<TransactionType[]>([]);
   const currentUser = useAppSelector((state) => state.user.user);
+  const { mutate } = useSWRConfig();
+
+  const fetchDoneTransaction = async (transactionId: number) => {
+    await instanceAxios
+      .get(`done-transaction/${transactionId}`)
+      .then((res) => {
+        message.success('Đã xác nhận nhận hàng');
+        mutate(`transaction-me?create_by_me`);
+      })
+      .catch((err) => message.error('Đã có lỗi xảy ra'));
+  };
 
   const fetchDataTransaction = useCallback(async () => {
     setLoading(true);
@@ -49,6 +61,7 @@ export default function TransactionCMS() {
   useEffect(() => {
     fetchDataTransaction();
   }, [fetchDataTransaction]);
+  useSWR(`transaction-me?create_by_me`, fetchDataTransaction);
 
   const columns: ColumnsType<TransactionType> = [
     {
@@ -100,7 +113,16 @@ export default function TransactionCMS() {
           case 'DONE':
             return <Tag color={'success'}>GD thành công</Tag>;
           case 'ACCEPT':
-            return <Tag color={'blue'}>Đã xác nhận</Tag>;
+            return (
+              <div className="flex items-center">
+                <Tag color={'blue'}>Đã xác nhận</Tag>
+                {currentTable === 'BUY' && (
+                  <Button onClick={() => fetchDoneTransaction(record.id || 0)}>
+                    Đã nhận
+                  </Button>
+                )}
+              </div>
+            );
           default:
             return <Tag color={'yellow'}>Đang chờ</Tag>;
         }

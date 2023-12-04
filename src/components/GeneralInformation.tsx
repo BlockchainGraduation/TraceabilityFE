@@ -230,7 +230,7 @@ export default function GeneralInformation() {
                 </div>
               </div>
               <div className="w-1/2">
-                <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
+                {/* <div className="w-full border-b-[1px] border-gray-300 py-[5px]">
                   <p className="font-semibold">Email</p>
                   <Row className="items-center">
                     <Col span={2}>
@@ -245,7 +245,7 @@ export default function GeneralInformation() {
                       />
                     </Col>
                   </Row>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

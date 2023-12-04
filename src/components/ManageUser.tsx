@@ -30,10 +30,13 @@ export default memo(function ManageUser() {
   const [skip, setSkip] = useState(1);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [loadingStatusAccept, setLoadingStatusAccept] = useState(false);
+  const [loadingStatusReject, setLoadingStatusReject] = useState(false);
   const [totalUser, setTotalUser] = useState(0);
   const [userList, setUserList] = useState<UserType[]>([]);
   const { mutate } = useSWRConfig();
   const fetchAction = async (record: UserType, status: boolean) => {
+    status ? setLoadingStatusAccept(true) : setLoadingStatusReject(true);
     await instanceAxios
       .patch(`user/confirm`, {
         user_id: record.id,
@@ -57,6 +60,10 @@ export default memo(function ManageUser() {
           message: 'Lỗi',
           description: `Đã có lỗi xảy ra`,
         });
+      })
+      .finally(() => {
+        setLoadingStatusAccept(false);
+        setLoadingStatusReject(false);
       });
   };
   const columnsWaiting: ColumnsType<UserType> =
@@ -145,12 +152,14 @@ export default memo(function ManageUser() {
           {confirmStatus === 'PENDDING' ? (
             <div className="flex items-center gap-2">
               <Button
+                loading={loadingStatusReject}
                 onClick={() => fetchAction(record, false)}
                 className="text-[10px] py-[6px] px-[10px]"
               >
                 Từ chối
               </Button>
               <Button
+                loading={loadingStatusAccept}
                 onClick={() => fetchAction(record, true)}
                 className="text-[10px] py-[6px] px-[10px]"
               >

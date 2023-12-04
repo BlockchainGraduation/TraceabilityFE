@@ -110,7 +110,7 @@ export default function Index() {
               </div>
               <div
                 data-aos="fade-down-left"
-                data-aos-delay="1000"
+                data-aos-delay="500"
                 data-aos-duration="1000"
               >
                 <Image

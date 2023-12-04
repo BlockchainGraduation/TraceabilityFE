@@ -7,7 +7,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, Dropdown, Row, notification } from 'antd';
+import { Col, Dropdown, Row, message, notification } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React from 'react';
@@ -39,6 +39,16 @@ export default function CMSProductItem({
           description: 'Đã có lỗi xảy ra!!!',
         })
       );
+  };
+
+  const fetchDelete = async (productId: number) => {
+    await instanceAxios
+      .delete(`product/${productId}/`)
+      .then((res) => {
+        message.success('Đã xóa');
+        mutate('product/me');
+      })
+      .catch((err) => message.error('Xóa thất bại'));
   };
 
   return (
@@ -123,7 +133,7 @@ export default function CMSProductItem({
                   label: (
                     <Row
                       onClick={() => {
-                        //   setProductId(record.id || '');
+                        fetchDelete(data?.id || 0);
                         //   setOpenModalUpdate(true);
                         //   setCurrentProduct(record);
                       }}
