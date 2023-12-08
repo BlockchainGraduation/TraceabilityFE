@@ -51,7 +51,7 @@ export default function Description(props: Props) {
           className="text-[20px] py-[20px] font-semibold"
           showEdit={props.showEdit}
           queryType="product"
-          APIurl={`detail_description/${props.id}/update`}
+          APIurl={`detai_description/${props.id}/`}
           passType="body"
           name={'title'}
           initialValue={props.title || ''}
@@ -59,7 +59,7 @@ export default function Description(props: Props) {
         <TextAreaCustom
           showEdit={props.showEdit}
           queryType="product"
-          APIurl={`detail_description/${props.id}/update`}
+          APIurl={`detai_description/${props.id}/`}
           passType="body"
           name={'description'}
           initialValue={props.description || ''}
@@ -78,8 +78,8 @@ export default function Description(props: Props) {
           <Upload
             accept="image/png, image/jpeg, image/jpg"
             showUploadList={false}
-            action={`${process.env.NEXT_PUBLIC_API_ORIGIN}detail_description/${props.id}/img`}
-            method="PUT"
+            action={`${process.env.NEXT_PUBLIC_API_ORIGIN}detai_description/${props.id}/`}
+            method="PATCH"
             headers={{
               authorization: `Bearer ${getCookie('access')}`,
             }}

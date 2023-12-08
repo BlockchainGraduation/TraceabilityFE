@@ -51,12 +51,12 @@ import Login from '../Login';
 import SearchItem from '../SearchItem';
 import NotificationItem from './NotificationItem';
 import Register from './Register';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 const inter = Inter({ subsets: ['latin'] });
 
 interface CheckboxItemType {
   index?: number;
-  product?: CartItemType;
   quantity?: number;
 }
 
@@ -83,7 +83,7 @@ export default memo(function Header() {
   const [listCart, setListCart] = useState<
     (CartItemType & { buyQuantity?: number })[]
   >([]);
-  const [checkedItems, setCheckedItems] = useState<any[]>([]);
+  const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
   const [unread, setUnread] = useState(0);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
@@ -114,7 +114,8 @@ export default memo(function Header() {
     setTotalPrice(
       listCart
         .filter(
-          (item) => checkedItems.includes(item.id) && item.buyQuantity !== 0
+          (item) =>
+            checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
         )
         .reduce(
           (item, currentValue) =>
@@ -124,6 +125,15 @@ export default memo(function Header() {
           0
         )
     );
+    console.log('listCart', listCart);
+    setBuyQuantityIndex(
+      listCart
+        .filter(
+          (item) =>
+            checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
+        )
+        .map((item) => ({ index: item.id, quantity: item.buyQuantity }))
+    );
   }, [checkedItems, listCart]);
 
   const onChangeBuyQuantity = (value?: any, index?: number) => {
@@ -132,13 +142,13 @@ export default memo(function Header() {
     newList.find((item) => {
       if (item.id === index) return (item.buyQuantity = value);
     });
+    // console.log(newList);
     setListCart(newList);
 
-    console.log('Number', buyQuantityIndex);
-    console.log('Value ', { value, index });
+    // console.log('Number', buyQuantityIndex);
+    // console.log('Value ', { value, index });
   };
-  const onChange = (checkedValues: CheckboxItemType[]) => {
-    console.log(checkedValues);
+  const onChange = (checkedValues: CheckboxValueType[]) => {
     setCheckedItems(checkedValues);
   };
 
@@ -192,7 +202,7 @@ export default memo(function Header() {
     // setLoadingBuy(true);
     const listBuyCart = listCart
       .filter(
-        (item) => checkedItems.includes(item.id) && item.buyQuantity !== 0
+        (item) => checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
       )
       .map((item, index) => ({
         cart_id: item.id,
@@ -201,26 +211,55 @@ export default memo(function Header() {
         price: (item.buyQuantity || 0) * (item.product_id?.price || 0),
       }));
 
-    if (listBuyCart.length)
-      await instanceAxios
-        .post(`create-multi-transaction`, { list_transactions: listBuyCart })
-        .then((res) => {
-          mutate('cart-me');
-          message.success(
-            'Mua hàng thành công, vui lòng chờ cửa hàng xác nhận!!!'
-          );
-        })
-        .catch((err) => message.error(tNotification(err.response.data.detail)))
-        .finally(() => setLoadingBuy(false));
-    // console.log(listBuyCart);
+    // if (listBuyCart.length)
+    //   await instanceAxios
+    //     .post(`create-multi-transaction`, { list_transactions: listBuyCart })
+    //     .then((res) => {
+    //       mutate('cart-me');
+    //       message.success(
+    //         'Mua hàng thành công, vui lòng chờ cửa hàng xác nhận!!!'
+    //       );
+    //     })
+    //     .catch((err) => message.error(tNotification(err.response.data.detail)))
+    //     .finally(() => setLoadingBuy(false));
+    console.log(checkedItems);
+    console.log(listBuyCart);
+  };
+
+  const indexCartDeleted = (index: number) => {
+    setCheckedItems(checkedItems.filter((item) => item !== index));
+    setBuyQuantityIndex(
+      buyQuantityIndex.filter((item) => item.index !== index)
+    );
   };
 
   const fetchCartMe = async () => {
     await instanceAxios
       .get(`cart-me`)
       .then((res) => {
-        setListCart(res.data);
-        // console.log(res.data);
+        if (buyQuantityIndex.length) {
+          const newList = [...res.data];
+          newList.forEach((item) => {
+            const indexInfo = buyQuantityIndex.find(
+              (indexItem) => indexItem.index === item.id
+            );
+
+            if (indexInfo) {
+              item.buyQuantity = indexInfo.quantity;
+            }
+          });
+          setListCart(newList);
+        } else {
+          setListCart(res.data);
+        }
+        // setListCart(
+        //   [...res.data].map(
+        //     (item: CartItemType & { buyQuantity?: number }, index) => ({
+        //       ...item,
+        //       buyQuantity: (item.product_id?.quantity || 0) > 0 ? 1 : 0,
+        //     })
+        //   )
+        // );
 
         // setBuyQuantityIndex([...res.data].map(() => 1));
       })
@@ -242,9 +281,9 @@ export default memo(function Header() {
   useEffect(() => {
     fetchNotificationMe();
   }, []);
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchCartMe();
-  }, []);
+  });
 
   useEffect(() => {
     if (showFormLogin) {
@@ -665,7 +704,7 @@ export default memo(function Header() {
                   {listCart.length ? (
                     <Checkbox.Group
                       value={checkedItems}
-                      onChange={(e) => onChange(e as CheckboxItemType[])}
+                      onChange={(e) => onChange(e)}
                       className="flex w-full flex-col gap-y-3"
                     >
                       {listCart.map((item, index) => (
@@ -683,10 +722,10 @@ export default memo(function Header() {
                               onChangeBuyQuantity(e, item.id)
                             }
                             onDeleteSuccess={() => {
-                              // indexCartDeleted(index);
+                              indexCartDeleted(item.id || 0);
                               mutate('cart-me');
                             }}
-                            active={valueRadioCart === index}
+                            // active={valueRadioCart === index}
                             data={item}
                           />
                         </div>
