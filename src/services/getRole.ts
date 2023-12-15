@@ -6,9 +6,8 @@ const getRole = (role: string) => {
       return 'Nhà phân phối';
     case 'RETAILER':
       return 'Nhà bán lẻ';
-
     default:
-      return 'Chủ sở hữu';
+      return 'Member';
   }
 };
 export default getRole;

@@ -41,8 +41,8 @@ export default function Login({ onFinish }: { onFinish: () => void }) {
       })
       .catch((err) => {
         notification.error({
-          message: 'Thông báo',
-          description: `Đăng nhập thất bại`,
+          message: 'Đăng nhập thất bại',
+          description: `Vui lòng xem lại thông tin!`,
         });
       })
       .finally(() => {

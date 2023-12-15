@@ -38,8 +38,8 @@ export default function NotificationItem(props: NotificationItemType) {
     <div
       className={`relative flex items-center p-[10px] ${
         !props.active
-          ? 'hover:bg-sky-100 hover:border hover:border-sky-600'
-          : 'hover:bg-gray-100'
+          ? 'hover:bg-sky-100 hover:border hover:border-sky-600 '
+          : 'hover:bg-gray-100 text-gray-500'
       }  hover:bg-gray-100 group rounded-xl max-w-[400px] gap-x-3`}
       onMouseOver={() => setShowDeleteIcon(true)}
       onMouseOut={() => setShowDeleteIcon(false)}
@@ -103,12 +103,21 @@ export default function NotificationItem(props: NotificationItemType) {
             // }}
           >
             <p className="">
-              <b className="font-medium text-[#2d4b7c]">
+              <b
+                className={`font-medium ${
+                  props.active ? 'text-gray-500' : 'text-[#2d4b7c]'
+                }`}
+              >
                 {props.create_by?.fullname}
               </b>
-              {` ${tNotifications(props.notification_type)} ${
-                props.product_id?.name
-              }`}
+              {` ${tNotifications(props.notification_type)} `}
+              <b
+                className={`font-medium ${
+                  props.active ? 'text-gray-500' : 'text-[#2d4b7c]'
+                }`}
+              >
+                {props.product_id?.name}
+              </b>
             </p>
           </div>
           <p

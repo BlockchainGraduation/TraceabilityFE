@@ -115,7 +115,7 @@ export default function ProductInfoComponent({
 
   const fethProduct = async () => {
     await instanceAxios
-      .get(`product/${productId}/`)
+      .get(`${edit ? `edit-product/${productId}` : `product/${productId}/`}`)
       .then(async (res) => {
         setDataProduct(res.data || {});
         await instanceAxios

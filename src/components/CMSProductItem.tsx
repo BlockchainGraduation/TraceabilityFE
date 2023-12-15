@@ -1,16 +1,26 @@
 import instanceAxios from '@/api/instanceAxios';
 import {
   faEllipsis,
+  faFileArrowDown,
   faPenToSquare,
   faShop,
   faShopLock,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Col, Dropdown, Row, message, notification } from 'antd';
+import {
+  Col,
+  Dropdown,
+  Image,
+  Modal,
+  QRCode,
+  Row,
+  message,
+  notification,
+} from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSWRConfig } from 'swr';
 
 export default function CMSProductItem({
@@ -20,6 +30,9 @@ export default function CMSProductItem({
   index: number;
   data?: ProductType;
 }) {
+  const [linkQRCode, setLinkQRCode] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const { mutate } = useSWRConfig();
   const fetchChangeStatus = async (status: boolean) => {
     await instanceAxios
@@ -49,6 +62,46 @@ export default function CMSProductItem({
         mutate('product/me');
       })
       .catch((err) => message.error('Xóa thất bại'));
+  };
+
+  const downloadQRCodeWithPadding = (padding: number, preView?: boolean) => {
+    const originalCanvas = document
+      .getElementById('myqrcode')
+      ?.querySelector<HTMLCanvasElement>('canvas');
+
+    if (originalCanvas) {
+      const paddedCanvas = document.createElement('canvas');
+      const paddingSize = padding * 2; // Gói gọn cả hai bên
+
+      // Đặt kích thước của canvas mới
+      paddedCanvas.width = originalCanvas.width + paddingSize;
+      paddedCanvas.height = originalCanvas.height + paddingSize;
+
+      const paddedContext = paddedCanvas.getContext('2d');
+
+      if (paddedContext) {
+        // Vẽ một hình vuông trắng để tạo padding
+        paddedContext.fillStyle = '#fff'; // Màu trắng
+        paddedContext.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+
+        // Vẽ nội dung QR code lên canvas mới
+        paddedContext.drawImage(originalCanvas, padding, padding);
+
+        // Tạo data URL và tải về
+        const url = paddedCanvas.toDataURL();
+        if (preView) {
+          setVisible(true);
+          setLinkQRCode(url);
+        } else {
+          const a = document.createElement('a');
+          a.download = 'QRCode.png';
+          a.href = url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      }
+    }
   };
 
   return (
@@ -133,6 +186,24 @@ export default function CMSProductItem({
                   label: (
                     <Row
                       onClick={() => {
+                        setOpenModal(true);
+                      }}
+                    >
+                      <Col span={5}>
+                        <FontAwesomeIcon
+                          icon={faFileArrowDown}
+                          style={{ color: '#63e6be' }}
+                        />
+                      </Col>
+                      <p>Xuất QR code</p>
+                    </Row>
+                  ),
+                },
+                {
+                  key: 5,
+                  label: (
+                    <Row
+                      onClick={() => {
                         fetchDelete(data?.id || 0);
                         //   setOpenModalUpdate(true);
                         //   setCurrentProduct(record);
@@ -157,6 +228,47 @@ export default function CMSProductItem({
           </Dropdown>
         </Col>
       </Row>
+
+      <Image
+        alt=""
+        width={200}
+        style={{ display: 'none' }}
+        // src={QRCode}
+
+        preview={{
+          visible,
+          src: linkQRCode,
+
+          onVisibleChange: (value) => {
+            setVisible(value);
+          },
+        }}
+      />
+      <Modal open={openModal} onCancel={() => setOpenModal(false)} footer={[]}>
+        <div id="myqrcode">
+          {/* <Image alt="" src={QRCode} /> */}
+          <QRCode
+            className="m-auto"
+            value={`${process.env.NEXT_PUBLIC_URL_ORIGIN}traceability/${data?.id}`}
+            bgColor="#fff"
+            style={{ marginBottom: 16 }}
+          />
+          <div className="flex gap-x-5 justify-center">
+            <button
+              className=" bg-gray-100 text-gray-700 font-semibold border rounded-xl py-[5px] px-[10px]"
+              onClick={() => downloadQRCodeWithPadding(10)}
+            >
+              Tải về
+            </button>
+            <button
+              className=" bg-gray-100 text-gray-700 font-semibold border rounded-xl py-[5px] px-[10px]"
+              onClick={() => downloadQRCodeWithPadding(10, true)}
+            >
+              Xem trước
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
