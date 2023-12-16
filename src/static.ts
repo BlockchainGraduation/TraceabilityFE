@@ -27,6 +27,7 @@ import logoShrimp from '../public/logo_shrimp.jpg';
 import distributerHome from '../public/distributerHome.png';
 import factoryHome from '../public/factory.jpg';
 import retailerHome from '../public/retailerHome.jpg';
+import blochain from '../public/blockchain.png';
 
 const staticVariables = {
   logo,
@@ -58,5 +59,6 @@ const staticVariables = {
   shrimp4,
   shrimpBg,
   noImage,
+  blochain,
 };
 export default staticVariables;

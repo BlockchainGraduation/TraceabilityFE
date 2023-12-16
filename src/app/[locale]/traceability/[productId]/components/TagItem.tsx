@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import React, { ReactNode } from 'react';
 
 export default function TagItem({
@@ -29,11 +30,13 @@ export default function TagItem({
               {label}
             </p>
           </div>
-          <p
-            className={` w-full py-[2px] px-[10px] font-medium rounded-lg max-sm:text-[10px] bg-gray-100 border border-gray-500 ${valueClassName}`}
-          >
-            {value}
-          </p>
+          <Tooltip title={value}>
+            <p
+              className={` w-full py-[2px] px-[10px] font-medium rounded-lg max-sm:text-[10px] bg-gray-100 border border-gray-500 ${valueClassName}`}
+            >
+              {value}
+            </p>
+          </Tooltip>
         </>
       )}
     </div>

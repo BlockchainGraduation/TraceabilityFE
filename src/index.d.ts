@@ -205,6 +205,7 @@ interface ProductType {
   product_type?: string;
   product_status?: string;
   active?: boolean;
+  tx_hash?: string;
   create_at?: string;
   updated_at?: string;
   transaction_id?: {};

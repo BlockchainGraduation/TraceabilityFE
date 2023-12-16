@@ -17,7 +17,7 @@ import {
   faTruckFast,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Carousel, Image } from 'antd';
+import { Carousel, Image, Skeleton, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import useSWR from 'swr';
@@ -30,6 +30,7 @@ export default function HomePage() {
   >('FACTORY');
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
   const [loadingPage, setLoadingPage] = useState(true);
+  const [loading, setLoading] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
   const ref = useRef();
   // const fetchListProduct = useCallback(async () => {
@@ -41,13 +42,17 @@ export default function HomePage() {
   //     });
   // }, []);
   const fetchFilterProduct = useCallback(async () => {
+    setLoading(true);
     await instanceAxios
       .get(`filter-product/?product_type=${currentListType}`)
       .then((res) => setListProduct(res.data.results || []))
       .catch((err) => {
         console.log(err);
       })
-      .finally(() => setLoadingPage(false));
+      .finally(() => {
+        setLoadingPage(false);
+        setLoading(false);
+      });
   }, [currentListType]);
   useEffect(() => {
     fetchFilterProduct();
@@ -243,22 +248,28 @@ export default function HomePage() {
           </div>
         </div>
         <div className="w-4/5 m-auto my-[50px]">
-          {listProduct.length ? (
-            <ScrollMenu
-              Footer={[]}
-              noPolyfill
-              wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
-              scrollContainerClassName="mx-[20px]"
-              itemClassName="m-[20px]"
-              LeftArrow={LeftArrow}
-              RightArrow={RightArrow}
-            >
-              {listProduct.map((item, index) => (
-                <ProductItem key={index} data={item} />
-              ))}
-            </ScrollMenu>
+          {loading ? (
+            <Skeleton loading={loading} active />
           ) : (
-            ''
+            <>
+              {listProduct.length ? (
+                <ScrollMenu
+                  Footer={[]}
+                  noPolyfill
+                  wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
+                  scrollContainerClassName="mx-[20px]"
+                  itemClassName="m-[20px]"
+                  LeftArrow={LeftArrow}
+                  RightArrow={RightArrow}
+                >
+                  {listProduct.map((item, index) => (
+                    <ProductItem key={index} data={item} />
+                  ))}
+                </ScrollMenu>
+              ) : (
+                ''
+              )}
+            </>
           )}
         </div>
         <div className="w-4/5 m-auto flex space-x-5">
@@ -301,22 +312,28 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col mt-[50px]">
-          <p className="m-auto text-[32px] font-extralight">
-            Bán chạy tháng nay
-          </p>
-        </div>
-        <div className="w-4/5 flex flex-wrap justify-center gap-10 m-auto my-[50px]">
-          {listProduct.map((item, index) => (
-            <ProductItem
-              style="detail"
-              isOwner={currentUser.id === item.create_by?.id}
-              className="bg-[#f5f5f5]"
-              key={index}
-              data={item}
-            />
-          ))}
-        </div>
+        {listProduct.length ? (
+          <>
+            <div className="w-full flex flex-col mt-[50px]">
+              <p className="m-auto text-[32px] font-extralight">
+                Bán chạy tháng nay
+              </p>
+            </div>
+            <div className="w-4/5 flex flex-wrap justify-center gap-10 m-auto my-[50px]">
+              {listProduct.map((item, index) => (
+                <ProductItem
+                  style="detail"
+                  isOwner={currentUser.id === item.create_by?.id}
+                  className="bg-[#f5f5f5]"
+                  key={index}
+                  data={item}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
         <div className="w-full items-center flex h-[400px] bg-[#f5f5f5] px-[150px] font-sans">
           <div className="w-1/2 flex flex-col">
             <p className="text-[20px] text-current-color">

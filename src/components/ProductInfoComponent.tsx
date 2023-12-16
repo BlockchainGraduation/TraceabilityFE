@@ -298,7 +298,7 @@ export default function ProductInfoComponent({
               )}
             </div>
             <div className="w-full relative">
-              {dataProduct.banner?.length && (
+              {dataProduct.banner?.length ? (
                 <ScrollMenu
                   Footer={[]}
                   noPolyfill
@@ -325,6 +325,8 @@ export default function ProductInfoComponent({
                     />
                   ))}
                 </ScrollMenu>
+              ) : (
+                ''
               )}
               {edit && (
                 <>
