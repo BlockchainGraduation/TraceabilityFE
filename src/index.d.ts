@@ -152,47 +152,47 @@ interface CartItemType {
 }
 
 interface ProductType {
-  id?: int;
+  id?: number;
   banner?: [
     {
-      id?: int;
+      id?: number;
       image?: string;
       create_at?: string;
-      product?: int;
+      product?: number;
     }
   ];
   growup?: [
     {
-      id?: int;
+      id?: number;
       growup_images?: [
         {
-          id?: int;
+          id?: number;
           image?: string;
           create_at?: string;
-          growup_id?: int;
+          growup_id?: number;
         }
       ];
       title?: string;
       description?: string;
-      product_id?: int;
+      product_id?: number;
     }
   ];
   comments?: [
     {
-      id?: int;
+      id?: number;
       description?: string;
       create_at?: string;
-      product_id?: int;
+      product_id?: number;
       user_id?: string;
     }
   ];
   detail_decriptions?: [
     {
-      id?: int;
+      id?: number;
       title?: string;
       description?: string;
       image?: string;
-      product_id?: int;
+      product_id?: number;
     }
   ];
   total_transaction?: number;
@@ -200,11 +200,12 @@ interface ProductType {
   name?: string;
   avatar?: string;
   description?: string;
-  price?: int;
-  quantity?: int;
+  price?: number;
+  quantity?: number;
   product_type?: string;
   product_status?: string;
   active?: boolean;
+  tx_hash?: string;
   create_at?: string;
   updated_at?: string;
   transaction_id?: {};
@@ -252,6 +253,36 @@ interface StatisticalUserType {
     reject_transaction_sales_count?: number;
     done_transaction_sales_count?: number;
   };
+  month_transaction?: {
+    '1'?: number;
+    '2'?: number;
+    '3'?: number;
+    '4'?: number;
+    '5'?: number;
+    '6'?: number;
+    '7'?: number;
+    '7'?: number;
+    '8'?: number;
+    '9'?: number;
+    '10'?: number;
+    '11'?: number;
+    '12'?: number;
+  };
+  month_product?: {
+    '1'?: number;
+    '2'?: number;
+    '3'?: number;
+    '4'?: number;
+    '5'?: number;
+    '6'?: number;
+    '7'?: number;
+    '7'?: number;
+    '8'?: number;
+    '9'?: number;
+    '10'?: number;
+    '11'?: number;
+    '12'?: number;
+  };
 }
 
 interface GrowUpType {
@@ -288,10 +319,10 @@ interface GrowUpType {
   };
 }
 interface CommentItemType {
-  id?: int;
+  id?: number;
   description?: string;
   create_at?: string;
-  product_id?: int;
+  product_id?: number;
   user_id?: UserType;
 }
 interface MarketType {
@@ -360,4 +391,14 @@ interface NotificationItemType {
   notification_type?: string;
   product_id?: ProductType;
   create_at?: string;
+}
+
+interface StatisticalProductType {
+  transaction?: {
+    transaction_count?: number;
+    pendding_transaction_count?: number;
+    reject_transaction_count?: number;
+    done_transaction_count?: number;
+    accept_transaction_count?: number;
+  };
 }

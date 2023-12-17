@@ -1,85 +1,62 @@
 'use client';
-import staticVariables from '@/static';
-import {
-  Avatar,
-  Badge,
-  Button,
-  Checkbox,
-  Col,
-  ConfigProvider,
-  Dropdown,
-  Empty,
-  Image,
-  Input,
-  InputNumber,
-  MenuProps,
-  Modal,
-  Popover,
-  Radio,
-  RadioChangeEvent,
-  Row,
-  Select,
-  Space,
-  message,
-  notification,
-} from 'antd';
-import Link from 'next/link';
-import { deleteCookie, getCookie } from 'cookies-next';
-import React, {
-  ChangeEvent,
-  ReactNode,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import Login from './Login';
-import Register from './Register';
-import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
-import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
-import { useLocale } from 'next-intl';
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
+import instanceAxios from '@/api/instanceAxios';
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import useSWR, { useSWRConfig } from 'swr';
+import { setshowFormLogin } from '@/reducers/showFormSlice';
+import { logOut, setLogin } from '@/reducers/userSlice';
+import currency from '@/services/currency';
+import staticVariables from '@/static';
 import {
   FieldTimeOutlined,
   GroupOutlined,
   HomeOutlined,
-  LogoutOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRightFromBracket,
+  faBell,
   faCartShopping,
-  faEarthAsia,
-  faHouse,
+  faMagnifyingGlass,
   faUser,
   faUserGear,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons';
-import { logOut, setLogin } from '@/reducers/userSlice';
-import SearchItem from './SearchItem';
-import instanceAxios from '@/api/instanceAxios';
-import { setshowFormLogin } from '@/reducers/showFormSlice';
-import ForgetForm from './Register/ForgetForm';
-import { Inter } from 'next/font/google';
-import { faBell } from '@fortawesome/free-regular-svg-icons';
-import NotificationItem from './NotificationItem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  Avatar,
+  Badge,
+  Checkbox,
+  ConfigProvider,
+  Dropdown,
+  Empty,
+  MenuProps,
+  Modal,
+  Popover,
+  message,
+} from 'antd';
+import { deleteCookie } from 'cookies-next';
 import moment from 'moment';
 import 'moment/locale/vi';
-import currency from '@/services/currency';
-import CartItem from './CartItem';
+import { useLocale, useTranslations } from 'next-intl';
+import { usePathname as pathLanguage, useRouter } from 'next-intl/client';
+import { Inter } from 'next/font/google';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useDebounce, useEffectOnce, useOnClickOutside } from 'usehooks-ts';
+import CartItem from '../CartItem';
 import { CheckoutForm } from '../Contents/common/CheckoutForm';
+import ForgetForm from '../ForgetForm';
+import Login from '../Login';
+import SearchItem from '../SearchItem';
+import NotificationItem from './NotificationItem';
+import Register from './Register';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 const inter = Inter({ subsets: ['latin'] });
 
 interface CheckboxItemType {
   index?: number;
-  product?: CartItemType;
   quantity?: number;
 }
 
@@ -92,6 +69,7 @@ export default memo(function Header() {
   const [showCartModal, setShowCartModal] = useState(false);
   const [showSearchItems, setShowSearchItems] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
+  const [showModalSearch, setShowModalSearch] = useState(false);
 
   const [currentForm, setCurrentForm] = useState<
     'LOGIN' | 'REGISTER' | 'FORGET'
@@ -105,7 +83,8 @@ export default memo(function Header() {
   const [listCart, setListCart] = useState<
     (CartItemType & { buyQuantity?: number })[]
   >([]);
-  const [checkedItems, setCheckedItems] = useState<any[]>([]);
+  const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
+  const [unread, setUnread] = useState(0);
   const [listNotifications, setListNotifications] = useState<
     NotificationItemType[]
   >([]);
@@ -116,6 +95,7 @@ export default memo(function Header() {
 
   const router = useRouter();
   const t = useTranslations('header');
+  const tNotification = useTranslations('notification');
   const pathname = pathLanguage();
   const path = usePathname();
   const locale = useLocale();
@@ -132,34 +112,44 @@ export default memo(function Header() {
 
   useEffect(() => {
     setTotalPrice(
-      checkedItems.reduce(
-        (item, currentValue) =>
-          item +
-          (listCart[currentValue]?.buyQuantity || 0) *
-            listCart[currentValue]?.product_id?.price,
-        0
-      )
+      listCart
+        .filter(
+          (item) =>
+            checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
+        )
+        .reduce(
+          (item, currentValue) =>
+            item +
+            (currentValue.buyQuantity || 0) *
+              (currentValue.product_id?.price || 0),
+          0
+        )
+    );
+    console.log('listCart', listCart);
+    setBuyQuantityIndex(
+      listCart
+        .filter(
+          (item) =>
+            checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
+        )
+        .map((item) => ({ index: item.id, quantity: item.buyQuantity }))
     );
   }, [checkedItems, listCart]);
 
-  const indexCartDeleted = (index: number) => {
-    const newList = [...listCart];
-    newList[index || 0].buyQuantity = newList[index + 1].buyQuantity || 0;
-    setListCart(newList);
-    setCheckedItems(checkedItems.filter((item) => item !== index));
-  };
-
   const onChangeBuyQuantity = (value?: any, index?: number) => {
     const newList = [...listCart];
-    newList[index || 0].buyQuantity = value;
+
+    newList.find((item) => {
+      if (item.id === index) return (item.buyQuantity = value);
+    });
+    // console.log(newList);
     setListCart(newList);
 
-    console.log('Number', buyQuantityIndex);
-    console.log('Value ', { value, index });
+    // console.log('Number', buyQuantityIndex);
+    // console.log('Value ', { value, index });
   };
-  const onChange = (checkedValues: CheckboxItemType[]) => {
+  const onChange = (checkedValues: CheckboxValueType[]) => {
     setCheckedItems(checkedValues);
-    console.log('checked = ', checkedValues);
   };
 
   const listIcon = [
@@ -209,23 +199,67 @@ export default memo(function Header() {
   }, [debouncedValue]);
 
   const fetchBuyCart = async () => {
-    const listBuyCart = checkedItems
-      .filter((item) => listCart[item].buyQuantity !== 0)
+    // setLoadingBuy(true);
+    const listBuyCart = listCart
+      .filter(
+        (item) => checkedItems.includes(item.id || 0) && item.buyQuantity !== 0
+      )
       .map((item, index) => ({
-        id: listCart[item].id,
-        product_id: listCart[item].product_id?.id,
-        quantity: listCart[item].buyQuantity,
-        price:
-          (listCart[item].buyQuantity || 0) * listCart[item].product_id?.price,
+        cart_id: item.id,
+        product_id: item.product_id?.id,
+        quantity: item.buyQuantity,
+        price: (item.buyQuantity || 0) * (item.product_id?.price || 0),
       }));
+
+    // if (listBuyCart.length)
+    //   await instanceAxios
+    //     .post(`create-multi-transaction`, { list_transactions: listBuyCart })
+    //     .then((res) => {
+    //       mutate('cart-me');
+    //       message.success(
+    //         'Mua hàng thành công, vui lòng chờ cửa hàng xác nhận!!!'
+    //       );
+    //     })
+    //     .catch((err) => message.error(tNotification(err.response.data.detail)))
+    //     .finally(() => setLoadingBuy(false));
+    console.log(checkedItems);
     console.log(listBuyCart);
+  };
+
+  const indexCartDeleted = (index: number) => {
+    setCheckedItems(checkedItems.filter((item) => item !== index));
+    setBuyQuantityIndex(
+      buyQuantityIndex.filter((item) => item.index !== index)
+    );
   };
 
   const fetchCartMe = async () => {
     await instanceAxios
       .get(`cart-me`)
       .then((res) => {
-        setListCart(res.data);
+        if (buyQuantityIndex.length) {
+          const newList = [...res.data];
+          newList.forEach((item) => {
+            const indexInfo = buyQuantityIndex.find(
+              (indexItem) => indexItem.index === item.id
+            );
+
+            if (indexInfo) {
+              item.buyQuantity = indexInfo.quantity;
+            }
+          });
+          setListCart(newList);
+        } else {
+          setListCart(res.data);
+        }
+        // setListCart(
+        //   [...res.data].map(
+        //     (item: CartItemType & { buyQuantity?: number }, index) => ({
+        //       ...item,
+        //       buyQuantity: (item.product_id?.quantity || 0) > 0 ? 1 : 0,
+        //     })
+        //   )
+        // );
 
         // setBuyQuantityIndex([...res.data].map(() => 1));
       })
@@ -234,7 +268,10 @@ export default memo(function Header() {
   const fetchNotificationMe = async () => {
     await instanceAxios
       .get(`notification-me`)
-      .then((res) => setListNotifications(res.data.detail))
+      .then((res) => {
+        setUnread(res.data.unread);
+        setListNotifications(res.data.detail);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -244,9 +281,9 @@ export default memo(function Header() {
   useEffect(() => {
     fetchNotificationMe();
   }, []);
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchCartMe();
-  }, []);
+  });
 
   useEffect(() => {
     if (showFormLogin) {
@@ -303,7 +340,7 @@ export default memo(function Header() {
     {
       label: (
         <Link href={`/user/${currentUser.id}`}>
-          <div className=" min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+          <div className=" min-w-[200px]  items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
             <div className="w-[30px]">
               <FontAwesomeIcon icon={faUser} style={{ color: '#376ecd' }} />
             </div>
@@ -313,42 +350,25 @@ export default memo(function Header() {
       ),
       key: '0',
     },
-    // {
-    //   label: (
-    //     <Popover
-    //       title="Thông báo của bạn"
-    //       placement={'left'}
-    //       content={contentNotifications}
-    //     >
-    //       <Row gutter={[16, 0]} wrap={false} justify={'start'}>
-    //         <Col className="justify-center" span={6}>
-    //           <FontAwesomeIcon icon={faBell} style={{ color: '#20249d' }} />
-    //         </Col>
-    //         <Col span={24}>
-    //           <div className="flex">
-    //             <p className="pr-[10px]">Thông báo</p>
-    //             {listNotifications.length && (
-    //               <p className="p-[5px] rounded-full">10</p>
-    //             )}
-    //           </div>
-    //         </Col>
-    //       </Row>
-    //     </Popover>
-    //   ),
-    //   key: '1.4',
-    // },
+
     {
       label: (
-        <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+        <div className="min-w-[200px]  items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
           <div className="w-[30px]">
             <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
           </div>
           <div className="flex gap-x-2">
-            <p className="">Ví của bạn:</p>
-            <p className="text 18px font-bold">{`${
+            <form
+              action={`http://localhost:8000/api/user/checkout`}
+              method="POST"
+              className=""
+            >
+              <button>Nạp card</button>
+            </form>
+            {/* <p className="text 18px font-bold">{`${
               currentUser.account_balance || 0
             } `}</p>
-            <p className="text-[12px] text-current-color">{currency}</p>
+            <p className="text-[12px] text-current-color">{currency}</p> */}
           </div>
         </div>
       ),
@@ -439,14 +459,14 @@ export default memo(function Header() {
       data-aos-duration="1500"
       className={`w-full	text-black ${
         isHomePage ? ' bg-transparent' : 'bg-[#2db457]'
-      } bg-white fixed top-0 z-50 flex lg:py-1.5 items-center border-b-[1px] justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
+      } bg-white fixed top-0 z-50 flex lg:py-1.5 items-center justify-between backdrop-blur-[50px] pl-5 pr-10 height-fit
       ${inter.className} `}
     >
       <Link href={'/'}>
         <Avatar
           size={50}
           className={`object-cover scale-[1.8]`}
-          src={staticVariables.logoDurian.src}
+          src={staticVariables.logoShrimp.src}
           alt=""
         />
       </Link>
@@ -464,7 +484,12 @@ export default memo(function Header() {
           </Link>
         ))}
       </div>
-      <div className="relative w-1/4">
+      {/* <div className="relative w-1/4"> */}
+      <Modal
+        open={showModalSearch}
+        onCancel={() => setShowModalSearch(false)}
+        footer={[]}
+      >
         <Popover
           getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
           title={
@@ -495,32 +520,45 @@ export default memo(function Header() {
           // trigger={'focus'}
           placement={'bottom'}
         >
-          <input
-            // tabIndex={1}
-            maxLength={50}
-            className="border-0 bg-[#1212120A] hover:bg-[#ececec] rounded-lg outline-0 px-[20px] py-[10px] text-sm font-light font-sans text-gray-900 "
-            placeholder="Search Product...(Max 50 char)"
-            value={valueSearch}
-            onChange={(e) => {
-              setValueSearch(e.target.value);
-              if (e.target.value.trim()) {
-                setShowSearchItems(true);
-              } else {
-                setShowSearchItems(false);
-              }
-            }}
-            onFocus={(e) => {
-              if (!e.target.value.trim()) {
-                return;
-              } else {
-                setShowSearchItems(true);
-                fethMarketSearch();
-              }
-            }}
-          />
+          <div className="relative h-fit">
+            <input
+              maxLength={50}
+              className="w-full mt-[20px]  hover:bg-[#ececec] border rounded-lg outline-0 px-[20px] pl-[50px] py-[10px] text-sm font-light font-sans text-gray-900 "
+              placeholder="Tìm kiếm sản phẩm...(Max 50 char)"
+              value={valueSearch}
+              onChange={(e) => {
+                setValueSearch(e.target.value);
+                if (e.target.value.trim()) {
+                  setShowSearchItems(true);
+                } else {
+                  setShowSearchItems(false);
+                }
+              }}
+              onFocus={(e) => {
+                if (!e.target.value.trim()) {
+                  return;
+                } else {
+                  setShowSearchItems(true);
+                  fethMarketSearch();
+                }
+              }}
+            />
+            <FontAwesomeIcon
+              className="absolute left-0 top-1/2 translate-x-full translate-y-1/3"
+              icon={faMagnifyingGlass}
+              style={{ color: '#2958c7' }}
+            />
+          </div>
         </Popover>
-      </div>
+      </Modal>
+      {/* </div> */}
       <div className="flex items-center ">
+        <div className="p-[20px]" onClick={() => setShowModalSearch(true)}>
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            style={{ color: '#3b71ce' }}
+          />
+        </div>
         {/* <ConfigProvider
           theme={{
             token: {
@@ -557,20 +595,37 @@ export default memo(function Header() {
 
         {logged ? (
           <div className="flex items-center space-x-5">
+            <div className="min-w-[200px] items-center flex py-[10px] font-medium text-[16px] space-x-3 px-[5px] rounded-xl">
+              <div className="w-[30px]">
+                <FontAwesomeIcon icon={faWallet} style={{ color: '#376ecd' }} />
+              </div>
+              <div className="flex gap-x-2">
+                <p className="">Ví của bạn:</p>
+                <p className="text 18px font-bold">{`${
+                  currentUser.account_balance || 0
+                } `}</p>
+                <p className="text-[12px] text-current-color">{currency}</p>
+              </div>
+            </div>
             <Popover
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-              title="Thông báo của bạn"
+              title={
+                <div className="flex items-center space-x-3">
+                  <FontAwesomeIcon
+                    icon={faBell}
+                    size={'1x'}
+                    style={{ color: '#0866ff' }}
+                  />
+                  <p>Thông báo của bạn</p>
+                </div>
+              }
               placement={'bottomLeft'}
               trigger={['click']}
               content={contentNotifications}
             >
-              <div className="bg-[#1212120A] hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
-                {listNotifications.length ? (
-                  <Badge
-                    count={listNotifications.length}
-                    offset={[16, -8]}
-                    color="blue"
-                  >
+              <div className=" hover:bg-[#ececec] px-[20px] py-[10px] rounded-lg">
+                {unread ? (
+                  <Badge count={unread} offset={[16, -8]} color="blue">
                     <FontAwesomeIcon
                       size={'1x'}
                       className=""
@@ -583,26 +638,35 @@ export default memo(function Header() {
                 )}
               </div>
             </Popover>
-
-            <Dropdown
-              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-              menu={{ items }}
-              placement={'bottomLeft'}
+            <ConfigProvider
+              theme={{
+                token: {
+                  controlItemBgHover: 'rgb(230, 240, 238)',
+                },
+              }}
             >
-              {/* {listNotifications ? (
+              <Dropdown
+                getPopupContainer={(trigger) =>
+                  trigger.parentNode as HTMLElement
+                }
+                menu={{ items }}
+                placement={'bottomLeft'}
+              >
+                {/* {listNotifications ? (
                 <Badge count={10} offset={[5, 10]} color="blue">
                   <Avatar src={currentUser.avatar} size="large" />
                 </Badge>
               ) : ( */}
-              <div>
-                {/* <Avatar src={currentUser.avatar} size={20} /> */}
-                <Avatar
-                  size={40}
-                  src={currentUser.avatar || staticVariables.noImage.src}
-                />
-              </div>
-              {/* )} */}
-            </Dropdown>
+                <div>
+                  {/* <Avatar src={currentUser.avatar} size={20} /> */}
+                  <Avatar
+                    size={40}
+                    src={currentUser.avatar || staticVariables.noImage.src}
+                  />
+                </div>
+                {/* )} */}
+              </Dropdown>
+            </ConfigProvider>
 
             <Modal
               width={'80%'}
@@ -622,10 +686,12 @@ export default memo(function Header() {
                   <p className="text-[16px] font-semibold">
                     {listCart.length} items
                   </p>
-                  {listCart.length && (
+                  {listCart.length ? (
                     <p className="text-[14px] font-semibold">
                       Xóa tất cả giỏ hàng
                     </p>
+                  ) : (
+                    ''
                   )}
                 </div>
                 <div className=" w-full max-h-[360px] overflow-y-auto  flex flex-col">
@@ -638,25 +704,28 @@ export default memo(function Header() {
                   {listCart.length ? (
                     <Checkbox.Group
                       value={checkedItems}
-                      onChange={(e) => onChange(e as CheckboxItemType[])}
+                      onChange={(e) => onChange(e)}
                       className="flex w-full flex-col gap-y-3"
                     >
                       {listCart.map((item, index) => (
-                        <div className="flex items-center gap-x-3" key={index}>
+                        <div
+                          className="flex items-center gap-x-3"
+                          key={item.id}
+                        >
                           <Checkbox
-                            // key={index}
-                            disabled={!listCart[index].buyQuantity}
-                            value={index}
+                            // key={item.id}
+                            disabled={item.buyQuantity === 0}
+                            value={item.id}
                           />
                           <CartItem
                             onChangeBuyQuantity={(e) =>
-                              onChangeBuyQuantity(e, index)
+                              onChangeBuyQuantity(e, item.id)
                             }
                             onDeleteSuccess={() => {
-                              indexCartDeleted(index);
+                              indexCartDeleted(item.id || 0);
                               mutate('cart-me');
                             }}
-                            active={valueRadioCart === index}
+                            // active={valueRadioCart === index}
                             data={item}
                           />
                         </div>
@@ -700,7 +769,8 @@ export default memo(function Header() {
                     >
                       <CheckoutForm
                         buyQuantity={
-                          listCart[valueRadioCart]?.product_id?.quantity > 0
+                          (listCart[valueRadioCart]?.product_id?.quantity ||
+                            0) > 0
                             ? 1
                             : 0
                         }

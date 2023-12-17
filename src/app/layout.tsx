@@ -52,7 +52,7 @@ export default function RootLayout({ children }: Props) {
           fetch(resource, init).then((res) => res.json()),
         revalidateIfStale: false,
         revalidateOnFocus: false,
-        revalidateOnReconnect: false,
+        revalidateOnReconnect: true,
         revalidateOnMount: false,
       }}
     >

@@ -16,7 +16,9 @@ import {
   notification,
 } from 'antd';
 import { CompoundedComponent } from 'antd/es/float-button/interface';
+import { useTranslations } from 'next-intl';
 import { ReactNode, useEffect, useState } from 'react';
+import { mutate } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
 
 export const CheckoutForm = ({
@@ -38,16 +40,19 @@ export const CheckoutForm = ({
   data?: ProductType;
   onSuccess?: () => void;
 }) => {
-  const [priceTotal, setPriceTotal] = useState(buyQuantity * data?.price);
+  const [priceTotal, setPriceTotal] = useState(
+    buyQuantity * (data?.price || 0)
+  );
   const [valueQuantity, setValueQuantity] = useState(buyQuantity);
   const [loading, setLoading] = useState(false);
   // const [orderType, setOrderType] = useState<'CART' | 'BUY'>('BUY');
   const currentUser = useAppSelector((state) => state.user.user);
   const [loadingBuy, setLoadingBuy] = useState(false);
+  const tNotification = useTranslations('notification');
 
   const [useForm] = Form.useForm();
   useEffect(() => {
-    setPriceTotal(buyQuantity * data?.price);
+    setPriceTotal(buyQuantity * (data?.price || 0));
     setValueQuantity(buyQuantity);
   }, [buyQuantity, data?.price]);
 
@@ -62,7 +67,7 @@ export const CheckoutForm = ({
       await instanceAxios
         .post('transaction', {
           quantity: valueQuantity,
-          price: buyQuantity * data?.price,
+          price: buyQuantity * (data?.price || 0),
           product_id: data?.id,
         })
         .then((res) => {
@@ -70,6 +75,8 @@ export const CheckoutForm = ({
             message: 'Thông báo',
             description: 'Mua hàng thành công',
           });
+          mutate('user/me');
+          mutate(`product/${data?.id}`);
           setValueQuantity(0);
           setPriceTotal(0);
           onSuccess?.();
@@ -77,7 +84,8 @@ export const CheckoutForm = ({
         .catch((err) =>
           notification.error({
             message: 'Thông báo',
-            description: 'Mua hàng thất bại',
+            description:
+              tNotification(err.response.data.detail) || 'Mua hàng thất bại',
           })
         )
         .finally(() => setLoadingBuy(false));
@@ -143,7 +151,7 @@ export const CheckoutForm = ({
             <InputNumber
               addonBefore={'Số lượng'}
               onChange={(e) => {
-                setPriceTotal((e || 0) * data?.price);
+                setPriceTotal((e || 0) * (data?.price || 0));
                 setValueQuantity(e || 0);
               }}
               value={valueQuantity}

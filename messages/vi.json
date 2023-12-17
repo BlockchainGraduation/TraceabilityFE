@@ -5,7 +5,7 @@
   "header": {
     "route": {
       "home": "Trang chủ",
-      "history": "Lịch sử",
+      "product": "Sản phẩm",
       "about":"About Us"
     }
   },
@@ -44,6 +44,10 @@
     "WELCOME":"Xin chào",
     "RE_PASSWORD_NOT_SAME":"Mật khẩu mới nhập lại chưa khớp!!!",
     "COMMENT_PRODUCT":"vừa comment ở sản phẩm",
+    "CART_EXISTS":"Sản phẩm đã tồn tại trong giỏ hàng",
+    "BALANCE_NOT_ENOUGHT":"Số tiền trong tài khoản không đủ",
+    "NOT_ALLOWED":"Bạn không được phép thao tác này",
+    "Authentication credentials were not provided":"Thông tin xác thực không được cung cấp.",
     "ERROR_OWNER_NOT_FOUND ": "",
     "ERROR_PRODUCT_NOT_EXIST ": "",
     "ERROR_LESSON_NOT_EXIST ": "",

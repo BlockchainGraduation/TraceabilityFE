@@ -1,49 +1,10 @@
 'use client';
 import instanceAxios from '@/api/instanceAxios';
 import ProductItem from '@/components/Contents/Home/ProductItem';
-import TextAreaCustom from '@/components/Contents/common/InputCustom/TextAreaCustom';
-import CreateProductForm from '@/components/Contents/User/CreateProductForm';
-import UserInfoCard from '@/components/Contents/common/UserInfoCard';
 import { useAppSelector } from '@/hooks';
 import staticVariables from '@/static';
-import {
-  ArrowUpOutlined,
-  BookOutlined,
-  InboxOutlined,
-  MessageOutlined,
-  PlusCircleOutlined,
-  PlusCircleTwoTone,
-  ScheduleOutlined,
-  StarOutlined,
-  TeamOutlined,
-} from '@ant-design/icons';
-import { faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
-import {
-  faEnvelope,
-  faHandshake,
-  faSquarePhone,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Avatar,
-  Card,
-  Carousel,
-  Col,
-  Collapse,
-  ConfigProvider,
-  Empty,
-  Image,
-  Modal,
-  Popover,
-  QRCode,
-  Row,
-  Space,
-  Statistic,
-  Tooltip,
-  Typography,
-} from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import MarketItem from '@/app/[locale]/home/components/MarketItem';
+import { Avatar, Empty, Image } from 'antd';
+import { useCallback, useState } from 'react';
 import { useEffectOnce } from 'usehooks-ts';
 import UserInformation from './components/UserInformation';
 
@@ -96,7 +57,7 @@ export default function UserInfo({ params }: { params: { id: string } }) {
                 {dataUser.fullname}
               </p>
               <p className="text-[16px] font-semibold text-[#65676B]">
-                {listProduct.length} Product
+                {listProduct.length} sản phẩm
               </p>
             </div>
             <div className="w-1/2">

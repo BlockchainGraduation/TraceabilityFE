@@ -16,23 +16,38 @@ import {
   Empty,
   Image,
   Modal,
+  Popover,
   Space,
   Statistic,
   Tag,
   Tooltip,
   Typography,
+  message,
 } from 'antd';
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  PinterestShareButton,
+  PinterestIcon,
+  RedditShareButton,
+  RedditIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+} from 'next-share';
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import useLogin from '@/services/requireLogin';
 import CommentItem from '../../ProductInfo/CommentItem';
 import CommentInput from '../../common/CommentInput';
 import instanceAxios from '@/api/instanceAxios';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import currency from '@/services/currency';
 import staticVariables from '@/static';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/hooks';
+import { useTranslations } from 'next-intl';
 
 const { Meta } = Card;
 
@@ -47,8 +62,22 @@ export default function ProductItem({
   data: ProductType;
   className?: string;
 }) {
+  // const [openSharePopover, setOpenSharePopover] = useState(false);
   const route = useRouter();
   const currentUser = useAppSelector((state) => state.user.user);
+  const tNotification = useTranslations('notification');
+
+  const fetchAddCart = async () => {
+    await instanceAxios
+      .post(`cart/`, { product_id: data.id })
+      .then((res) => {
+        message.success('Đã thêm vào giỏ hàng');
+        mutate('cart-me');
+      })
+      .catch((err) => {
+        message.warning(tNotification(err.response.data.detail));
+      });
+  };
 
   return (
     <div
@@ -72,7 +101,10 @@ export default function ProductItem({
         {currentUser.id !== data.create_by?.id && (
           <div className="absolute rounded-xl bg-white bottom-0 w-3/5 left-1/2 -translate-x-1/2 border-2 invisible flex justify-between px-[10px] py-[5px] group-hover:transition-all group-hover:opacity-100 opacity-0	 group-hover:duration-500 group-hover:-translate-y-1/2 group-hover:visible duration-500  ">
             <Tooltip title={'Add cart'}>
-              <ShoppingCartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+              <ShoppingCartOutlined
+                onClick={fetchAddCart}
+                className="rounded-full hover:bg-green-500 p-[5px]"
+              />
             </Tooltip>
             <Tooltip title={'Visit'}>
               <SearchOutlined
@@ -83,9 +115,40 @@ export default function ProductItem({
             <Tooltip title={'Favourite'}>
               <HeartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
             </Tooltip>
-            <Tooltip title={'Share'}>
-              <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-            </Tooltip>
+            <Popover
+              trigger={['click']}
+              content={
+                <div className="flex gap-x-2">
+                  <FacebookShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+                  {/* <PinterestShareButton url={'http://localhost:3000'} children={undefined} media={''}>
+                    <PinterestIcon size={32} round />
+                  </PinterestShareButton> */}
+                  <RedditShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <RedditIcon size={32} round />
+                  </RedditShareButton>
+                  <WhatsappShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <WhatsappIcon size={32} round />
+                  </WhatsappShareButton>
+                  <LinkedinShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <LinkedinIcon size={32} round />
+                  </LinkedinShareButton>
+                </div>
+              }
+            >
+              <Tooltip title={'Share'}>
+                <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+              </Tooltip>
+            </Popover>
           </div>
         )}
       </div>
@@ -108,7 +171,9 @@ export default function ProductItem({
         {!isOwner && (
           <div className="flex items-center space-x-3 ">
             <div>
-              <Avatar src={data.create_by?.avatar} />
+              <Avatar
+                src={data.create_by?.avatar || staticVariables.noImage.src}
+              />
             </div>
             <p className="text-[12px]">{data.create_by?.fullname}</p>
           </div>

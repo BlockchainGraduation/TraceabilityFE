@@ -2,9 +2,9 @@
 import instanceAxios from '@/api/instanceAxios';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import Login from '@/components/Header/Login';
+import Login from '@/components/Login';
 import Register from '@/components/Header/Register';
-import ForgetForm from '@/components/Header/Register/ForgetForm';
+import ForgetForm from '@/components/ForgetForm';
 import staticVariables from '@/static';
 import { Image } from 'antd';
 import { useRouter } from 'next/navigation';

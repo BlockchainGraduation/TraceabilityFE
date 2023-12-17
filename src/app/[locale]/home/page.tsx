@@ -12,11 +12,12 @@ import {
 import {
   faHandSparkles,
   faShieldHeart,
+  faShuffle,
   faSoap,
   faTruckFast,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Carousel, Image } from 'antd';
+import { Carousel, Image, Skeleton, Spin } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import useSWR from 'swr';
@@ -29,6 +30,7 @@ export default function HomePage() {
   >('FACTORY');
   const [listProduct, setListProduct] = useState<ProductType[]>([]);
   const [loadingPage, setLoadingPage] = useState(true);
+  const [loading, setLoading] = useState(false);
   const currentUser = useAppSelector((state) => state.user.user);
   const ref = useRef();
   // const fetchListProduct = useCallback(async () => {
@@ -40,13 +42,17 @@ export default function HomePage() {
   //     });
   // }, []);
   const fetchFilterProduct = useCallback(async () => {
+    setLoading(true);
     await instanceAxios
       .get(`filter-product/?product_type=${currentListType}`)
       .then((res) => setListProduct(res.data.results || []))
       .catch((err) => {
         console.log(err);
       })
-      .finally(() => setLoadingPage(false));
+      .finally(() => {
+        setLoadingPage(false);
+        setLoading(false);
+      });
   }, [currentListType]);
   useEffect(() => {
     fetchFilterProduct();
@@ -62,8 +68,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'FAST SHIPPNG',
-      content: 'Delivery anywhere nationwide',
+      label: 'HỆ THỐNG TOÀN QUỐC',
+      content: 'Ai ai cũng có thể sử dụng dịch vụ của chúng tôi trên toàn quốc',
     },
     {
       icon: (
@@ -73,8 +79,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'SAFE',
-      content: 'Product quality is more guaranteed when applying blockchain',
+      label: 'AN TOÀN',
+      content: 'Chất lượng sản phẩm được đảm bảo hơn khi áp dụng blockchain',
     },
     {
       icon: (
@@ -84,8 +90,8 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'TRANSPARENT',
-      content: 'Information is more transparent with storage on blockchain',
+      label: 'MINH BẠCH',
+      content: 'Thông tin minh bạch hơn với việc lưu trữ trên blockchain',
     },
     {
       icon: (
@@ -95,34 +101,39 @@ export default function HomePage() {
           style={{ color: '#3f76d5' }}
         />
       ),
-      label: 'EASY',
-      content: 'All buying and selling operations are very easy',
+      label: 'DỄ DÀNG',
+      content: 'Mọi thao tác mua bán trên hệ thống đều rất dễ dàng',
+    },
+    {
+      icon: (
+        <FontAwesomeIcon
+          size={'2x'}
+          icon={faShuffle}
+          style={{ color: '#3f76d5' }}
+        />
+      ),
+      label: 'NGUỒN GỐC RÕ RÀNG',
+      content: 'Dễ dàng truy xuất được nguồn gốc khi sản phẩm có vấn đề',
     },
   ];
   const listSlide = [
     {
       img: staticVariables.shrimp3.src,
-      title: 'Seed Shrimp',
-      label: 'Seed Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'FACTORY',
+      label: 'Nhà máy chế biến',
+      content: `Vai trò của nhà máy chế biến là chuyển đổi nguyên liệu đầu vào thành sản phẩm thành phẩm thông qua quá trình chế biến...`,
     },
     {
       img: staticVariables.shrimp2.src,
-      title: 'Fishermen Shrimp',
-      label: 'Fishermen Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'DISTRIBUTER',
+      label: 'Nhà phân phối',
+      content: `Nhà phân phối đóng vai trò quan trọng trong quá trình cung ứng và phân phối sản phẩm từ nhà sản xuất đến người tiêu dùng cuối cùng....`,
     },
     {
       img: staticVariables.shrimp1.src,
-      title: 'Fatory Shrimp',
-      label: 'Fatory Shrimp',
-      content: ` The XX không chỉ là điểm đến về dịch vụ ăn uống, khi đến với
-      The XX các bạn sẽ được trải nghiệm thêm về nghệ thuật từ
-      không gian trang trí...`,
+      title: 'RETAILER',
+      label: 'Nhà bán lẻ',
+      content: ` Nhà bán lẻ (Retailer) đóng một vai trò quan trọng trong chuỗi cung ứng và phân phối sản phẩm từ nhà sản xuất đến người tiêu dùng...`,
     },
   ];
   return (
@@ -193,7 +204,7 @@ export default function HomePage() {
             ))}
           </Carousel>
         </div>
-        <div className="w-full flex flex-wrap px-[150px] my-[50px] gap-5 justify-around">
+        <div className="w-full flex flex-wrap px-[200px] my-[50px] gap-5 justify-around">
           {listIntroduct.map((item, index) => (
             <div key={index} className="w-3/12 flex items-center space-x-5">
               {item.icon}
@@ -206,7 +217,7 @@ export default function HomePage() {
         </div>
         <div className="w-full flex flex-col">
           <p className="m-auto text-[32px] font-extralight">
-            Trendding Products
+            Sản phẩm đang bán chạy
           </p>
           <div className="flex m-auto gap-x-5 cursor-pointer my-[10px]">
             <p
@@ -215,7 +226,7 @@ export default function HomePage() {
                 currentListType === 'FACTORY' && 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              FACTORY
+              NHÀ MÁY CHẾ BIẾN
             </p>
             <p
               onClick={() => setCurrentListType('DISTRIBUTER')}
@@ -224,7 +235,7 @@ export default function HomePage() {
                 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              DISTRIBUTER
+              NHÀ PHÂN PHỐI
             </p>
             <p
               onClick={() => setCurrentListType('RETAILER')}
@@ -232,35 +243,41 @@ export default function HomePage() {
                 currentListType === 'RETAILER' && 'bg-current-color text-white'
               }  rounded-xl border-[1px]`}
             >
-              RETAILER
+              NHÀ BÁN LẺ
             </p>
           </div>
         </div>
         <div className="w-4/5 m-auto my-[50px]">
-          {listProduct.length ? (
-            <ScrollMenu
-              Footer={[]}
-              noPolyfill
-              wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
-              scrollContainerClassName="mx-[20px]"
-              itemClassName="m-[20px]"
-              LeftArrow={LeftArrow}
-              RightArrow={RightArrow}
-            >
-              {listProduct.map((item, index) => (
-                <ProductItem key={index} data={item} />
-              ))}
-            </ScrollMenu>
+          {loading ? (
+            <Skeleton loading={loading} active />
           ) : (
-            ''
+            <>
+              {listProduct.length ? (
+                <ScrollMenu
+                  Footer={[]}
+                  noPolyfill
+                  wrapperClassName="w-full w-fit px-[10px] mb-[30px] "
+                  scrollContainerClassName="mx-[20px]"
+                  itemClassName="m-[20px]"
+                  LeftArrow={LeftArrow}
+                  RightArrow={RightArrow}
+                >
+                  {listProduct.map((item, index) => (
+                    <ProductItem key={index} data={item} />
+                  ))}
+                </ScrollMenu>
+              ) : (
+                ''
+              )}
+            </>
           )}
         </div>
         <div className="w-4/5 m-auto flex space-x-5">
           <div className="w-1/2 flex bg-[#f5f5f5] p-[20px]">
             <div className="w-1/2 flex flex-col items-center justify-center">
-              <p className="text-[20px]">Seed Shrimp</p>
+              <p className="text-[20px] font-semibold">Nhà máy chế biến</p>
               <div className="flex space-x-3 items-center">
-                <p>VISIT NOW </p>
+                <p>TÌM KIẾM NGAY </p>
                 <PlayCircleFilled />
               </div>
             </div>
@@ -277,9 +294,9 @@ export default function HomePage() {
           </div>
           <div className="w-1/2 flex  bg-[#f5f5f5] p-[20px]">
             <div className="w-1/2 flex flex-col items-center justify-center">
-              <p className="text-[20px]">Fishermen</p>
+              <p className="text-[20px] font-semibold">Nhà phân phối</p>
               <div className="flex space-x-3 items-center">
-                <p>VISIT NOW </p>
+                <p>TÌM KIẾM NGAY</p>
                 <PlayCircleFilled />
               </div>
             </div>
@@ -295,22 +312,28 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col mt-[50px]">
-          <p className="m-auto text-[32px] font-extralight">
-            Best sales of week
-          </p>
-        </div>
-        <div className="w-4/5 flex gap-10 m-auto my-[50px]">
-          {listProduct.map((item, index) => (
-            <ProductItem
-              style="detail"
-              isOwner={currentUser.id === item.create_by?.id}
-              className="bg-[#f5f5f5]"
-              key={index}
-              data={item}
-            />
-          ))}
-        </div>
+        {listProduct.length ? (
+          <>
+            <div className="w-full flex flex-col mt-[50px]">
+              <p className="m-auto text-[32px] font-extralight">
+                Bán chạy tháng nay
+              </p>
+            </div>
+            <div className="w-4/5 flex flex-wrap justify-center gap-10 m-auto my-[50px]">
+              {listProduct.map((item, index) => (
+                <ProductItem
+                  style="detail"
+                  // isOwner={currentUser.id === item.create_by?.id}
+                  className="bg-[#f5f5f5]"
+                  key={index}
+                  data={item}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
         <div className="w-full items-center flex h-[400px] bg-[#f5f5f5] px-[150px] font-sans">
           <div className="w-1/2 flex flex-col">
             <p className="text-[20px] text-current-color">

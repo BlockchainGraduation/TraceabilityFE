@@ -19,22 +19,23 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import ChangPassword from '@/components/CMS/ChangePassword';
-import ProductCMS from '@/components/CMS/Product';
-import TransactionCMS from '@/components/CMS/Transaction';
+import ChangPassword from '@/components/ChangePassword';
+import ProductCMS from '@/components/Product';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useRouter } from 'next/navigation';
-import ManageUser from '@/components/CMS/Admin/ManageUser';
-import ManageProduct from '@/components/CMS/Admin/ManageProduct';
-import Statistical from '@/components/CMS/Statistical';
+import ManageUser from '@/components/ManageUser';
+import ManageProduct from '@/components/ManageProduct';
+import Statistical from '@/components/Statistical';
 import { useEffectOnce } from 'usehooks-ts';
 import { Footer as FooterAntd } from 'antd/es/layout/layout';
 import Footer from '@/components/Footer';
-import GeneralInformation from '@/components/CMS/GeneralInformation';
+import 'moment/locale/vi';
+import GeneralInformation from '@/components/GeneralInformation';
 import instanceAxios from '@/api/instanceAxios';
 import { logOut } from '@/reducers/userSlice';
 import { deleteCookie } from 'cookies-next';
-import OrderCMS from '@/components/CMS/Order';
+import OrderCMS from '@/components/Order';
+import TransactionCMS from '@/components/Transaction';
 
 const { Header, Content, Sider } = Layout;
 
@@ -80,8 +81,8 @@ export default memo(function CMSPage() {
 
   ////Render taskbar
   const items: MenuItem[] = [
-    getItem('Đơn hàng', '1', <ScheduleOutlined />),
-    getItem('Thống kê', '2', <PieChartOutlined />),
+    getItem('Thống kê', '1', <ScheduleOutlined />),
+    getItem('Đơn hàng', '2', <PieChartOutlined />),
     getItem('Thông tin của bạn', 'sub1', <UserOutlined />, [
       getItem('Thông tin chung', '3', <WalletOutlined />),
       getItem('Đổi mật khẩu', '4', <LockOutlined />),
@@ -107,8 +108,8 @@ export default memo(function CMSPage() {
     getItem('Đăng xuất', '10', <LoginOutlined />),
   ];
   const contents = [
-    <OrderCMS key={1} />,
-    <Statistical key={2} />,
+    <Statistical key={1} />,
+    <OrderCMS key={2} />,
     <GeneralInformation key={3} />,
     <ChangPassword className="w-2/5 m-auto" key={4} />,
     <></>,

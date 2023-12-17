@@ -12,7 +12,7 @@ import RegisterEnterprise from './RegisterEnterprise';
 import Rules from './Rules';
 import { useAppDispatch } from '@/hooks';
 import { initialUser, setLogin } from '@/reducers/userSlice';
-import ConfirmOTP from './ConfirmOTP';
+import ConfirmOTP from '../../ConfirmOTP';
 
 export default function Register({
   onFinish,
