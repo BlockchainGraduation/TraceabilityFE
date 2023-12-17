@@ -323,7 +323,7 @@ export default function HomePage() {
               {listProduct.map((item, index) => (
                 <ProductItem
                   style="detail"
-                  isOwner={currentUser.id === item.create_by?.id}
+                  // isOwner={currentUser.id === item.create_by?.id}
                   className="bg-[#f5f5f5]"
                   key={index}
                   data={item}

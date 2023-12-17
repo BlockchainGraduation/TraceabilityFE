@@ -16,6 +16,7 @@ import {
   Empty,
   Image,
   Modal,
+  Popover,
   Space,
   Statistic,
   Tag,
@@ -23,6 +24,18 @@ import {
   Typography,
   message,
 } from 'antd';
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  PinterestShareButton,
+  PinterestIcon,
+  RedditShareButton,
+  RedditIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+} from 'next-share';
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import useLogin from '@/services/requireLogin';
@@ -49,6 +62,7 @@ export default function ProductItem({
   data: ProductType;
   className?: string;
 }) {
+  // const [openSharePopover, setOpenSharePopover] = useState(false);
   const route = useRouter();
   const currentUser = useAppSelector((state) => state.user.user);
   const tNotification = useTranslations('notification');
@@ -101,9 +115,40 @@ export default function ProductItem({
             <Tooltip title={'Favourite'}>
               <HeartOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
             </Tooltip>
-            <Tooltip title={'Share'}>
-              <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
-            </Tooltip>
+            <Popover
+              trigger={['click']}
+              content={
+                <div className="flex gap-x-2">
+                  <FacebookShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+                  {/* <PinterestShareButton url={'http://localhost:3000'} children={undefined} media={''}>
+                    <PinterestIcon size={32} round />
+                  </PinterestShareButton> */}
+                  <RedditShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <RedditIcon size={32} round />
+                  </RedditShareButton>
+                  <WhatsappShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <WhatsappIcon size={32} round />
+                  </WhatsappShareButton>
+                  <LinkedinShareButton
+                    url={`${process.env.NEXT_PUBLIC_URL_ORIGIN}product/${data.id}`}
+                  >
+                    <LinkedinIcon size={32} round />
+                  </LinkedinShareButton>
+                </div>
+              }
+            >
+              <Tooltip title={'Share'}>
+                <ShareAltOutlined className="rounded-full hover:bg-green-500 p-[5px]" />
+              </Tooltip>
+            </Popover>
           </div>
         )}
       </div>

@@ -55,6 +55,7 @@ import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import useSWR, { useSWRConfig } from 'swr';
 import { useEffectOnce } from 'usehooks-ts';
 import RelatedHistoryItem from './RelatedHistoryItem';
+import allowBuy from '@/services/allowBuy';
 
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -206,7 +207,10 @@ export default function ProductInfoComponent({
         setFileList([]);
       })
       .catch((err) => console.log(err))
-      .finally(() => setLoadingBanner(false));
+      .finally(() => {
+        setLoadingBanner(false);
+        setShowModalUpload(false);
+      });
   };
 
   const fetchAddCart = async () => {
@@ -276,21 +280,26 @@ export default function ProductInfoComponent({
                   // onChange={handleChangeProductAvatar}
                   onChange={(info) => {
                     setLoadingAvatar(true);
-                    if (info.file.status !== 'uploading') {
+                    if (info.file.status === 'uploading') {
+                      console.log(info.file.status);
                       // console.log(info.file, info.fileList);
                     }
                     if (info.file.status === 'done') {
                       // setLoadingAvatar(false);
                       mutate(`product/${productId}`);
                       message.success(`Upload thành công`);
+                      setLoadingAvatar(false);
                     } else if (info.file.status === 'error') {
                       message.error(`Upload thất bại`);
+                      setLoadingAvatar(false);
                     }
-                    setLoadingAvatar(false);
                   }}
                 >
                   {loadingAvatar ? (
-                    <Spin className="absolute right-0 p-[10px]  top-1/2 shadow-xl -translate-x-1/3" />
+                    <Spin
+                      spinning={loadingAvatar}
+                      className="absolute right-0 p-[10px]  top-1/2 shadow-xl -translate-x-1/3"
+                    />
                   ) : (
                     <EditTwoTone className="absolute right-0 p-[10px] text-[20px] bg-blue-100 top-1/2 shadow-xl -translate-x-1/3 rounded-full" />
                   )}
@@ -451,7 +460,7 @@ export default function ProductInfoComponent({
                 max={dataProduct.quantity}
               />
               <button
-                disabled={edit}
+                disabled={!allowBuy(dataProduct, currentUser)}
                 onClick={fetchAddCart}
                 className="disabled:bg-[#f5f5f5] disabled:cursor-not-allowed bg-current-color text-white disabled:text-[#c7c7c7] font-semibold px-[20px] py-[10px] rounded-xl"
               >
@@ -491,7 +500,7 @@ export default function ProductInfoComponent({
                 // onClick={() => setShowModalPay(true)}
                 // onClick={fetchBuyProduct}
                 loading={loadingBuy}
-                disabled={currentUser.id === dataProduct.create_by?.id}
+                disabled={!allowBuy(dataProduct, currentUser)}
                 className="w-full h-fit rounded-xl font-semibold text-white text-[30px] bg-current-color"
               >
                 Mua ngay
@@ -597,7 +606,7 @@ export default function ProductInfoComponent({
                     Đã có {commentCount} bình luận cho{' '}
                     <p className="font-semibold">{dataProduct.name}</p>
                   </div>
-                  <p>Xem thêm</p>
+                  {/* <p>Xem thêm</p> */}
                 </div>
                 <div className="flex max-h-[400px] flex-col-reverse overflow-auto">
                   <div className="flex flex-col-reverse">
