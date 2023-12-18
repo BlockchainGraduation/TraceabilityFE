@@ -359,7 +359,7 @@ export default memo(function Header() {
           </div>
           <div className="flex gap-x-2">
             <form
-              action={`http://localhost:8000/api/user/checkout`}
+              action={`${process.env.NEXT_PUBLIC_API_ORIGIN}user/checkout`}
               method="POST"
               className=""
             >
